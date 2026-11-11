@@ -36,6 +36,39 @@
       "minLength": 1,
       "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
     },
+    "expressions": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "neutral": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+            },
+            "stressed": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+            },
+            "angry": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+            },
+            "pleased": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "gestor_params": {
       "anyOf": [
         {

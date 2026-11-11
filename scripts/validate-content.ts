@@ -94,6 +94,24 @@ export function loadAndValidateContent(rootDir = process.cwd()): ContentValidati
             `${relLabel}: portrait_asset_id '${charDef.portrait_asset_id}' must have category 'character' (found '${assetEntry.category}').`,
           );
         }
+
+        if (charDef.expressions) {
+          for (const [exprKey, exprAssetId] of Object.entries(charDef.expressions)) {
+            if (!exprAssetId) {
+              continue;
+            }
+            const exprEntry = manifest.assets[exprAssetId];
+            if (!exprEntry) {
+              errors.push(
+                `${relLabel}: expressions.${exprKey} '${exprAssetId}' not found in assets/manifest.json.`,
+              );
+            } else if (exprEntry.category !== "character") {
+              errors.push(
+                `${relLabel}: expressions.${exprKey} '${exprAssetId}' must have category 'character' (found '${exprEntry.category}').`,
+              );
+            }
+          }
+        }
       }
       characters[charDef.id] = charDef;
     }
@@ -202,6 +220,12 @@ function validateCrossReferencesAndGraph(
     if (event.character_id && !characters[event.character_id]) {
       errors.push(
         `${ctxLabel}: character_id '${event.character_id}' not found in content/characters/.`,
+      );
+    }
+
+    if (event.character_expression != null && !event.character_id) {
+      errors.push(
+        `${ctxLabel}: character_expression '${event.character_expression}' requires a non-null character_id.`,
       );
     }
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { EventCategorySchema, SnakeCaseIdSchema } from "./asset-manifest.ts";
+import { CharacterExpressionSchema } from "./character.ts";
 
 export const GestorTierSchema = z.enum(["self", "cheap", "premium"]);
 
@@ -239,6 +240,7 @@ export const EventSchema = z
     body: z.string().min(1),
     tags: z.array(z.string().min(1)).optional(),
     character_id: SnakeCaseIdSchema.nullable().optional(),
+    character_expression: CharacterExpressionSchema.nullable().optional(),
     illustration_id: SnakeCaseIdSchema.nullable().optional(),
     requirements: RequirementsSpecSchema.nullable().optional(),
     weight: z.number().min(0),

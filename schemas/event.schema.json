@@ -50,6 +50,22 @@
         }
       ]
     },
+    "character_expression": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "neutral",
+            "stressed",
+            "angry",
+            "pleased"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "illustration_id": {
       "anyOf": [
         {

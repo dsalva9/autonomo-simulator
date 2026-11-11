@@ -23,7 +23,7 @@ Autónomo Simulator is a **mobile-first, offline-capable, single-codebase satiri
 | **§16.2 Economy, Taxes & Insolvency** | Baseline monthly billing (scaled by `reputation`, `moral`, `employee`) + event gigs. Official billing accrues a simplified tax liability settled every 3rd month (*"El Trimestre"*). Cash can dip negative (*"Números rojos"*, adding monthly Stress) plus 1 active tax deferral (*"Aplazamiento"*). **Bancarrota** triggers after 3 consecutive negative months, breaching a hard debt floor (default `-5,000 €`), or defaulting on deferred taxes. |
 | **§16.3 Turn Pacing** | **1 random event + at most 1 scheduled chain follow-up** per month (excess queued follow-ups spill over FIFO to the next month), plus quarterly tax settlements (every 3rd month) and annual summaries (every 12th month), targeting ~15–25 min for 120 months. |
 | **§16.4 Event Schema & RNG** | Choices support **both** deterministic `effects` and weighted random `outcomes[]` (with immediate `result_text`) plus delayed `schedule_events`, driven by the seeded PRNG. Inline `es-ES` text uses deterministic `<event_id>.<choice_id>` paths for future i18n. |
-| **§16.5 Visual Style & Assets** | Visual direction stays open until `docs/ART_DIRECTION.md`. Scene rendering abstracts over both raster/pixel sprites and WebP/SVG layers via `assets/manifest.json` (`placeholder \| ready`), decoupling Narrative from Art. |
+| **§16.5 Visual Style & Assets** | Locked in [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) (Franco-Spanish satirical editorial comic in `.webp` + reactive `.svg` props/fallbacks, `render_mode: "vector_hd"`). `assets/manifest.json` (`placeholder \| ready`) and multi-expression NPC maps decouple Narrative from Art (see [ADR 001](./docs/adr/001-art-direction-webp-and-expressions.md)). |
 | **§16.6 MVP Entity Scope** | Basic playable implementations of **Gestor**, **Partner/Children**, and **Employee (max 1)** are all included in the v1 `GameState`, `event.schema.json`, UI, and initial 30–50 MVP event pool. |
 | **§16.7 Endless Mode** | Both victories (`month === 120` *«¡Eres un héroe!»* and `money >= 150,000 €` *«Ricachón»*) fire once with an option to **Retire** or **Keep Playing** under normal rules; earned victory badges persist onto the final share card even if the player later loses. |
 | **§16.8 Agent Integration & Saves** | Trunk-based `main` with role branches/worktrees (`engine/*`, `content/*`, `art/*`), `pnpm verify` CI gates, repo-native `docs/proposals/` & `docs/adr/`, single roguelite autosave + persistent Hall of Fame/Achievements in IndexedDB, and client-side Canvas PNG + text sharing. |
@@ -357,6 +357,7 @@ title: "¿Con IVA o... nos arreglamos?"
 body: "Un cliente urgente te ofrece 1.800 € en mano si le haces el encargo este fin de semana «sin papeleos»."
 tags: [dinero_b, dilema_fiscal, fin_de_semana]
 character_id: cliente_regateador        # Optional: must exist in content/characters/
+character_expression: angry             # Optional: neutral | stressed | angry | pleased (falls back to portrait_asset_id)
 illustration_id: null                   # Optional: if set, must exist in assets/manifest.json
 
 requirements:
@@ -446,7 +447,7 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
    - Globally unique `event.id` and `character.id` matching filename (`<id>.yaml`).
    - Every `event` has `>= 2` choices, and **at least 1 choice has no conditional `requirements`** (guarantees a drawn event can never soft-lock the player).
    - Every `schedule_events[].event_id` exists in the catalog; chain-only events (`weight: 0`) must have at least one incoming `schedule_events` edge (no orphan events).
-   - Every `character_id` exists in `content/characters/` and every `illustration_id` exists in `assets/manifest.json`.
+   - Every `character_id` exists in `content/characters/`, every `character.expressions.*` portrait ID exists in `assets/manifest.json` (`category: "character"`), `event.character_expression` requires a non-null `character_id`, and every `illustration_id` exists in `assets/manifest.json`.
    - Cycle detector flags unbounded `delay_months: 0` or inescapable negative loops.
 3. **Simulation Layer (`tests/simulation/`)**:
    - Runs 1,000+ headless seeded games across 4 bots (`PrudentBot`, `GreedyEnBBot`, `WorkaholicBot`, `RandomBot`).
@@ -498,21 +499,29 @@ Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:
     - **Center Stage**: Event narrative card, choice buttons with keyboard shortcuts (`1`–`4`), and immediate outcome feedback.
     - **Right Panel**: Financial Ledger (*"Cuaderno de Cuentas"*), quarterly tax reserve tracker, active temporal modifiers, and scrollable timeline.
 
-### 7.2 Asset Manifest & Style-Agnostic Scene Renderer
-Until `docs/ART_DIRECTION.md` locks the final visual style (pixel art vs editorial comic vs retro bureaucracy), `assets/manifest.json` abstracts asset resolution:
+### 7.2 Asset Manifest, Multi-Expression Portraits & Style-Agnostic Scene Renderer
+Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/001-art-direction-webp-and-expressions.md), `assets/manifest.json` registers all `.webp` comic panels/portraits and standalone `.svg` props/fallbacks under logical `snake_case` IDs:
 
 ```json
 {
   "schema_version": 1,
   "default_render_mode": "vector_hd",
   "assets": {
-    "char_gestor_barato": {
-      "path": "characters/gestor_barato.svg",
+    "char_gestor_barato_paco": {
+      "path": "characters/char_gestor_barato_paco.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_gestor_barato_paco_estresado": {
+      "path": "characters/char_gestor_barato_paco_estresado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     }
   },
   "fallbacks": {
@@ -525,6 +534,8 @@ Until `docs/ART_DIRECTION.md` locks the final visual style (pixel art vs editori
 }
 ```
 
+- **Multi-Expression NPC Resolution**: Character YAMLs (`content/characters/<id>.yaml`) optionally declare `expressions: { neutral?, stressed?, angry?, pleased? }` mapping to `character` entries in `assets/manifest.json`, while events optionally set `character_expression`. UI resolves `character.expressions?.[expression] ?? character.portrait_asset_id` inside a modular CSS Polaroid frame.
+- **Binary Dimension & Budget Validation (`scripts/validate-assets.ts`)**: Accepts only `.webp` (verifying `RIFF....WEBP` magic bytes and exact `VP8 ` / `VP8L` / `VP8X` pixel `width` × `height`) and standalone `.svg` (`xmlns` + dimensions), enforcing per-category caps (`background <= 145 KB`, `illustration <= 125 KB`, `character <= 70 KB`, `ui <= 20 KB`) and a `<= 2.2 MB` total `assets/` payload ceiling.
 - `SceneRenderer` applies CSS scaling rules per asset's `render_mode` (`image-rendering: pixelated` for `"pixel_art"` sprites vs smooth high-DPI scaling for `"vector_hd"` WebP/SVG).
 - Upgrading an asset from `"placeholder"` to `"ready"` requires zero changes to `src/` or `content/`.
 

@@ -28,6 +28,8 @@ export {
   type InspectionCurve,
 } from "./balance.ts";
 export {
+  CharacterExpressionSchema,
+  CharacterExpressionsMapSchema,
   CharacterRoleSchema,
   CharacterSchema,
   EmployeeParamsSchema,
@@ -35,6 +37,8 @@ export {
   GestorPaidTierSchema,
   GestorParamsSchema,
   type CharacterDef,
+  type CharacterExpression,
+  type CharacterExpressionsMap,
   type CharacterRole,
   type EmployeeParams,
   type FamilyParams,
