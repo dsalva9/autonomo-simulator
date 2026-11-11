@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Marco de fotos familiar de madera sobre el escritorio">
+  <!-- Ground Shadow Under Wooden Frame & Easel -->
+  <ellipse cx="132" cy="226" rx="88" ry="15" fill="#1f2421" opacity="0.24" />
+
+  <!-- Wooden Rear Tabletop Easel Support Leg -->
+  <path d="M 166 154 L 208 214 Q 211 220 204 222 L 188 222 L 154 172 Z" fill="#8f510d" stroke="#1f2421" stroke-width="3.5" stroke-linejoin="round" />
+  <line x1="172" y1="170" x2="196" y2="214" stroke="#1f2421" stroke-width="2" stroke-linecap="round" opacity="0.45" />
+
+  <!-- Tilted Warm Wooden Tabletop Photo Frame -->
+  <g transform="translate(122, 126) rotate(4) translate(-86, -94)">
+    <!-- Hard Offset Comic Ink Shadow -->
+    <rect x="6" y="7" width="172" height="188" rx="8" fill="#1f2421" opacity="0.32" />
+
+    <!-- Outer Handcrafted Oak/Terracotta Frame -->
+    <rect x="0" y="0" width="172" height="188" rx="8" fill="#b86443" stroke="#1f2421" stroke-width="4" />
+    <!-- Top & Left Sunlit Wood Bevel -->
+    <path d="M 4 184 L 4 8 Q 4 4 8 4 L 166 4 L 148 22 L 22 22 L 22 166 Z" fill="#d8925a" opacity="0.65" />
+    <!-- Bottom & Right Shaded Wood Bevel -->
+    <path d="M 168 6 L 168 180 Q 168 184 164 184 L 6 184 L 22 166 L 150 166 L 150 22 Z" fill="#8f510d" opacity="0.55" />
+
+    <!-- Mitre Corner Ink Lines & Subtle Wood Grain -->
+    <line x1="3" y1="3" x2="22" y2="22" stroke="#1f2421" stroke-width="2.5" />
+    <line x1="169" y1="3" x2="150" y2="22" stroke="#1f2421" stroke-width="2.5" />
+    <line x1="3" y1="185" x2="22" y2="166" stroke="#1f2421" stroke-width="2.5" />
+    <line x1="169" y1="185" x2="150" y2="166" stroke="#1f2421" stroke-width="2.5" />
+    <path d="M 46 11 Q 78 8 112 12 M 12 64 Q 15 96 11 128 M 160 54 Q 157 92 161 132 M 54 176 Q 92 179 128 175" fill="none" stroke="#373f3a" stroke-width="1.6" stroke-linecap="round" opacity="0.5" />
+
+    <!-- Cream Passe-Partout Mat Border -->
+    <rect x="20" y="20" width="132" height="148" rx="3" fill="#fffdf8" stroke="#1f2421" stroke-width="3" />
+
+    <!-- Inner Photograph Canvas (Clipped Visually Within x=30..142, y=30..146) -->
+    <g>
+      <!-- Mediterranean Golden-Hour Gouache Sky Backdrop -->
+      <rect x="30" y="30" width="112" height="116" rx="2" fill="#f6efe0" stroke="#1f2421" stroke-width="2.2" />
+      <!-- Warm Ochre Sunset Glow -->
+      <circle cx="86" cy="68" r="36" fill="#e6b86a" opacity="0.55" />
+      <circle cx="86" cy="68" r="22" fill="#f7d98c" opacity="0.7" />
+      <!-- Soft Emerald Distant Hills -->
+      <path d="M 31 114 Q 58 100 88 110 T 141 106 L 141 145 L 31 145 Z" fill="#1f5c53" opacity="0.28" />
+
+      <!-- Gender-Neutral Couple/Family Silhouettes Leaning Together (Zero Fixed Avatar) -->
+      <!-- Left Figure Shoulder & Head -->
+      <path d="M 36 145 C 38 118 52 106 68 106 C 82 106 90 116 92 145 Z" fill="#264e7a" stroke="#1f2421" stroke-width="3" stroke-linejoin="round" />
+      <circle cx="71" cy="84" r="16" fill="#373f3a" stroke="#1f2421" stroke-width="3" />
+
+      <!-- Right Figure Shoulder & Head Leaning Warmly Against Left Figure -->
+      <path d="M 76 145 C 78 120 90 110 104 110 C 118 110 130 120 134 145 Z" fill="#b42b24" stroke="#1f2421" stroke-width="3" stroke-linejoin="round" />
+      <circle cx="101" cy="89" r="14.5" fill="#373f3a" stroke="#1f2421" stroke-width="3" />
+
+      <!-- Optional Small Child / Pet Warm Silhouette Tucked in Foreground Center -->
+      <path d="M 68 145 C 70 130 78 124 86 124 C 94 124 102 130 104 145 Z" fill="#e6b86a" stroke="#1f2421" stroke-width="2.8" stroke-linejoin="round" />
+      <circle cx="86" cy="112" r="10" fill="#4a524e" stroke="#1f2421" stroke-width="2.8" />
+
+      <!-- Small Warm Inked Heart Above Couple -->
+      <path d="M 86 58 C 82 52 74 54 74 60 C 74 66 86 72 86 72 C 86 72 98 66 98 60 C 98 54 90 52 86 58 Z" fill="#b42b24" stroke="#1f2421" stroke-width="2" stroke-linejoin="round" />
+
+      <!-- Subtle Diagonal Glass Reflection Streak -->
+      <polygon points="33,33 56,33 33,66" fill="#fffdf8" opacity="0.65" />
+      <polygon points="64,33 74,33 33,92 33,78" fill="#fffdf8" opacity="0.45" />
+
+      <!-- Inner Frame Crisp Border Re-Stroke -->
+      <rect x="30" y="30" width="112" height="116" rx="2" fill="none" stroke="#1f2421" stroke-width="2.4" />
+    </g>
+
+    <!-- Bottom Passe-Partout Decorative Ink Line -->
+    <line x1="62" y1="157" x2="110" y2="157" stroke="#4a524e" stroke-width="2" stroke-linecap="round" opacity="0.55" />
+  </g>
+</svg>

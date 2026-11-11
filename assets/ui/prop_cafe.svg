@@ -1,36 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Taza de café de supervivencia">
-  <!-- Coffee Ring Stain on Desk -->
-  <ellipse cx="144" cy="214" rx="58" ry="15" fill="none" stroke="#8B5A2B" stroke-width="3" stroke-dasharray="62 12 28 8" opacity="0.45" />
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Taza de café cargado sobre manchas de escritorio">
+  <!-- Overlapping Dark-Roast Coffee Ring Stains on Desk -->
+  <ellipse cx="154" cy="216" rx="58" ry="15" fill="none" stroke="#8f510d" stroke-width="3.2" stroke-dasharray="68 10 34 8 18 12" opacity="0.52" />
+  <ellipse cx="164" cy="222" rx="44" ry="11" fill="none" stroke="#b86443" stroke-width="2.2" stroke-dasharray="48 14 26 10" opacity="0.42" />
+  <circle cx="214" cy="208" r="3.2" fill="#8f510d" opacity="0.48" />
+  <circle cx="204" cy="224" r="2.2" fill="#8f510d" opacity="0.42" />
 
-  <!-- Saucer Shadow & Saucer -->
-  <ellipse cx="118" cy="212" rx="76" ry="18" fill="#1F2421" opacity="0.2" />
-  <ellipse cx="118" cy="202" rx="74" ry="18" fill="#EDE2CE" stroke="#1F2421" stroke-width="3.5" />
-  <ellipse cx="118" cy="200" rx="46" ry="9" fill="#D5C6AC" stroke="#1F2421" stroke-width="2" />
+  <!-- Hard-Edged Comic Ground Shadow -->
+  <ellipse cx="116" cy="214" rx="80" ry="19" fill="#1f2421" opacity="0.24" />
 
-  <!-- Rising Steam Wisps -->
-  <path d="M 92 84 C 78 66 106 50 92 28" fill="none" stroke="#FFFDF8" stroke-width="6" stroke-linecap="round" opacity="0.9" />
-  <path d="M 92 84 C 78 66 106 50 92 28" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Stoneware Saucer -->
+  <ellipse cx="114" cy="202" rx="76" ry="19" fill="#efe4ce" stroke="#1f2421" stroke-width="3.8" />
+  <!-- Gouache Shadow Crescent on Saucer -->
+  <path d="M 52 204 C 76 216 154 216 178 202 C 164 218 72 218 52 204 Z" fill="#dacbb2" />
+  <ellipse cx="114" cy="199" rx="46" ry="9.5" fill="#dacbb2" stroke="#1f2421" stroke-width="2.2" />
 
-  <path d="M 120 76 C 106 56 136 38 120 16" fill="none" stroke="#FFFDF8" stroke-width="6" stroke-linecap="round" opacity="0.9" />
-  <path d="M 120 76 C 106 56 136 38 120 16" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Small Café Spoon Resting on Saucer Right -->
+  <g transform="translate(152, 198) rotate(16)">
+    <path d="M -18 0 L 26 -2 Q 34 -2 34 2 Q 34 6 26 5 L -18 3 Z" fill="#f6efe0" stroke="#1f2421" stroke-width="2.4" stroke-linejoin="round" />
+    <ellipse cx="-22" cy="1.5" rx="9" ry="5" fill="#dacbb2" stroke="#1f2421" stroke-width="2.4" />
+  </g>
 
-  <path d="M 148 86 C 136 68 160 54 148 34" fill="none" stroke="#FFFDF8" stroke-width="5" stroke-linecap="round" opacity="0.85" />
-  <path d="M 148 86 C 136 68 160 54 148 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Expressive Hand-Inked Steam Ribbons -->
+  <path d="M 86 84 C 70 66 102 48 86 24" fill="none" stroke="#fffdf8" stroke-width="7.5" stroke-linecap="round" opacity="0.92" />
+  <path d="M 86 84 C 70 66 102 48 86 24" fill="none" stroke="#1f2421" stroke-width="2.8" stroke-linecap="round" />
 
-  <!-- Mug Handle -->
-  <path d="M 168 118 C 210 118 210 176 164 176" fill="none" stroke="#1F2421" stroke-width="18" stroke-linecap="round" />
-  <path d="M 168 118 C 210 118 210 176 164 176" fill="none" stroke="#D96B43" stroke-width="11" stroke-linecap="round" />
+  <path d="M 116 76 C 98 54 134 36 116 14" fill="none" stroke="#fffdf8" stroke-width="8" stroke-linecap="round" opacity="0.94" />
+  <path d="M 116 76 C 98 54 134 36 116 14" fill="none" stroke="#1f2421" stroke-width="3" stroke-linecap="round" />
 
-  <!-- Mug Body -->
-  <path d="M 62 102 L 174 102 L 166 188 C 164 204 72 204 70 188 Z" fill="#D96B43" stroke="#1F2421" stroke-width="3.5" stroke-linejoin="round" />
+  <path d="M 146 84 C 132 68 158 50 144 30" fill="none" stroke="#fffdf8" stroke-width="6.5" stroke-linecap="round" opacity="0.88" />
+  <path d="M 146 84 C 132 68 158 50 144 30" fill="none" stroke="#1f2421" stroke-width="2.6" stroke-linecap="round" />
 
-  <!-- Cream Band & Lightning Caffeine Emblem -->
-  <rect x="67" y="132" width="102" height="36" fill="#FFF7E2" stroke="#1F2421" stroke-width="2.5" />
-  <polygon points="122,136 110,152 120,152 114,165 130,148 120,148" fill="#F2B84B" stroke="#1F2421" stroke-width="1.8" stroke-linejoin="round" />
+  <!-- Terracotta Ceramic Mug Handle -->
+  <path d="M 164 116 C 208 114 210 176 160 176" fill="none" stroke="#1f2421" stroke-width="19" stroke-linecap="round" />
+  <path d="M 164 116 C 208 114 210 176 160 176" fill="none" stroke="#b86443" stroke-width="11.5" stroke-linecap="round" />
+  <path d="M 172 122 C 198 124 198 164 168 168" fill="none" stroke="#e6b86a" stroke-width="3" stroke-linecap="round" opacity="0.75" />
 
-  <!-- Mug Rim & Dark Espresso Surface -->
-  <ellipse cx="118" cy="102" rx="56" ry="14" fill="#FFF7E2" stroke="#1F2421" stroke-width="3.5" />
-  <ellipse cx="118" cy="104" rx="47" ry="10" fill="#3B2314" stroke="#1F2421" stroke-width="2" />
-  <!-- Crema Swirl -->
-  <path d="M 92 104 Q 118 98 142 105" fill="none" stroke="#C68B53" stroke-width="3" stroke-linecap="round" />
+  <!-- Ceramic Mug Body (Gouache Terracotta + Shadow Plane) -->
+  <path d="M 58 100 L 170 100 L 161 188 C 158 205 70 205 67 188 Z" fill="#b86443" stroke="#1f2421" stroke-width="3.8" stroke-linejoin="round" />
+  <!-- Gouache Shaded Right Side of Mug -->
+  <path d="M 134 102 L 168 102 L 159 187 C 157 198 136 202 122 201 C 136 182 138 140 134 102 Z" fill="#8f510d" opacity="0.45" />
+  <!-- Sunlit Left Gouache Highlight -->
+  <path d="M 68 112 L 76 184" fill="none" stroke="#e6b86a" stroke-width="5" stroke-linecap="round" opacity="0.6" />
+
+  <!-- Cream Stoneware Band & Wordless Roasted Coffee Bean / Bolt Emblem -->
+  <path d="M 62 132 L 166 132 L 163 166 L 65 166 Z" fill="#f6efe0" stroke="#1f2421" stroke-width="2.8" stroke-linejoin="round" />
+  <!-- Fine Comic Cross-Hatching on Band Shadow -->
+  <path d="M 146 136 L 154 162 M 153 136 L 160 160" stroke="#373f3a" stroke-width="1.8" stroke-linecap="round" opacity="0.55" />
+  <!-- Wordless Caffeine Bolt Icon -->
+  <polygon points="118,136 105,150 115,150 109,163 126,147 116,147" fill="#e6b86a" stroke="#1f2421" stroke-width="2.2" stroke-linejoin="round" />
+
+  <!-- Mug Rim & Dark Espresso Crema Surface -->
+  <ellipse cx="114" cy="100" rx="56" ry="14" fill="#fffdf8" stroke="#1f2421" stroke-width="3.8" />
+  <ellipse cx="114" cy="102" rx="47" ry="10" fill="#2b1a12" stroke="#1f2421" stroke-width="2.4" />
+  <!-- Golden Crema Swirl & Drip on Rim -->
+  <path d="M 84 102 C 102 95 128 107 144 100" fill="none" stroke="#e6b86a" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M 96 105 Q 116 109 132 104" fill="none" stroke="#b86443" stroke-width="2.2" stroke-linecap="round" />
+  <!-- Tiny Espresso Drip Over Front Rim -->
+  <path d="M 90 112 L 90 124 A 3 3 0 0 0 96 124 L 95 113 Z" fill="#3b2314" stroke="#1f2421" stroke-width="1.8" />
 </svg>

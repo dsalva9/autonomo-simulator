@@ -42,21 +42,13 @@
       "render_mode": "vector_hd",
       "status": "placeholder"
     },
-    "bg_despacho_base": {
-      "path": "backgrounds/bg_despacho_base.svg",
-      "category": "background",
-      "width": 960,
-      "height": 540,
-      "render_mode": "vector_hd",
-      "status": "placeholder"
-    },
     "prop_facturas": {
       "path": "ui/prop_facturas.svg",
       "category": "ui",
       "width": 256,
       "height": 256,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "prop_cafe": {
       "path": "ui/prop_cafe.svg",
@@ -64,7 +56,7 @@
       "width": 256,
       "height": 256,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "prop_numeros_rojos": {
       "path": "ui/prop_numeros_rojos.svg",
@@ -72,55 +64,375 @@
       "width": 256,
       "height": 256,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "prop_foto_familia": {
+      "path": "ui/prop_foto_familia.svg",
+      "category": "ui",
+      "width": 256,
+      "height": 256,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "bg_despacho_base": {
+      "path": "backgrounds/bg_despacho_base.webp",
+      "category": "background",
+      "width": 1280,
+      "height": 720,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "bg_despacho_burnout": {
+      "path": "backgrounds/bg_despacho_burnout.webp",
+      "category": "background",
+      "width": 1280,
+      "height": 720,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "bg_despacho_numeros_rojos": {
+      "path": "backgrounds/bg_despacho_numeros_rojos.webp",
+      "category": "background",
+      "width": 1280,
+      "height": 720,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "bg_despacho_estudio": {
+      "path": "backgrounds/bg_despacho_estudio.webp",
+      "category": "background",
+      "width": 1280,
+      "height": 720,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_clientes_base": {
+      "path": "illustrations/banner_clientes_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_clientes_tension": {
+      "path": "illustrations/banner_clientes_tension.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_hacienda_base": {
+      "path": "illustrations/banner_hacienda_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_hacienda_inspeccion": {
+      "path": "illustrations/banner_hacienda_inspeccion.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_familia_base": {
+      "path": "illustrations/banner_familia_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_empleados_base": {
+      "path": "illustrations/banner_empleados_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_gestor_base": {
+      "path": "illustrations/banner_gestor_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_primer_trimestre": {
+      "path": "illustrations/illus_hito_primer_trimestre.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_inspeccion_hacienda": {
+      "path": "illustrations/illus_hito_inspeccion_hacienda.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_primer_empleado": {
+      "path": "illustrations/illus_hito_primer_empleado.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_crisis_familiar": {
+      "path": "illustrations/illus_hito_crisis_familiar.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_bancarrota": {
+      "path": "illustrations/illus_final_bancarrota.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_ansiedad": {
+      "path": "illustrations/illus_final_ansiedad.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_desmotivacion": {
+      "path": "illustrations/illus_final_desmotivacion.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_oposiciones": {
+      "path": "illustrations/illus_final_oposiciones.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_asalariado": {
+      "path": "illustrations/illus_final_asalariado.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_subsidios": {
+      "path": "illustrations/illus_final_subsidios.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_heroe": {
+      "path": "illustrations/illus_final_heroe.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_final_ricachon": {
+      "path": "illustrations/illus_final_ricachon.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
     },
     "char_cliente_regateador": {
-      "path": "characters/char_cliente_regateador.svg",
+      "path": "characters/char_cliente_regateador.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_cliente_regateador_complaciente": {
+      "path": "characters/char_cliente_regateador_complaciente.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_cliente_regateador_enfadado": {
+      "path": "characters/char_cliente_regateador_enfadado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     },
     "char_inspector_hacienda": {
-      "path": "characters/char_inspector_hacienda.svg",
+      "path": "characters/char_inspector_hacienda.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_inspector_hacienda_severo": {
+      "path": "characters/char_inspector_hacienda_severo.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_inspector_hacienda_satisfecho": {
+      "path": "characters/char_inspector_hacienda_satisfecho.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     },
     "char_gestor_barato_paco": {
-      "path": "characters/char_gestor_barato_paco.svg",
+      "path": "characters/char_gestor_barato_paco.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_gestor_barato_paco_estresado": {
+      "path": "characters/char_gestor_barato_paco_estresado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_gestor_barato_paco_confiado": {
+      "path": "characters/char_gestor_barato_paco_confiado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     },
     "char_gestor_premium_elena": {
-      "path": "characters/char_gestor_premium_elena.svg",
+      "path": "characters/char_gestor_premium_elena.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_gestor_premium_elena_seria": {
+      "path": "characters/char_gestor_premium_elena_seria.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_gestor_premium_elena_satisfecha": {
+      "path": "characters/char_gestor_premium_elena_satisfecha.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     },
     "char_pareja_alex": {
-      "path": "characters/char_pareja_alex.svg",
+      "path": "characters/char_pareja_alex.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_pareja_alex_cansado": {
+      "path": "characters/char_pareja_alex_cansado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_pareja_alex_feliz": {
+      "path": "characters/char_pareja_alex_feliz.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     },
     "char_empleado_junior_dani": {
-      "path": "characters/char_empleado_junior_dani.svg",
+      "path": "characters/char_empleado_junior_dani.webp",
       "category": "character",
       "width": 512,
       "height": 512,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
+    },
+    "char_empleado_junior_dani_agobiado": {
+      "path": "characters/char_empleado_junior_dani_agobiado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_empleado_junior_dani_motivado": {
+      "path": "characters/char_empleado_junior_dani_motivado.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_cliente_corporativo_marta": {
+      "path": "characters/char_cliente_corporativo_marta.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_cliente_corporativo_marta_exigente": {
+      "path": "characters/char_cliente_corporativo_marta_exigente.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_empleada_senior_laura": {
+      "path": "characters/char_empleada_senior_laura.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "char_empleada_senior_laura_saturada": {
+      "path": "characters/char_empleada_senior_laura_saturada.webp",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "ready"
     }
   },
   "fallbacks": {
