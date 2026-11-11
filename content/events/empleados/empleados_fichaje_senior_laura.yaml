@@ -1,0 +1,53 @@
+schema_version: 1
+id: empleados_fichaje_senior_laura
+category: empleados
+title: "Un fichaje de peso pesado"
+body: "Laura, una especialista sénior harta de reuniones estériles en grandes consultoras, busca incorporarse a un estudio pequeño donde se trabaje con cabeza y sin humo. Su coste mensual impone respeto, pero su oficio permite asumir proyectos de otra liga desde el primer día."
+tags:
+  - contratacion
+  - senior
+  - crecimiento
+  - costes_fijos
+character_id: empleada_senior_laura
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 18
+  has_employee: false
+weight: 8
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: fichar_laura_plantilla
+    label: "Incorporar a Laura en plantilla (2.150 €/mes, facturación ×1,65)"
+    requirements:
+      has_employee: false
+    result_text: "Firmáis el contrato y en cuarenta y ocho horas Laura ya ha ordenado carpetas, plantillas y procesos que llevaban meses cogidos con pinzas. Da vértigo la nómina, pero tu estudio juega en primera división."
+    effects:
+      hire_employee:
+        character_id: empleada_senior_laura
+      deductible_expense: 350
+      moral: 6
+      stress: -8
+      reputation: 7
+      set_flags:
+        - empleada_laura_activa
+      clear_flags:
+        - empleado_dani_activo
+        - desgaste_plantilla
+  - id: alianza_proyecto_grande
+    label: "Proponerle colaborar como externa en un proyecto exigente sin nómina fija"
+    result_text: "Unís fuerzas en un encargo complejo facturando a buen nivel y descontando sus honorarios profesionales. El cliente queda encantado y tú duermes sin cargas permanentes."
+    effects:
+      billed_income: 2750
+      deductible_expense: 1350
+      moral: 3
+      stress: -3
+      reputation: 4
+  - id: descartar_estructura_pesada
+    label: "Declinar con honestidad: tu tesorería aún prefiere ir ligera de equipaje"
+    result_text: "Laura agradece tu franqueza sin rodeos corporativos y seguís en contacto profesional por si más adelante te cuadran las cuentas."
+    effects:
+      moral: 1
+      stress: 1

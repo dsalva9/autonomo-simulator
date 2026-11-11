@@ -1,0 +1,58 @@
+schema_version: 1
+id: clientes_subida_tarifas_ipc
+category: clientes
+title: "Operación actualizar tarifas sin morir en el intento"
+body: "Ha subido la luz, el alquiler, el aceite de oliva y cada suscripción de software, pero tus precios siguen congelados desde que abriste. Toca enviar el temido correo anual de actualización de tarifas a los clientes habituales."
+tags:
+  - tarifas
+  - inflacion
+  - negociacion
+character_id: cliente_regateador
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 10
+weight: 10
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: anunciar_subida_firme
+    label: "Comunicar un +15 % firme con un mes de preaviso"
+    outcomes:
+      - id: cartera_saneada
+        weight: 65
+        result_text: "Tras dos suspiros teatrales, los clientes serios aceptan sin pestañear y solo se marcha quien más guerra daba por menos dinero."
+        effects:
+          add_modifier:
+            id: mod_tarifas_ipc
+            label: "Tarifas actualizadas al IPC"
+            remaining_months: 6
+            monthly_billed_delta: 380
+            monthly_moral_delta: 1
+          stress: 3
+          moral: 6
+          reputation: 3
+      - id: espantada_temporal
+        weight: 35
+        result_text: "Borja monta un drama digno de Goya y cancela un par de encargos menores, dejándote un bache corto pero tardes sorprendentemente tranquilas."
+        effects:
+          cash_delta: -240
+          stress: 6
+          moral: 1
+          personal_life: 3
+          reputation: 1
+  - id: subida_simbolica_timida
+    label: "Subir apenas un pellizco simbólico pidiendo casi perdón"
+    result_text: "Nadie se enfada, pero el aumento apenas cubre la subida del café con leche de media mañana."
+    effects:
+      billed_income: 350
+      stress: 2
+      moral: -2
+  - id: borrar_borrador_por_miedo
+    label: "Borrar el correo y absorber tú toda la inflación otro año"
+    result_text: "Conservas hasta al último cliente a costa de trabajar más horas por el mismo poder adquisitivo."
+    effects:
+      stress: 4
+      moral: -6
+      reputation: 1

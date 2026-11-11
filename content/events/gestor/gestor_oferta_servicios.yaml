@@ -8,6 +8,7 @@ tags:
   - impuestos
   - costes_fijos
 character_id: gestor_barato_paco
+character_expression: pleased
 illustration_id: null
 weight: 10
 cooldown_months: 6

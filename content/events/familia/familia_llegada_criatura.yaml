@@ -1,0 +1,70 @@
+schema_version: 1
+id: familia_llegada_criatura
+category: familia
+title: "Ampliación de plantilla doméstica"
+body: "Después de meses mirando carritos de reojo y haciendo cuentas en servilletas, Álex y tú tenéis la conversación definitiva: ampliar la familia. Entre una ilusión inmensa, gastos fijos permanentes (+280 €/mes) y el arte acrobático de facturar durmiendo cuatro horas, nada volverá a ser igual."
+tags:
+  - hijos
+  - crianza
+  - convivencia
+  - conciliacion
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 12
+  family_statuses:
+    - cohabiting
+weight: 9
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: dar_el_paso_y_conciliar
+    label: "Dar el paso, bajar el ritmo unos meses y disfrutar la crianza (+280 €/mes fijos)"
+    result_text: "Llegan los pañales, las madrugadas en vela y una felicidad descomunal que hace que cualquier urgencia de cliente parezca ridícula. Facturas algo menos al principio, pero ganas vida de verdad."
+    effects:
+      add_child: 1
+      cash_delta: -600
+      moral: 16
+      stress: 6
+      personal_life: 18
+      set_flags:
+        - criatura_en_casa
+      add_modifier:
+        id: permiso_crianza_autonomo
+        label: "Noches en vela y horario reducido de crianza"
+        remaining_months: 4
+        monthly_billed_delta: -320
+        monthly_moral_delta: 3
+        monthly_stress_delta: 2
+      schedule_events:
+        - event_id: familia_crisis_portatil_vacaciones
+          delay_months: 8
+          probability: 0.45
+  - id: dar_el_paso_con_escuela_infantil
+    label: "Tener la criatura apoyándoos en escuela infantil para no frenar ingresos"
+    result_text: "Aprendes a contestar presupuestos sosteniendo un biberón con el hombro. Los ingresos aguantan el tirón inicial, aunque acumulas unas ojeras dignas de estudio médico."
+    effects:
+      add_child: 1
+      billed_income: 700
+      cash_delta: -850
+      moral: 12
+      stress: 14
+      personal_life: 10
+      set_flags:
+        - criatura_en_casa
+      add_modifier:
+        id: malabares_escuela_infantil
+        label: "Escuela infantil y turnos de madrugada"
+        remaining_months: 5
+        monthly_expense_delta: 160
+        monthly_moral_delta: 2
+        monthly_stress_delta: 3
+  - id: posponer_hasta_tener_colchon
+    label: "Pedir tiempo: primero necesitas un colchón que no tiemble cada trimestre"
+    result_text: "Acordáis esperar a tener las cuentas más desahogadas. Sobre el papel es una decisión sensata, aunque queda cierta melancolía flotando en el pasillo."
+    effects:
+      moral: -3
+      stress: -2
+      personal_life: -4

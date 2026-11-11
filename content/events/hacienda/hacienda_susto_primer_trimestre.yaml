@@ -1,0 +1,49 @@
+schema_version: 1
+id: hacienda_susto_primer_trimestre
+category: hacienda
+title: "El bautismo del primer trimestre"
+body: "Llega tu primer cierre trimestral y descubres el gran espejismo óptico del autónomo español: ese dinero tan bonito que veías en tu cuenta corriente nunca fue tuyo; eras simplemente un recaudador gratuito custodiando el IVA para el Estado."
+tags:
+  - primer_trimestre
+  - iva
+  - bautismo_fiscal
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: illus_hito_primer_trimestre
+requirements:
+  min_month: 2
+  max_month: 6
+weight: 22
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: separar_cuenta_impuestos
+    label: "Abrir una cuenta aparte para impuestos y apretarse el cinturón este mes"
+    result_text: "Apartas de golpe un colchón intocable y juras no volver a confundir facturación bruta con sueldo neto mientras vivas."
+    effects:
+      cash_delta: -180
+      stress: 3
+      moral: 4
+      fiscal_risk: -6
+      set_flags:
+        - disciplina_fiscal_aprendida
+  - id: auditoria_expres_deducciones
+    label: "Pagar una consulta puntual para rescatar gastos deducibles olvidados"
+    requirements:
+      stats:
+        money:
+          min: 200
+    result_text: "Descubres tres facturas de suministros y software perfectamente deducibles que suavizan el golpe del estreno trimestral."
+    effects:
+      deductible_expense: 160
+      stress: -5
+      moral: 4
+      fiscal_risk: -6
+  - id: mirar_al_techo_de_madrugada
+    label: "Entrar en negación mirando tutoriales fiscales a las tres de la mañana"
+    result_text: "Sobrevives al susto a base de tilas dobles, con el orgullo magullado pero una lección vital grabada a fuego."
+    effects:
+      stress: 9
+      moral: -5
+      personal_life: -3

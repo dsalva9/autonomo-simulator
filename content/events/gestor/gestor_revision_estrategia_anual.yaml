@@ -1,0 +1,61 @@
+schema_version: 1
+id: gestor_revision_estrategia_anual
+category: gestor
+title: "Revisión de estrategia antes del cierre anual"
+body: "Se acerca el cierre del ejercicio fiscal y todavía estás a tiempo de ordenar amortizaciones, ajustar retenciones y planificar gastos antes de que el año quede tallado en piedra."
+tags:
+  - planificacion
+  - cierre_anual
+  - estrategia
+character_id: gestor_premium_elena
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 8
+weight: 10
+cooldown_months: 12
+max_occurrences: 5
+exclusive_with: []
+choices:
+  - id: ejecutar_plan_cierre_con_gestoria
+    label: "Ejecutar el plan completo de optimización anual con tu gestoría"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Reordenáis vencimientos y gastos deducibles al milímetro, reduciendo tus costes operativos durante todo el arranque del próximo tramo."
+    effects:
+      deductible_expense: 180
+      add_modifier:
+        id: mod_plan_cierre_anual
+        label: "Cierre fiscal optimizado"
+        remaining_months: 4
+        monthly_expense_delta: -90
+        monthly_stress_delta: -1
+      moral: 5
+      fiscal_risk: -10
+  - id: fichar_a_elena_para_el_cierre
+    label: "Aprovechar para contratar de forma estable a Elena Montes (180 €/mes)"
+    requirements:
+      gestor_tiers:
+        - self
+        - cheap
+      stats:
+        money:
+          min: 300
+    result_text: "Estrenas asesoría integral justo a tiempo para blindar el cierre anual y empezar la siguiente etapa con red de seguridad."
+    effects:
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      deductible_expense: 160
+      stress: -8
+      moral: 5
+      fiscal_risk: -12
+  - id: cerrar_ejercicio_sin_cambios
+    label: "Dejar el ejercicio tal cual está y no tocar lo que funciona"
+    result_text: "Cierras carpetas sin gastar un euro extra hoy, confiando en que el próximo trimestre venga manso."
+    effects:
+      stress: -3
+      moral: 1
+      fiscal_risk: 4

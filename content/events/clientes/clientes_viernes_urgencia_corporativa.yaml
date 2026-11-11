@@ -1,0 +1,48 @@
+schema_version: 1
+id: clientes_viernes_urgencia_corporativa
+category: clientes
+title: "Viernes, 19:30: «El comité se ha adelantado al lunes»"
+body: "Ya tienes las llaves en la mano cuando el móvil vibra sin tregua. Marta te llama desde un taxi camino del aeropuerto: dirección general ha adelantado la presentación al lunes a las 8:30 y necesitan rehacer todo el encargo este fin de semana."
+tags:
+  - urgencia
+  - fin_de_semana
+  - conciliacion
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 2
+weight: 11
+cooldown_months: 7
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: aplicar_tarifa_emergencia_nocturna
+    label: "Aceptar aplicando recargo salvaje de urgencia de fin de semana"
+    result_text: "Facturas a precio de cirujano suizo a cambio de no ver la luz del sol hasta el lunes. El lunes a las ocho el archivo está en su bandeja y tú pareces un mapache."
+    effects:
+      billed_income: 1650
+      stress: 13
+      moral: -3
+      personal_life: -8
+      reputation: 5
+  - id: repartir_turno_con_empleado
+    label: "Coordinar un turno partido con tu empleado pagándole un plus"
+    requirements:
+      has_employee: true
+    result_text: "Dividís el marrón con orden militar, compensas generosamente las horas extra y llegáis al lunes con el entregable impecable y las neuronas enteras."
+    effects:
+      billed_income: 1650
+      deductible_expense: 260
+      stress: 4
+      moral: 3
+      personal_life: -2
+      reputation: 5
+  - id: activar_respuesta_automatica
+    label: "Dejar saltar el contestador de horario laboral hasta el lunes"
+    result_text: "Silencias el teléfono y disfrutas del sábado como un ciudadano libre. El lunes Marta está gélida, pero descubres que nadie murió por un PowerPoint."
+    effects:
+      stress: -9
+      moral: 5
+      personal_life: 7
+      reputation: -4

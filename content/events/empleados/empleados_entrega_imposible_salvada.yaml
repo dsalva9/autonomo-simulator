@@ -1,0 +1,65 @@
+schema_version: 1
+id: empleados_entrega_imposible_salvada
+category: empleados
+title: "Milagro a contrarreloj en el estudio"
+body: "Un cliente estratégico adelanta la fecha límite de un proyecto clave mientras tú estás atrapado resolviendo trámites urgentes. Cuando vuelves a mirar la bandeja de salida, tu fichaje ya ha reestructurado el trabajo, pulido cada detalle y enviado una entrega impecable que salva el contrato."
+tags:
+  - plantilla
+  - rendimiento
+  - prima
+  - reputacion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 6
+  has_employee: true
+weight: 9
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: pagar_prima_y_tarde_libre
+    label: "Repartir el éxito con una prima de 450 € y el viernes libre"
+    result_text: "El cliente aprueba el presupuesto completo con felicitaciones por escrito y en el despacho se respira orgullo genuino. Te quitas un buen pico del margen, pero fidelizas oro puro."
+    effects:
+      billed_income: 2500
+      cash_delta: -450
+      moral: 7
+      stress: -6
+      reputation: 7
+      clear_flags:
+        - desgaste_plantilla
+  - id: celebrar_y_mejorar_equipo_estudio
+    label: "Invitar a comer y reinvertir parte del ingreso en mejorar el puesto de trabajo"
+    result_text: "Cobras el hito íntegro y deduces material ergonómico nuevo para el estudio. Buen equilibrio entre cuidar la caja y reconocer el esfuerzo."
+    effects:
+      billed_income: 2500
+      deductible_expense: 280
+      moral: 4
+      stress: -3
+      reputation: 6
+  - id: asumir_como_parte_del_sueldo
+    label: "Dar una palmadita en la espalda y guardar todo el margen («para eso está la nómina»)"
+    outcomes:
+      - id: resentimiento_silencioso
+        weight: 65
+        result_text: "La factura entra limpia en el banco, pero el «gracias, crack» sin compensación deja un silencio tenso entre las dos mesas del despacho."
+        effects:
+          billed_income: 2500
+          moral: -5
+          stress: 5
+          reputation: 5
+          set_flags:
+            - desgaste_plantilla
+          schedule_events:
+            - event_id: empleados_negociacion_condiciones
+              delay_months: 2
+              probability: 0.65
+      - id: profesionalidad_estoica
+        weight: 35
+        result_text: "Se encaja con deportividad profesional y tu cuenta corriente agradece el ingreso íntegro, aunque sabes que has gastado un comodín de buena voluntad."
+        effects:
+          billed_income: 2500
+          moral: -2
+          stress: 1
+          reputation: 5

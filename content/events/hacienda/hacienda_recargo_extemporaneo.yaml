@@ -1,0 +1,67 @@
+schema_version: 1
+id: hacienda_recargo_extemporaneo
+category: hacienda
+title: "Liquidación de recargo por presentación extemporánea"
+body: "Una autoliquidación entró con cuarenta y ocho horas de retraso por un baile de dígitos en el IBAN y el sistema automático no perdona: recibes carta de pago con recargo por declaración extemporánea sin requerimiento previo."
+tags:
+  - recargo
+  - plazos
+  - apremio
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 4
+weight: 8
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: pagar_con_reduccion_periodo_voluntario
+    label: "Abonar en periodo voluntario aprovechando el 25 % de reducción"
+    result_text: "Pagas puntualmente la carta reducida y archivas el resguardo con tres clips metálicos por si las moscas."
+    effects:
+      cash_delta: -330
+      stress: 5
+      moral: -4
+      fiscal_risk: -8
+  - id: reclamar_error_a_paco
+    label: "Exigir explicaciones a Paco porque el retraso fue de su despacho"
+    requirements:
+      gestor_tiers:
+        - cheap
+    outcomes:
+      - id: paco_paga_la_mitad
+        weight: 65
+        result_text: "Paco suda tinta china revisando sus carpetas y asume la mitad del recargo descontándotelo de próximas cuotas."
+        effects:
+          cash_delta: -150
+          stress: 4
+          moral: 2
+          fiscal_risk: -6
+      - id: facturas_enviadas_tarde
+        weight: 35
+        result_text: "Paco te enseña el WhatsApp donde le mandaste los últimos tickets el día 20 a las nueve de la noche. Toca tragar."
+        effects:
+          cash_delta: -330
+          stress: 8
+          moral: -5
+          fiscal_risk: -6
+  - id: alegar_caida_sede_electronica
+    label: "Presentar recurso adjuntando capturas de error técnico del portal"
+    outcomes:
+      - id: incidencia_oficial_reconocida
+        weight: 35
+        result_text: "Efectivamente hubo una caída registrada esa tarde en los servidores públicos: anulan el recargo por completo."
+        effects:
+          stress: 4
+          moral: 8
+          fiscal_risk: -6
+      - id: recurso_desestimado
+        weight: 65
+        result_text: "Desestiman tus capturas meses después y terminas abonando el recargo íntegro sin reducción."
+        effects:
+          cash_delta: -480
+          stress: 10
+          moral: -7
+          fiscal_risk: -4

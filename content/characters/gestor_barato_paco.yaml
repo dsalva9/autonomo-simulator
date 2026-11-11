@@ -4,6 +4,10 @@ name: "Paco «El Rápido»"
 role: gestor
 bio: "Gestor de barrio con despacho encima de una churrería y hojas de cálculo heredadas de 2007. Presenta los trimestres el último día a las 23:58 respondiendo con un pulgar hacia arriba, pero por sesenta euros al mes tampoco le vas a pedir poesía."
 portrait_asset_id: char_gestor_barato_paco
+expressions:
+  neutral: char_gestor_barato_paco
+  stressed: char_gestor_barato_paco_estresado
+  pleased: char_gestor_barato_paco_confiado
 gestor_params:
   tier: cheap
   monthly_fee: 60

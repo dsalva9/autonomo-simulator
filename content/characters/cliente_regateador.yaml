@@ -4,3 +4,7 @@ name: "Borja «El de la Visibilidad»"
 role: cliente
 bio: "Emprendedor en serie de proyectos «disruptivos» con presupuesto de bocadillo. Considera que cualquier encargo se hace en dos ratos, manda audios de cuatro minutos los viernes a las nueve de la noche y paga en visibilidad siempre que le dejas."
 portrait_asset_id: char_cliente_regateador
+expressions:
+  neutral: char_cliente_regateador
+  pleased: char_cliente_regateador_complaciente
+  angry: char_cliente_regateador_enfadado

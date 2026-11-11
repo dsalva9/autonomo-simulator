@@ -1,0 +1,56 @@
+schema_version: 1
+id: hacienda_devolucion_inesperada
+category: hacienda
+title: "Ciencia ficción administrativa: «Acuerdo de devolución»"
+body: "Abres una notificación electrónica con el pulso a mil por hora y parpadeas tres veces ante la pantalla: tras cruzar tus retenciones soportadas del ejercicio anterior, resulta que Hacienda te debe dinero a ti."
+tags:
+  - devolucion
+  - irpf
+  - liquidez
+character_id: hacienda_inspector_gomez
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 7
+  stats:
+    fiscal_risk:
+      max: 35
+weight: 8
+cooldown_months: 16
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: solicitar_transferencia_inmediata
+    label: "Pedir el ingreso en cuenta ya mismo pese a la leyenda urbana"
+    outcomes:
+      - id: transferencia_limpia
+        weight: 80
+        result_text: "A los pocos días entra la transferencia oficial con puntualidad suiza. Haces una captura de pantalla para enmarcarla."
+        effects:
+          cash_delta: 820
+          stress: -8
+          moral: 8
+      - id: verificacion_rutinaria_previa
+        weight: 20
+        result_text: "Antes de soltar un euro te piden adjuntar dos certificados de retenciones, pero tras el papeleo cobras íntegro."
+        effects:
+          cash_delta: 720
+          stress: 3
+          moral: 3
+          fiscal_risk: 4
+  - id: compensar_en_proximo_trimestre
+    label: "Dejarlo «a compensar» para no remover aguas y rebajar futuros pagos"
+    result_text: "Aplicas la prudencia ancestral del gremio: cero preguntas, expediente impoluto y un ahorro neto garantizado."
+    effects:
+      cash_delta: 580
+      stress: -6
+      moral: 5
+      fiscal_risk: -5
+  - id: cobrar_y_celebrar_fin_de_semana
+    label: "Ingresarlo y dedicar una parte a una escapada de desconexión"
+    result_text: "Guardas la mayor parte en caja y brindas a la salud de las retenciones bien practicadas. Te sienta como diez sesiones de fisioterapia."
+    effects:
+      cash_delta: 520
+      stress: -12
+      moral: 9
+      personal_life: 7

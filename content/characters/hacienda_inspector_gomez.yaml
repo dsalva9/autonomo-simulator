@@ -4,3 +4,7 @@ name: "Inspector Gómez"
 role: hacienda
 bio: "Veterano de la Agencia Tributaria con mirada de rayos X para los gastos de restaurante en domingo. No levanta la voz jamás: le basta con enviar una notificación electrónica un viernes por la tarde para arruinarte el puente."
 portrait_asset_id: char_inspector_hacienda
+expressions:
+  neutral: char_inspector_hacienda
+  angry: char_inspector_hacienda_severo
+  pleased: char_inspector_hacienda_satisfecho

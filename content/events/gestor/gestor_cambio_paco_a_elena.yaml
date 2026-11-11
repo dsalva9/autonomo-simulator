@@ -1,0 +1,58 @@
+schema_version: 1
+id: gestor_cambio_paco_a_elena
+category: gestor
+title: "Operación rescate contable: de la churrería al blindaje"
+body: "Tras los últimos sobresaltos con las carpetas de Paco, el despacho de Elena Montes te ofrece asumir tu contabilidad y auditar los trimestres anteriores. Paco te jura por WhatsApp que acaba de actualizar su hoja de cálculo y promete regalarte un mes si te quedas."
+tags:
+  - gestoria
+  - cambio_gestor
+  - tranquilidad
+character_id: gestor_premium_elena
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 4
+  gestor_tiers:
+    - cheap
+weight: 9
+cooldown_months: 10
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: contratar_traspaso_a_elena
+    label: "Pagar la auditoría de traspaso y pasarse a Elena Montes (180 €/mes)"
+    requirements:
+      stats:
+        money:
+          min: 300
+    result_text: "El equipo de Elena sanea tus libros en cuarenta y ocho horas, corrige tres asientos cojos y te devuelve el sueño profundo."
+    effects:
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      deductible_expense: 210
+      stress: -12
+      moral: 6
+      fiscal_risk: -16
+      clear_flags:
+        - susto_con_paco
+  - id: aceptar_mes_gratis_de_paco
+    label: "Quedarse con Paco a cambio de ahorrarte la cuota de este mes"
+    result_text: "Te guardas los sesenta euros en el bolsillo y aceptas vivir con esa adrenalina artesanal cada final de trimestre."
+    effects:
+      cash_delta: 60
+      stress: 4
+      moral: -1
+      fiscal_risk: 4
+      clear_flags:
+        - susto_con_paco
+  - id: cortar_por_lo_sano_sin_gestor
+    label: "Dar de baja a Paco y llevar tú mismo los libros desde cero"
+    result_text: "Te ahorras cuotas ajenas a cambio de reservar un domingo cada tres meses para pelearte con casillas numéricas."
+    effects:
+      set_gestor:
+        tier: self
+      stress: 6
+      moral: 1
+      clear_flags:
+        - susto_con_paco

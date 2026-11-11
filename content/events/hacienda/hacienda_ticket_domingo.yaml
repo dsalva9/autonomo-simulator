@@ -1,0 +1,64 @@
+schema_version: 1
+id: hacienda_ticket_domingo
+category: hacienda
+title: "Comprobación limitada: «¿Arroz caldoso un domingo?»"
+body: "El Inspector Gómez firma un requerimiento de comprobación sobre tus gastos de representación: le intriga profundamente cómo tres facturas de restaurante en domingo a las 15:45 guardan correlación estricta con tus ingresos."
+tags:
+  - deducciones
+  - comprobacion
+  - hosteleria
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 5
+weight: 9
+cooldown_months: 10
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: complementaria_eliminando_tickets
+    label: "Presentar complementaria quitando los tickets dudosos sin rechistar"
+    result_text: "Abonas la diferencia con un discreto recargo y prometes solemnemente no volver a colar jamás un postre dominical como reunión de estrategia."
+    effects:
+      cash_delta: -260
+      stress: 5
+      moral: -2
+      fiscal_risk: -10
+  - id: justificar_reunion_comercial
+    label: "Aportar correos y agenda defendiendo que eran comidas reales con clientes"
+    outcomes:
+      - id: prueba_admitida
+        weight: 50
+        result_text: "Uno de aquellos domingos efectivamente cerró un presupuesto real: Gómez valida la correlación y archiva las actuaciones."
+        effects:
+          stress: 7
+          moral: 6
+          fiscal_risk: -6
+      - id: ampliacion_actuaciones
+        weight: 50
+        result_text: "Gómez rechaza el argumento y decide ampliar la revisión al ejercicio entero convocándote a inspección formal."
+        effects:
+          cash_delta: -300
+          stress: 13
+          moral: -6
+          fiscal_risk: 10
+          set_flags:
+            - tickets_dudosos_deducidos
+          schedule_events:
+            - event_id: hacienda_acta_inspeccion
+              delay_months: 2
+              probability: 0.85
+  - id: negociar_ajuste_via_gestoria
+    label: "Dejar que tu gestoría pacte una regularización limpia de mínimos"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu gestoría separa el grano de la paja en un escrito impecable y cierra el expediente por una fracción del susto inicial."
+    effects:
+      deductible_expense: 100
+      cash_delta: -120
+      stress: 2
+      moral: 2
+      fiscal_risk: -12

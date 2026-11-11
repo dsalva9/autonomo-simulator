@@ -1,0 +1,62 @@
+schema_version: 1
+id: clientes_moroso_reincidente
+category: clientes
+title: "El retorno del moroso: «Lo tuyo ya está en contabilidad»"
+body: "Con una factura anterior todavía coleando y tres excusas sobre «un fallo del banco con las remesas SEPA», Borja reaparece tan campante pidiendo un nuevo entregable urgente para mañana."
+tags:
+  - impago
+  - morosidad
+  - limites
+character_id: cliente_regateador
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 5
+weight: 9
+cooldown_months: 9
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: retener_archivos_hasta_transferencia
+    label: "No abrir ni un archivo hasta cobrar lo atrasado y el 100 % nuevo"
+    outcomes:
+      - id: milagro_bancario_instantaneo
+        weight: 70
+        result_text: "Obra de magia financiera: en doce minutos «contabilidad» desbloquea una transferencia inmediata con justificante y todo."
+        effects:
+          billed_income: 1450
+          stress: 4
+          moral: 7
+          reputation: 2
+          clear_flags:
+            - impago_pendiente
+      - id: se_esfuma_ofendido
+        weight: 30
+        result_text: "Se indigna por tu «falta de confianza» y desaparece del mapa, ahorrándote un segundo agujero seguro."
+        effects:
+          stress: -3
+          moral: 4
+          reputation: -1
+          clear_flags:
+            - impago_pendiente
+  - id: enviar_burofax_y_cortar_relacion
+    label: "Gastar en un burofax certificado para cobrar la deuda y despedirle"
+    result_text: "El sello de Correos obra maravillas en la memoria selectiva de Borja. Liquida el saldo pendiente y no vuelve a escribirte jamás."
+    effects:
+      deductible_expense: 45
+      billed_income: 850
+      stress: 5
+      moral: 5
+      reputation: 1
+      clear_flags:
+        - impago_pendiente
+  - id: fiarse_una_ultima_vez
+    label: "Creerte la excusa del banco y acumular otra factura a sesenta días"
+    result_text: "Entregas el trabajo cruzando los dedos mientras una vocecita interior te recuerda que el ser humano tropieza dos veces con el mismo Borja."
+    effects:
+      deferred_invoice:
+        amount: 1700
+        delay_months: 2
+        default_prob: 0.40
+      stress: 9
+      moral: -6

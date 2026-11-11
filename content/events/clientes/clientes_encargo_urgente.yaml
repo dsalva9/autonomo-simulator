@@ -8,6 +8,7 @@ tags:
   - facturacion
   - impago_potencial
 character_id: cliente_regateador
+character_expression: angry
 illustration_id: null
 weight: 15
 cooldown_months: 0

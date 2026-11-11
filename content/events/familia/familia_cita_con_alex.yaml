@@ -1,0 +1,71 @@
+schema_version: 1
+id: familia_cita_con_alex
+category: familia
+title: "Cañas que se alargan con Álex"
+body: "En el cumpleaños de una amistad común terminas charlando tres horas seguidas con Álex, alguien con contrato indefinido y horario humano a quien le parece exótico que sepas qué es un cierre trimestral. Antes de despediros, te propone cenar esta semana con una condición: prohibido hablar de facturas."
+tags:
+  - pareja
+  - citas
+  - inicio_relacion
+  - vida_personal
+character_id: pareja_alex
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 2
+  family_statuses:
+    - single
+weight: 14
+cooldown_months: 10
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: apostar_por_citas_con_alex
+    label: "Reservar mesa, guardar el móvil en la mochila y ver adónde os lleva"
+    result_text: "La cena del jueves lleva a un desayuno de domingo y, cuando quieres darte cuenta, ya hay un cepillo de dientes extra en tu cuarto de baño. Oficialmente salís juntos."
+    effects:
+      set_family_status:
+        status: dating
+        partner_character_id: pareja_alex
+      cash_delta: -95
+      moral: 9
+      stress: -10
+      personal_life: 14
+      set_flags:
+        - relacion_con_alex
+      schedule_events:
+        - event_id: familia_mudanza_conjunta
+          delay_months: 5
+          probability: 0.55
+  - id: tomarselo_con_calma
+    label: "Quedar sin prisas, encajando planes cuando el trabajo dé tregua"
+    outcomes:
+      - id: quimica_imparable
+        weight: 60
+        result_text: "Aunque intentabais ir despacio, la complicidad puede más que tu agenda caótica y acabáis formalizando lo vuestro entre risas."
+        effects:
+          set_family_status:
+            status: dating
+            partner_character_id: pareja_alex
+          cash_delta: -60
+          moral: 6
+          stress: -6
+          personal_life: 10
+          set_flags:
+            - relacion_con_alex
+      - id: amistad_cordial
+        weight: 40
+        result_text: "Después de cancelar dos martes seguidos por entregas urgentes, la chispa queda en una amistad simpática de mensajes esporádicos."
+        effects:
+          moral: 1
+          stress: -2
+          personal_life: 3
+  - id: priorizar_cartera_clientes
+    label: "Dar largas educadas: ahora mismo estás casado con tu facturación"
+    result_text: "Aprovechas las noches despejadas para cerrar presupuestos atrasados. Tu cuenta corriente engorda un poco; tu nevera sigue medio vacía."
+    effects:
+      billed_income: 550
+      stress: 4
+      moral: -2
+      personal_life: -6
+      reputation: 2

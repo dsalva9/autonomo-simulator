@@ -1,0 +1,82 @@
+schema_version: 1
+id: empleados_negociacion_condiciones
+category: empleados
+title: "Revisión de sueldo o viernes libres"
+body: "Tu persona en plantilla te pide veinte minutos a puerta cerrada con una libreta llena de puntos muy razonables: el coste de la vida ha subido, otras empresas tantean perfiles por internet y quiere revisar su sueldo o, como alternativa, implantar teletrabajo y jornada intensiva de cuatro días."
+tags:
+  - plantilla
+  - negociacion
+  - salario
+  - conciliacion_laboral
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 9
+  has_employee: true
+weight: 8
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: aprobar_subida_e_incentivos
+    label: "Aprobar una mejora salarial ligada a objetivos durante el próximo semestre"
+    result_text: "Aumentan tus costes mensuales, pero el compromiso se nota de inmediato en el ritmo de entregas y la paz mental de no tener que formar a nadie desde cero."
+    effects:
+      moral: 5
+      stress: -4
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mejora_salarial_plantilla
+        label: "Mejora salarial e incentivos de equipo"
+        remaining_months: 6
+        monthly_billed_delta: 380
+        monthly_expense_delta: 260
+        monthly_moral_delta: 1
+        monthly_stress_delta: -2
+  - id: pactar_jornada_flexible_remoto
+    label: "Ofrecer teletrabajo híbrido y viernes libres en lugar de subir costes fijos"
+    result_text: "No tocas la tesorería mensual y a cambio perdéis un pelín de margen para urgencias de viernes tarde, pero el ambiente del estudio mejora de forma espectacular."
+    effects:
+      moral: 4
+      stress: -5
+      personal_life: 4
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: jornada_flexible_estudio
+        label: "Jornada flexible y viernes sin reuniones"
+        remaining_months: 6
+        monthly_billed_delta: -120
+        monthly_moral_delta: 1
+        monthly_stress_delta: -3
+  - id: congelar_condiciones_por_trimestre
+    label: "Negarte por ahora alegando que Hacienda y los gastos fijos no dan margen"
+    outcomes:
+      - id: enfriamiento_en_despacho
+        weight: 60
+        result_text: "Acepta quedarse de momento, pero se acabaron los favores fuera de hora y cada mañana se nota cierta distancia profesional."
+        effects:
+          moral: -4
+          stress: 6
+          set_flags:
+            - desgaste_plantilla
+          add_modifier:
+            id: desmotivacion_plantilla
+            label: "Plantilla desmotivada al mínimo estricto"
+            remaining_months: 4
+            monthly_billed_delta: -200
+            monthly_stress_delta: 2
+      - id: baja_voluntaria_inesperada
+        weight: 40
+        result_text: "Dos semanas después te deja firmada la baja voluntaria con preaviso reglamentario tras fichar por otra empresa. Te ahorras indemnización, pero vuelves a estar solo ante el peligro."
+        effects:
+          dismiss_employee:
+            severance_cost: 0
+          moral: -6
+          stress: 12
+          reputation: -2
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla

@@ -1,0 +1,72 @@
+schema_version: 1
+id: empleados_reestructuracion_despido
+category: empleados
+title: "Tijera o reinvención en el despacho"
+body: "Encadenas un par de meses en los que mantener una nómina fija todos los días 28 empieza a quitarte el sueño frente al extracto bancario. Toca decidir en frío si reorganizas la actividad comercial para sostener el puesto o si reduces estructura asumiendo el coste de salida."
+tags:
+  - plantilla
+  - reestructuracion
+  - despido
+  - costes_fijos
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 10
+  has_employee: true
+weight: 6
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: reorganizar_cartera_y_mantener
+    label: "Mantener el puesto, recortar gastos superfluos y salir a captar nuevos encargos"
+    result_text: "Cancelas suscripciones inútiles, apretáis los dientes juntos y cerráis una campaña comercial rápida que justifica mantener el equipo unido."
+    effects:
+      billed_income: 950
+      deductible_expense: 180
+      moral: 3
+      stress: 5
+      reputation: 2
+  - id: acordar_salida_pactada
+    label: "Pactar una salida amistosa con indemnización íntegra y carta de recomendación"
+    result_text: "Es una conversación dura, pero cerráis la etapa con respeto mutuo y cuentas claras (1.450 € de liquidación). El estudio vuelve a ser silencioso y tus costes fijos caen de golpe."
+    effects:
+      dismiss_employee:
+        severance_cost: 1450
+      moral: -3
+      stress: -6
+      reputation: 1
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla
+  - id: recorte_drastico_minimo_legal
+    label: "Ejecutar un despido ajustando al límite la indemnización para proteger caja"
+    outcomes:
+      - id: finiquito_tenso_firmado
+        weight: 65
+        result_text: "Se firma el finiquito por 750 € sin pasar por juzgados, aunque la despedida es gélida y en el sector siempre acaba corriendo la voz."
+        effects:
+          dismiss_employee:
+            severance_cost: 750
+          moral: -8
+          stress: 4
+          reputation: -4
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla
+      - id: papeleta_conciliacion_laboral
+        weight: 35
+        result_text: "El intento de ahorrar acaba en papeleta de conciliación laboral y consulta urgente: terminas abonando 1.900 € de indemnización más gastos de asesoramiento."
+        effects:
+          dismiss_employee:
+            severance_cost: 1900
+          deductible_expense: 250
+          moral: -9
+          stress: 12
+          reputation: -5
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla

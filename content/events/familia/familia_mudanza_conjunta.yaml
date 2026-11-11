@@ -1,0 +1,70 @@
+schema_version: 1
+id: familia_mudanza_conjunta
+category: familia
+title: "Cajas de mudanza y gastos a medias"
+body: "Los caseros de ambos amagan con subir el alquiler el mismo mes y Álex pone los números encima de la mesa: si os vais a vivir juntos compartiréis suministros, compra y techo, a cambio de negociar cuántas carpetas caben en el salón sin parecer una gestoría."
+tags:
+  - pareja
+  - convivencia
+  - alquiler
+  - hogar
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 6
+  family_statuses:
+    - dating
+weight: 11
+cooldown_months: 12
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: compartir_piso_ajustando_gastos
+    label: "Mudaros juntos repartiendo alquiler y recibos para aliviar el mes"
+    result_text: "Sobrevivís a un sábado montando estanterías con llave Allen sin romper la relación. La mudanza pica en el bolsillo hoy, pero compartir gastos fijos te da un respiro mensual notable."
+    effects:
+      set_family_status:
+        status: cohabiting
+        partner_character_id: pareja_alex
+      cash_delta: -450
+      moral: 8
+      stress: -7
+      personal_life: 12
+      set_flags:
+        - convivencia_estable
+      add_modifier:
+        id: alquiler_gastos_compartidos
+        label: "Alquiler y suministros compartidos"
+        remaining_months: 8
+        monthly_expense_delta: -190
+        monthly_moral_delta: 1
+  - id: alquilar_piso_con_despacho
+    label: "Buscar un piso con habitación extra para separar hogar y estudio"
+    result_text: "La fianza y el equipamiento escuecen y asumís algo más de renta mensual, pero poder cerrar la puerta del despacho a las siete transforma tu concentración y vuestra paz."
+    effects:
+      set_family_status:
+        status: cohabiting
+        partner_character_id: pareja_alex
+      cash_delta: -720
+      deductible_expense: 220
+      moral: 10
+      stress: -9
+      personal_life: 14
+      reputation: 2
+      set_flags:
+        - convivencia_estable
+      add_modifier:
+        id: despacho_propio_en_casa
+        label: "Despacho propio y convivencia ordenada"
+        remaining_months: 8
+        monthly_billed_delta: 220
+        monthly_expense_delta: 90
+        monthly_stress_delta: -2
+  - id: esperar_cada_uno_en_su_casa
+    label: "Posponer la convivencia: aún necesitas tu propio espacio y tus manías"
+    result_text: "Álex entiende tus dudas aunque la ilusión se enfría un par de grados. Seguís saliendo juntos, cada cual pagando internet y luz por su cuenta."
+    effects:
+      moral: -2
+      stress: 2
+      personal_life: -5

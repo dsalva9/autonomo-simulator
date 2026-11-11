@@ -8,6 +8,7 @@ tags:
   - dilema_fiscal
   - fin_de_semana
 character_id: cliente_regateador
+character_expression: pleased
 illustration_id: null
 weight: 10
 cooldown_months: 6

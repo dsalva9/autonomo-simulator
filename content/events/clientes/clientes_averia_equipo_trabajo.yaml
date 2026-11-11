@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_averia_equipo_trabajo
+category: clientes
+title: "Pantalla en negro en mitad de una entrega"
+body: "Martes a las once de la mañana: tu equipo principal suelta un sutil aroma a tostadora quemada y se apaga para siempre con tres encargos a medias. Sin herramienta de trabajo no se factura ni un euro."
+tags:
+  - equipamiento
+  - gasto_deducible
+  - imprevisto
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 3
+weight: 10
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: comprar_equipo_profesional_nuevo
+    label: "Comprar equipo nuevo de gama profesional con factura deducible"
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: "Duele pasar la tarjeta, pero estrenas máquina silenciosa y veloz hoy mismo y desgranas el gasto íntegro en el próximo trimestre."
+    effects:
+      deductible_expense: 1350
+      stress: -4
+      moral: 5
+      reputation: 3
+  - id: parche_taller_barrio
+    label: "Pagar una reparación de urgencia en la tienda de la esquina"
+    outcomes:
+      - id: soldadura_heroica
+        weight: 60
+        result_text: "El técnico revive la placa base con estaño y fe. Hace ruido de helicóptero, pero entregas todo a tiempo y salvas la semana."
+        effects:
+          deductible_expense: 260
+          billed_income: 400
+          stress: 5
+          moral: 1
+      - id: recaida_fatal
+        weight: 40
+        result_text: "Vuelve a morir diez minutos antes de enviar el archivo final. Acabas pagando doble por un equipo reacondicionado y pidiendo disculpas."
+        effects:
+          deductible_expense: 520
+          stress: 13
+          moral: -6
+          reputation: -4
+  - id: renting_equipo_sustitucion
+    label: "Contratar un renting tecnológico de cuatro meses para salir del paso"
+    result_text: "Recibes un equipo de sustitución esa misma tarde sin descapitalizarte de golpe, sumando una cuota mensual asumible."
+    effects:
+      deductible_expense: 160
+      add_modifier:
+        id: mod_renting_equipo
+        label: "Renting equipo de trabajo"
+        remaining_months: 4
+        monthly_expense_delta: 95
+      stress: 2

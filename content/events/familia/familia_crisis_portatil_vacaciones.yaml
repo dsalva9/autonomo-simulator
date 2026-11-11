@@ -1,0 +1,104 @@
+schema_version: 1
+id: familia_crisis_portatil_vacaciones
+category: familia
+title: "La cena fría y el brillo del portátil"
+body: "Habíais bloqueado cuatro días sagrados de descanso familiar y logística doméstica tras meses de locura. En la primera noche, un cliente importante te cose a llamadas exigiendo rehacer una entrega mientras los platos se enfrían en la mesa. Álex mira el resplandor azul del portátil en el pasillo y suspira al límite: «Si hoy también eliges la pantalla, tenemos un problema serio»."
+tags:
+  - pareja
+  - crisis_familiar
+  - vacaciones
+  - conciliacion
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: illus_hito_crisis_familiar
+requirements:
+  min_month: 8
+  family_statuses:
+    - dating
+    - cohabiting
+weight: 8
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: cerrar_portatil_y_priorizar_familia
+    label: "Cerrar la tapa del portátil, activar el modo avión y quedarte con los tuyos"
+    outcomes:
+      - id: vinculo_blindado
+        weight: 75
+        result_text: "Respondes con firmeza que lo verás a la vuelta. El mundo no se hunde, el cliente espera a regañadientes y esos cuatro días reconstruyen la confianza en casa."
+        effects:
+          moral: 12
+          stress: -14
+          personal_life: 16
+          reputation: -2
+          clear_flags:
+            - crisis_pareja_latente
+          add_modifier:
+            id: pacto_desconexion_familiar
+            label: "Vínculo familiar reforzado"
+            remaining_months: 5
+            monthly_moral_delta: 2
+            monthly_stress_delta: -2
+      - id: cliente_perdido_hogar_salvado
+        weight: 25
+        result_text: "El cliente se lleva ese encargo puntual a otro proveedor ofendido por tu osadía de cenar en paz, pero la tranquilidad que recuperas en casa compensa cada euro."
+        effects:
+          cash_delta: -200
+          moral: 9
+          stress: -11
+          personal_life: 14
+          reputation: -6
+          clear_flags:
+            - crisis_pareja_latente
+  - id: negociar_dos_horas_de_madrugada
+    label: "Pactar dos horas cronometradas al amanecer para apagar el fuego y cumplir en casa"
+    outcomes:
+      - id: equilibrio_agotador
+        weight: 60
+        result_text: "Te levantas a las cinco y media, envías un parche digno antes del desayuno y cumples con todos los planes familiares a costa de tu sistema nervioso."
+        effects:
+          billed_income: 950
+          moral: 2
+          stress: 10
+          personal_life: 3
+          reputation: 3
+      - id: promesa_incumplida
+        weight: 40
+        result_text: "Las dos horas se convierten en seis, bostezas durante todo el puente mirando notificaciones a escondidas y la vuelta a casa transcurre en un silencio glacial."
+        effects:
+          billed_income: 950
+          moral: -7
+          stress: 12
+          personal_life: -11
+          reputation: 2
+          set_flags:
+            - crisis_pareja_latente
+  - id: encerrarse_a_facturar_todo_el_puente
+    label: "Encerrarte con el portátil: «Los recibos de esta casa no se pagan solos»"
+    outcomes:
+      - id: ruptura_por_desgaste
+        weight: 55
+        result_text: "Salvas una factura jugosa, pero cuando sales al salón el domingo por la noche encuentras una maleta hecha junto a la puerta. Algo esencial se ha roto."
+        effects:
+          billed_income: 1750
+          moral: -16
+          stress: 15
+          personal_life: -22
+          reputation: 4
+          set_family_status:
+            status: separated
+            partner_character_id: pareja_alex
+          clear_flags:
+            - convivencia_estable
+      - id: ultimatum_helado
+        weight: 45
+        result_text: "Facturas el encargo urgente y Álex se queda por los pelos, dejándote claro con voz tranquila que no habrá una próxima vez."
+        effects:
+          billed_income: 1750
+          moral: -10
+          stress: 12
+          personal_life: -15
+          reputation: 4
+          set_flags:
+            - crisis_pareja_latente

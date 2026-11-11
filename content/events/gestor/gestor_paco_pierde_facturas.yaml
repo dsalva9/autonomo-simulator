@@ -1,0 +1,65 @@
+schema_version: 1
+id: gestor_paco_pierde_facturas
+category: gestor
+title: "«Oye, ¿no tendrás otra copia de los gastos del trimestre?»"
+body: "A cuarenta y ocho horas del cierre trimestral, Paco te llama con voz temblorosa y ruido de freidora de fondo: una mancha de aceite ha dejado ilegible tu subcarpeta de gastos deducibles y, de propina, ha mezclado dos facturas tuyas con las de una frutería."
+tags:
+  - gestoria
+  - chapuza
+  - deducciones
+character_id: gestor_barato_paco
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 3
+  gestor_tiers:
+    - cheap
+weight: 12
+cooldown_months: 8
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: reconstruir_facturas_de_madrugada
+    label: "Pasar la noche descargando duplicados PDF de veinte proveedores"
+    result_text: "Llegas al alba con los ojos cuadrados, pero rescatas cada euro deducible y obligas a Paco a cuadrar el modelo al céntimo."
+    effects:
+      deductible_expense: 220
+      stress: 10
+      moral: -4
+      personal_life: -5
+      fiscal_risk: -3
+  - id: dejar_que_presente_a_ojo
+    label: "Decirle que presente con lo que tenga y rezar fuerte"
+    outcomes:
+      - id: pasa_desapercibido
+        weight: 55
+        result_text: "Pierdes parte de las deducciones por el camino, pero nadie levanta la liebre este trimestre."
+        effects:
+          cash_delta: -180
+          stress: 5
+          moral: -3
+          fiscal_risk: 9
+          set_flags:
+            - susto_con_paco
+      - id: descuadre_cantoso
+        weight: 45
+        result_text: "El baile de cifras salta en los cruces automáticos y sales del trimestre jurando buscar una asesoría seria cuanto antes."
+        effects:
+          cash_delta: -280
+          stress: 11
+          moral: -6
+          fiscal_risk: 15
+          set_flags:
+            - susto_con_paco
+          schedule_events:
+            - event_id: gestor_cambio_paco_a_elena
+              delay_months: 1
+              probability: 0.85
+  - id: despedir_a_paco_en_el_acto
+    label: "Recoger tus carpetas ahora mismo y volver a la autogestión"
+    result_text: "Subes encima de la churrería, rescatas tus papeles supervivientes y decides que para equivocarte ya te bastas tú solo."
+    effects:
+      set_gestor:
+        tier: self
+      stress: 7
+      moral: 1

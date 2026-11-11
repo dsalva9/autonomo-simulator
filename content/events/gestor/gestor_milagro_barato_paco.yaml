@@ -1,0 +1,53 @@
+schema_version: 1
+id: gestor_milagro_barato_paco
+category: gestor
+title: "El milagro inesperado de Paco «El Rápido»"
+body: "Nunca subestimes a un gestor de barrio que desayuna desde 1996 con el funcionario de ventanilla: Paco te avisa de una ayuda autonómica de modernización para autónomos cuyo plazo cierra hoy a las dos de la tarde."
+tags:
+  - gestoria
+  - subvencion
+  - picardia_legal
+character_id: gestor_barato_paco
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 5
+  gestor_tiers:
+    - cheap
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: tramitar_subvencion_relampago
+    label: "Pagarle 50 € de gestión urgente y firmar la solicitud al vuelo"
+    outcomes:
+      - id: concesion_aprobada
+        weight: 75
+        result_text: "Paco clava hasta el último sello compulsado sobre la bocina y semanas después aterriza una ayuda limpia en tu cuenta. Hoy le invitas tú a los churros."
+        effects:
+          deductible_expense: 50
+          cash_delta: 920
+          stress: -7
+          moral: 8
+          reputation: 2
+      - id: cupo_agotado_por_segundos
+        weight: 25
+        result_text: "El presupuesto de la convocatoria se agota tres minutos antes de vuestro registro, aunque al menos la tasa de tramitación te la deduces."
+        effects:
+          deductible_expense: 50
+          stress: 4
+          moral: -3
+  - id: reclamar_comisiones_indebidas
+    label: "Pasar de subvenciones y pedirle que reclame solo cargos bancarios indebidos"
+    result_text: "Con una plantilla veterana de dos párrafos, Paco logra que tu banco te devuelva comisiones de mantenimiento cobradas de más."
+    effects:
+      cash_delta: 240
+      stress: -4
+      moral: 4
+  - id: dejarlo_pasar_sin_estres
+    label: "Agradecer el chivatazo pero no meterse en papeleos de última hora"
+    result_text: "Sigues con tu jornada en paz sin perseguir ventanillas."
+    effects:
+      stress: -2
+      moral: 1

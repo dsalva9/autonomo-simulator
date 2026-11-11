@@ -1,0 +1,13 @@
+schema_version: 1
+id: empleada_senior_laura
+name: "Laura (Especialista Sénior)"
+role: empleado
+bio: "Veterana curtida en tres agencias y dos consultoras que sobrevivió a base de poner límites claros y documentarlo todo en cuadernos impecables. Cobra lo que vale, detecta marrones a tres semanas vista y cierra el ordenador a las seis en punto aunque arda Roma."
+portrait_asset_id: char_empleada_senior_laura
+expressions:
+  neutral: char_empleada_senior_laura
+  stressed: char_empleada_senior_laura_saturada
+employee_params:
+  role_label: "Especialista sénior"
+  monthly_cost: 2150
+  billing_multiplier: 1.65

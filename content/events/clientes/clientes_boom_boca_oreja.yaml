@@ -1,0 +1,52 @@
+schema_version: 1
+id: clientes_boom_boca_oreja
+category: clientes
+title: "Efecto bola de nieve: tres clientes de golpe"
+body: "Alguien ha hablado bien de ti en una comida del sector y ocurre el milagro: en la misma semana entran tres presupuestos serios sin regateos. El único problema es que el día sigue teniendo veinticuatro horas."
+tags:
+  - reputacion
+  - crecimiento
+  - iguala
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 5
+  stats:
+    reputation:
+      min: 45
+weight: 10
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: abarcar_los_tres_encargos
+    label: "Decir que sí a todo antes de que cambien de idea"
+    result_text: "Facturas como una locomotora durante cuatro semanas, aunque llegas al final del mes confundiendo el salero con el ratón inalámbrico."
+    effects:
+      billed_income: 2150
+      stress: 13
+      moral: 2
+      personal_life: -6
+      reputation: 4
+  - id: elegir_el_mejor_y_derivar
+    label: "Quedarte el proyecto más rentable y derivar el resto a colegas"
+    result_text: "Trabajas con margen sano, quedas como un señor en el gremio y te guardas favores profesionales para cuando vengan vacas flacas."
+    effects:
+      billed_income: 1350
+      stress: 2
+      moral: 6
+      personal_life: 2
+      reputation: 5
+  - id: convertir_en_iguala_estable
+    label: "Transformar al cliente principal en una iguala mensual de cuatro meses"
+    result_text: "Cambias el pico puntual por ingresos recurrentes previsibles. Saber cuánto vas a facturar el día uno sabe casi a nómina."
+    effects:
+      add_modifier:
+        id: mod_iguala_recomendacion
+        label: "Iguala por boca-oreja"
+        remaining_months: 4
+        monthly_billed_delta: 480
+        monthly_stress_delta: 2
+      moral: 5
+      reputation: 3

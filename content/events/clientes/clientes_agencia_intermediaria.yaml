@@ -1,0 +1,46 @@
+schema_version: 1
+id: clientes_agencia_intermediaria
+category: clientes
+title: "Subcontrata en marca blanca: tú trabajas, ellos firman"
+body: "Una agencia con oficinas de diseño y futbolín te propone ejecutar íntegro el proyecto de una gran marca: ellos le cobran un dineral al cliente final, se quedan el 55 % por «gestión de cuenta» y te prohíben mencionar que el trabajo es tuyo."
+tags:
+  - subcontrata
+  - agencia
+  - margen
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 4
+weight: 11
+cooldown_months: 8
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: aceptar_marca_blanca
+    label: "Tragar con la cláusula fantasma por asegurar facturación"
+    result_text: "Sacas adelante el proyecto mientras tres ejecutivos de cuentas reenvían tus correos poniéndose medallas. La factura entra puntual, pero escuece el orgullo."
+    effects:
+      billed_income: 1250
+      stress: 8
+      moral: -5
+      reputation: 0
+  - id: negociar_tarifa_senior_y_credito
+    label: "Exigir tarifa sénior completa y permiso para enseñarlo en tu dosier"
+    requirements:
+      stats:
+        reputation:
+          min: 50
+    result_text: "No tienen a nadie capaz de entregarlo a tiempo y ceden. Cobras lo que vale tu oficio y sumas un caso potente a tu cartera."
+    effects:
+      billed_income: 1550
+      stress: 6
+      moral: 4
+      reputation: 4
+  - id: rechazar_intermediacion
+    label: "Declinar ser mano de obra invisible para el PowerPoint de otro"
+    result_text: "Cierras la videollamada con una sonrisa impecable y dedicas la semana a tus propios clientes directos."
+    effects:
+      stress: -4
+      moral: 4
+      personal_life: 2

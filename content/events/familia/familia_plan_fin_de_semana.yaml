@@ -8,9 +8,15 @@ tags:
   - conciliacion
   - descanso
 character_id: pareja_alex
+character_expression: pleased
 illustration_id: null
-weight: 12
-cooldown_months: 0
+requirements:
+  family_statuses:
+    - single
+    - dating
+    - cohabiting
+weight: 10
+cooldown_months: 8
 max_occurrences: null
 exclusive_with: []
 choices:
@@ -28,6 +34,8 @@ choices:
       stress: -12
       moral: 8
       personal_life: 12
+      set_flags:
+        - relacion_con_alex
   - id: escapada_desconexion_total
     label: "Aceptar el plan, silenciar el móvil y recargar pilas"
     result_text: "Gastas algo en gasolina y comida casera, pero el lunes vuelves al escritorio recordando qué se siente al tener vida propia fuera del despacho."
@@ -35,7 +43,7 @@ choices:
       cash_delta: -90
       stress: -10
       moral: 6
-      personal_life: 8
+      personal_life: 9
   - id: quedarse_adelantando_entregas
     label: "Cancelar el plan a última hora para facturar encargos pendientes"
     result_text: "Mandas un audio eterno disculpándote y pasas el sábado frente a la pantalla. Sacas una buena factura adelante, pero el piso se siente enorme y silencioso."

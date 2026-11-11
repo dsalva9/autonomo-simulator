@@ -1,0 +1,9 @@
+schema_version: 1
+id: cliente_corporativo_marta
+name: "Marta (Compras Corporativas)"
+role: cliente
+bio: "Responsable de compras de una multinacional con tres niveles de comité hasta para aprobar un bolígrafo. Habla en anglicismos, exige darte de alta en un portal de proveedores de 1998 y llama «política financiera estándar» a pagar a noventa días fecha factura."
+portrait_asset_id: char_cliente_corporativo_marta
+expressions:
+  neutral: char_cliente_corporativo_marta
+  angry: char_cliente_corporativo_marta_exigente

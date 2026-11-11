@@ -1,0 +1,64 @@
+schema_version: 1
+id: hacienda_certificado_caducado
+category: hacienda
+title: "Día 19 a las 22:15: «Su certificado digital ha caducado»"
+body: "Con el borrador listo para domiciliar, el navegador escupe un aviso rojo digno de película de terror: tu certificado electrónico expiró ayer a medianoche y Autofirma se niega en redondo a reconocer tu existencia."
+tags:
+  - sede_electronica
+  - burocracia
+  - plazos
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 4
+  gestor_tiers:
+    - self
+    - cheap
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: videoidentificacion_de_madrugada
+    label: "Pagar renovación urgente por vídeo y pelearse con cuatro navegadores"
+    outcomes:
+      - id: presentado_sobre_la_bocina
+        weight: 65
+        result_text: "Tras reinstalar certificados raíz tres veces, el justificante PDF se descarga a las 23:58. Envejeces dos años, pero entras en plazo."
+        effects:
+          deductible_expense: 35
+          stress: 9
+          moral: 3
+          personal_life: -3
+      - id: colapso_a_medianoche
+        weight: 35
+        result_text: "La pasarela se queda congelada al 99 % y el reloj marca las 00:02. Presentas fuera del plazo de domiciliación con papeletas de recargo."
+        effects:
+          deductible_expense: 35
+          stress: 13
+          moral: -6
+          fiscal_risk: 8
+          schedule_events:
+            - event_id: hacienda_recargo_extemporaneo
+              delay_months: 2
+              probability: 0.70
+  - id: colaborador_social_urgencia
+    label: "Pagar a una asesoría colaboradora de guardia para que presente por ti"
+    requirements:
+      stats:
+        money:
+          min: 150
+    result_text: "Bendito apoderamiento telemático: pagas la urgencia deducible, recibes el resguardo sellado en diez minutos y te vas a dormir."
+    effects:
+      deductible_expense: 110
+      stress: 2
+      moral: 2
+      fiscal_risk: -3
+  - id: ir_al_banco_por_nrc_manana
+    label: "Rendirse hoy y perder toda la mañana siguiente pidiendo código NRC en ventanilla"
+    result_text: "Pierdes media jornada haciendo cola entre recibos y comisiones bancarias, pero dejas el impuesto pagado dentro del día veinte."
+    effects:
+      cash_delta: -60
+      stress: 6
+      moral: -3
+      personal_life: -2

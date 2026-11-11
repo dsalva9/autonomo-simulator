@@ -8,7 +8,8 @@ tags:
   - sancion
   - inspeccion
 character_id: hacienda_inspector_gomez
-illustration_id: null
+character_expression: angry
+illustration_id: illus_hito_inspeccion_hacienda
 requirements:
   required_flags:
     - cobro_en_b_reciente
@@ -55,14 +56,20 @@ choices:
           fiscal_risk: -12
           clear_flags:
             - cobro_en_b_reciente
-      - id: sancion_completa
+      - id: escalada_a_inspeccion
         weight: 55
-        result_text: "Tu escrito cita una normativa derogada hace una década. El Inspector Gómez ni se inmuta y te gira la liquidación íntegra sin descuento por pronto pago."
+        result_text: "Tu escrito cita una normativa derogada hace una década y despierta el instinto cazador del Inspector Gómez: lejos de archivar, eleva las actuaciones a comparecencia de inspección formal."
         effects:
-          cash_delta: -1100
-          stress: 18
-          moral: -10
-          personal_life: -6
-          fiscal_risk: -15
+          cash_delta: -350
+          stress: 15
+          moral: -8
+          personal_life: -5
+          fiscal_risk: -10
+          set_flags:
+            - expediente_inspeccion_abierto
           clear_flags:
             - cobro_en_b_reciente
+          schedule_events:
+            - event_id: hacienda_acta_inspeccion
+              delay_months: 2
+              probability: 1

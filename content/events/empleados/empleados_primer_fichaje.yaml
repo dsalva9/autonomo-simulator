@@ -8,7 +8,8 @@ tags:
   - crecimiento
   - costes_fijos
 character_id: empleado_junior_dani
-illustration_id: null
+character_expression: pleased
+illustration_id: illus_hito_primer_empleado
 requirements:
   min_month: 4
   has_employee: false
@@ -29,6 +30,11 @@ choices:
       stress: -4
       moral: 5
       reputation: 4
+      set_flags:
+        - empleado_dani_activo
+      clear_flags:
+        - empleada_laura_activa
+        - desgaste_plantilla
   - id: subcontratar_apoyo_puntual
     label: "Proponerle una colaboración externa puntual para sacar el pico de trabajo"
     result_text: "Sacas adelante un proyecto grande pagándole su factura profesional deducible. Menos margen neto que haciéndolo tú todo, pero cero compromisos fijos el mes que viene."
