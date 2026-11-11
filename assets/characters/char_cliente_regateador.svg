@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Cliente regateador">
+  <defs>
+    <linearGradient id="cliPortBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FCE7B2" />
+      <stop offset="100%" stop-color="#E5AF56" />
+    </linearGradient>
+    <clipPath id="cliFrameClip">
+      <rect x="20" y="20" width="472" height="472" rx="28" />
+    </clipPath>
+  </defs>
+
+  <!-- Portrait Frame Backdrop -->
+  <rect x="20" y="20" width="472" height="472" rx="28" fill="url(#cliPortBg)" stroke="#1F2421" stroke-width="6" />
+
+  <g clip-path="url(#cliFrameClip)">
+    <!-- Editorial Halftone / Sunburst Circle -->
+    <circle cx="256" cy="240" r="176" fill="#FFF7DE" opacity="0.55" />
+    <circle cx="256" cy="240" r="152" fill="none" stroke="#C67D1E" stroke-width="2.5" stroke-dasharray="10 8" />
+
+    <!-- Shoulders: Puffer Gilet ("Chaleco Acolchado") over Open-Collar Shirt -->
+    <path d="M 86 500 C 92 382 154 348 256 348 C 358 348 420 382 426 500 Z" fill="#FFFDF9" stroke="#1F2421" stroke-width="5" />
+    <!-- Navy Quilted Puffer Vest -->
+    <path d="M 112 500 C 118 394 162 356 214 354 L 228 500 Z" fill="#243B55" stroke="#1F2421" stroke-width="5" stroke-linejoin="round" />
+    <path d="M 400 500 C 394 394 350 356 298 354 L 284 500 Z" fill="#243B55" stroke="#1F2421" stroke-width="5" stroke-linejoin="round" />
+    <!-- Puffer Quilt Ribs -->
+    <line x1="126" y1="408" x2="220" y2="408" stroke="#1F2421" stroke-width="3" />
+    <line x1="118" y1="452" x2="224" y2="452" stroke="#1F2421" stroke-width="3" />
+    <line x1="292" y1="408" x2="386" y2="408" stroke="#1F2421" stroke-width="3" />
+    <line x1="288" y1="452" x2="394" y2="452" stroke-width="3" stroke="#1F2421" />
+
+    <!-- Open Shirt Collar & Gold Chain Hint -->
+    <polygon points="212,350 256,406 200,398" fill="#FFFDF9" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+    <polygon points="300,350 256,406 312,398" fill="#FFFDF9" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+    <path d="M 232 374 Q 256 396 280 374" fill="none" stroke="#D99B26" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Neck -->
+    <rect x="226" y="302" width="60" height="62" rx="22" fill="#E6A97E" stroke="#1F2421" stroke-width="4.5" />
+    <path d="M 228 326 Q 256 344 284 326" fill="#C98A60" opacity="0.45" />
+
+    <!-- Ears -->
+    <ellipse cx="164" cy="232" rx="18" ry="26" fill="#E6A97E" stroke="#1F2421" stroke-width="4.5" />
+    <ellipse cx="348" cy="232" rx="18" ry="26" fill="#E6A97E" stroke="#1F2421" stroke-width="4.5" />
+
+    <!-- Head (Slick Squared Jaw) -->
+    <path d="M 170 166 C 170 112 342 112 342 166 L 338 264 C 336 312 296 330 256 330 C 216 330 176 312 174 264 Z" fill="#F0B68C" stroke="#1F2421" stroke-width="5" />
+
+    <!-- Slicked-Back Gel Hair Wave -->
+    <path d="M 164 188 C 156 124 204 86 274 90 C 334 94 362 126 346 184 C 338 150 306 138 258 142 C 210 146 182 156 164 188 Z" fill="#2A211C" stroke="#1F2421" stroke-width="4.5" stroke-linejoin="round" />
+    <path d="M 204 114 Q 264 102 316 118" fill="none" stroke="#59493F" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Asymmetrical Winking Eyebrows -->
+    <path d="M 194 184 Q 218 168 240 180" fill="none" stroke="#2A211C" stroke-width="6" stroke-linecap="round" />
+    <path d="M 272 174 Q 298 158 322 172" fill="none" stroke="#2A211C" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Tinted Amber Aviator Glasses Perched Slightly Low -->
+    <g transform="translate(0, 8)">
+      <path d="M 184 192 L 244 192 L 238 226 C 234 238 192 238 188 224 Z" fill="#D98A2B" fill-opacity="0.48" stroke="#1F2421" stroke-width="4" />
+      <path d="M 268 192 L 328 192 L 324 224 C 320 238 278 238 274 226 Z" fill="#D98A2B" fill-opacity="0.48" stroke="#1F2421" stroke-width="4" />
+      <line x1="244" y1="196" x2="268" y2="196" stroke="#1F2421" stroke-width="4" />
+      <!-- Left Winking Eye & Right Sly Pupil -->
+      <path d="M 200 208 Q 215 198 230 208" fill="none" stroke="#1F2421" stroke-width="4" stroke-linecap="round" />
+      <circle cx="298" cy="208" r="6" fill="#1F2421" />
+      <circle cx="300" cy="206" r="2" fill="#FFFFFF" />
+    </g>
+
+    <!-- Nose & Five-O'Clock Stubble Shadow -->
+    <path d="M 256 206 L 266 244 L 248 248" fill="none" stroke="#1F2421" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 184 260 C 188 308 222 324 256 324 C 290 324 324 308 328 260 C 312 276 200 276 184 260 Z" fill="#B88463" opacity="0.24" />
+
+    <!-- Wide Sharky Salesman Grin -->
+    <path d="M 206 270 Q 258 308 308 264 C 304 298 278 308 254 306 C 226 304 210 290 206 270 Z" fill="#FFFDF9" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+    <line x1="224" y1="283" x2="292" y2="281" stroke="#1F2421" stroke-width="2" />
+
+    <!-- Foreground Hand Making "Un Cambiecito de Nada" Pinch Gesture + Kraft Envelope -->
+    <g transform="translate(334, 348)">
+      <!-- Envelope tucked in pocket -->
+      <rect x="-26" y="42" width="76" height="96" rx="5" fill="#E3B778" stroke="#1F2421" stroke-width="4" transform="rotate(-10)" />
+      <text x="6" y="84" font-family="system-ui, sans-serif" font-size="22" font-weight="800" fill="#4A7C59" transform="rotate(-10)">€?</text>
+      <!-- Pinching Hand -->
+      <circle cx="52" cy="48" r="34" fill="#F0B68C" stroke="#1F2421" stroke-width="4.5" />
+      <path d="M 24 36 Q 44 26 56 36" fill="none" stroke="#1F2421" stroke-width="4" stroke-linecap="round" />
+      <path d="M 24 50 Q 44 58 56 48" fill="none" stroke="#1F2421" stroke-width="4" stroke-linecap="round" />
+      <!-- Tiny gap indicator lines -->
+      <line x1="12" y1="36" x2="12" y2="50" stroke="#C83E37" stroke-width="3" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Corner Role Stamp -->
+  <rect x="34" y="34" width="124" height="30" rx="6" fill="#1F2421" />
+  <text x="96" y="54" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="700" fill="#FCE7B2" letter-spacing="1.2">CLIENTE</text>
+</svg>

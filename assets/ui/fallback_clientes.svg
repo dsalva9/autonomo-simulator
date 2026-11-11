@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="320" viewBox="0 0 512 320" role="img" aria-label="Categoría Clientes">
+  <defs>
+    <linearGradient id="cliBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFF7E2" />
+      <stop offset="100%" stop-color="#F2DFB6" />
+    </linearGradient>
+    <pattern id="cliGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#E2C992" stroke-width="1" opacity="0.55" />
+    </pattern>
+  </defs>
+
+  <!-- Card Base -->
+  <rect x="0" y="0" width="512" height="320" rx="16" fill="url(#cliBg)" />
+  <rect x="12" y="12" width="488" height="296" rx="12" fill="url(#cliGrid)" stroke="#C68B2C" stroke-width="2.5" />
+
+  <!-- Decorative File Tab Header -->
+  <path d="M 28 12 L 196 12 L 212 36 L 28 36 Z" fill="#D98A2B" />
+  <text x="42" y="29" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#FFFDF7" letter-spacing="1.2">EXP. CLIENTES</text>
+
+  <!-- Background Sunburst Circle -->
+  <circle cx="256" cy="168" r="104" fill="#F9C963" opacity="0.35" />
+  <circle cx="256" cy="168" r="84" fill="none" stroke="#D98A2B" stroke-width="2" stroke-dasharray="6 6" />
+
+  <!-- Napkin / Informal Quote Sheet -->
+  <g transform="translate(136, 72) rotate(-6)">
+    <rect x="0" y="0" width="142" height="172" rx="6" fill="#FFFDF8" stroke="#1F2421" stroke-width="3" />
+    <line x1="18" y1="28" x2="118" y2="28" stroke="#D98A2B" stroke-width="4" stroke-linecap="round" />
+    <line x1="18" y1="48" x2="122" y2="48" stroke="#B7AEA0" stroke-width="3" stroke-linecap="round" />
+    <line x1="18" y1="64" x2="104" y2="64" stroke="#B7AEA0" stroke-width="3" stroke-linecap="round" />
+    <line x1="18" y1="80" x2="114" y2="80" stroke="#B7AEA0" stroke-width="3" stroke-linecap="round" />
+    <!-- Crossed out price & haggled price -->
+    <text x="18" y="114" font-family="'Courier New', monospace" font-size="16" font-weight="700" fill="#8C8275">1.500€</text>
+    <line x1="14" y1="109" x2="82" y2="105" stroke="#C83E37" stroke-width="3" stroke-linecap="round" />
+    <text x="18" y="140" font-family="'Courier New', monospace" font-size="20" font-weight="700" fill="#1F2421">¿600€?</text>
+  </g>
+
+  <!-- Discreet Kraft Envelope Peeking Out -->
+  <g transform="translate(248, 96) rotate(9)">
+    <rect x="0" y="0" width="136" height="90" rx="5" fill="#E3B778" stroke="#1F2421" stroke-width="3" />
+    <path d="M 3 4 L 68 50 L 133 4" fill="#D4A35E" stroke="#1F2421" stroke-width="3" stroke-linejoin="round" />
+    <!-- Euro banknotes peeking from corner -->
+    <rect x="92" y="-14" width="34" height="22" rx="3" fill="#63A375" stroke="#1F2421" stroke-width="2.5" transform="rotate(-12 92 -14)" />
+    <text x="101" y="2" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#1F2421" transform="rotate(-12 92 -14)">€</text>
+  </g>
+
+  <!-- Urgent Chat Bubble ("PARA AYER") -->
+  <g transform="translate(254, 48)">
+    <rect x="0" y="0" width="188" height="44" rx="10" fill="#1F2421" />
+    <polygon points="26,44 42,44 22,58" fill="#1F2421" />
+    <circle cx="22" cy="22" r="7" fill="#E05347" />
+    <text x="38" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="800" fill="#FFF7E2" letter-spacing="0.6">«ES PARA AYER»</text>
+  </g>
+
+  <!-- Ticking Pocket Stopwatch -->
+  <g transform="translate(348, 198)">
+    <rect x="26" y="-10" width="16" height="10" rx="2" fill="#D98A2B" stroke="#1F2421" stroke-width="2.5" />
+    <circle cx="34" cy="32" r="34" fill="#FFFDF8" stroke="#1F2421" stroke-width="3" />
+    <circle cx="34" cy="32" r="27" fill="none" stroke="#E05347" stroke-width="2.5" stroke-dasharray="4 4" />
+    <line x1="34" y1="32" x2="34" y2="14" stroke="#1F2421" stroke-width="3" stroke-linecap="round" />
+    <line x1="34" y1="32" x2="50" y2="38" stroke="#C83E37" stroke-width="3" stroke-linecap="round" />
+    <circle cx="34" cy="32" r="4" fill="#1F2421" />
+    <!-- Motion ticks -->
+    <path d="M -6 16 Q -14 32 -6 48" fill="none" stroke="#C83E37" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M 74 16 Q 82 32 74 48" fill="none" stroke="#C83E37" stroke-width="2.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Rubber Stamp Badge -->
+  <g transform="translate(34, 246) rotate(-4)">
+    <rect x="0" y="0" width="210" height="42" rx="5" fill="#FFF7E2" fill-opacity="0.9" stroke="#B8641A" stroke-width="3" />
+    <rect x="4" y="4" width="202" height="34" rx="3" fill="none" stroke="#B8641A" stroke-width="1.2" />
+    <text x="105" y="27" text-anchor="middle" font-family="'Courier New', monospace" font-size="15" font-weight="700" fill="#B8641A" letter-spacing="1.5">ENCARGO ENTRADA</text>
+  </g>
+</svg>

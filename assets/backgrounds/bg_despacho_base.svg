@@ -1,0 +1,231 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Despacho de autónomo">
+  <defs>
+    <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F3E8D5" />
+      <stop offset="100%" stop-color="#DFD0B5" />
+    </linearGradient>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8BC4EA" />
+      <stop offset="100%" stop-color="#FCE4B6" />
+    </linearGradient>
+    <linearGradient id="deskGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C88B52" />
+      <stop offset="100%" stop-color="#9E6533" />
+    </linearGradient>
+    <linearGradient id="lampGlow" x1="0.3" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#FFE999" stop-opacity="0.48" />
+      <stop offset="100%" stop-color="#FFE999" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Back Wall & Lower Dado Trim -->
+  <rect x="0" y="0" width="960" height="390" fill="url(#wallGrad)" />
+  <rect x="0" y="328" width="960" height="62" fill="#C9B79B" stroke="#1F2421" stroke-width="2.5" />
+
+  <!-- Left Bookshelf with A-Z Binders & Pothos Plant -->
+  <g transform="translate(36, 62)">
+    <rect x="0" y="0" width="184" height="278" rx="6" fill="#8C5830" stroke="#1F2421" stroke-width="3" />
+    <rect x="10" y="12" width="164" height="78" fill="#684122" stroke="#1F2421" stroke-width="2" />
+    <rect x="10" y="102" width="164" height="80" fill="#684122" stroke="#1F2421" stroke-width="2" />
+    <rect x="10" y="194" width="164" height="72" fill="#684122" stroke="#1F2421" stroke-width="2" />
+
+    <!-- Top Shelf: A-Z Binders (2024, 2025, 2026) -->
+    <g transform="translate(18, 20)">
+      <rect x="0" y="0" width="26" height="68" rx="2" fill="#2E6F65" stroke="#1F2421" stroke-width="2" />
+      <rect x="5" y="10" width="16" height="24" fill="#FFFDF8" />
+      <circle cx="13" cy="52" r="4" fill="#684122" />
+
+      <rect x="29" y="0" width="26" height="68" rx="2" fill="#2E6F65" stroke="#1F2421" stroke-width="2" />
+      <rect x="34" y="10" width="16" height="24" fill="#FFFDF8" />
+      <circle cx="42" cy="52" r="4" fill="#684122" />
+
+      <rect x="58" y="0" width="26" height="68" rx="2" fill="#C83E37" stroke="#1F2421" stroke-width="2" />
+      <rect x="63" y="10" width="16" height="24" fill="#FFFDF8" />
+      <circle cx="71" cy="52" r="4" fill="#684122" />
+
+      <!-- Leaning Binder -->
+      <g transform="translate(92, 2) rotate(11)">
+        <rect x="0" y="0" width="26" height="66" rx="2" fill="#D98A2B" stroke="#1F2421" stroke-width="2" />
+        <rect x="5" y="10" width="16" height="24" fill="#FFFDF8" />
+        <circle cx="13" cy="50" r="4" fill="#684122" />
+      </g>
+    </g>
+
+    <!-- Middle Shelf: Books & Blinking Wi-Fi Router -->
+    <rect x="20" y="132" width="64" height="14" rx="2" fill="#3B6698" stroke="#1F2421" stroke-width="2" />
+    <rect x="18" y="146" width="72" height="16" rx="2" fill="#E05347" stroke="#1F2421" stroke-width="2" />
+    <rect x="22" y="162" width="66" height="18" rx="2" fill="#F2B84B" stroke="#1F2421" stroke-width="2" />
+    <!-- Router -->
+    <line x1="126" y1="158" x2="120" y2="128" stroke="#1F2421" stroke-width="3" stroke-linecap="round" />
+    <line x1="152" y1="158" x2="158" y2="128" stroke="#1F2421" stroke-width="3" stroke-linecap="round" />
+    <rect x="112" y="158" width="52" height="20" rx="4" fill="#2B302C" stroke="#1F2421" stroke-width="2" />
+    <circle cx="124" cy="168" r="3" fill="#63D471" />
+    <circle cx="134" cy="168" r="3" fill="#63D471" />
+    <circle cx="144" cy="168" r="3" fill="#F2B84B" />
+
+    <!-- Shoebox of Receipts on Bottom Shelf -->
+    <rect x="24" y="226" width="94" height="38" rx="3" fill="#DFC39D" stroke="#1F2421" stroke-width="2" />
+    <rect x="20" y="216" width="102" height="12" rx="2" fill="#C9A97E" stroke="#1F2421" stroke-width="2" transform="rotate(-3 20 216)" />
+    <text x="71" y="250" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#1F2421">TICKETS</text>
+
+    <!-- Potted Surviving Pothos on Top of Bookshelf -->
+    <g transform="translate(116, -42)">
+      <polygon points="10,14 48,14 42,42 16,42" fill="#D96B43" stroke="#1F2421" stroke-width="2.5" />
+      <path d="M 28 14 C 18 -6 0 -4 -4 10 C 8 14 20 12 28 14 Z" fill="#4A7C59" stroke="#1F2421" stroke-width="2" />
+      <path d="M 30 14 C 36 -10 56 -8 58 8 C 46 14 36 12 30 14 Z" fill="#5D986E" stroke="#1F2421" stroke-width="2" />
+      <path d="M 29 14 C 24 -16 38 -20 40 -2 C 34 8 30 12 29 14 Z" fill="#68A87A" stroke="#1F2421" stroke-width="2" />
+      <!-- Trailing vine -->
+      <path d="M 44 22 Q 62 42 54 74 Q 48 96 58 114" fill="none" stroke="#4A7C59" stroke-width="3" stroke-linecap="round" />
+      <ellipse cx="58" cy="54" rx="8" ry="5" fill="#5D986E" stroke="#1F2421" stroke-width="1.8" transform="rotate(24 58 54)" />
+      <ellipse cx="52" cy="86" rx="8" ry="5" fill="#4A7C59" stroke="#1F2421" stroke-width="1.8" transform="rotate(-20 52 86)" />
+    </g>
+  </g>
+
+  <!-- Center-Left Window with Spanish Persiana & Sunny Rooftops -->
+  <g transform="translate(268, 44)">
+    <rect x="0" y="0" width="244" height="236" rx="6" fill="#FAF5EA" stroke="#1F2421" stroke-width="3.5" />
+    <rect x="14" y="14" width="216" height="208" fill="url(#skyGrad)" stroke="#1F2421" stroke-width="2.5" />
+
+    <!-- Warm Mediterranean Sun & Neighbouring Terracotta Buildings -->
+    <circle cx="176" cy="112" r="26" fill="#FFF2B2" opacity="0.9" />
+    <rect x="16" y="156" width="84" height="64" fill="#E8C39E" stroke="#1F2421" stroke-width="2" />
+    <polygon points="14,156 58,136 104,156" fill="#C9643B" stroke="#1F2421" stroke-width="2" />
+    <rect x="100" y="168" width="128" height="52" fill="#F2DEC4" stroke="#1F2421" stroke-width="2" />
+    <polygon points="96,168 164,146 230,168" fill="#B8522E" stroke="#1F2421" stroke-width="2" />
+
+    <!-- Rolled-Down Slatted Persiana (Top Third) -->
+    <g fill="#7A9A89" stroke="#1F2421" stroke-width="2">
+      <rect x="14" y="14" width="216" height="14" />
+      <rect x="14" y="28" width="216" height="14" />
+      <rect x="14" y="42" width="216" height="14" />
+      <rect x="14" y="56" width="216" height="14" />
+      <rect x="14" y="70" width="216" height="10" fill="#5D7B6B" />
+    </g>
+    <!-- Persiana Pull Strap on Right Frame -->
+    <rect x="233" y="34" width="6" height="154" fill="#D8C9B0" stroke="#1F2421" stroke-width="1.5" />
+
+    <!-- Window Mullions -->
+    <line x1="122" y1="80" x2="122" y2="222" stroke="#FAF5EA" stroke-width="8" />
+    <line x1="122" y1="80" x2="122" y2="222" stroke="#1F2421" stroke-width="2.5" />
+    <!-- Window Sill -->
+    <rect x="-10" y="232" width="264" height="14" rx="3" fill="#FAF5EA" stroke="#1F2421" stroke-width="3" />
+  </g>
+
+  <!-- Wall Calendar ("EL TRIMESTRE") -->
+  <g transform="translate(556, 56)">
+    <circle cx="58" cy="-8" r="4" fill="#1F2421" />
+    <line x1="58" y1="-8" x2="24" y2="8" stroke="#1F2421" stroke-width="2" />
+    <line x1="58" y1="-8" x2="92" y2="8" stroke="#1F2421" stroke-width="2" />
+    <rect x="0" y="6" width="116" height="132" rx="6" fill="#FFFDF8" stroke="#1F2421" stroke-width="3" />
+    <path d="M 0 12 A 6 6 0 0 1 6 6 L 110 6 A 6 6 0 0 1 116 12 L 116 38 L 0 38 Z" fill="#C83E37" stroke="#1F2421" stroke-width="3" />
+    <text x="58" y="27" text-anchor="middle" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#FFFDF8">TRIMESTRE</text>
+    <!-- Calendar Grid Dots -->
+    <g fill="#7A8691">
+      <rect x="16" y="50" width="14" height="12" rx="2" />
+      <rect x="38" y="50" width="14" height="12" rx="2" />
+      <rect x="60" y="50" width="14" height="12" rx="2" />
+      <rect x="82" y="50" width="14" height="12" rx="2" />
+      <rect x="16" y="72" width="14" height="12" rx="2" />
+      <rect x="38" y="72" width="14" height="12" rx="2" />
+      <rect x="60" y="72" width="14" height="12" rx="2" />
+      <rect x="82" y="72" width="14" height="12" rx="2" />
+      <rect x="16" y="94" width="14" height="12" rx="2" />
+      <rect x="38" y="94" width="14" height="12" rx="2" />
+      <rect x="60" y="94" width="14" height="12" rx="2" />
+    </g>
+    <!-- Red Circled Day 20 Deadline -->
+    <circle cx="89" cy="100" r="14" fill="none" stroke="#C83E37" stroke-width="3" />
+    <text x="89" y="105" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="#C83E37">20</text>
+    <text x="58" y="126" text-anchor="middle" font-family="'Courier New', monospace" font-size="10" font-weight="700" fill="#9E2A25">¡IVA + IRPF!</text>
+  </g>
+
+  <!-- Right Corkboard with Post-its & Notes -->
+  <g transform="translate(706, 52)">
+    <rect x="0" y="0" width="212" height="168" rx="6" fill="#C68B53" stroke="#1F2421" stroke-width="3" />
+    <rect x="10" y="10" width="192" height="148" rx="3" fill="#D9A36C" stroke="#1F2421" stroke-width="2" />
+
+    <!-- Post-it 1 -->
+    <g transform="translate(24, 22) rotate(-5)">
+      <rect x="0" y="0" width="66" height="62" fill="#FCE068" stroke="#1F2421" stroke-width="2" />
+      <circle cx="33" cy="8" r="4" fill="#C83E37" />
+      <line x1="12" y1="24" x2="54" y2="24" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="12" y1="36" x2="46" y2="36" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="12" y1="48" x2="50" y2="48" stroke="#C83E37" stroke-width="2.5" stroke-linecap="round" />
+    </g>
+
+    <!-- Receipt Pinned -->
+    <g transform="translate(106, 20) rotate(4)">
+      <rect x="0" y="0" width="76" height="98" fill="#FFFDF8" stroke="#1F2421" stroke-width="2" />
+      <circle cx="38" cy="9" r="4" fill="#3B6698" />
+      <line x1="14" y1="26" x2="62" y2="26" stroke="#7A8691" stroke-width="2" />
+      <line x1="14" y1="38" x2="56" y2="38" stroke="#7A8691" stroke-width="2" />
+      <line x1="14" y1="50" x2="60" y2="50" stroke="#7A8691" stroke-width="2" />
+      <polyline points="14,78 30,68 46,74 62,58" fill="none" stroke="#2E6F65" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+
+    <!-- Pink Note -->
+    <g transform="translate(42, 96) rotate(3)">
+      <rect x="0" y="0" width="74" height="46" fill="#F7B7B2" stroke="#1F2421" stroke-width="2" />
+      <text x="37" y="28" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="700" fill="#1F2421">CUOTA MES</text>
+    </g>
+  </g>
+
+  <!-- Warm Cone of Light from Desk Lamp -->
+  <polygon points="758,236 590,390 910,390" fill="url(#lampGlow)" />
+
+  <!-- Foreground Wide Wooden Desk -->
+  <g transform="translate(0, 366)">
+    <polygon points="0,24 960,24 960,174 0,174" fill="url(#deskGrad)" stroke="#1F2421" stroke-width="3.5" />
+    <rect x="0" y="24" width="960" height="14" fill="#DFA268" stroke="#1F2421" stroke-width="2.5" />
+    <!-- Subtle Wood Grain Lines -->
+    <line x1="64" y1="78" x2="220" y2="78" stroke="#8A5425" stroke-width="2" stroke-linecap="round" opacity="0.55" />
+    <line x1="690" y1="114" x2="880" y2="114" stroke="#8A5425" stroke-width="2" stroke-linecap="round" opacity="0.55" />
+    <line x1="340" y1="142" x2="580" y2="142" stroke="#8A5421" stroke-width="2" stroke-linecap="round" opacity="0.45" />
+  </g>
+
+  <!-- Articulated Desk Lamp on Right -->
+  <g transform="translate(740, 212)">
+    <ellipse cx="94" cy="176" rx="38" ry="11" fill="#2E6F65" stroke="#1F2421" stroke-width="3" />
+    <polyline points="94,172 118,92 48,26" fill="none" stroke="#1F2421" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="118" cy="92" r="6" fill="#F2B84B" stroke="#1F2421" stroke-width="2" />
+    <g transform="translate(18, 8) rotate(-24)">
+      <path d="M 0 28 C 4 4 44 4 48 28 Z" fill="#2E6F65" stroke="#1F2421" stroke-width="3" />
+      <ellipse cx="24" cy="28" rx="24" ry="7" fill="#FFF3B8" stroke="#1F2421" stroke-width="2.5" />
+    </g>
+  </g>
+
+  <!-- Center Open Freelancer Laptop -->
+  <g transform="translate(362, 276)">
+    <!-- Screen Lid -->
+    <rect x="18" y="0" width="200" height="126" rx="8" fill="#2B302C" stroke="#1F2421" stroke-width="3.5" />
+    <rect x="28" y="10" width="180" height="104" rx="4" fill="#F7F4EB" />
+    <!-- Spreadsheet UI inside Laptop -->
+    <rect x="28" y="10" width="180" height="20" fill="#2E6F65" />
+    <circle cx="40" cy="20" r="3.5" fill="#E05347" />
+    <circle cx="51" cy="20" r="3.5" fill="#F2B84B" />
+    <circle cx="62" cy="20" r="3.5" fill="#63D471" />
+    <!-- Bar Chart & Ledger Lines -->
+    <rect x="42" y="72" width="16" height="30" rx="2" fill="#3B6698" />
+    <rect x="64" y="54" width="16" height="48" rx="2" fill="#2E6F65" />
+    <rect x="86" y="80" width="16" height="22" rx="2" fill="#D98A2B" />
+    <rect x="108" y="44" width="16" height="58" rx="2" fill="#C83E37" />
+    <line x1="136" y1="48" x2="194" y2="48" stroke="#9AA5B1" stroke-width="4" stroke-linecap="round" />
+    <line x1="136" y1="64" x2="186" y2="64" stroke="#9AA5B1" stroke-width="4" stroke-linecap="round" />
+    <line x1="136" y1="80" x2="192" y2="80" stroke="#9AA5B1" stroke-width="4" stroke-linecap="round" />
+    <line x1="136" y1="96" x2="174" y2="96" stroke="#C83E37" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Keyboard Deck -->
+    <polygon points="0,126 236,126 254,152 -18,152" fill="#B8C0C8" stroke="#1F2421" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="14,132 222,132 230,143 6,143" fill="#4A525A" />
+    <rect x="94" y="145" width="48" height="5" rx="2" fill="#8D97A2" />
+  </g>
+
+  <!-- Pencil Cup Left of Laptop -->
+  <g transform="translate(292, 344)">
+    <line x1="14" y1="20" x2="6" y2="-12" stroke="#E05347" stroke-width="5" stroke-linecap="round" />
+    <line x1="24" y1="20" x2="26" y2="-16" stroke="#F2B84B" stroke-width="5" stroke-linecap="round" />
+    <line x1="34" y1="20" x2="42" y2="-8" stroke="#3B6698" stroke-width="5" stroke-linecap="round" />
+    <rect x="4" y="14" width="40" height="48" rx="5" fill="#D96B43" stroke="#1F2421" stroke-width="3" />
+    <line x1="4" y1="28" x2="44" y2="28" stroke="#FFF7E2" stroke-width="3" />
+  </g>
+</svg>

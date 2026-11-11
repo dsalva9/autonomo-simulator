@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Alex, pareja">
+  <defs>
+    <linearGradient id="alexBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FCE8DE" />
+      <stop offset="100%" stop-color="#E6A98E" />
+    </linearGradient>
+    <clipPath id="alexClip">
+      <rect x="20" y="20" width="472" height="472" rx="28" />
+    </clipPath>
+  </defs>
+
+  <!-- Portrait Frame -->
+  <rect x="20" y="20" width="472" height="472" rx="28" fill="url(#alexBg)" stroke="#1F2421" stroke-width="6" />
+
+  <g clip-path="url(#alexClip)">
+    <!-- Warm Sunset Circle -->
+    <circle cx="256" cy="240" r="172" fill="#FFF7F2" opacity="0.68" />
+    <circle cx="256" cy="240" r="150" fill="none" stroke="#C9643B" stroke-width="2.5" stroke-dasharray="8 8" />
+
+    <!-- Back Wavy Hair Silhouette -->
+    <path d="M 152 194 C 142 110 370 110 360 194 C 374 238 364 286 340 302 L 172 302 C 148 286 138 238 152 194 Z" fill="#4E3429" stroke="#1F2421" stroke-width="5" />
+
+    <!-- Cozy Knit Terracotta Sweater & Olive Scarf -->
+    <path d="M 84 500 C 92 380 158 348 256 348 C 354 348 420 380 428 500 Z" fill="#D96B43" stroke="#1F2421" stroke-width="5" />
+    <!-- Knit Sweater Ribbing -->
+    <line x1="162" y1="382" x2="154" y2="500" stroke="#B8522E" stroke-width="4" stroke-linecap="round" />
+    <line x1="208" y1="378" x2="204" y2="500" stroke="#B8522E" stroke-width="4" stroke-linecap="round" />
+    <line x1="304" y1="378" x2="308" y2="500" stroke="#B8522E" stroke-width="4" stroke-linecap="round" />
+    <line x1="350" y1="382" x2="358" y2="500" stroke="#B8522E" stroke-width="4" stroke-linecap="round" />
+
+    <!-- Neck -->
+    <rect x="228" y="300" width="56" height="56" rx="18" fill="#E3AE8C" stroke="#1F2421" stroke-width="4.5" />
+
+    <!-- Soft Sage Scarf Wrapped Around Collar -->
+    <path d="M 186 344 C 206 376 306 376 326 344 C 334 364 316 392 256 392 C 196 392 178 364 186 344 Z" fill="#5D8A66" stroke="#1F2421" stroke-width="4.5" />
+    <path d="M 274 378 L 298 468 L 336 460 L 312 372 Z" fill="#5D8A66" stroke="#1F2421" stroke-width="4.5" stroke-linejoin="round" />
+
+    <!-- Ears -->
+    <ellipse cx="172" cy="234" rx="16" ry="24" fill="#E3AE8C" stroke="#1F2421" stroke-width="4.5" />
+    <ellipse cx="340" cy="234" rx="16" ry="24" fill="#E3AE8C" stroke="#1F2421" stroke-width="4.5" />
+
+    <!-- Warm Expressive Face -->
+    <path d="M 180 166 C 180 116 332 116 332 166 L 328 256 C 324 302 288 324 256 324 C 224 324 188 302 184 256 Z" fill="#EDBA99" stroke="#1F2421" stroke-width="5" />
+
+    <!-- Warm Cheek Blush & Freckles -->
+    <ellipse cx="208" cy="248" rx="16" ry="9" fill="#E07A5F" opacity="0.42" />
+    <ellipse cx="304" cy="248" rx="16" ry="9" fill="#E07A5F" opacity="0.42" />
+
+    <!-- Tousled Wavy Chestnut Curls Across Forehead -->
+    <path d="M 170 198 C 166 132 212 102 268 106 C 322 110 348 140 340 198 C 322 164 298 152 272 162 C 252 142 224 146 212 166 C 194 160 180 176 170 198 Z" fill="#4E3429" stroke="#1F2421" stroke-width="4.5" stroke-linejoin="round" />
+
+    <!-- Affectionate Yet "Still Working on Sunday?" Raised-Brow Expression -->
+    <path d="M 200 192 Q 222 184 240 190" fill="none" stroke="#3B261D" stroke-width="5.5" stroke-linecap="round" />
+    <path d="M 272 184 Q 294 168 314 180" fill="none" stroke="#3B261D" stroke-width="5.5" stroke-linecap="round" />
+
+    <!-- Warm Almond Eyes -->
+    <ellipse cx="220" cy="214" rx="9" ry="10" fill="#1F2421" />
+    <ellipse cx="292" cy="214" rx="9" ry="10" fill="#1F2421" />
+    <circle cx="223" cy="210" r="3" fill="#FFFFFF" />
+    <circle cx="295" cy="210" r="3" fill="#FFFFFF" />
+
+    <!-- Nose & Warm Lopsided Smile -->
+    <path d="M 256 210 L 250 244 L 262 248" fill="none" stroke="#1F2421" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 224 272 Q 258 298 292 268" fill="none" stroke="#1F2421" stroke-width="4.5" stroke-linecap="round" />
+
+    <!-- Holding Warm Mug & Weekend Tickets -->
+    <g transform="translate(92, 386) rotate(-8)">
+      <rect x="0" y="0" width="84" height="92" rx="10" fill="#FFFDF8" stroke="#1F2421" stroke-width="4" />
+      <path d="M 84 22 C 108 22 108 66 84 66" fill="none" stroke="#1F2421" stroke-width="5" />
+      <path d="M 42 58 C 42 58 26 46 26 38 A 8 8 0 0 1 42 36 A 8 8 0 0 1 58 38 C 58 46 42 58 42 58 Z" fill="#D96B43" />
+    </g>
+  </g>
+
+  <!-- Corner Role Stamp -->
+  <rect x="34" y="34" width="118" height="30" rx="6" fill="#C9643B" />
+  <text x="93" y="54" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="700" fill="#FFFDF8" letter-spacing="1.2">PAREJA</text>
+</svg>

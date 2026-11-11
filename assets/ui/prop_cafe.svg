@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Taza de café de supervivencia">
+  <!-- Coffee Ring Stain on Desk -->
+  <ellipse cx="144" cy="214" rx="58" ry="15" fill="none" stroke="#8B5A2B" stroke-width="3" stroke-dasharray="62 12 28 8" opacity="0.45" />
+
+  <!-- Saucer Shadow & Saucer -->
+  <ellipse cx="118" cy="212" rx="76" ry="18" fill="#1F2421" opacity="0.2" />
+  <ellipse cx="118" cy="202" rx="74" ry="18" fill="#EDE2CE" stroke="#1F2421" stroke-width="3.5" />
+  <ellipse cx="118" cy="200" rx="46" ry="9" fill="#D5C6AC" stroke="#1F2421" stroke-width="2" />
+
+  <!-- Rising Steam Wisps -->
+  <path d="M 92 84 C 78 66 106 50 92 28" fill="none" stroke="#FFFDF8" stroke-width="6" stroke-linecap="round" opacity="0.9" />
+  <path d="M 92 84 C 78 66 106 50 92 28" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+
+  <path d="M 120 76 C 106 56 136 38 120 16" fill="none" stroke="#FFFDF8" stroke-width="6" stroke-linecap="round" opacity="0.9" />
+  <path d="M 120 76 C 106 56 136 38 120 16" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+
+  <path d="M 148 86 C 136 68 160 54 148 34" fill="none" stroke="#FFFDF8" stroke-width="5" stroke-linecap="round" opacity="0.85" />
+  <path d="M 148 86 C 136 68 160 54 148 34" fill="none" stroke="#1F2421" stroke-width="2.5" stroke-linecap="round" />
+
+  <!-- Mug Handle -->
+  <path d="M 168 118 C 210 118 210 176 164 176" fill="none" stroke="#1F2421" stroke-width="18" stroke-linecap="round" />
+  <path d="M 168 118 C 210 118 210 176 164 176" fill="none" stroke="#D96B43" stroke-width="11" stroke-linecap="round" />
+
+  <!-- Mug Body -->
+  <path d="M 62 102 L 174 102 L 166 188 C 164 204 72 204 70 188 Z" fill="#D96B43" stroke="#1F2421" stroke-width="3.5" stroke-linejoin="round" />
+
+  <!-- Cream Band & Lightning Caffeine Emblem -->
+  <rect x="67" y="132" width="102" height="36" fill="#FFF7E2" stroke="#1F2421" stroke-width="2.5" />
+  <polygon points="122,136 110,152 120,152 114,165 130,148 120,148" fill="#F2B84B" stroke="#1F2421" stroke-width="1.8" stroke-linejoin="round" />
+
+  <!-- Mug Rim & Dark Espresso Surface -->
+  <ellipse cx="118" cy="102" rx="56" ry="14" fill="#FFF7E2" stroke="#1F2421" stroke-width="3.5" />
+  <ellipse cx="118" cy="104" rx="47" ry="10" fill="#3B2314" stroke="#1F2421" stroke-width="2" />
+  <!-- Crema Swirl -->
+  <path d="M 92 104 Q 118 98 142 105" fill="none" stroke="#C68B53" stroke-width="3" stroke-linecap="round" />
+</svg>

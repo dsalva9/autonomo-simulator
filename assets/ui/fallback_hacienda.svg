@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="320" viewBox="0 0 512 320" role="img" aria-label="Categoría Hacienda">
+  <defs>
+    <linearGradient id="hacBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7EFEA" />
+      <stop offset="100%" stop-color="#E8D5CE" />
+    </linearGradient>
+    <pattern id="hacLines" width="16" height="16" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="16" x2="16" y2="0" stroke="#D9B8B0" stroke-width="1" opacity="0.45" />
+    </pattern>
+  </defs>
+
+  <!-- Base -->
+  <rect x="0" y="0" width="512" height="320" rx="16" fill="url(#hacBg)" />
+  <rect x="12" y="12" width="488" height="296" rx="12" fill="url(#hacLines)" stroke="#9E2A25" stroke-width="2.5" />
+
+  <!-- Official Header Strip -->
+  <path d="M 28 12 L 230 12 L 246 36 L 28 36 Z" fill="#9E2A25" />
+  <text x="42" y="29" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#FFF9F7" letter-spacing="1.2">EXP. AGENCIA FISCAL</text>
+
+  <!-- Ominous Concentric Inspection Target -->
+  <circle cx="262" cy="166" r="102" fill="#DF9A95" opacity="0.25" />
+  <circle cx="262" cy="166" r="78" fill="none" stroke="#C83E37" stroke-width="2" stroke-dasharray="8 5" />
+
+  <!-- Certified Letter ("CARTA CERTIFICADA") -->
+  <g transform="translate(106, 84) rotate(-4)">
+    <rect x="0" y="0" width="236" height="148" rx="6" fill="#FFFDF9" stroke="#1F2421" stroke-width="3" />
+    <!-- Red/Yellow Official Stripe Band -->
+    <rect x="0" y="18" width="236" height="10" fill="#C83E37" />
+    <rect x="0" y="28" width="236" height="6" fill="#E8B838" />
+    <!-- Address Window -->
+    <rect x="20" y="54" width="124" height="52" rx="4" fill="#E6ECEF" stroke="#1F2421" stroke-width="2" />
+    <line x1="30" y1="70" x2="122" y2="70" stroke="#2B302C" stroke-width="3" stroke-linecap="round" />
+    <line x1="30" y1="84" x2="104" y2="84" stroke="#5A636A" stroke-width="2.5" stroke-linecap="round" />
+    <line x1="30" y1="96" x2="130" y2="96" stroke="#5A636A" stroke-width="2.5" stroke-linecap="round" />
+    <!-- Barcode -->
+    <g transform="translate(162, 54)" fill="#1F2421">
+      <rect x="0" y="0" width="4" height="36" />
+      <rect x="7" y="0" width="2" height="36" />
+      <rect x="12" y="0" width="6" height="36" />
+      <rect x="21" y="0" width="3" height="36" />
+      <rect x="27" y="0" width="5" height="36" />
+      <rect x="35" y="0" width="2" height="36" />
+      <rect x="40" y="0" width="6" height="36" />
+      <rect x="49" y="0" width="3" height="36" />
+    </g>
+    <text x="20" y="132" font-family="'Courier New', monospace" font-size="13" font-weight="700" fill="#9E2A25">ACUSE DE RECIBO · MOD. 303</text>
+  </g>
+
+  <!-- Sweating Euro Coin Under Magnifying Glass -->
+  <g transform="translate(302, 92)">
+    <!-- Magnifying Glass Handle -->
+    <line x1="78" y1="92" x2="136" y2="152" stroke="#1F2421" stroke-width="14" stroke-linecap="round" />
+    <line x1="78" y1="92" x2="136" y2="152" stroke="#9E2A25" stroke-width="8" stroke-linecap="round" />
+    <!-- Lens -->
+    <circle cx="52" cy="64" r="54" fill="#F2F9FC" fill-opacity="0.88" stroke="#1F2421" stroke-width="5" />
+    <circle cx="52" cy="64" r="46" fill="none" stroke="#9EB9C7" stroke-width="2" />
+    <!-- Coin Inside Lens -->
+    <circle cx="52" cy="66" r="28" fill="#F2C14E" stroke="#1F2421" stroke-width="3" />
+    <text x="52" y="76" text-anchor="middle" font-family="system-ui, sans-serif" font-size="28" font-weight="800" fill="#1F2421">€</text>
+    <!-- Sweat Drop -->
+    <path d="M 84 36 C 84 36 92 48 92 53 A 6 6 0 1 1 80 53 C 80 48 84 36 84 36 Z" fill="#5DA9E9" stroke="#1F2421" stroke-width="2" />
+    <!-- Lens Glint -->
+    <path d="M 22 38 A 36 36 0 0 1 48 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <!-- Red Bureaucratic Stamp -->
+  <g transform="translate(38, 244) rotate(-3)">
+    <rect x="0" y="0" width="238" height="44" rx="5" fill="#F7EFEA" fill-opacity="0.92" stroke="#C83E37" stroke-width="3.5" />
+    <rect x="4" y="4" width="230" height="36" rx="3" fill="none" stroke="#C83E37" stroke-width="1.2" />
+    <text x="119" y="28" text-anchor="middle" font-family="'Courier New', monospace" font-size="15" font-weight="700" fill="#C83E37" letter-spacing="1.4">REQUERIMIENTO OFICIAL</text>
+  </g>
+</svg>

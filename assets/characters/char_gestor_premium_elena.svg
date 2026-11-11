@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Elena, asesora fiscal premium">
+  <defs>
+    <linearGradient id="elenaBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D7ECE6" />
+      <stop offset="100%" stop-color="#8BBDB0" />
+    </linearGradient>
+    <clipPath id="elenaClip">
+      <rect x="20" y="20" width="472" height="472" rx="28" />
+    </clipPath>
+  </defs>
+
+  <!-- Portrait Frame -->
+  <rect x="20" y="20" width="472" height="472" rx="28" fill="url(#elenaBg)" stroke="#1F2421" stroke-width="6" />
+
+  <g clip-path="url(#elenaClip)">
+    <!-- Crisp Geometric Shield Halo -->
+    <circle cx="256" cy="236" r="170" fill="#F4FBF8" opacity="0.72" />
+    <circle cx="256" cy="236" r="148" fill="none" stroke="#1E5E54" stroke-width="2.5" />
+
+    <!-- Back Hair Silhouette (Sharp Geometric Bob) -->
+    <path d="M 156 178 C 156 96 356 96 356 178 L 366 298 C 338 312 174 312 146 298 Z" fill="#1E242B" stroke="#1F2421" stroke-width="5" stroke-linejoin="round" />
+
+    <!-- Structured Emerald Tailored Blazer & Cream Silk Turtleneck -->
+    <path d="M 90 500 L 116 364 L 256 344 L 396 364 L 422 500 Z" fill="#1E5E54" stroke="#1F2421" stroke-width="5" stroke-linejoin="round" />
+    <polygon points="218,346 294,346 256,472" fill="#FFFDF8" stroke="#1F2421" stroke-width="4" />
+    <polygon points="216,346 174,386 244,474" fill="#16473F" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+    <polygon points="296,346 338,386 268,474" fill="#16473F" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+
+    <!-- Neck & High Silk Collar -->
+    <rect x="232" y="298" width="48" height="54" rx="16" fill="#E8BCA0" stroke="#1F2421" stroke-width="4.5" />
+    <rect x="224" y="330" width="64" height="24" rx="6" fill="#FFFDF8" stroke="#1F2421" stroke-width="4" />
+
+    <!-- Gold Hoop Earrings -->
+    <circle cx="174" cy="252" r="11" fill="none" stroke="#E0A938" stroke-width="5" />
+    <circle cx="338" cy="252" r="11" fill="none" stroke="#E0A938" stroke-width="5" />
+
+    <!-- Composed Sculpted Face -->
+    <path d="M 184 162 C 184 114 328 114 328 162 L 322 254 C 318 298 284 320 256 320 C 228 320 194 298 190 254 Z" fill="#F2C8AD" stroke="#1F2421" stroke-width="5" />
+
+    <!-- Sleek Side-Swept Bob Bangs -->
+    <path d="M 176 196 C 178 136 226 116 284 120 C 318 124 334 150 334 198 C 314 162 284 150 246 154 C 212 158 190 174 176 196 Z" fill="#1E242B" stroke="#1F2421" stroke-width="4.5" />
+    <path d="M 206 132 Q 258 118 302 136" fill="none" stroke="#45505E" stroke-width="3.5" stroke-linecap="round" />
+
+    <!-- Poised Arched Eyebrows & Cat-Eye Glasses -->
+    <path d="M 200 186 Q 222 174 242 182" fill="none" stroke="#1E242B" stroke-width="5" stroke-linecap="round" />
+    <path d="M 270 182 Q 290 174 312 186" fill="none" stroke="#1E242B" stroke-width="5" stroke-linecap="round" />
+
+    <!-- Chic Gold-Rimmed Geometric Glasses -->
+    <polygon points="188,194 246,196 240,226 194,224" fill="#FFFFFF" fill-opacity="0.35" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+    <polygon points="324,194 266,196 272,226 318,224" fill="#FFFFFF" fill-opacity="0.35" stroke="#1F2421" stroke-width="4" stroke-linejoin="round" />
+    <line x1="246" y1="202" x2="266" y2="202" stroke="#E0A938" stroke-width="4" />
+
+    <!-- Calm Focused Eyes -->
+    <circle cx="218" cy="210" r="6" fill="#1F2421" />
+    <circle cx="294" cy="210" r="6" fill="#1F2421" />
+    <circle cx="220" cy="208" r="2" fill="#FFFFFF" />
+    <circle cx="296" cy="208" r="2" fill="#FFFFFF" />
+
+    <!-- Refined Nose & Confident Half-Smile -->
+    <path d="M 256 206 L 262 244 L 250 248" fill="none" stroke="#1F2421" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 228 274 Q 258 292 286 270" fill="none" stroke="#9E3B3B" stroke-width="5" stroke-linecap="round" />
+
+    <!-- Sleek Digital Tablet with Fiscal Shield Icon -->
+    <g transform="translate(308, 366) rotate(-6)">
+      <rect x="0" y="0" width="128" height="140" rx="10" fill="#2B302C" stroke="#1F2421" stroke-width="4.5" />
+      <rect x="10" y="12" width="108" height="114" rx="5" fill="#E8F6F2" />
+      <!-- Shield & Checkmark -->
+      <path d="M 64 28 L 94 40 L 94 68 C 94 90 64 106 64 106 C 64 106 34 90 34 68 L 34 40 Z" fill="#2E6F65" stroke="#1F2421" stroke-width="3" stroke-linejoin="round" />
+      <polyline points="50,66 60,76 78,54" fill="none" stroke="#FFFDF8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+  </g>
+
+  <!-- Corner Role Stamp -->
+  <rect x="34" y="34" width="176" height="30" rx="6" fill="#1E5E54" />
+  <text x="122" y="54" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="700" fill="#FFFDF8" letter-spacing="1.2">ASESORA PREMIUM</text>
+</svg>

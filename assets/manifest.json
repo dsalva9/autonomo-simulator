@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "default_render_mode": "vector_hd",
+  "assets": {
+    "ui_fallback_clientes": {
+      "path": "ui/fallback_clientes.svg",
+      "category": "ui",
+      "width": 512,
+      "height": 320,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "ui_fallback_hacienda": {
+      "path": "ui/fallback_hacienda.svg",
+      "category": "ui",
+      "width": 512,
+      "height": 320,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "ui_fallback_familia": {
+      "path": "ui/fallback_familia.svg",
+      "category": "ui",
+      "width": 512,
+      "height": 320,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "ui_fallback_empleados": {
+      "path": "ui/fallback_empleados.svg",
+      "category": "ui",
+      "width": 512,
+      "height": 320,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "ui_fallback_gestor": {
+      "path": "ui/fallback_gestor.svg",
+      "category": "ui",
+      "width": 512,
+      "height": 320,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "bg_despacho_base": {
+      "path": "backgrounds/bg_despacho_base.svg",
+      "category": "background",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "prop_facturas": {
+      "path": "ui/prop_facturas.svg",
+      "category": "ui",
+      "width": 256,
+      "height": 256,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "prop_cafe": {
+      "path": "ui/prop_cafe.svg",
+      "category": "ui",
+      "width": 256,
+      "height": 256,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "prop_numeros_rojos": {
+      "path": "ui/prop_numeros_rojos.svg",
+      "category": "ui",
+      "width": 256,
+      "height": 256,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "char_cliente_regateador": {
+      "path": "characters/char_cliente_regateador.svg",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "char_inspector_hacienda": {
+      "path": "characters/char_inspector_hacienda.svg",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "char_gestor_barato_paco": {
+      "path": "characters/char_gestor_barato_paco.svg",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "char_gestor_premium_elena": {
+      "path": "characters/char_gestor_premium_elena.svg",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "char_pareja_alex": {
+      "path": "characters/char_pareja_alex.svg",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    },
+    "char_empleado_junior_dani": {
+      "path": "characters/char_empleado_junior_dani.svg",
+      "category": "character",
+      "width": 512,
+      "height": 512,
+      "render_mode": "vector_hd",
+      "status": "placeholder"
+    }
+  },
+  "fallbacks": {
+    "clientes": "ui/fallback_clientes.svg",
+    "hacienda": "ui/fallback_hacienda.svg",
+    "familia": "ui/fallback_familia.svg",
+    "empleados": "ui/fallback_empleados.svg",
+    "gestor": "ui/fallback_gestor.svg"
+  }
+}
