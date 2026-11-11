@@ -5,8 +5,16 @@ import {
   createMemoryStorageDriver,
   createStorageAdapter,
 } from "../../src/services/storage/index.ts";
-import { setGameStoreStoragePort, useGameStore } from "../../src/store/gameStore.ts";
-import { useUIStore } from "../../src/store/uiStore.ts";
+import {
+  getVisibleGameState,
+  setGameStoreStoragePort,
+  useGameStore,
+} from "../../src/store/gameStore.ts";
+import {
+  FAST_PACING_STORAGE_KEY,
+  SFX_MUTED_STORAGE_KEY,
+  useUIStore,
+} from "../../src/store/uiStore.ts";
 
 describe("useGameStore & useUIStore Integration", () => {
   beforeEach(async () => {
@@ -18,17 +26,51 @@ describe("useGameStore & useUIStore Integration", () => {
       activeTitleTab: "hall_of_fame",
       abandonModalOpen: false,
       reducedMotionOverride: null,
+      sfxMuted: false,
+      fastPacing: false,
       toast: null,
     });
     await useGameStore.getState().hydrate();
   });
 
-  it("captures pendingOutcome on choice, advances to Month 3 Trimestre, settles tax, and unlocks primer_trimestre", async () => {
+  it("captures pendingOutcome & outcomePreviewState at Month N before transitioning to Month N+1 on acknowledgeOutcome", async () => {
     await useGameStore.getState().startRun("FASE0-STORE-FLOW");
     expect(useUIStore.getState().screenView).toBe("game");
     expect(useGameStore.getState().activeRun?.month).toBe(1);
+    expect(getVisibleGameState(useGameStore.getState())?.month).toBe(1);
 
-    // Step through until phase === 'quarterly_tax' at Month 3
+    const month1Before = structuredClone(useGameStore.getState().activeRun!);
+    const m1View = getActiveEvent(month1Before, compiledCatalog)!;
+    const m1Choice = m1View.choices.find((c) => c.eligible)!;
+
+    await useGameStore.getState().chooseOption(m1Choice.choice.id);
+
+    // During outcome review: visible state stays on Month 1 with exact choice delta
+    const midStore = useGameStore.getState();
+    expect(midStore.pendingOutcome).not.toBeNull();
+    expect(midStore.outcomePreviewState).not.toBeNull();
+    expect(getVisibleGameState(midStore)?.month).toBe(1);
+    expect(getVisibleGameState(midStore)?.indicators.money).toBe(
+      month1Before.indicators.money + midStore.pendingOutcome!.outcome.money_delta,
+    );
+    if (midStore.pendingOutcome!.outcome.money_delta !== 0) {
+      expect(midStore.lastDeltas.money).toBe(midStore.pendingOutcome!.outcome.money_delta);
+    } else {
+      expect(midStore.lastDeltas.money).toBeUndefined();
+    }
+
+    // Canonical persisted state already advanced to Month 2
+    expect(midStore.activeRun?.month).toBe(2);
+
+    // Acknowledge outcome -> transitions visible state & deltas cleanly to Month 2
+    useGameStore.getState().acknowledgeOutcome();
+    const afterAck = useGameStore.getState();
+    expect(afterAck.pendingOutcome).toBeNull();
+    expect(afterAck.outcomePreviewState).toBeNull();
+    expect(getVisibleGameState(afterAck)?.month).toBe(2);
+    expect(afterAck.lastMonthStart?.month).toBe(2);
+
+    // Continue stepping through until phase === 'quarterly_tax' at Month 3
     for (let guard = 0; guard < 8; guard += 1) {
       const run = useGameStore.getState().activeRun!;
       if (run.phase === "quarterly_tax" && useGameStore.getState().pendingOutcome === null) {
@@ -84,5 +126,58 @@ describe("useGameStore & useUIStore Integration", () => {
     useGameStore.getState().returnToTitle();
     expect(useGameStore.getState().activeRun).toBeNull();
     expect(useUIStore.getState().screenView).toBe("title");
+  });
+
+  it("manages sfxMuted & fastPacing preferences safely and auto-acknowledges non-lethal outcomes in fastPacing", async () => {
+    const mockBacking = new Map<string, string>();
+    const originalDescriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+    Object.defineProperty(globalThis, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: (k: string) => mockBacking.get(k) ?? null,
+        setItem: (k: string, v: string) => {
+          mockBacking.set(k, v);
+        },
+        removeItem: (k: string) => {
+          mockBacking.delete(k);
+        },
+      },
+    });
+
+    try {
+      expect(useUIStore.getState().sfxMuted).toBe(false);
+      expect(useUIStore.getState().fastPacing).toBe(false);
+
+      useUIStore.getState().toggleSfxMuted();
+      expect(useUIStore.getState().sfxMuted).toBe(true);
+      expect(mockBacking.get(SFX_MUTED_STORAGE_KEY)).toBe("true");
+
+      useUIStore.getState().setSfxMuted(false);
+      expect(useUIStore.getState().sfxMuted).toBe(false);
+      expect(mockBacking.get(SFX_MUTED_STORAGE_KEY)).toBe("false");
+
+      useUIStore.getState().toggleFastPacing();
+      expect(useUIStore.getState().fastPacing).toBe(true);
+      expect(mockBacking.get(FAST_PACING_STORAGE_KEY)).toBe("true");
+
+      await useGameStore.getState().startRun("FASE2-FAST-PACING");
+      const view = getActiveEvent(useGameStore.getState().activeRun!, compiledCatalog)!;
+      const eligible = view.choices.find((c) => c.eligible)!;
+
+      await useGameStore.getState().chooseOption(eligible.choice.id);
+      expect(useGameStore.getState().pendingOutcome).toBeNull();
+      expect(useGameStore.getState().outcomePreviewState).toBeNull();
+      expect(getVisibleGameState(useGameStore.getState())?.month).toBe(2);
+
+      useUIStore.getState().setFastPacing(false);
+      expect(useUIStore.getState().fastPacing).toBe(false);
+      expect(mockBacking.get(FAST_PACING_STORAGE_KEY)).toBe("false");
+    } finally {
+      if (originalDescriptor) {
+        Object.defineProperty(globalThis, "localStorage", originalDescriptor);
+      } else {
+        Reflect.deleteProperty(globalThis, "localStorage");
+      }
+    }
   });
 });

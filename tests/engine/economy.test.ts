@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { loadAndValidateContent } from "../../scripts/validate-content.ts";
 import {
   applyPlayerChoice,
   applyRecurringMonthEconomy,
   canDeferQuarterlyTax,
   computeBaselineMonthlyBilling,
   computeMonthlyRecurringExpenses,
+  computeNetCashAfterTaxReserve,
+  computeReservedTaxObligation,
   createInitialGameState,
   resolveChoiceEffects,
   settleQuarter,
@@ -136,5 +139,59 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
 
     expect(res.state.phase).toBe("game_over");
     expect(res.state.ending?.id).toBe("defeat_bankruptcy");
+  });
+
+  it("computes reserved tax obligation and net liquid cash after accrued + deferred Hacienda debt", () => {
+    const catalog = createFixtureCatalog();
+    let state = createInitialGameState(catalog, { seed: "TAX-RESERVE-HELPER" });
+
+    expect(computeReservedTaxObligation(state)).toBe(0);
+    expect(computeNetCashAfterTaxReserve(state)).toBe(state.indicators.money);
+
+    state = {
+      ...state,
+      indicators: { ...state.indicators, money: 2400 },
+      finances: {
+        ...state.finances,
+        accrued_tax_liability: 650,
+        deferred_tax: {
+          principal: 1500,
+          surcharge: 150,
+          due_month: 6,
+        },
+      },
+    };
+
+    expect(computeReservedTaxObligation(state)).toBe(650 + 1500 + 150);
+    expect(computeNetCashAfterTaxReserve(state)).toBe(2400 - 2300);
+
+    // Dipping below reserved taxes turns tax-adjusted liquidity negative even before Trimestre
+    const underwater = {
+      ...state,
+      indicators: { ...state.indicators, money: 1900 },
+    };
+    expect(computeNetCashAfterTaxReserve(underwater)).toBe(-400);
+  });
+
+  it("enforces Phase 2 balance.yaml starting cash window and negative after-tax passive baseline", () => {
+    const validated = loadAndValidateContent(process.cwd());
+    expect(validated.ok).toBe(true);
+    expect(validated.balance).not.toBeNull();
+
+    const liveCatalog = {
+      balance: validated.balance!,
+      characters: validated.characters,
+      events: validated.events,
+      manifest: validated.manifest ?? undefined,
+    };
+
+    const started = startNewRun(liveCatalog, { seed: "BALANCE-WINDOW-CHECK" });
+    expect(started.state.indicators.money).toBeGreaterThanOrEqual(2900);
+    expect(started.state.indicators.money).toBeLessThanOrEqual(3500);
+
+    // Passive Month 1 cashflow after quarterly tax reserve must be negative without client gigs
+    const m1Summary = started.resolution.monthStart!;
+    const passiveAfterTax = m1Summary.net_recurring_cash - m1Summary.tax_accrued_on_billing;
+    expect(passiveAfterTax).toBeLessThan(0);
   });
 });

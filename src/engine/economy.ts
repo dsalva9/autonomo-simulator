@@ -65,6 +65,17 @@ export function computeMonthlyRecurringExpenses(state: GameState, catalog: Conte
   return Math.max(0, Math.round(total));
 }
 
+export function computeReservedTaxObligation(state: GameState): number {
+  const deferredTotal = state.finances.deferred_tax
+    ? state.finances.deferred_tax.principal + state.finances.deferred_tax.surcharge
+    : 0;
+  return Math.max(0, Math.round(state.finances.accrued_tax_liability + deferredTotal));
+}
+
+export function computeNetCashAfterTaxReserve(state: GameState): number {
+  return Math.round(state.indicators.money - computeReservedTaxObligation(state));
+}
+
 export interface RecurringMonthResult {
   state: GameState;
   grossBilling: number;

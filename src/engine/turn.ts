@@ -146,19 +146,22 @@ export function applyPlayerChoice(
       state: stateWithRemaining,
       resolution: {
         choiceOutcome: applied.summary,
+        postChoiceState: stateWithRemaining,
         endedRun: stateWithRemaining.ending,
       },
     };
   }
 
   if (remainingEvents.length > 0) {
+    const postChoiceState: GameState = {
+      ...stateWithRemaining,
+      phase: "event_resolution",
+    };
     return {
-      state: {
-        ...stateWithRemaining,
-        phase: "event_resolution",
-      },
+      state: postChoiceState,
       resolution: {
         choiceOutcome: applied.summary,
+        postChoiceState,
       },
     };
   }
@@ -168,6 +171,7 @@ export function applyPlayerChoice(
     state: nextStep.state,
     resolution: {
       choiceOutcome: applied.summary,
+      postChoiceState: stateWithRemaining,
       ...nextStep.resolution,
     },
   };

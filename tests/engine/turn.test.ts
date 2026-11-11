@@ -173,4 +173,53 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
       expect(reloaded).toEqual(continuous);
     }
   });
+
+  it("captures postChoiceState at Month N before advancing to Month N+1 recurring economy", () => {
+    const catalog: ContentCatalog = {
+      balance: createFixtureBalance(),
+      characters: createFixtureCharacters(),
+      events: [
+        {
+          schema_version: 1,
+          id: "familia_gasto_directo",
+          category: "familia",
+          title: "Gasto imprevisto",
+          body: "Toca pagar reparación doméstica.",
+          weight: 10,
+          cooldown_months: 0,
+          choices: [
+            {
+              id: "pagar_reparacion",
+              label: "Pagar 400 €",
+              result_text: "Pagas al contado.",
+              effects: { cash_delta: -400, stress: -3 },
+            },
+            {
+              id: "ignorar",
+              label: "Ignorar",
+              result_text: "Lo dejas pasar.",
+              effects: { stress: 5 },
+            },
+          ],
+        },
+      ],
+    };
+
+    const started = startNewRun(catalog, { seed: "POST-CHOICE-SNAPSHOT" });
+    const month1MoneyBeforeChoice = started.state.indicators.money;
+    expect(started.state.month).toBe(1);
+
+    const step = applyPlayerChoice(started.state, catalog, "pagar_reparacion");
+
+    // Headless next state already advanced to Month 2 with Month 2 recurring economy
+    expect(step.state.month).toBe(2);
+    expect(step.resolution.monthStart?.month).toBe(2);
+
+    // postChoiceState preserves exact Month 1 state & -400 € cash delta before Month 2 billing
+    expect(step.resolution.postChoiceState).toBeDefined();
+    expect(step.resolution.postChoiceState!.month).toBe(1);
+    expect(step.resolution.postChoiceState!.current_turn_events).toEqual([]);
+    expect(step.resolution.postChoiceState!.indicators.money).toBe(month1MoneyBeforeChoice - 400);
+    expect(step.resolution.choiceOutcome?.money_delta).toBe(-400);
+  });
 });

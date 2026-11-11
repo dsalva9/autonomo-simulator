@@ -1,24 +1,24 @@
 schema_version: 1
 
 initial_indicators:
-  money: 3500
+  money: 2600
   moral: 75
   stress: 20
   personal_life: 65
   reputation: 35
   fiscal_risk: 0
 
-base_monthly_billing: 2250
-base_living_cost: 1250
+base_monthly_billing: 2240
+base_living_cost: 1290
 autonomo_quota: 310
 child_monthly_cost: 280
 
-reputation_multiplier_min: 0.75
-reputation_multiplier_max: 1.45
+reputation_multiplier_min: 0.74
+reputation_multiplier_max: 1.35
 moral_multiplier_min: 0.70
 moral_multiplier_max: 1.15
 
-personal_life_recovery_threshold: 60
+personal_life_recovery_threshold: 55
 personal_life_monthly_stress_relief: 2
 
 effective_quarterly_tax_rate: 0.28

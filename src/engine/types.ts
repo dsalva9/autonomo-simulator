@@ -254,6 +254,7 @@ export interface QuarterlySettlementSummary {
 export interface TurnResolution {
   monthStart?: MonthStartSummary;
   choiceOutcome?: ChoiceOutcomeSummary;
+  postChoiceState?: GameState;
   quarterlyReport?: QuarterlyReport;
   quarterlySettlement?: QuarterlySettlementSummary;
   unlockedVictories?: VictoryBadge[];

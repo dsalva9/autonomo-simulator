@@ -265,7 +265,7 @@ export interface GameState {
 
 ### 3.2 Initial Run State (Month 1 Defaults — Parameterized in `content/config/balance.yaml`)
 - Starts at `month: 1`, `family.status: "single"`, `family.children_count: 0`, `employee: null`, `gestor.tier: "self"`.
-- Initial indicators (calibratable in `balance.yaml`): `money: 3500`, `moral: 75`, `stress: 20`, `personal_life: 65`, `reputation: 35`, `fiscal_risk: 0`.
+- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)): `money: 2600` (`~3,216 €` after Month 1 recurring step, `~2,596 €` net after accrued tax reserve), `moral: 75`, `stress: 20`, `personal_life: 65`, `reputation: 35`, `fiscal_risk: 0`.
 
 ---
 
@@ -315,6 +315,7 @@ stateDiagram-v2
      - Validate choice is eligible in current state.
      - If `choice.outcomes` is present, roll one `Outcome` by `weight` using `prng`; otherwise apply `choice.effects` directly.
      - Apply all deltas, clamp stats to `[0, 100]`, enqueue `schedule_events`, and record a `HistoryEntry`.
+     - Snapshot `TurnResolution.postChoiceState` at `month = N` immediately after `resolveChoiceEffects` (before `transitionAfterTurnEvents` / `advanceToNextMonth`) so the UI can display exact Month `N` outcome deltas prior to applying Month `N+1` recurring cashflow (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)). Pure helpers `computeReservedTaxObligation(state)` and `computeNetCashAfterTaxReserve(state)` expose accrued + deferred Hacienda obligations alongside raw `indicators.money`.
 
 3. **`QuarterlyTax` (*"El Trimestre"* — Months 3, 6, 9, 12, ...)**:
    - **Gestor & Hacienda Check**:
@@ -462,8 +463,8 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
 ## 6. State Management, Persistence & Share Pipeline
 
 ### 6.1 Zustand Store Split (`src/store/`)
-- **`useGameStore`**: Holds `activeRun: GameState | null` and `profile: PlayerProfile`. Exposes pure action dispatchers (`startNewRun(seed?)`, `chooseOption(choiceId)`, `settleQuarter(mode)`, `continueEndless()`, `retireRun()`). Every mutating action delegates synchronously to `src/engine/`, updates state, and triggers asynchronous persistence through `StoragePort`.
-- **`useUIStore`**: Holds strictly transient presentation state (`activeMobileTab`, `isLedgerOpen`, `textSpeed`, `reducedMotionOverride`, `shareModalOpen`). Never persisted inside `GameState`.
+- **`useGameStore`**: Holds canonical persisted `activeRun: GameState | null`, two-step outcome snapshot `outcomePreviewState: GameState | null` (`getVisibleGameState(store)`), `queuedPostOutcomeDeltas`, `queuedMonthStart`, and `profile: ProfileEnvelope`. Exposes pure action dispatchers (`startRun(seed?)`, `chooseOption(choiceId)`, `acknowledgeOutcome()`, `settleQuarterlyTax(mode)`, `decideVictory(decision)`, `closeAnnualSummary()`, `abandonActiveRun()`). Every mutating action delegates synchronously to `src/engine/`, stages Month `N` choice deltas before Month `N+1` recurring cashflow (unless `fastPacing` auto-acknowledges non-lethal outcomes), and triggers asynchronous persistence through `StoragePort` (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)).
+- **`useUIStore`**: Holds presentation state and lightweight client preferences (`screenView`, `activeMobileTab`, `activeTitleTab`, `abandonModalOpen`, `reducedMotionOverride`, `sfxMuted` persisted to `"autonomo:sfx_muted"`, `fastPacing` persisted to `"autonomo:fast_pacing"`, and `toast`). Never persisted inside `GameState`.
 
 ### 6.2 Roguelite Persistence & Save Migrations (`src/services/storage/`)
 Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:

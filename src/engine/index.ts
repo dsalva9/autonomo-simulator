@@ -5,6 +5,8 @@ export {
   clampStat,
   computeBaselineMonthlyBilling,
   computeMonthlyRecurringExpenses,
+  computeNetCashAfterTaxReserve,
+  computeReservedTaxObligation,
   enqueueScheduledEvent,
   prepareQuarterlyTax,
   resolveEndingQuote,

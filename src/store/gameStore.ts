@@ -60,6 +60,9 @@ export interface GameStoreState {
   hydrated: boolean;
   hydrating: boolean;
   activeRun: GameState | null;
+  outcomePreviewState: GameState | null;
+  queuedPostOutcomeDeltas: IndicatorDeltas | null;
+  queuedMonthStart: MonthStartSummary | null;
   profile: ProfileEnvelope;
   corruptedSaveNotice: string | null;
   pendingOutcome: PendingOutcomeView | null;
@@ -81,10 +84,19 @@ export interface GameStoreState {
   setReducedMotionPreference: (value: boolean | null) => Promise<void>;
 }
 
+export function getVisibleGameState(
+  store: Pick<GameStoreState, "activeRun" | "outcomePreviewState">,
+): GameState | null {
+  return store.outcomePreviewState ?? store.activeRun;
+}
+
 export const useGameStore = create<GameStoreState>((set, get) => ({
   hydrated: false,
   hydrating: false,
   activeRun: null,
+  outcomePreviewState: null,
+  queuedPostOutcomeDeltas: null,
+  queuedMonthStart: null,
   profile: createDefaultProfileEnvelope(),
   corruptedSaveNotice: null,
   pendingOutcome: null,
@@ -112,6 +124,9 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
       hydrating: false,
       profile,
       activeRun: loadedRun.envelope?.state ?? null,
+      outcomePreviewState: null,
+      queuedPostOutcomeDeltas: null,
+      queuedMonthStart: null,
       corruptedSaveNotice: loadedRun.corruptedRecovery?.reason ?? null,
       pendingOutcome: null,
       lastMonthStart: null,
@@ -127,6 +142,9 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
 
     set({
       activeRun: state,
+      outcomePreviewState: null,
+      queuedPostOutcomeDeltas: null,
+      queuedMonthStart: null,
       pendingOutcome: null,
       lastMonthStart: resolution.monthStart ?? null,
       lastDeltas: {},
@@ -169,23 +187,53 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     const locale = get().profile.settings.locale;
     const prevIndicators = current.indicators;
     const { state: nextState, resolution } = applyPlayerChoice(current, compiledCatalog, choiceId);
-    const deltas = diffIndicators(prevIndicators, nextState.indicators);
+    const rawPostChoice = resolution.postChoiceState ?? nextState;
+    const previewState: GameState =
+      nextState.month === rawPostChoice.month
+        ? {
+            ...rawPostChoice,
+            phase: nextState.phase,
+            ending: nextState.ending ?? rawPostChoice.ending,
+          }
+        : rawPostChoice;
 
-    const pendingOutcome: PendingOutcomeView | null = resolution.choiceOutcome
-      ? {
-          event: activeView.event,
-          choiceId,
-          choiceLabel: resolveChoiceLabel(activeView.event.id, matchedChoice.choice, locale),
-          outcome: resolution.choiceOutcome,
-        }
-      : null;
+    const choiceDeltas = diffIndicators(prevIndicators, rawPostChoice.indicators);
+    const postOutcomeDeltas = diffIndicators(rawPostChoice.indicators, nextState.indicators);
 
-    set((curr) => ({
-      activeRun: nextState,
-      pendingOutcome,
-      lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
-      lastDeltas: deltas,
-    }));
+    const autoAcknowledge = useUIStore.getState().fastPacing && nextState.ending === null;
+
+    const pendingOutcome: PendingOutcomeView | null =
+      !autoAcknowledge && resolution.choiceOutcome
+        ? {
+            event: activeView.event,
+            choiceId,
+            choiceLabel: resolveChoiceLabel(activeView.event.id, matchedChoice.choice, locale),
+            outcome: resolution.choiceOutcome,
+          }
+        : null;
+
+    if (pendingOutcome) {
+      set((curr) => ({
+        activeRun: nextState,
+        pendingOutcome,
+        outcomePreviewState: previewState,
+        queuedPostOutcomeDeltas: postOutcomeDeltas,
+        queuedMonthStart: resolution.monthStart ?? null,
+        lastMonthStart: curr.lastMonthStart,
+        lastDeltas: choiceDeltas,
+      }));
+    } else {
+      const totalDeltas = diffIndicators(prevIndicators, nextState.indicators);
+      set((curr) => ({
+        activeRun: nextState,
+        pendingOutcome: null,
+        outcomePreviewState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastDeltas: totalDeltas,
+      }));
+    }
 
     const synced = await activeStoragePort.syncRunProgress(nextState);
     set((curr) => ({
@@ -198,7 +246,30 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
   },
 
   acknowledgeOutcome: () => {
-    set({ pendingOutcome: null });
+    set((curr) => {
+      const monthAdvanced =
+        curr.activeRun !== null &&
+        curr.outcomePreviewState !== null &&
+        curr.activeRun.month !== curr.outcomePreviewState.month;
+      const hasSameMonthPostDeltas =
+        curr.queuedPostOutcomeDeltas !== null &&
+        Object.keys(curr.queuedPostOutcomeDeltas).length > 0;
+
+      return {
+        pendingOutcome: null,
+        outcomePreviewState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        lastDeltas: monthAdvanced
+          ? (curr.queuedPostOutcomeDeltas ?? {})
+          : hasSameMonthPostDeltas
+            ? (curr.queuedPostOutcomeDeltas ?? curr.lastDeltas)
+            : curr.lastDeltas,
+        lastMonthStart: monthAdvanced
+          ? (curr.queuedMonthStart ?? curr.lastMonthStart)
+          : curr.lastMonthStart,
+      };
+    });
   },
 
   settleQuarterlyTax: async (mode: QuarterlySettlementMode) => {
@@ -213,6 +284,9 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
 
     set((curr) => ({
       activeRun: nextState,
+      outcomePreviewState: null,
+      queuedPostOutcomeDeltas: null,
+      queuedMonthStart: null,
       pendingOutcome: null,
       lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
       lastDeltas: deltas,
@@ -244,6 +318,9 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
 
     set((curr) => ({
       activeRun: nextState,
+      outcomePreviewState: null,
+      queuedPostOutcomeDeltas: null,
+      queuedMonthStart: null,
       pendingOutcome: null,
       lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
       lastDeltas: deltas,
@@ -271,6 +348,9 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
 
     set((curr) => ({
       activeRun: nextState,
+      outcomePreviewState: null,
+      queuedPostOutcomeDeltas: null,
+      queuedMonthStart: null,
       pendingOutcome: null,
       lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
       lastDeltas: deltas,
@@ -318,6 +398,9 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
 
     set({
       activeRun: endedState,
+      outcomePreviewState: null,
+      queuedPostOutcomeDeltas: null,
+      queuedMonthStart: null,
       pendingOutcome: null,
       lastDeltas: {},
     });
@@ -340,11 +423,17 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     if (current && current.ending !== null) {
       set({
         activeRun: null,
+        outcomePreviewState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
         pendingOutcome: null,
         lastDeltas: {},
       });
     } else {
       set({
+        outcomePreviewState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
         pendingOutcome: null,
       });
     }
