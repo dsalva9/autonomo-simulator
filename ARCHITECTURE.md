@@ -489,16 +489,16 @@ Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:
 
 ## 7. UI/UX, Style-Agnostic Scene Renderer & Accessibility
 
-### 7.1 Responsive Layout Architecture (Mobile-First, True Desktop)
-- **Mobile (`< 1024px`)**:
-  - Sticky compact top HUD: Month/Year (`Año 3 · Mes 2 · Trimestre en 1 mes`), `Money` (flashes red in *Números rojos*), and compact meters for `Moral`, `Stress`, `Personal Life`, and `Reputation`.
-  - Main viewport: Compact animated Office Header Strip + prominent **Event Card** with thumb-friendly (`min-height: 48px`) choice buttons.
+### 7.1 Responsive Layout Architecture (Mobile-First, Single-Screen Desktop)
+- **Mobile (`< 1024px` — `360×780` & `390×844`)**:
+  - Sticky compact top HUD (`<= 140px`): Month/Year (`Año 3 · Mes 2 · Trimestre en 1 mes`), `Money` + tax-adjusted `Libre` strip, and 4 aligned micro-gauges (`Moral`, `Stress`, `Personal Life`, `Reputation`).
+  - Main viewport: Compact Office Header Strip + prominent **Event Card** with thumb-friendly (`min-height: 48px`, `>= 6px` gap) choice buttons and bottom padding clearing the fixed bottom bar. Automatic `window.scrollTo({ top: 0 })` runs on turn-state transitions (`event -> outcome -> next event`) whenever `scrollY > 0` so players never have to manually scroll back up to read outcomes.
   - Bottom Navigation Bar: `Despacho` (Play), `Cuentas` (Trimestre accrual, fixed costs, invoices), `Entorno` (Gestor, Family, Employee), `Historial` (Log & Achievements).
-- **Desktop (`>= 1024px`)**:
-  - Dedicated 3-column workspace (never a stretched phone column):
-    - **Left Panel**: Live **Office Scene** (reactive desk props, character portrait, employee desk, family photo frame) + Entity status cards.
-    - **Center Stage**: Event narrative card, choice buttons with keyboard shortcuts (`1`–`4`), and immediate outcome feedback.
-    - **Right Panel**: Financial Ledger (*"Cuaderno de Cuentas"*), quarterly tax reserve tracker, active temporal modifiers, and scrollable timeline.
+- **Desktop (`>= 1024px` — `1366×768` laptop & `1440×900`+ desktop)**:
+  - Dedicated 3-column workspace engineered to fit **100% within a single screen (`scrollY === 0`, `scrollHeight <= innerHeight + 2`)** so players never yo-yo scroll down for choices and back up for outcomes:
+    - **Left Panel**: Live **Office Scene** (viewport-proportioned height, reactive desk props, character portrait) + compact `Entorno` status cards.
+    - **Center Stage**: 1-line horizontal monthly cashflow ticker, height-capped (`98px–148px`) comic banner with non-overlapping NPC Polaroid, event narrative card, all choice buttons (`1`–`4`), and immediate above-the-fold outcome panel.
+    - **Right Panel**: Compact Financial Ledger (*"Cuaderno de Cuentas"*), quarterly tax reserve tracker, active temporal modifiers, and internally scrollable `Diario de Expediente` + `Sellos de carrera` panels.
 
 ### 7.2 Asset Manifest, Multi-Expression Portraits & Style-Agnostic Scene Renderer
 Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/001-art-direction-webp-and-expressions.md), `assets/manifest.json` registers all `.webp` comic panels/portraits and standalone `.svg` props/fallbacks under logical `snake_case` IDs:
@@ -540,8 +540,9 @@ Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/00
 - `SceneRenderer` applies CSS scaling rules per asset's `render_mode` (`image-rendering: pixelated` for `"pixel_art"` sprites vs smooth high-DPI scaling for `"vector_hd"` WebP/SVG).
 - Upgrading an asset from `"placeholder"` to `"ready"` requires zero changes to `src/` or `content/`.
 
-### 7.3 Accessibility & Performance Budgets
-- Full keyboard playability (`1`–`9` choices, `Enter`/`Space` confirm, `Esc` close non-mandatory drawers), visible `:focus-visible` rings, no hover-only disclosures.
+### 7.3 Accessibility, UX Ergonomics & Performance Budgets
+- Full keyboard playability (`1`–`9` choices, `Enter`/`Space` confirm, `Esc` close non-mandatory drawers), visible `:focus-visible` rings, no hover-only disclosures, and zero scroll drift across keyboard turns.
+- **Viewport & Hit-Target Ergonomics**: Primary CTAs on `TitleScreen` (including active-run resume), `QuarterlyTaxModal`, `AbandonRunModal`, and `EndRunScreen` (illustration + `<canvas>` certificate + Share/Replay actions) sit 100% above the fold on `1366×768` and `1440×900`. Interactive buttons/tabs maintain unoccluded pointer centers (`document.elementFromPoint`), `AchievementToast` anchors away from primary turn controls (`top-[7.5rem]` on mobile, `bottom-4 right-4` on desktop), and narrative/choice copy never truncates silently (`scrollHeight <= clientHeight`, no `ellipsis`) while maintaining legibility floors (`>= 17px` event title, `>= 13.5px` body/choices, `>= 12px` HUD money).
 - Semantic landmarks, `aria-live="polite"` announcements for outcome text and stat changes, WCAG AA contrast (`>= 4.5:1`), colorblind-safe `+`/`-` directional icons alongside green/red stat badges.
 - Respects `prefers-reduced-motion` (disables shake/confetti/desk transitions).
 - Initial JS + compiled content bundle target: `< 250 KB` gzipped for instant mobile load over 4G.
@@ -561,9 +562,9 @@ Every completed task or milestone runs a full verification + QA + delivery seque
    - `pnpm lint` — `biome check .`.
    - `pnpm test` — `vitest run` (engine unit tests + content tests + fast seeded simulation smoke suite).
    - `pnpm build` — Production Vite bundle (`dist/`) verifying zero bundling or asset-resolution errors.
-2. **Structured Manual Test Plan & Playwright Execution (Local -> Live Vercel Production)**:
-   - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, mobile `390×844` touch layout, and desktop `1440×900` multi-panel layout).
-   - Agents **execute** both automated E2E regressions (`tests/ui/*.spec.ts`) and interactive/manual walkthrough scenarios via **Playwright** against the real production build—verifying DOM layout, visual screenshots, IndexedDB save/reload persistence, HTTP asset responses, and **zero** browser `console.error` / `pageerror` events.
+2. **Structured Manual Test Plan, Usability Audit & Playwright Execution (Local -> Live Vercel Production)**:
+   - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, narrow mobile `360×780`, mobile `390×844`, compact laptop `1366×768`, and desktop `1440×900` multi-panel layout).
+   - Agents **execute** automated E2E regressions (`tests/ui/phase*.spec.ts`), the dedicated **Usability & UX Audit Suite (`tests/ui/ux-usability.spec.ts`)** (verifying zero desktop yo-yo scroll without `scrollIntoViewIfNeeded()`, above-the-fold CTAs, mobile scroll-reset + bottom-nav clearance, `document.elementFromPoint` hit-target non-occlusion including live toasts, zero silent text truncation, legibility floors, and keyboard ergonomics), and interactive walkthrough scenarios via **Playwright** against the real production build—verifying DOM layout, visual screenshots, IndexedDB save/reload persistence, HTTP asset responses, and **zero** browser `console.error` / `pageerror` events.
    - **Local vs Live Vercel Production Parity (`playwright.config.ts` & `playwright.prod.config.ts`)**:
      - **Local Pre-Push Gate (`pnpm test:e2e`)**: Playwright boots `pnpm preview` (`http://localhost:4173` serving `dist/`) and runs all checks locally before commit/push.
      - **Live Production Post-Deploy Gate (`pnpm test:e2e:prod`)**: Runs the exact same mobile + desktop E2E and QA verification suite against the live Vercel production deployment at `https://autonomo-simulator.vercel.app/` (cross-platform via `playwright.prod.config.ts` with `webServer: undefined`; custom preview URLs can override via `PLAYWRIGHT_BASE_URL`).

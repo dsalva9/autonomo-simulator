@@ -68,11 +68,11 @@ function GaugeItem({
   return (
     <div
       data-testid={testId}
-      className={`rounded-lg border px-2 py-1 lg:px-3 lg:py-1.5 flex flex-col justify-between bg-[#fffdf8] ${
+      className={`rounded-lg border px-2 py-1 lg:px-2.5 lg:py-1 flex flex-col justify-between bg-[#fffdf8] ${
         isDanger ? "border-[#b42b24] bg-[#fdf0ef]" : "border-[#1f2421]/55"
       }`}
     >
-      <div className="flex items-center justify-between gap-0.5 min-h-[16px] leading-none">
+      <div className="flex items-center justify-between gap-0.5 min-h-[15px] leading-none">
         <span className="font-semibold text-[11px] lg:text-xs text-[#1f2421] truncate">
           <span className="hidden sm:inline">{label}</span>
           <span className="sm:hidden">{shortLabel}</span>
@@ -103,7 +103,7 @@ function GaugeItem({
       </meter>
       <div
         aria-hidden="true"
-        className="mt-1 h-1.5 w-full rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/25"
+        className="mt-1 lg:mt-0.5 h-1.5 w-full rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/25"
       >
         <div
           className={`h-full transition-all duration-200 ${barColor}`}
@@ -159,7 +159,7 @@ export function IndicatorBar({
 
   return (
     <header className="sticky top-0 z-30 border-b-2 border-[#1f2421] bg-[#f6efe0]/96 backdrop-blur-xs shadow-xs">
-      <div className="max-w-[1400px] mx-auto px-2.5 sm:px-5 py-1.5 lg:py-2 space-y-1.5">
+      <div className="max-w-[1400px] mx-auto px-2.5 sm:px-5 py-1.5 space-y-1.5 lg:space-y-1">
         {/* Screen-reader live region for turn deltas */}
         <output className="sr-only" aria-live="polite">
           {liveAnnouncementParts.length > 0
@@ -184,7 +184,7 @@ export function IndicatorBar({
               {state.endless_mode ? `M${state.month}·∞` : `M${state.month}/120`}
             </span>
             <span
-              className={`hidden min-[385px]:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap tabular-nums ${
+              className={`hidden min-[430px]:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap tabular-nums ${
                 calendar.monthsUntilTrimestre === 0
                   ? "bg-[#fdf0ef] text-[#b42b24] border border-[#b42b24]/40"
                   : "bg-[#fcf4df] text-[#8f510d]"

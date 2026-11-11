@@ -61,16 +61,16 @@ export function QuarterlyTaxModal({ state, onSettle }: QuarterlyTaxModalProps) {
     >
       <div className="paper-dossier animate-dossier w-full max-w-xl max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2.5rem)] flex flex-col rounded-xl overflow-hidden">
         {/* Official Red Header */}
-        <div className="bg-[#b42b24] text-[#fffdf8] px-4 sm:px-5 py-3.5 border-b-2 border-[#1f2421] flex items-center justify-between gap-3 shrink-0">
+        <div className="bg-[#b42b24] text-[#fffdf8] px-4 sm:px-5 py-2.5 border-b-2 border-[#1f2421] flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
-            <Landmark className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" aria-hidden="true" />
+            <Landmark className="w-5 h-5 shrink-0" aria-hidden="true" />
             <div className="min-w-0">
               <p className="stamp-badge text-[10px] sm:text-xs text-[#fce592] truncate">
                 MODELO 303 / 130 · AUTOLIQUIDACIÓN
               </p>
               <h2
                 id="trimestre-modal-title"
-                className="font-editorial text-lg sm:text-xl font-bold"
+                className="font-editorial text-base sm:text-lg font-bold"
               >
                 El Trimestre · Mes {state.month} (T{report?.quarter ?? 1})
               </h2>
@@ -81,7 +81,7 @@ export function QuarterlyTaxModal({ state, onSettle }: QuarterlyTaxModalProps) {
           </span>
         </div>
 
-        <div className="p-4 sm:p-5 space-y-3.5 text-sm overflow-y-auto dossier-scroll">
+        <div className="p-3.5 sm:p-4 space-y-2.5 text-sm overflow-y-auto dossier-scroll">
           <p className="text-xs sm:text-sm text-[#373f3a] leading-relaxed">
             Llega el día 20 y toca ajustar cuentas con la Agencia Tributaria por lo facturado en los
             últimos tres meses.

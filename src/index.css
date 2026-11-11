@@ -25,6 +25,11 @@
   --font-mono: "Courier New", Consolas, "Liberation Mono", monospace;
 }
 
+html {
+  scroll-padding-top: 9rem;
+  scroll-padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+}
+
 html,
 body {
   background-color: var(--bg-desk);
@@ -50,79 +55,141 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Tier 1: Outer Structural Dossiers */
-.paper-dossier {
-  background-color: var(--bg-paper);
-  border: 2px solid var(--border-ink);
-  box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.88);
+@layer components {
+  /* Tier 1: Outer Structural Dossiers */
+  .paper-dossier {
+    background-color: var(--bg-paper);
+    border: 2px solid var(--border-ink);
+    box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.88);
+  }
+
+  .paper-dossier-warm {
+    background-color: var(--bg-paper-warm);
+    border: 2px solid var(--border-ink);
+    box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.82);
+  }
+
+  /* Standardized Header Cadence Across Left / Center / Right Columns */
+  .dossier-header {
+    min-height: 36px;
+    padding: 0.4rem 0.875rem;
+    border-bottom: 2px solid rgba(31, 36, 33, 0.18);
+    background-color: rgba(246, 239, 224, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  /* Tier 2: Subtle Internal Dividers & Tidy Scrollbars */
+  .dossier-divider {
+    border-color: var(--divider-ink);
+  }
+
+  .dossier-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(31, 36, 33, 0.28) transparent;
+  }
+
+  .polaroid-card {
+    position: relative;
+    background-color: var(--bg-paper);
+    border: 2px solid var(--border-ink);
+    box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.88);
+    transform: rotate(-1.2deg);
+    transition: transform 160ms ease-out;
+  }
+
+  .polaroid-pin {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 9999px;
+    background: radial-gradient(circle at 35% 35%, #e05a52 0%, var(--stamp-red) 65%, #7c1b16 100%);
+    border: 2px solid var(--border-ink);
+    box-shadow: 1px 1px 0px 0px rgba(31, 36, 33, 0.85);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .polaroid-pin-sm {
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    border-width: 1.5px;
+  }
+
+  .stamp-badge {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
 }
 
-.paper-dossier-warm {
-  background-color: var(--bg-paper-warm);
-  border: 2px solid var(--border-ink);
-  box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.82);
+/* Viewport-Aware Desktop Proportions: prevent vertical overflow on 768p–900p laptops */
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 6rem;
+    scroll-padding-bottom: 1.5rem;
+  }
+
+  .scene-stage-frame {
+    height: 152px;
+  }
+
+  .event-banner-img {
+    height: 140px;
+  }
+
+  .event-banner-img[data-banner-kind="milestone"] {
+    height: 152px;
+  }
 }
 
-/* Standardized Header Cadence Across Left / Center / Right Columns */
-.dossier-header {
-  min-height: 42px;
-  padding: 0.625rem 1rem;
-  border-bottom: 2px solid rgba(31, 36, 33, 0.18);
-  background-color: rgba(246, 239, 224, 0.72);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
+@media (min-width: 1024px) and (max-height: 830px) {
+  .dossier-header {
+    min-height: 34px;
+    padding: 0.3rem 0.75rem;
+  }
 
-/* Tier 2: Subtle Internal Dividers & Tidy Scrollbars */
-.dossier-divider {
-  border-color: var(--divider-ink);
-}
+  .scene-stage-frame {
+    height: 112px;
+  }
 
-.dossier-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(31, 36, 33, 0.28) transparent;
-}
+  .event-banner-img {
+    height: 112px;
+  }
 
-.polaroid-card {
-  position: relative;
-  background-color: var(--bg-paper);
-  border: 2px solid var(--border-ink);
-  box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.88);
-  transform: rotate(-1.2deg);
-  transition: transform 160ms ease-out;
-}
+  .event-banner-img[data-banner-kind="milestone"] {
+    height: 120px;
+  }
 
-.polaroid-pin {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  margin-left: -6px;
-  border-radius: 9999px;
-  background: radial-gradient(circle at 35% 35%, #e05a52 0%, var(--stamp-red) 65%, #7c1b16 100%);
-  border: 2px solid var(--border-ink);
-  box-shadow: 1px 1px 0px 0px rgba(31, 36, 33, 0.85);
-  pointer-events: none;
-  z-index: 2;
-}
+  .event-polaroid-desktop {
+    width: 4.8rem;
+  }
 
-.polaroid-pin-sm {
-  top: -4px;
-  width: 8px;
-  height: 8px;
-  margin-left: -4px;
-  border-width: 1.5px;
-}
+  .event-card-body {
+    padding: 0.65rem 0.875rem;
+  }
 
-.stamp-badge {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-weight: 700;
+  .cuentas-body,
+  .historial-body {
+    padding: 0.55rem 0.75rem;
+  }
+
+  .historial-seals-grid {
+    max-height: 2.5rem;
+  }
+
+  .historial-timeline {
+    max-height: 4.25rem;
+  }
 }
 
 .render-pixel-art {

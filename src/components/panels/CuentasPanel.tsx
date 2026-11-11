@@ -46,9 +46,9 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
         </span>
       </div>
 
-      <div className="p-3.5 space-y-3 text-xs">
+      <div className="cuentas-body p-3 space-y-2 text-xs">
         {/* Monthly Baseline Cashflow Table */}
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <div className="flex items-center justify-between gap-2 font-bold text-[#1f2421]">
             <span className="inline-flex items-center gap-1 min-w-0">
               <TrendingUp className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
@@ -59,7 +59,7 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
             </span>
           </div>
 
-          <div className="border-t border-[#1f2421]/14 pt-1.5 space-y-1 text-[#373f3a]">
+          <div className="border-t border-[#1f2421]/14 pt-1 space-y-0.5 text-[#373f3a]">
             <div className="flex items-center justify-between gap-2">
               <span className="truncate">Coste de vida básico</span>
               <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">

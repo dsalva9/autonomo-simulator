@@ -58,9 +58,9 @@ export function HistorialPanel({ state, unlockedAchievements }: HistorialPanelPr
         </span>
       </div>
 
-      <div className="p-3.5 space-y-3">
+      <div className="historial-body p-3 space-y-2">
         {/* Tidy Career Seals Progress + Compact 2-Column Scrollable Grid */}
-        <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] p-2.5 space-y-2">
+        <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] p-2 space-y-1.5">
           <div className="flex items-center justify-between text-xs font-bold text-[#1f2421]">
             <span className="inline-flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
@@ -81,7 +81,7 @@ export function HistorialPanel({ state, unlockedAchievements }: HistorialPanelPr
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-1 max-h-20 overflow-y-auto dossier-scroll pr-0.5">
+          <div className="historial-seals-grid grid grid-cols-2 gap-1 max-h-14 overflow-y-auto dossier-scroll pr-0.5">
             {ACHIEVEMENT_CATALOG.map((ach) => {
               const isUnlocked = Boolean(unlockedAchievements[ach.id]);
               return (
@@ -103,9 +103,9 @@ export function HistorialPanel({ state, unlockedAchievements }: HistorialPanelPr
         </div>
 
         {/* Reverse-Chronological Timeline */}
-        <ul className="divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] max-h-52 overflow-y-auto dossier-scroll text-xs">
+        <ul className="historial-timeline divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] max-h-24 xl:max-h-36 overflow-y-auto dossier-scroll text-xs">
           {recentEntries.map((entry) => (
-            <li key={entry.id} className="px-3 py-2 space-y-0.5">
+            <li key={entry.id} className="px-2.5 py-1.5 space-y-0.5">
               <div className="flex items-center justify-between gap-2 font-bureau text-[11px] tabular-nums">
                 <span className="font-bold text-[#8f510d]">Mes {entry.month}</span>
                 {entry.money_delta !== undefined && entry.money_delta !== 0 && (

@@ -78,6 +78,21 @@ export function GameScreen({ state }: GameScreenProps) {
     }
   }, [showQuarterlyModal, state.run_id, state.month, sfxMuted]);
 
+  // Prevent yo-yo scrolling: whenever a choice resolves to outcome or advances to the next card,
+  // reset vertical scroll if the user had scrolled down (e.g. on compact mobile or zoomed viewports).
+  const turnViewSignature = `${state.run_id}:${state.month}:${activeEventView?.event.id ?? "none"}:${
+    pendingOutcome ? `${pendingOutcome.choiceId}:${pendingOutcome.outcome.outcome_id}` : "event"
+  }`;
+  const prevTurnViewSignatureRef = useRef<string>(turnViewSignature);
+  useEffect(() => {
+    if (prevTurnViewSignatureRef.current !== turnViewSignature) {
+      prevTurnViewSignatureRef.current = turnViewSignature;
+      if (typeof window !== "undefined" && window.scrollY > 0) {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+    }
+  }, [turnViewSignature]);
+
   const handleSelectChoice = (choiceId: string) => {
     const beforeHistoryLen = useGameStore.getState().activeRun?.history.length ?? 0;
     void chooseOption(choiceId);
@@ -133,10 +148,10 @@ export function GameScreen({ state }: GameScreenProps) {
       />
 
       {/* Adaptive Workspace: Tabbed on Mobile (<1024px), Aligned 3-Column Desk on Desktop (>=1024px) */}
-      <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-5 pt-3.5 pb-[calc(5.25rem+env(safe-area-inset-bottom))] lg:pb-8">
-        <div className="lg:grid lg:grid-cols-[316px_minmax(0,1fr)_336px] xl:grid-cols-[336px_minmax(0,1fr)_356px] lg:gap-5 lg:items-start">
+      <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-5 pt-2 pb-[calc(5.25rem+env(safe-area-inset-bottom))] lg:pb-2.5">
+        <div className="lg:grid lg:grid-cols-[296px_minmax(0,1fr)_312px] xl:grid-cols-[324px_minmax(0,1fr)_344px] lg:gap-4 xl:gap-5 lg:items-start">
           {/* Left Column: Live Office Scene + Entorno Support Cards */}
-          <aside className="space-y-3.5 lg:space-y-4 lg:sticky lg:top-[114px]">
+          <aside className="space-y-2.5 lg:space-y-2.5 lg:sticky lg:top-[88px] lg:max-h-[calc(100vh-98px)] lg:overflow-y-auto lg:pr-1 lg:pb-1 dossier-scroll">
             <div
               className={
                 activeMobileTab === "despacho" || activeMobileTab === "entorno"
@@ -155,7 +170,7 @@ export function GameScreen({ state }: GameScreenProps) {
           {/* Center Stage: Monthly Economy Strip, Event Card, Choices & Outcome Resolution */}
           <section
             aria-label="Mesa de decisiones"
-            className={activeMobileTab === "despacho" ? "block mt-3.5 lg:mt-0" : "hidden lg:block"}
+            className={activeMobileTab === "despacho" ? "block mt-2 lg:mt-0" : "hidden lg:block"}
           >
             <EventStage
               state={state}
@@ -170,7 +185,7 @@ export function GameScreen({ state }: GameScreenProps) {
           </section>
 
           {/* Right Column: Cuaderno de Cuentas & Historial */}
-          <aside className="space-y-3.5 lg:space-y-4 lg:sticky lg:top-[114px]">
+          <aside className="space-y-2.5 lg:space-y-2.5 lg:sticky lg:top-[88px] lg:max-h-[calc(100vh-98px)] lg:overflow-y-auto lg:pr-1 lg:pb-1 dossier-scroll">
             <div className={activeMobileTab === "cuentas" ? "block" : "hidden lg:block"}>
               <CuentasPanel state={state} />
             </div>

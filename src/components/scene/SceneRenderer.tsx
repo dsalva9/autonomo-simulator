@@ -115,7 +115,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
       </div>
 
       {/* Panoramic Desk Stage: clean unobstructed art with 4 non-overlapping prop slots */}
-      <div className="relative w-full h-28 sm:h-36 lg:h-auto lg:aspect-video overflow-hidden border-b border-[#1f2421]/18 bg-[#e9decb]">
+      <div className="scene-stage-frame relative w-full h-20 sm:h-32 overflow-hidden border-b border-[#1f2421]/18 bg-[#e9decb]">
         {bgAsset && (
           <img
             data-testid="scene-bg"
@@ -138,7 +138,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={numerosRojosAsset.width}
             height={numerosRojosAsset.height}
             decoding="async"
-            className={`absolute top-1.5 left-2 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
+            className={`absolute top-1.5 left-2 w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
           />
         )}
 
@@ -151,7 +151,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={facturasAsset.width}
             height={facturasAsset.height}
             decoding="async"
-            className={`absolute bottom-1 left-2.5 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
+            className={`absolute bottom-1 left-2.5 w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
           />
         )}
 
@@ -164,7 +164,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={familiaAsset.width}
             height={familiaAsset.height}
             decoding="async"
-            className={`absolute bottom-1 right-[24%] w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
+            className={`absolute bottom-1 right-[24%] w-10 h-10 sm:w-13 sm:h-13 lg:w-14 lg:h-14 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
           />
         )}
 
@@ -177,13 +177,13 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={cafeAsset.width}
             height={cafeAsset.height}
             decoding="async"
-            className={`absolute bottom-1 right-2.5 w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
+            className={`absolute bottom-1 right-2.5 w-10 h-10 sm:w-13 sm:h-13 lg:w-14 lg:h-14 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
           />
         )}
       </div>
 
       {/* Mobile Slim 1-Line Subject Strip (< 1024px) — Zero Desk Art Occlusion */}
-      <div className="lg:hidden px-3 py-1.5 bg-[#fffdf8] flex items-center justify-between gap-2">
+      <div className="lg:hidden px-3 py-1 bg-[#fffdf8] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <img
             data-testid="scene-subject-mobile-art"
@@ -193,7 +193,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={subjectArt.width}
             height={subjectArt.height}
             decoding="async"
-            className={`w-7 h-7 rounded object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
+            className={`w-6 h-6 rounded object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
           />
           <p className="text-xs font-bold text-[#1f2421] truncate">{subjectLabel}</p>
         </div>
@@ -204,7 +204,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
       </div>
 
       {/* Desktop Compact Interlocutor Footer (>= 1024px) */}
-      <div className="hidden lg:flex items-center gap-3 px-3.5 py-2.5 bg-[#fffdf8]">
+      <div className="hidden lg:flex items-center gap-2.5 px-3 py-2 bg-[#fffdf8]">
         <img
           data-testid="scene-subject-art"
           data-asset-id={subjectArt.id}
@@ -213,7 +213,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           width={subjectArt.width}
           height={subjectArt.height}
           decoding="async"
-          className={`w-11 h-11 rounded-lg object-cover shrink-0 border border-[#1f2421]/60 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
+          className={`w-9 h-9 rounded-lg object-cover shrink-0 border border-[#1f2421]/60 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
         />
         <div className="min-w-0 flex-1 space-y-0.5">
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -226,7 +226,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
               </span>
             )}
           </div>
-          <p className="font-editorial font-bold text-sm text-[#1f2421] truncate">{subjectLabel}</p>
+          <p className="font-editorial font-bold text-xs text-[#1f2421] truncate">{subjectLabel}</p>
         </div>
       </div>
     </section>

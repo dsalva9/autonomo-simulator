@@ -16,14 +16,20 @@ Both targets below are **mandatory** Playwright verification gates for every use
 > **Custom Preview URL Override**: To verify a Vercel preview URL before merging, set `PLAYWRIGHT_BASE_URL` (PowerShell: `$env:PLAYWRIGHT_BASE_URL="https://<preview-url>"; pnpm test:e2e:prod` · macOS/Linux: `PLAYWRIGHT_BASE_URL=https://<preview-url> pnpm test:e2e:prod`).
 
 ### Mandatory Target Viewports
-- **Narrow Mobile Audit**: `360 × 780` (compact Android handset profile verifying zero horizontal clip on tilted stamps, Polaroids, HUD treasury strip, modals, and bottom navigation).
-- **Mobile (`mobile-chromium`)**: `390 × 844` (Pixel 7 touch profile; sticky compact HUD `<= 140px` with 4-column aligned micro-gauges, slim 1-line office subject strip, in-flow NPC Polaroid above title/body, `>= 48px` touch choice buttons, 4-tab bottom navigation bar).
-- **Desktop (`desktop-chromium`)**: `1440 × 900` (Desktop Chrome; aligned 3-column workspace with live `16:9` office scene + `Entorno` Polaroids on left, narrative `EventStage` with `8:3` / `16:9` comic headers in center, and `Cuaderno de Cuentas` + `Diario de Expediente` on right).
+- **Narrow Mobile Audit**: `360 × 780` (compact Android handset profile verifying zero horizontal clip on tilted stamps, Polaroids, HUD treasury strip, modals, bottom navigation, and automatic turn scroll-reset).
+- **Mobile (`mobile-chromium`)**: `390 × 844` (Pixel 7 touch profile; sticky compact HUD `<= 140px` with 4-column aligned micro-gauges, slim 1-line office subject strip, in-flow NPC Polaroid above title/body, `>= 48px` touch choice buttons clearing fixed bottom nav, automatic scroll-reset on choice/outcome transitions, 4-tab bottom navigation bar).
+- **Compact Laptop Desktop**: `1366 × 768` (standard 13"–14" Windows/laptop viewport; entire 3-column workspace, event banner, body, all choices, outcome panel, and all screen/modal primary CTAs MUST fit 100% above the fold at `scrollY === 0` with zero yo-yo scrolling).
+- **Desktop (`desktop-chromium`)**: `1440 × 900` (Desktop Chrome; aligned 3-column single-screen workspace with live `16:9` office scene + `Entorno` Polaroids on left, narrative `EventStage` with `8:3` / `16:9` comic headers in center, and `Cuaderno de Cuentas` + `Diario de Expediente` on right, zero page scrollbar during turn loop).
 
 ### Global Invariants (All Scenarios)
 - **Zero Console Errors**: Browser `console.error` count MUST remain `0`.
 - **Zero Uncaught Exceptions**: Browser `pageerror` count MUST remain `0`.
 - **Zero Failed Asset / HTTP Requests**: Every HTTP response MUST be `< 400` (`200` / `304`), and every visible `<img>` element MUST finish decoding with `naturalWidth > 0`.
+- **Usability & UX Invariants (Enforced on Every Major Change via `tests/ui/ux-usability.spec.ts`)**:
+  - **Zero Desktop Yo-Yo Scroll**: On `1366×768` and `1440×900`, `event-title`, `event-body`, all `choice-btn-*`, `outcome-panel`, `outcome-result-text`, and `outcome-continue-btn` MUST sit inside `[headerBottom, innerHeight]` at `window.scrollY === 0` (`scrollHeight <= innerHeight + 2`) **without** calling `scrollIntoViewIfNeeded()`.
+  - **Above-the-Fold Primary CTAs**: Primary actions on `TitleScreen` (including when `continue-run-card` is mounted), `AbandonRunModal`, `QuarterlyTaxModal`, and `EndRunScreen` MUST be 100% visible without scrolling on `1366×768` and `1440×900`.
+  - **Mobile Scroll-Reset & Nav Clearance**: On `360×780` and `390×844`, the lowest choice button MUST clear the fixed bottom nav (`>= 4px`), and transitioning `choice -> outcome -> next event` MUST automatically reset `window.scrollY` to `0`.
+  - **Unoccluded Hit Targets & Readable Copy**: `document.elementFromPoint(cx, cy)` MUST hit every interactive button/tab (even while `AchievementToast` is open); narrative/choice text MUST NEVER truncate silently (`scrollHeight <= clientHeight + 2`, `textOverflow !== "ellipsis"`); font sizes MUST stay readable (`title >= 17px`, `body >= 13.5px`, `money >= 12px`) with `>= 48px` choice height and `>= 6px` inter-button spacing.
 
 ---
 
@@ -168,9 +174,9 @@ Both targets below are **mandatory** Playwright verification gates for every use
 ### QA-13: Live Vercel Production Parity (`https://autonomo-simulator.vercel.app/`)
 - **Preconditions**: Latest `main` deployed via Vercel CD.
 - **Steps**:
-  1. Execute `pnpm test:e2e:prod` running `tests/ui/phase0.spec.ts`, `tests/ui/phase1.spec.ts`, and `tests/ui/phase2.spec.ts` across `desktop-chromium` (`1440×900`) and `mobile-chromium` (`390×844`) against `https://autonomo-simulator.vercel.app/`.
+  1. Execute `pnpm test:e2e:prod` running `tests/ui/phase0.spec.ts`, `tests/ui/phase1.spec.ts`, `tests/ui/phase2.spec.ts`, and `tests/ui/ux-usability.spec.ts` across `desktop-chromium` (`1366×768` & `1440×900`) and `mobile-chromium` (`360×780` & `390×844`) against `https://autonomo-simulator.vercel.app/`.
 - **Expected Result**:
-  - 100% of E2E specs pass against live HTTPS production with HTTP `200`/`304` on all `.webp`/`.svg`/PWA/OG assets, zero `console.error`, and zero `pageerror` events.
+  - 100% of E2E and Usability/UX specs pass against live HTTPS production with HTTP `200`/`304` on all `.webp`/`.svg`/PWA/OG assets, zero `console.error`, and zero `pageerror` events.
 
 ---
 
@@ -244,3 +250,64 @@ Both targets below are **mandatory** Playwright verification gates for every use
   2. Trigger voluntary exit (`abandon-oposiciones-btn`) and inspect `[data-testid="end-run-illustration"]` (`960 × 540`) and `[data-testid="share-canvas"]` (`1080 × 1350`).
 - **Expected Result**:
   - `loadAndRenderShareCard` preloads the ending `.webp` illustration and composites a multi-color framed `16:9` (`512 × 288`) comic vignette (`ANEXO GRÁFICO [00]`) onto the `1080 × 1350` `<canvas>` with zero text overlap and valid PNG output.
+
+---
+
+## 5. Usability & User Experience (UX) Audit Scenarios (`tests/ui/ux-usability.spec.ts`)
+
+Fast, deterministic UX checks executed on every major change so obvious usability regressions (yo-yo scrolling, below-the-fold buttons, toast/header click occlusion, stranded scroll state, or silent text clipping) are caught immediately without playing a 120-month run.
+
+### QA-20: Zero Desktop Yo-Yo Scroll — Event Banner, Body, All Choices & Outcome Fit 100% Above the Fold (`1366×768` & `1440×900`)
+- **Preconditions**: Desktop Chromium resized to both `1366 × 768` (laptop) and `1440 × 900` (desktop), seeded run `FASE1-BURNOUT-1601`.
+- **Steps**:
+  1. Play Months 1 through 3, settle Trimestre (`trimestre-defer-btn`), and reach Month 4 (`hacienda_carta_certificada` featuring a `16:9` milestone comic banner + NPC Inspector Polaroid + 3 choices).
+  2. On every active event card and every post-choice `outcome-panel`, measure `window.scrollY`, `document.documentElement.scrollHeight`, `window.innerHeight`, and the live viewport bounding boxes of `event-title`, `event-body`, every `choice-btn-*`, `outcome-panel`, `outcome-result-text`, and `outcome-continue-btn` **without** calling `scrollIntoViewIfNeeded()`.
+- **Expected Result**:
+  - `window.scrollY === 0` and `scrollHeight <= innerHeight + 2` across all turns (the entire 3-column workspace fits inside a single screen with zero page scrollbar).
+  - Every audited narrative element, choice button, outcome summary, and **Continuar** button sits 100% inside `[headerBottom, viewportHeight]` on both `1366×768` and `1440×900`—zero scrolling down to find choices and zero scrolling back up to read results.
+
+---
+
+### QA-21: Above-the-Fold Primary CTA Audit Across `TitleScreen`, Modals & `EndRunScreen` (`1366×768` & `1440×900`)
+- **Preconditions**: Desktop Chromium at `1366 × 768` and `1440 × 900`.
+- **Steps**:
+  1. Inspect fresh `TitleScreen` (`seed-input`, `start-run-btn`), start `FASE0-TRIMESTRE-PAY`, return to `TitleScreen` so `continue-run-card` is mounted alongside new-run controls, and measure `continue-run-btn` + `start-run-btn` without scrolling.
+  2. Resume run, open `AbandonRunModal`, and measure all 3 voluntary exit options (`abandon-oposiciones-btn`, `abandon-salaried-btn`, `abandon-cese-btn`).
+  3. Advance to Month 3 `QuarterlyTaxModal` and measure `trimestre-pay-btn` + `trimestre-defer-btn`.
+  4. Exit to `EndRunScreen` and measure `end-run-title`, `end-run-illustration`, `share-canvas`, `share-native-btn`, `copy-summary-btn`, `download-card-btn`, `end-new-run-btn`, and `end-return-title-btn` at `scrollY === 0`.
+- **Expected Result**:
+  - 100% of primary CTAs and visual anchors across every screen and modal sit completely inside `[0, viewportHeight]` without requiring vertical scroll on either `1366×768` or `1440×900`.
+
+---
+
+### QA-22: Mobile Bottom-Nav Clearance & Automatic Scroll-Reset on Turn Transitions (`360×780` & `390×844`)
+- **Preconditions**: Mobile Chromium resized to `360 × 780` and `390 × 844`, seeded run `FASE1-BANNER-1`.
+- **Steps**:
+  1. Scroll to `document.documentElement.scrollHeight` and compare the bottom edge of the last `choice-btn-*` against the top edge of the fixed `nav[aria-label="Secciones del despacho"]`.
+  2. Click the bottom choice button while scrolled down, then inspect `window.scrollY` and the viewport bounds of `outcome-result-text` and `outcome-continue-btn`.
+  3. Click `outcome-continue-btn` and inspect `window.scrollY` + `event-title` on Month 2.
+- **Expected Result**:
+  - At max scroll, `lastChoice.bottom <= bottomNav.top - 4` (never tucked behind the fixed bottom tab bar).
+  - Transitioning `choice -> outcome` and `outcome -> next event` automatically resets `window.scrollY` to `0`, placing `outcome-result-text`, `outcome-continue-btn`, and the next month's `event-title` cleanly between the sticky header and fixed bottom nav.
+
+---
+
+### QA-23: Hit-Target Non-Occlusion (`elementFromPoint` + Live `AchievementToast`), Zero Silent Text Truncation, Legibility Floor & Spacing
+- **Preconditions**: Executed in both `desktop-chromium` (`1366×768`) and `mobile-chromium` (`390×844`) using seed `FASE1-BANNER-1`.
+- **Steps**:
+  1. Check `scrollHeight <= clientHeight + 2`, `scrollWidth <= clientWidth + 2`, and `textOverflow !== "ellipsis"` on `event-title`, `event-body`, every `choice-btn-*`, and `outcome-result-text`.
+  2. Measure computed `fontSize` on `event-title`, `event-body`, and `indicator-money-value`, plus vertical gaps between consecutive `choice-btn-*` buttons.
+  3. Evaluate `document.elementFromPoint(cx, cy)` on HUD action buttons (`toggle-sfx-btn`, `toggle-fast-pacing-btn`, `return-title-btn`, `abandon-run-btn`), all `choice-btn-*`, and mobile tabs (`mobile-tab-*`).
+  4. Click `contratar_paco_barato` to trigger live `[data-testid="achievement-toast"]` (*Delega y Rezarás*) alongside `outcome-panel`, and immediately evaluate `document.elementFromPoint(cx, cy)` on `outcome-continue-btn`.
+- **Expected Result**:
+  - Zero silent text clipping or ellipsis on gameplay narrative/choices/outcomes; `event-title >= 17px`, `event-body >= 13.5px`, `indicator-money-value >= 12px`; choice buttons `>= 48px` tall with `>= 6px` inter-button gaps.
+  - Every tested control receives pointer hits at its visual center—including `outcome-continue-btn` while `AchievementToast` is actively displayed on both mobile and desktop.
+
+---
+
+### QA-24: Frictionless Keyboard-Only 3-Month Turn Loop + Trimestre Settlement (`1366×768`)
+- **Preconditions**: Desktop Chromium at `1366 × 768`, seed `FASE0-TRIMESTRE-PAY` entered in `seed-input`.
+- **Steps**:
+  1. Press `Enter` to start the run, then play Months 1–3 and settle Month 3 `QuarterlyTaxModal` using only keyboard shortcuts (`1`–`9` and `Enter`) with zero mouse clicks or scroll wheel input.
+- **Expected Result**:
+  - Advances cleanly to `Año 1 · Mes 4` via keyboard alone while `window.scrollY` stays `0` at every single step.

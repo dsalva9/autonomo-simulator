@@ -132,56 +132,55 @@ export function EventStage({
     : null;
 
   return (
-    <div className="space-y-3.5">
-      {/* Monthly Recurring Economy Strip: Compact Aligned 3-Column Accounting Ledger */}
+    <div data-testid="event-stage" className="space-y-2.5">
+      {/* Monthly Recurring Economy Strip: Single-Line Desktop Ticker / 2-Band Mobile Ledger */}
       {lastMonthStart && lastMonthStart.month === state.month && !pendingOutcome && (
         <div
           data-testid="month-economy-strip"
           className="paper-dossier-warm rounded-xl overflow-hidden text-xs"
         >
-          <div className="px-3.5 py-1.5 border-b border-[#1f2421]/14 bg-[#efe4ce]/70 flex items-center justify-between gap-2">
+          <div className="px-3 sm:px-3.5 py-1.5 bg-[#efe4ce]/65 flex flex-wrap items-center justify-between gap-x-2 xl:gap-x-3 gap-y-1">
             <div className="flex items-center gap-1.5 font-semibold text-[#1f2421] min-w-0">
               <Receipt className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
-              <span className="truncate">Liquidación fija · Mes {lastMonthStart.month}</span>
+              <span className="truncate">
+                <span className="hidden xl:inline">Liquidación fija · </span>
+                <span className="xl:hidden">Liq. </span>
+                Mes {lastMonthStart.month}
+              </span>
             </div>
+
             <span
-              className={`font-bureau text-[11px] font-bold tabular-nums whitespace-nowrap shrink-0 ${
+              className={`font-bureau text-[11px] font-bold tabular-nums whitespace-nowrap shrink-0 sm:order-3 ${
                 lastMonthStart.net_recurring_cash >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
               }`}
             >
               Caja fija: {formatSignedEuros(lastMonthStart.net_recurring_cash)}
             </span>
-          </div>
 
-          <div className="grid grid-cols-3 divide-x divide-[#1f2421]/14 bg-[#fffdf8]/85">
-            <div className="px-2.5 sm:px-3.5 py-1.5">
-              <span className="block text-[10px] sm:text-[11px] text-[#4a524e] truncate">
-                Facturación
+            <div className="w-full sm:w-auto sm:order-2 flex items-center justify-between sm:justify-start gap-x-2 xl:gap-x-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#1f2421]/14 font-bureau text-[11px] tabular-nums">
+              <span>
+                <span className="text-[#4a524e]">Fact.: </span>
+                <strong className="font-bold text-[#1f5c53] whitespace-nowrap">
+                  +{formatEuros(lastMonthStart.gross_billing)}
+                </strong>
               </span>
-              <strong className="font-bureau text-xs font-bold text-[#1f5c53] tabular-nums whitespace-nowrap">
-                +{formatEuros(lastMonthStart.gross_billing)}
-              </strong>
-            </div>
-            <div className="px-2.5 sm:px-3.5 py-1.5">
-              <span className="block text-[10px] sm:text-[11px] text-[#4a524e] truncate">
-                Gastos fijos
+              <span>
+                <span className="text-[#4a524e]">Fijos: </span>
+                <strong className="font-bold text-[#b42b24] whitespace-nowrap">
+                  -{formatEuros(lastMonthStart.total_expenses)}
+                </strong>
               </span>
-              <strong className="font-bureau text-xs font-bold text-[#b42b24] tabular-nums whitespace-nowrap">
-                -{formatEuros(lastMonthStart.total_expenses)}
-              </strong>
-            </div>
-            <div className="px-2.5 sm:px-3.5 py-1.5">
-              <span className="block text-[10px] sm:text-[11px] text-[#4a524e] truncate">
-                Reserva IVA/IRPF
+              <span>
+                <span className="text-[#4a524e]">IVA/IRPF: </span>
+                <strong className="font-bold text-[#264e7a] whitespace-nowrap">
+                  +{formatEuros(lastMonthStart.tax_accrued_on_billing)}
+                </strong>
               </span>
-              <strong className="font-bureau text-xs font-bold text-[#264e7a] tabular-nums whitespace-nowrap">
-                +{formatEuros(lastMonthStart.tax_accrued_on_billing)}
-              </strong>
             </div>
           </div>
 
           {lastMonthStart.invoices_settled.length > 0 && (
-            <div className="px-3.5 py-1.5 border-t border-[#1f2421]/14 bg-[#f6efe0] flex flex-wrap gap-x-3 gap-y-1 font-bureau text-[11px] font-bold tabular-nums">
+            <div className="px-3 sm:px-3.5 py-1 border-t border-[#1f2421]/14 bg-[#fffdf8]/90 flex flex-wrap gap-x-3 gap-y-0.5 font-bureau text-[11px] font-bold tabular-nums">
               {lastMonthStart.invoices_settled.map((inv) => (
                 <span
                   key={inv.invoice_id}
@@ -213,15 +212,15 @@ export function EventStage({
             </span>
           </div>
 
-          <div className="p-4 sm:p-5 space-y-4">
-            <div className="rounded-lg bg-[#f6efe0] border border-[#1f2421]/20 px-3.5 py-2.5 text-xs text-[#373f3a]">
+          <div className="p-3.5 sm:p-4 space-y-3">
+            <div className="rounded-lg bg-[#f6efe0] border border-[#1f2421]/20 px-3 py-2 text-xs text-[#373f3a]">
               <span className="font-bold text-[#1f2421]">Decisión tomada: </span>
               <span>{pendingOutcome.choiceLabel}</span>
             </div>
 
             <p
               data-testid="outcome-result-text"
-              className="text-base sm:text-lg leading-relaxed text-[#1f2421] font-medium"
+              className="text-sm sm:text-base leading-relaxed text-[#1f2421] font-medium"
             >
               {resolveChoiceResultText(
                 pendingOutcome.event.id,
@@ -233,7 +232,7 @@ export function EventStage({
             </p>
 
             {/* Applied Deltas Breakdown */}
-            <div data-testid="outcome-deltas" className="flex flex-wrap gap-2 pt-0.5">
+            <div data-testid="outcome-deltas" className="flex flex-wrap gap-1.5 pt-0.5">
               {pendingOutcome.outcome.money_delta !== 0 && (
                 <DeltaPill
                   label="Caja"
@@ -285,12 +284,12 @@ export function EventStage({
               )}
             </div>
 
-            <div className="pt-1">
+            <div className="pt-0.5">
               <button
                 type="button"
                 data-testid="outcome-continue-btn"
                 onClick={onContinueOutcome}
-                className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-5 py-3 flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-5 py-2.5 flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
               >
                 <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
                 <span>
@@ -332,11 +331,11 @@ export function EventStage({
             )}
           </div>
 
-          <div className="p-4 sm:p-5 space-y-4">
+          <div className="event-card-body p-3.5 sm:p-4 space-y-2.5 sm:space-y-3">
             {/* Visual Comic Header Banner + Pinned Multi-Expression Polaroid */}
             {bannerResolution && (
               <div
-                className={`relative ${activeCharacter && activeCharacterPortrait ? "sm:pb-6" : ""}`}
+                className={`relative ${activeCharacter && activeCharacterPortrait ? "sm:pb-2.5" : ""}`}
               >
                 <img
                   data-testid="event-banner-art"
@@ -347,8 +346,10 @@ export function EventStage({
                   width={bannerResolution.asset.width}
                   height={bannerResolution.asset.height}
                   decoding="async"
-                  className={`w-full ${
-                    bannerResolution.kind === "milestone" ? "aspect-video" : "aspect-[8/3]"
+                  className={`event-banner-img w-full ${
+                    bannerResolution.kind === "milestone"
+                      ? "aspect-video sm:aspect-auto sm:h-40"
+                      : "aspect-[8/3] sm:aspect-auto sm:h-36"
                   } object-cover rounded-lg border-2 border-[#1f2421] bg-[#f6efe0] shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] ${renderModeClass(
                     bannerResolution.asset.render_mode,
                   )}`}
@@ -359,7 +360,7 @@ export function EventStage({
                     data-testid="event-character-polaroid"
                     data-expression={activeCharacterExpression}
                     data-asset-id={activeCharacterPortrait.id}
-                    className="polaroid-card rounded-[3px] flex sm:block items-center gap-2.5 mx-1 sm:mx-0 mb-0 mt-3 sm:mt-0 p-1.5 sm:pb-2 w-fit max-w-[calc(100%-0.5rem)] sm:w-28 md:w-32 sm:absolute sm:right-3 sm:bottom-0 z-10"
+                    className="event-polaroid-desktop polaroid-card rounded-[3px] flex sm:block items-center gap-2.5 mx-1 sm:mx-0 mb-0 mt-2.5 sm:mt-0 p-1 sm:pb-1.5 w-fit max-w-[calc(100%-0.5rem)] sm:w-24 sm:absolute sm:right-3 sm:bottom-0 z-10"
                   >
                     <span className="polaroid-pin" aria-hidden="true" />
                     <img
@@ -369,11 +370,11 @@ export function EventStage({
                       width={activeCharacterPortrait.width}
                       height={activeCharacterPortrait.height}
                       decoding="async"
-                      className={`w-11 h-11 sm:w-full aspect-square object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                      className={`w-10 h-10 sm:w-full aspect-square object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
                         activeCharacterPortrait.render_mode,
                       )}`}
                     />
-                    <figcaption className="min-w-0 pr-1 sm:pr-0 sm:mt-1.5 px-0.5 sm:text-center font-bureau text-[11px] font-bold text-[#1f2421] leading-tight line-clamp-2">
+                    <figcaption className="min-w-0 pr-1 sm:pr-0 sm:mt-1 px-0.5 sm:text-center font-bureau text-[10px] font-bold text-[#1f2421] leading-tight line-clamp-2">
                       {activeCharacter.name}
                     </figcaption>
                   </figure>
@@ -381,25 +382,25 @@ export function EventStage({
               </div>
             )}
 
-            {/* Title & Body */}
-            <div className="space-y-2">
+            {/* Title & Body — never truncated */}
+            <div className="space-y-1.5">
               <h2
                 data-testid="event-title"
-                className="font-editorial text-xl sm:text-2xl font-bold text-[#1f2421] leading-snug"
+                className="font-editorial text-lg sm:text-xl font-bold text-[#1f2421] leading-snug"
               >
                 {resolveEventTitle(activeEventView.event, locale)}
               </h2>
               <p
                 data-testid="event-body"
-                className="text-sm sm:text-[15px] text-[#373f3a] leading-relaxed"
+                className="text-sm sm:text-[14.5px] text-[#373f3a] leading-relaxed lg:leading-snug"
               >
                 {resolveEventBody(activeEventView.event, locale)}
               </p>
             </div>
 
-            {/* Choice Buttons (min-height >= 48px on touch & desktop) */}
+            {/* Choice Buttons (min-height >= 48px on touch & desktop, >= 8px vertical separation) */}
             <fieldset
-              className="space-y-2.5 pt-0.5 border-0 p-0 m-0 min-w-0"
+              className="space-y-2 pt-0.5 border-0 p-0 m-0 min-w-0"
               aria-label="Opciones de decisión"
             >
               {activeEventView.choices.map((entry, index) => {
@@ -417,7 +418,7 @@ export function EventStage({
                     data-choice-id={choice.id}
                     disabled={!eligible}
                     onClick={() => onSelectChoice(choice.id)}
-                    className={`w-full min-h-12 text-left rounded-lg border-2 px-3.5 sm:px-4 py-3 transition-all flex items-start gap-3 ${
+                    className={`w-full min-h-12 text-left rounded-lg border-2 px-3 sm:px-3.5 py-2 transition-all flex items-start gap-2.5 ${
                       eligible
                         ? "border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] active:translate-y-px shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] cursor-pointer"
                         : "border-[#1f2421]/35 bg-[#efe4ce]/65 text-[#4a524e] cursor-not-allowed opacity-85"
@@ -434,17 +435,19 @@ export function EventStage({
                       {index + 1}
                     </span>
 
-                    <span className="flex-1 min-w-0 space-y-1">
-                      <span className="block font-semibold text-sm sm:text-[15px] leading-snug text-[#1f2421]">
-                        {resolveChoiceLabel(activeEventView.event.id, choice, locale)}
-                      </span>
-
-                      {hasWeightedOutcomes && eligible && (
-                        <span className="inline-flex items-center gap-1 font-bureau text-[11px] font-bold text-[#8f510d]">
-                          <Dices className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                          Desenlace con incertidumbre
+                    <span className="flex-1 min-w-0 space-y-0.5 self-center">
+                      <span className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                        <span className="font-semibold text-sm sm:text-[14.5px] leading-snug text-[#1f2421]">
+                          {resolveChoiceLabel(activeEventView.event.id, choice, locale)}
                         </span>
-                      )}
+
+                        {hasWeightedOutcomes && eligible && (
+                          <span className="inline-flex items-center gap-1 font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#8f510d] border border-[#8f510d]/30 shrink-0 w-fit">
+                            <Dices className="w-3 h-3 shrink-0" aria-hidden="true" />
+                            <span>Incertidumbre</span>
+                          </span>
+                        )}
+                      </span>
 
                       {!eligible && (
                         <span

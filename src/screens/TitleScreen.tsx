@@ -76,7 +76,7 @@ export function TitleScreen() {
   return (
     <main
       data-testid="title-screen"
-      className="min-h-screen px-3.5 sm:px-5 py-5 sm:py-8 max-w-6xl mx-auto space-y-5"
+      className="min-h-screen px-3.5 sm:px-5 py-4 sm:py-5 max-w-6xl mx-auto space-y-3.5 sm:space-y-4"
     >
       {/* Corrupt Save Recovery Banner */}
       {corruptedSaveNotice && (
@@ -109,7 +109,7 @@ export function TitleScreen() {
 
       {/* Hero Bureaucratic Header Card */}
       <section className="paper-dossier rounded-2xl overflow-hidden">
-        <div className="bg-[#1f2421] text-[#fffdf8] px-4 sm:px-7 py-3 flex flex-wrap items-center justify-between gap-2 border-b-2 border-[#1f2421]">
+        <div className="bg-[#1f2421] text-[#fffdf8] px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 border-b-2 border-[#1f2421]">
           <span className="stamp-badge text-[11px] sm:text-xs text-[#fce592]">
             MODELO 036 · DECLARACIÓN CENSAL DE ALTA EN EL RETA
           </span>
@@ -118,15 +118,15 @@ export function TitleScreen() {
           </span>
         </div>
 
-        <div className="p-5 sm:p-7 bg-gradient-to-br from-[#fffdf8] via-[#fffdf8] to-[#f6efe0] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-          <div className="space-y-2.5 max-w-2xl">
-            <h1 className="font-editorial text-3xl sm:text-5xl font-bold text-[#1f2421] tracking-tight">
+        <div className="p-4 sm:p-5 bg-gradient-to-br from-[#fffdf8] via-[#fffdf8] to-[#f6efe0] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="space-y-1.5 max-w-2xl">
+            <h1 className="font-editorial text-2xl sm:text-4xl font-bold text-[#1f2421] tracking-tight">
               Autónomo Simulator
             </h1>
-            <blockquote className="border-l-4 border-[#b42b24] pl-3.5 py-0.5 font-editorial italic text-base sm:text-xl text-[#373f3a]">
+            <blockquote className="border-l-4 border-[#b42b24] pl-3 py-0.5 font-editorial italic text-sm sm:text-lg text-[#373f3a]">
               «Sé tu propio jefe. Descubre por qué era mala idea.»
             </blockquote>
-            <p className="text-sm sm:text-[15px] text-[#4a524e] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#4a524e] leading-relaxed">
               Sobrevive diez años (120 meses) entre presupuestos regateados, facturas a sesenta
               días, cuotas mensuales implacables y cierres trimestrales de IVA e IRPF. O acumula{" "}
               <strong className="font-bureau text-[#1f5c53] tabular-nums">150.000 €</strong> limpios
@@ -135,18 +135,24 @@ export function TitleScreen() {
           </div>
 
           {/* Official Tilted Rubber Stamp — safe margin prevents clipping on narrow 360px phones */}
-          <div className="self-start lg:self-center shrink-0 mx-1.5 my-1 rotate-[-2.5deg] rounded-xl border-4 border-[#b42b24] bg-[#fdf0ef] px-5 py-3 text-center shadow-xs">
-            <p className="stamp-badge text-[11px] text-[#b42b24]">VENTANILLA ÚNICA</p>
-            <p className="font-bureau text-lg font-black text-[#b42b24] tabular-nums">120 MESES</p>
-            <p className="font-bureau text-[11px] font-bold text-[#373f3a]">SIN RED SALARIAL</p>
+          <div className="self-start lg:self-center shrink-0 mx-1.5 my-0.5 rotate-[-2.5deg] rounded-xl border-4 border-[#b42b24] bg-[#fdf0ef] px-4 py-2.5 text-center shadow-xs">
+            <p className="stamp-badge text-[10px] sm:text-[11px] text-[#b42b24]">
+              VENTANILLA ÚNICA
+            </p>
+            <p className="font-bureau text-base sm:text-lg font-black text-[#b42b24] tabular-nums">
+              120 MESES
+            </p>
+            <p className="font-bureau text-[10px] sm:text-[11px] font-bold text-[#373f3a]">
+              SIN RED SALARIAL
+            </p>
           </div>
         </div>
       </section>
 
       {/* Main Action Grid: Play & Settings (Left) + Archive (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* Left Column: Play Actions & Desk Preferences */}
-        <div className="lg:col-span-5 space-y-4">
+        <div className="lg:col-span-5 space-y-3">
           {hasResumableRun && resumableCalendar && (
             <section
               data-testid="continue-run-card"
@@ -161,9 +167,9 @@ export function TitleScreen() {
                 </span>
               </div>
 
-              <div className="p-4 space-y-3.5">
+              <div className="p-3.5 space-y-2.5">
                 <div className="grid grid-cols-2 divide-x divide-[#1f2421]/14 rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] text-xs">
-                  <div className="p-2.5">
+                  <div className="p-2">
                     <span className="text-[#4a524e] block text-[11px]">Calendario</span>
                     <strong
                       data-testid="continue-run-calendar"
@@ -172,7 +178,7 @@ export function TitleScreen() {
                       {resumableCalendar.label}
                     </strong>
                   </div>
-                  <div className="p-2.5">
+                  <div className="p-2">
                     <span className="text-[#4a524e] block text-[11px]">Dinero en caja</span>
                     <strong
                       data-testid="continue-run-money"
@@ -189,7 +195,7 @@ export function TitleScreen() {
                   type="button"
                   data-testid="continue-run-btn"
                   onClick={handleContinueRun}
-                  className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-4 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                  className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Play className="w-5 h-5 fill-current shrink-0" aria-hidden="true" />
                   Continuar partida
@@ -213,7 +219,7 @@ export function TitleScreen() {
               </span>
             </div>
 
-            <div className="p-4 space-y-3.5">
+            <div className="p-3.5 space-y-2.5">
               <div className="space-y-1.5">
                 <label
                   htmlFor="seed-input"

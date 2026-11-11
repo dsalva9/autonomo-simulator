@@ -49,12 +49,12 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
 
       <div className="divide-y divide-[#1f2421]/14">
         {/* Row 1: Gestoría */}
-        <div className="px-3.5 py-2.5 flex items-center gap-3">
-          <div className="w-11 shrink-0 flex items-center justify-center">
+        <div className="px-3 py-2 flex items-center gap-2.5">
+          <div className="w-10 shrink-0 flex items-center justify-center">
             {gestorPortrait ? (
               <div
                 data-testid="entorno-polaroid-gestor"
-                className="polaroid-card p-1 pb-1.5 rounded-[3px]"
+                className="polaroid-card p-0.5 pb-1 rounded-[3px]"
               >
                 <span className="polaroid-pin polaroid-pin-sm" aria-hidden="true" />
                 <img
@@ -63,14 +63,14 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
                   width={gestorPortrait.width}
                   height={gestorPortrait.height}
                   decoding="async"
-                  className={`w-9 h-9 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                  className={`w-8 h-8 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
                     gestorPortrait.render_mode,
                   )}`}
                 />
               </div>
             ) : (
-              <div className="w-11 h-11 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5 text-[#8f510d]" aria-hidden="true" />
+              <div className="w-9 h-9 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
+                <ShieldCheck className="w-4 h-4 text-[#8f510d]" aria-hidden="true" />
               </div>
             )}
           </div>
@@ -89,12 +89,12 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
         </div>
 
         {/* Row 2: Familia / Pareja */}
-        <div className="px-3.5 py-2.5 flex items-center gap-3">
-          <div className="w-11 shrink-0 flex items-center justify-center">
+        <div className="px-3 py-2 flex items-center gap-2.5">
+          <div className="w-10 shrink-0 flex items-center justify-center">
             {partnerPortrait ? (
               <div
                 data-testid="entorno-polaroid-partner"
-                className="polaroid-card p-1 pb-1.5 rounded-[3px]"
+                className="polaroid-card p-0.5 pb-1 rounded-[3px]"
               >
                 <span className="polaroid-pin polaroid-pin-sm" aria-hidden="true" />
                 <img
@@ -103,14 +103,14 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
                   width={partnerPortrait.width}
                   height={partnerPortrait.height}
                   decoding="async"
-                  className={`w-9 h-9 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                  className={`w-8 h-8 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
                     partnerPortrait.render_mode,
                   )}`}
                 />
               </div>
             ) : (
-              <div className="w-11 h-11 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
-                <Heart className="w-5 h-5 text-[#b42b24]" aria-hidden="true" />
+              <div className="w-9 h-9 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
+                <Heart className="w-4 h-4 text-[#b42b24]" aria-hidden="true" />
               </div>
             )}
           </div>
@@ -127,12 +127,12 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
         </div>
 
         {/* Row 3: Empleado (max 1) */}
-        <div className="px-3.5 py-2.5 flex items-center gap-3">
-          <div className="w-11 shrink-0 flex items-center justify-center">
+        <div className="px-3 py-2 flex items-center gap-2.5">
+          <div className="w-10 shrink-0 flex items-center justify-center">
             {state.employee && employeePortrait ? (
               <div
                 data-testid="entorno-polaroid-employee"
-                className="polaroid-card p-1 pb-1.5 rounded-[3px]"
+                className="polaroid-card p-0.5 pb-1 rounded-[3px]"
               >
                 <span className="polaroid-pin polaroid-pin-sm" aria-hidden="true" />
                 <img
@@ -141,14 +141,14 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
                   width={employeePortrait.width}
                   height={employeePortrait.height}
                   decoding="async"
-                  className={`w-9 h-9 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                  className={`w-8 h-8 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
                     employeePortrait.render_mode,
                   )}`}
                 />
               </div>
             ) : (
-              <div className="w-11 h-11 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
-                <Briefcase className="w-5 h-5 text-[#1f5c53]" aria-hidden="true" />
+              <div className="w-9 h-9 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
+                <Briefcase className="w-4 h-4 text-[#1f5c53]" aria-hidden="true" />
               </div>
             )}
           </div>

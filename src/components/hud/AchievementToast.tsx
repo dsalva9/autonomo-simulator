@@ -49,7 +49,7 @@ export function AchievementToast() {
     <output
       data-testid="achievement-toast"
       aria-live="polite"
-      className="fixed bottom-20 lg:bottom-5 right-3 sm:right-5 z-40 w-[calc(100vw-1.5rem)] max-w-sm paper-dossier animate-dossier rounded-xl overflow-hidden bg-[#1f5c53] text-[#fffdf8]"
+      className="fixed top-[7.5rem] left-3 right-3 mx-auto lg:top-auto lg:left-auto lg:mx-0 lg:bottom-4 lg:right-4 z-40 w-[calc(100vw-1.5rem)] max-w-xs paper-dossier animate-dossier rounded-xl overflow-hidden bg-[#1f5c53] text-[#fffdf8]"
     >
       <div className="px-3.5 py-2.5 flex items-start justify-between gap-2.5">
         <div className="flex items-start gap-2.5 min-w-0">

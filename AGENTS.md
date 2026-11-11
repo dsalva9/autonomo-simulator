@@ -52,6 +52,10 @@ Runs `schema:check` -> `validate:assets` -> `validate:content` -> `typecheck` ->
 - **State Split**: Keep game rules in `src/engine/`, reactive run/save wiring in `src/store/gameStore.ts`, and ephemeral UI state in `src/store/uiStore.ts`.
 - **Schema Authority**: Edit Zod schemas in `src/engine/schemas/`, then run `pnpm schema:emit`—NEVER hand-edit `schemas/*.schema.json`.
 - **No Hardcoded Stories**: NEVER embed narrative events or Spanish story text inside `src/engine/`.
+- **UX & Viewport Ergonomics**:
+  - **Zero Desktop Yo-Yo Scroll**: On standard laptop (`1366×768`) and desktop (`1440×900`) viewports, the entire 3-column workspace and active turn loop (`month-economy-strip`, `event-card` banner/title/body, all `choice-btn-*`, and `outcome-panel` + `outcome-continue-btn`) MUST fit 100% inside the visible viewport at `scrollY === 0` (`scrollHeight <= innerHeight + 2`) so players never scroll down to find choices or scroll back up to read results. Primary CTAs on `TitleScreen` (fresh + resumable run), `AbandonRunModal`, `QuarterlyTaxModal`, and `EndRunScreen` MUST also sit 100% above the fold without scrolling.
+  - **No Scroll Masking in Tests**: NEVER mask desktop layout overflow in Playwright specs by calling `scrollIntoViewIfNeeded()` before clicking primary desktop turn actions.
+  - **Scroll-Reset, Non-Occlusion & Legibility**: Reset `window.scrollTo({ top: 0 })` automatically on turn-state transitions (`event -> outcome -> next event`) whenever `window.scrollY > 0` (preventing stranded mid-scroll states on mobile `360×780` / `390×844` or zoomed viewports); verify via `document.elementFromPoint` that interactive controls are never occluded by sticky HUDs, fixed mobile nav bars, Polaroids, or `AchievementToast`; forbid silent narrative/choice text truncation (`scrollHeight <= clientHeight`, never `text-overflow: ellipsis` on story/choices); and maintain legibility & touch floors (`>= 17px` event title, `>= 13.5px` body/choices, `>= 12px` HUD money, `>= 48px` choice/tab height, `>= 6px` inter-button gap).
 - **Architecture Decisions**: Record non-trivial structural or contract changes in `docs/adr/NNN-slug.md` and keep `ARCHITECTURE.md` synchronized.
 
 ### Narrative Agent
@@ -146,17 +150,18 @@ Co-Authored-By: <Agent Model Name> <noreply@agent.local>
 Every completed feature, slice, or fix MUST execute this full end-to-end pipeline before finishing:
 1. **Code & Contract Checks**: Run `schema:check`, `validate:assets`, `validate:content`, `typecheck`, and `lint` (`biome check`).
 2. **Automated Tests**: Create/update unit, content, simulation, and Playwright regression tests as needed, and run the full automated test suite (`pnpm test`).
-3. **Production Build & Local Playwright QA (Pre-Commit / Pre-Push)**:
-   - Document/update human-readable manual QA scenarios in `docs/qa/manual-test-plan.md` (covering mobile `390×844` + desktop `1440×900`, user flows, edge cases, and persistence).
-   - Run `pnpm build` to emit a clean `dist/`, then execute Playwright E2E + manual QA scenarios locally via `pnpm test:e2e` (against `dist/` via `pnpm preview`) with screenshot & zero-console/page/HTTP-error verification **before** commit/push.
+3. **Production Build & Local Playwright E2E + Usability/UX QA (Pre-Commit / Pre-Push)**:
+   - Document/update human-readable manual QA and UX scenarios in `docs/qa/manual-test-plan.md` (covering narrow mobile `360×780`, mobile `390×844`, compact laptop `1366×768`, and desktop `1440×900`, user flows, edge cases, persistence, and usability invariants).
+   - Maintain and execute `tests/ui/ux-usability.spec.ts` on every major UI, layout, modal, HUD, or content-presentation change to catch obvious UX regressions (yo-yo scrolling, below-the-fold CTAs, toast/sticky-bar click occlusion, stranded mobile scroll position, silent text clipping, cramped tap targets, or keyboard friction) without needing to play a full 120-month run.
+   - Run `pnpm build` to emit a clean `dist/`, then execute Playwright E2E + UX Usability + manual QA scenarios locally via `pnpm test:e2e` (against `dist/` via `pnpm preview`) with screenshot & zero-console/page/HTTP-error verification **before** commit/push.
 4. **Commit & Push**: Stage changes, commit using Conventional Commits + `Co-Authored-By`, and `git push` to GitHub (`origin`).
-5. **Live Vercel Production Playwright QA (Post-Deploy)**: Once Vercel CD finishes deploying to `https://autonomo-simulator.vercel.app/`, run `pnpm test:e2e:prod` to verify all Playwright E2E + manual QA scenarios pass against the live production URL with zero console/page/HTTP errors.
+5. **Live Vercel Production Playwright QA (Post-Deploy)**: Once Vercel CD finishes deploying to `https://autonomo-simulator.vercel.app/`, run `pnpm test:e2e:prod` to verify all Playwright E2E + UX Usability + manual QA scenarios pass against the live production URL with zero console/page/HTTP errors.
 
 ### Programmer DoD
 - [ ] Zero boundary violations (`src/engine/` remains pure; no hardcoded content).
 - [ ] `pnpm schema:emit` run if Zod schemas changed; `ARCHITECTURE.md` / `docs/adr/` updated if contracts changed.
-- [ ] Automated unit/simulation/UI tests added or updated and passing.
-- [ ] Manual QA scenarios updated in `docs/qa/manual-test-plan.md` and executed via Playwright **both** locally (`pnpm test:e2e` against `dist/`) before commit/push **and** against the live Vercel deployment (`https://autonomo-simulator.vercel.app/` via `pnpm test:e2e:prod`) after push/deployment, with zero console/page/HTTP errors.
+- [ ] Automated unit/simulation/UI tests and Playwright UX Usability checks (`tests/ui/ux-usability.spec.ts` across `360×780`, `390×844`, `1366×768`, and `1440×900`) added or updated and passing with zero yo-yo scroll, zero occluded hit targets, and zero silent text truncation.
+- [ ] Manual QA & UX scenarios updated in `docs/qa/manual-test-plan.md` and executed via Playwright **both** locally (`pnpm test:e2e` against `dist/`) before commit/push **and** against the live Vercel deployment (`https://autonomo-simulator.vercel.app/` via `pnpm test:e2e:prod`) after push/deployment, with zero console/page/HTTP errors.
 - [ ] `pnpm verify` (including `pnpm build` and local `pnpm test:e2e`) passes before commit/push, changes are committed and pushed to `origin`, and post-deploy `pnpm test:e2e:prod` passes against `https://autonomo-simulator.vercel.app/`.
 
 ### Narrative DoD
