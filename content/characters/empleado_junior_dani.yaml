@@ -1,0 +1,10 @@
+schema_version: 1
+id: empleado_junior_dani
+name: "Dani"
+role: empleado
+bio: "Recién salido de tres cursos intensivos, con cuarenta pestañas abiertas, un termo de litro y medio y ganas genuinas de ayudar. Saca bastante trabajo adelante, aunque tiene un don especial para tocar la carpeta equivocada un viernes a última hora."
+portrait_asset_id: char_empleado_junior_dani
+employee_params:
+  role_label: "Junior Multiusos"
+  monthly_cost: 1400
+  billing_multiplier: 1.35

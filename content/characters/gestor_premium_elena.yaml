@@ -1,0 +1,10 @@
+schema_version: 1
+id: gestor_premium_elena
+name: "Elena Montes, Asesoría Integral"
+role: gestor
+bio: "Fiscalista implacable que exige todas las facturas numeradas antes del día cinco de cada mes. Su cuota mensual escuece como el alcohol en una herida, pero hasta los inspectores le hablan de usted."
+portrait_asset_id: char_gestor_premium_elena
+gestor_params:
+  tier: premium
+  monthly_fee: 180
+  inspection_shield: 0.70

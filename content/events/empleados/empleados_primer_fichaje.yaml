@@ -1,0 +1,46 @@
+schema_version: 1
+id: empleados_primer_fichaje
+category: empleados
+title: "Un par de manos extra"
+body: "El volumen de encargos empieza a desbordarte y conoces a Dani, un perfil junior entusiasta que busca su primera oportunidad estable. Te ofrece incorporarse a tu pequeño despacho para multiplicar tu capacidad... junto con tus gastos fijos mensuales."
+tags:
+  - contratacion
+  - crecimiento
+  - costes_fijos
+character_id: empleado_junior_dani
+illustration_id: null
+requirements:
+  min_month: 4
+  has_employee: false
+weight: 8
+cooldown_months: 12
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: fichar_dani_plantilla
+    label: "Contratar a Dani en plantilla (1.400 €/mes, facturación ×1,35)"
+    requirements:
+      has_employee: false
+    result_text: "Tramitas el alta y despejas media mesa para su pantalla. Dani llega el lunes con termo gigante, libreta nueva y una ilusión que casi te contagia."
+    effects:
+      hire_employee:
+        character_id: empleado_junior_dani
+      deductible_expense: 200
+      stress: -4
+      moral: 5
+      reputation: 4
+  - id: subcontratar_apoyo_puntual
+    label: "Proponerle una colaboración externa puntual para sacar el pico de trabajo"
+    result_text: "Sacas adelante un proyecto grande pagándole su factura profesional deducible. Menos margen neto que haciéndolo tú todo, pero cero compromisos fijos el mes que viene."
+    effects:
+      billed_income: 1600
+      deductible_expense: 750
+      stress: -3
+      moral: 2
+      reputation: 3
+  - id: seguir_como_lobo_solitario
+    label: "Agradecerle el interés y seguir remando en solitario"
+    result_text: "Bastante deporte de riesgo es pagar tu propia cuota mensual como para asumir una nómina fija. Dani te deja su contacto por si más adelante cambias de idea."
+    effects:
+      stress: 2
+      moral: 1

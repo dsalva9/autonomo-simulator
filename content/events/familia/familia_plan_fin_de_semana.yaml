@@ -1,0 +1,47 @@
+schema_version: 1
+id: familia_plan_fin_de_semana
+category: familia
+title: "Operación desconexión con Álex"
+body: "Viernes por la tarde. Álex aparece con un plan de escapada sencilla fuera de la ciudad y una única norma innegociable: el ordenador se queda apagado en casa, lejos de cualquier enchufe y de cualquier cliente con «una cosita de cinco minutos»."
+tags:
+  - pareja
+  - conciliacion
+  - descanso
+character_id: pareja_alex
+illustration_id: null
+weight: 12
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: empezar_relacion_alex
+    label: "Apagar el portátil y apostar en serio por lo vuestro"
+    requirements:
+      family_statuses:
+        - single
+    result_text: "Entre caminatas, sobremesas largas y cero notificaciones, volvéis el domingo con algo mucho más estable que cualquier calendario de entregas: oficialmente salís juntos."
+    effects:
+      set_family_status:
+        status: dating
+        partner_character_id: pareja_alex
+      cash_delta: -120
+      stress: -12
+      moral: 8
+      personal_life: 12
+  - id: escapada_desconexion_total
+    label: "Aceptar el plan, silenciar el móvil y recargar pilas"
+    result_text: "Gastas algo en gasolina y comida casera, pero el lunes vuelves al escritorio recordando qué se siente al tener vida propia fuera del despacho."
+    effects:
+      cash_delta: -90
+      stress: -10
+      moral: 6
+      personal_life: 8
+  - id: quedarse_adelantando_entregas
+    label: "Cancelar el plan a última hora para facturar encargos pendientes"
+    result_text: "Mandas un audio eterno disculpándote y pasas el sábado frente a la pantalla. Sacas una buena factura adelante, pero el piso se siente enorme y silencioso."
+    effects:
+      billed_income: 650
+      stress: 7
+      moral: -4
+      personal_life: -8
+      reputation: 2

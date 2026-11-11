@@ -1,0 +1,9 @@
+schema_version: 1
+id: pareja_alex
+name: "Álex"
+role: pareja
+bio: "Persona con horario humano que te recuerda que existen los fines de semana, las cenas sin mirar el correo y la vida más allá del cierre trimestral. Cuando te ve al borde del colapso, aparece con croquetas y esconde el cargador del portátil."
+portrait_asset_id: char_pareja_alex
+family_params:
+  monthly_cost: 180
+  support_modifier: 2

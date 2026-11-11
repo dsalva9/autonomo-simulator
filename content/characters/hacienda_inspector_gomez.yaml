@@ -1,0 +1,6 @@
+schema_version: 1
+id: hacienda_inspector_gomez
+name: "Inspector Gómez"
+role: hacienda
+bio: "Veterano de la Agencia Tributaria con mirada de rayos X para los gastos de restaurante en domingo. No levanta la voz jamás: le basta con enviar una notificación electrónica un viernes por la tarde para arruinarte el puente."
+portrait_asset_id: char_inspector_hacienda

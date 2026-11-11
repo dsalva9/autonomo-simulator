@@ -1,0 +1,68 @@
+schema_version: 1
+id: hacienda_carta_certificada
+category: hacienda
+title: "Notificación con acuse de recibo"
+body: "El cartero pronuncia las cuatro palabras más terroríficas del castellano: «Certificado de Agencia Tributaria». El Inspector Gómez ha detectado movimientos poco habituales y solicita aclaraciones documentales en diez días hábiles."
+tags:
+  - requerimiento
+  - sancion
+  - inspeccion
+character_id: hacienda_inspector_gomez
+illustration_id: null
+requirements:
+  required_flags:
+    - cobro_en_b_reciente
+weight: 3
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: encargar_alegaciones_gestor
+    label: "Pagar el suplemento de defensa a tu gestoría para que conteste"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu gestoría arma un expediente de treinta páginas con anexos numerados y jerga administrativa hipnótica. El requerimiento se cierra sin sanción y te deduces la minuta profesional."
+    effects:
+      deductible_expense: 240
+      stress: 4
+      moral: 2
+      fiscal_risk: -18
+      clear_flags:
+        - cobro_en_b_reciente
+  - id: pagar_recargo_pronto_pago
+    label: "Aceptar la propuesta y pagar la multa con reducción por pronto pago"
+    result_text: "Asumes el golpe sin rechistar para quitarte la losa de encima. La sanción no es deducible y duele en el alma, pero al menos el expediente queda archivado."
+    effects:
+      cash_delta: -650
+      stress: 8
+      moral: -5
+      fiscal_risk: -20
+      clear_flags:
+        - cobro_en_b_reciente
+  - id: presentar_escrito_casero
+    label: "Redactar tú mismo las alegaciones de madrugada y cruzar los dedos"
+    outcomes:
+      - id: archivo_milagroso
+        weight: 45
+        result_text: "Tras adjuntar cuarenta justificantes escaneados del revés, el Inspector Gómez decide que tiene expedientes más jugosos en su mesa y archiva el caso con un simple tirón de orejas."
+        effects:
+          deductible_expense: 60
+          stress: 12
+          moral: 4
+          personal_life: -5
+          fiscal_risk: -12
+          clear_flags:
+            - cobro_en_b_reciente
+      - id: sancion_completa
+        weight: 55
+        result_text: "Tu escrito cita una normativa derogada hace una década. El Inspector Gómez ni se inmuta y te gira la liquidación íntegra sin descuento por pronto pago."
+        effects:
+          cash_delta: -1100
+          stress: 18
+          moral: -10
+          personal_life: -6
+          fiscal_risk: -15
+          clear_flags:
+            - cobro_en_b_reciente
