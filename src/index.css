@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+:root {
+  --bg-desk: #e9decb;
+  --bg-desk-grid: #dacbb2;
+  --bg-paper: #fffdf8;
+  --bg-paper-warm: #f6efe0;
+  --bg-paper-muted: #efe4ce;
+  --ink-primary: #1f2421;
+  --ink-secondary: #373f3a;
+  --ink-muted: #4a524e;
+  --border-ink: #1f2421;
+  --stamp-red: #b42b24;
+  --stamp-red-bg: #fdf0ef;
+  --stamp-emerald: #1f5c53;
+  --stamp-emerald-bg: #e8f5f1;
+  --stamp-blue: #264e7a;
+  --stamp-blue-bg: #ebf2fa;
+  --stamp-amber: #8f510d;
+  --stamp-amber-bg: #fcf4df;
+
+  --font-editorial: Georgia, Cambria, "Times New Roman", serif;
+  --font-body: "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Courier New", Consolas, "Liberation Mono", monospace;
+}
+
+html,
+body {
+  background-color: var(--bg-desk);
+  color: var(--ink-primary);
+  font-family: var(--font-body);
+  background-image: radial-gradient(var(--bg-desk-grid) 1.1px, transparent 1.1px);
+  background-size: 20px 20px;
+  min-height: 100%;
+}
+
+.font-editorial {
+  font-family: var(--font-editorial);
+}
+
+.font-bureau {
+  font-family: var(--font-mono);
+}
+
+.paper-dossier {
+  background-color: var(--bg-paper);
+  border: 2px solid var(--border-ink);
+  box-shadow: 4px 4px 0px 0px rgba(31, 36, 33, 0.88);
+}
+
+.paper-dossier-warm {
+  background-color: var(--bg-paper-warm);
+  border: 2px solid var(--border-ink);
+  box-shadow: 3px 3px 0px 0px rgba(31, 36, 33, 0.82);
+}
+
+.stamp-badge {
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.render-pixel-art {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.render-vector-hd {
+  image-rendering: auto;
+}
+
+@keyframes dossierEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stampPop {
+  0% {
+    opacity: 0;
+    transform: scale(1.08) rotate(-4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-2deg);
+  }
+}
+
+.animate-dossier {
+  animation: dossierEnter 180ms ease-out both;
+}
+
+.animate-stamp {
+  animation: stampPop 200ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+:focus-visible {
+  outline: 3px solid var(--stamp-blue);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
