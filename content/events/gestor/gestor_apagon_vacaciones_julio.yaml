@@ -1,0 +1,60 @@
+schema_version: 1
+id: gestor_apagon_vacaciones_julio
+category: gestor
+title: "Quince de julio: gestoría en servicios mínimos"
+body: "Treinta y nueve grados en la calle y cinco días para cerrar el trimestre de verano. Necesitas aclarar con urgencia dos facturas con retención especial, pero en tu gestoría salta un contestador veraniego y Paco solo manda una foto borrosa desde un chiringuito diciendo que el becario lo mira luego."
+tags:
+  - verano
+  - trimestre
+  - gestoria
+character_id: gestor_barato_paco
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 6
+  gestor_tiers:
+    - cheap
+    - premium
+weight: 10
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: pagar_revision_externa_guardia
+    label: "Pagar una revisión puntual de guardia para presentar clavado y en plazo (190 €)"
+    result_text: "Un fiscalista que veranea en agosto repasa tus libros en una hora, corrige las retenciones y deja todo listo para domiciliar sin sustos."
+    effects:
+      deductible_expense: 190
+      stress: -4
+      moral: 2
+      fiscal_risk: -8
+  - id: activar_canal_urgente_elena
+    label: "Activar el protocolo prioritario de Elena Montes para clientes en cierre"
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: "La socia de guardia del despacho toma el relevo en media hora y valida cada asiento con precisión quirúrgica."
+    effects:
+      deductible_expense: 60
+      stress: -7
+      moral: 5
+      fiscal_risk: -10
+  - id: cuadrar_asientos_con_cafe_con_hielo
+    label: "Armarte de ventilador y cuadrar tú mismo los asientos dudosos antes del día veinte"
+    outcomes:
+      - id: cuadre_veraniego_limpio
+        weight: 60
+        result_text: "Pierdes una tarde entera repasando casillas a treinta grados, pero clavas la autoliquidación sin gastar un euro extra."
+        effects:
+          stress: 9
+          moral: 3
+          personal_life: -4
+          fiscal_risk: -2
+      - id: gasto_olvidado_por_calor
+        weight: 40
+        result_text: "Con las prisas dejas fuera varias facturas deducibles por prudencia excesiva y terminas ingresando de más este trimestre."
+        effects:
+          cash_delta: -260
+          stress: 11
+          moral: -5
+          fiscal_risk: 3

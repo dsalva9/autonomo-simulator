@@ -1,0 +1,60 @@
+schema_version: 1
+id: gestor_inversion_amortizable_diciembre
+category: gestor
+title: "Inversión amortizable o liquidez en el colchón"
+body: "Tras años de tralla acumulada, las herramientas y el mobiliario de tu estudio piden relevo generacional antes de cerrar el ejercicio. Elena Montes te pone la disyuntiva sobre la mesa: invertir ahora recorta tu liquidez inmediata pero amortiza impuestos e impulsa tu capacidad; aguantar con parches protege la caja hoy a costa de sufrir mañana."
+tags:
+  - amortizacion
+  - inversion
+  - veterania
+  - largo_plazo
+character_id: gestor_premium_elena
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 66
+weight: 11
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: renovar_estudio_integral_deducible
+    label: "Acometer la renovación completa del estudio con factura deducible (1.450 €)"
+    requirements:
+      stats:
+        money:
+          min: 1650
+    result_text: "La cuenta pega un bajón respetable hoy, pero estrenas equipamiento de primera línea, rebajas el próximo trimestre y trabajas el doble de fluido."
+    effects:
+      deductible_expense: 1450
+      stress: -8
+      moral: 8
+      reputation: 5
+      fiscal_risk: -8
+      add_modifier:
+        id: mod_estudio_renovado_veterano
+        label: "Equipamiento de estudio renovado"
+        remaining_months: 6
+        monthly_billed_delta: 310
+        monthly_stress_delta: -2
+  - id: actualizar_solo_esenciales
+    label: "Renovar únicamente lo imprescindible sin desfondar la reserva fiscal (480 €)"
+    result_text: "Cambias silla y herramientas críticas manteniendo el grueso de la tesorería a salvo para cuando llegue el cargo trimestral."
+    effects:
+      deductible_expense: 480
+      stress: -4
+      moral: 4
+      reputation: 2
+      fiscal_risk: -4
+  - id: aguantar_con_equipos_veteranos
+    label: "No soltar un euro ahora y exprimir el material viejo otro año más"
+    result_text: "Tu saldo bancario no se mueve un milímetro hoy, aunque los cuelgues diarios y el ruido de ventiladores cansados te restan ritmo cada semana."
+    effects:
+      stress: 6
+      moral: -3
+      add_modifier:
+        id: mod_desgaste_equipos_veteranos
+        label: "Equipos veteranos al límite"
+        remaining_months: 4
+        monthly_billed_delta: -140
+        monthly_stress_delta: 2

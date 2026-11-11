@@ -1,0 +1,70 @@
+schema_version: 1
+id: empleados_oferta_fuga_cliente
+category: empleados
+title: "Oferta furtiva desde la trinchera cliente"
+body: "Después de meses puliendo procesos y sacando proyectos impecables juntos, descubres que el departamento de Marta ha tanteado por privado a tu persona en plantilla para ficharla en su nómina interna y ahorrarse de paso tu intermediación como estudio."
+tags:
+  - plantilla
+  - retencion
+  - clientes
+  - fuga_talento
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 12
+  has_employee: true
+weight: 8
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: blindar_con_prima_y_marcar_limites
+    label: "Abonar una prima de fidelización (550 €) y hacer valer la cláusula comercial ante Marta"
+    result_text: "Tu fichaje agradece el gesto quedándose a tu lado y Marta acepta renovar el proyecto respetando escrupulosamente el perímetro de tu estudio."
+    effects:
+      cash_delta: -550
+      billed_income: 600
+      stress: 5
+      moral: 7
+      reputation: 4
+      clear_flags:
+        - desgaste_plantilla
+  - id: pactar_cesion_y_cobrar_traspaso
+    label: "Negociar una compensación facturada por la transición y volver a ir por libre"
+    result_text: "Cierras el traspaso como un acuerdo profesional civilizado, cobras una factura compensatoria y eliminas de golpe la carga salarial fija de cada mes."
+    effects:
+      billed_income: 1950
+      dismiss_employee:
+        severance_cost: 0
+      stress: 6
+      moral: -3
+      reputation: 1
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla
+  - id: no_igualar_y_confiar_en_el_trato
+    label: "Negarte a entrar en pujas contra una multinacional y apelar al buen ambiente"
+    outcomes:
+      - id: lealtad_al_estudio_pequeno
+        weight: 50
+        result_text: "Prefiere la libertad de tu despacho antes que encadenar comités corporativos eternos y declina la oferta sin tocar tu tesorería."
+        effects:
+          moral: 5
+          stress: 4
+          reputation: 2
+      - id: marcha_con_quince_dias_preaviso
+        weight: 50
+        result_text: "Firma las catorce pagas corporativas dejando el preaviso legal sobre tu mesa. Te quedas sin equipo en mitad del trimestre y reorganizar entregas te cuesta dinero."
+        effects:
+          dismiss_employee:
+            severance_cost: 0
+          cash_delta: -350
+          moral: -8
+          stress: 13
+          reputation: -4
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla

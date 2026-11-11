@@ -1,0 +1,65 @@
+schema_version: 1
+id: clientes_concurso_acreedores_proyecto
+category: clientes
+title: "Persiana bajada a mitad de proyecto"
+body: "Llevas tres semanas volcado en un encargo grande cuando tus correos rebotan y salta la noticia en el boletín mercantil: la empresa cliente acaba de solicitar concurso de acreedores. Borja, que hacía de intermediario externo, te susurra por teléfono que antes de que llegue el administrador concursal «igual puedes rescatar algo en mano»."
+tags:
+  - concurso_acreedores
+  - impago
+  - liquidez
+character_id: cliente_regateador
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 8
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: rectificativa_iva_con_gestoria
+    label: "Emitir factura rectificativa con tu gestoría para recuperar al menos los impuestos"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Cumples los plazos legales al milímetro para no regalar encima el IVA de una factura incobrable y rescatas una pequeña compensación limpia dentro del procedimiento."
+    effects:
+      deductible_expense: 190
+      cash_delta: 340
+      stress: 5
+      moral: 1
+      fiscal_risk: -4
+  - id: aceptar_arreglo_rapido_borja
+    label: "Aceptar el «arreglo rápido» que sugiere Borja antes de que precinten las oficinas"
+    outcomes:
+      - id: rescate_parcial_en_mano
+        weight: 60
+        result_text: "Sales de aquella nave medio vacía con un sobre discreto que cubre parte de tus horas, aunque sabes que esa contabilidad la van a mirar con lupa en el juzgado."
+        effects:
+          cash_delta: 850
+          stress: 9
+          moral: -5
+          fiscal_risk: 18
+          set_flags:
+            - cobro_en_b_reciente
+          schedule_events:
+            - event_id: hacienda_carta_certificada
+              delay_months: 3
+              probability: 0.45
+      - id: cerradura_cambiada
+        weight: 40
+        result_text: "Cuando llegas ya han cambiado el bombín de la puerta: ni sobre, ni cliente, ni horas cobradas, solo el viaje en balde y una úlcera incipiente."
+        effects:
+          cash_delta: -120
+          stress: 14
+          moral: -9
+          fiscal_risk: 6
+  - id: asumir_perdida_y_pasar_pagina
+    label: "Asumir el quebranto hoy mismo y reaprovechar el trabajo genérico para otros clientes"
+    result_text: "Tragas saliva al tachar la previsión de cobro, cubres los gastos vivos de tu bolsillo y reciclas las mejores piezas en tu catálogo comercial."
+    effects:
+      cash_delta: -180
+      stress: 7
+      moral: -5
+      reputation: 2

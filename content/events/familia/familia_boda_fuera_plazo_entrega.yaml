@@ -1,0 +1,48 @@
+schema_version: 1
+id: familia_boda_fuera_plazo_entrega
+category: familia
+title: "Boda a cuatrocientos kilómetros y entrega el lunes"
+body: "Se casa alguien imprescindible de tu entorno en la otra punta del país con preboda el viernes, banquete maratoniano el sábado y comida familiar el domingo. Entre sobre de regalo, hotel, traje y gasolina se va un buen pellizco, justo el fin de semana previo a una entrega comprometida."
+tags:
+  - boda
+  - viaje
+  - conciliacion
+  - gastos_personales
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 5
+weight: 10
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: desconectar_y_celebrar_todo_el_finde
+    label: "Pagar viaje, hotel y regalo digno, y dejar el portátil en casa (490 €)"
+    result_text: "Tu cuenta corriente adelgaza casi quinientos euros en cuarenta y ocho horas, pero bailas, ríes con gente querida y recuerdas que no eres un robot con NIF."
+    effects:
+      cash_delta: -490
+      stress: -13
+      moral: 9
+      personal_life: 13
+      reputation: -2
+  - id: llevar_portatil_al_hotel
+    label: "Asistir a la boda y encerrarte el domingo en el hotel a rematar el encargo"
+    result_text: "Cumples en las fotos y salvas la factura del lunes tecleando con resaca frente al minibar, aunque vuelves el domingo más cansado que el jueves."
+    effects:
+      cash_delta: -440
+      billed_income: 880
+      stress: 11
+      moral: -3
+      personal_life: 2
+      reputation: 3
+  - id: poner_excusa_laboral_y_quedarse
+    label: "Disculparte por una urgencia profesional, enviar un detalle y quedarte facturando"
+    result_text: "Ahorras viaje y adelantas un buen pico de facturación en silencio mientras ves fotos del baile por el grupo de mensajería con un pinchazo en el pecho."
+    effects:
+      cash_delta: -160
+      billed_income: 1150
+      stress: 7
+      moral: -6
+      personal_life: -11
+      reputation: 2

@@ -1,0 +1,63 @@
+schema_version: 1
+id: clientes_renovacion_cartera_veterana
+category: clientes
+title: "Renovación en bloque de la vieja guardia"
+body: "Llevas media década resistiendo trimestres y tus cuentas más veteranas coinciden renovando acuerdos para el próximo semestre. Marta encabeza un paquete de igualas muy jugoso, aunque tu espalda y tu paciencia ya no perdonan las semanas de sesenta horas como el primer año."
+tags:
+  - veterania
+  - iguala
+  - desgaste
+  - largo_plazo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 60
+weight: 12
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: renovar_bloque_completo_intensivo
+    label: "Firmar el paquete completo y exprimir la facturación otro semestre"
+    result_text: "Aseguras una entrada de caja formidable mes tras mes, a costa de vivir pegado al teléfono y coleccionar contracturas cervicales."
+    effects:
+      billed_income: 950
+      add_modifier:
+        id: mod_cartera_veterana_total
+        label: "Renovación intensiva de cuentas veteranas"
+        remaining_months: 6
+        monthly_billed_delta: 620
+        monthly_stress_delta: 5
+      stress: 8
+      moral: -3
+      personal_life: -7
+      reputation: 4
+  - id: filtrar_clientes_rentables_senior
+    label: "Soltar las cuentas quemadoras y renovar solo el tramo de mayor margen"
+    requirements:
+      stats:
+        reputation:
+          min: 55
+    result_text: "Haces valer tus galones: dejas marchar a quienes llamaban los domingos y consolidas una cartera madura, rentable y compatible con dormir."
+    effects:
+      add_modifier:
+        id: mod_cartera_curada_senior
+        label: "Cartera veterana seleccionada"
+        remaining_months: 6
+        monthly_billed_delta: 340
+        monthly_moral_delta: 1
+        monthly_stress_delta: -2
+      stress: -6
+      moral: 7
+      personal_life: 5
+      reputation: 3
+  - id: renovar_con_colchon_colaboradores
+    label: "Renovar a ritmo sostenible pagando apoyo externo para los picos (420 €)"
+    result_text: "Sacrificas margen hoy contratando refuerzo puntual deducible, pero conservas a tus clientes históricos sin hipotecar tu salud."
+    effects:
+      deductible_expense: 420
+      stress: -9
+      moral: 5
+      personal_life: 6
+      reputation: 1

@@ -1,0 +1,74 @@
+schema_version: 1
+id: familia_subida_alquiler_hipoteca
+category: familia
+title: "Revisión anual de techo y recibos"
+body: "Abres el buzón rezando para que sea publicidad y te encuentras la carta anual de actualización de vivienda acompañada del recibo del seguro del hogar. Mantener cuatro paredes donde dormir y trabajar vuelve a encarecerse sin preguntar cómo llevas el trimestre."
+tags:
+  - vivienda
+  - alquiler
+  - hipoteca
+  - coste_vida
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 9
+weight: 11
+cooldown_months: 14
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: asumir_revision_sin_mudanza
+    label: "Tragar con la subida para ahorrarte el infierno logístico de una mudanza"
+    result_text: "Abonas la póliza anual y aceptas el nuevo recibo mensual resignado: mudarse ahora mismo te costaría todavía más salud y dinero."
+    effects:
+      cash_delta: -260
+      add_modifier:
+        id: mod_subida_vivienda
+        label: "Revisión al alza de vivienda"
+        remaining_months: 6
+        monthly_expense_delta: 145
+        monthly_stress_delta: 2
+      moral: -4
+      stress: 5
+  - id: negociar_con_historial_buen_pagador
+    label: "Plantarte con tus justificantes puntuales para negociar una rebaja razonable"
+    outcomes:
+      - id: acuerdo_moderado
+        weight: 60
+        result_text: "Haces valer que jamás has devuelto un recibo y dejáis el ajuste congelado tras cubrir únicamente la renovación anual de gastos."
+        effects:
+          cash_delta: -290
+          stress: -3
+          moral: 5
+          personal_life: 3
+      - id: muro_inmobiliario
+        weight: 40
+        result_text: "Te responden con el mantra de «así está la zona» y sales de la llamada con la subida intacta y un cabreo monumental."
+        effects:
+          cash_delta: -320
+          add_modifier:
+            id: mod_subida_vivienda
+            label: "Revisión al alza de vivienda"
+            remaining_months: 5
+            monthly_expense_delta: 135
+            monthly_stress_delta: 2
+          stress: 9
+          moral: -6
+  - id: adelantar_colchon_para_rebajar_cuota
+    label: "Soltar 1.200 € de ahorro ahora para amortizar condiciones y bajar el gasto mensual"
+    requirements:
+      stats:
+        money:
+          min: 1800
+    result_text: "Pegas un bocado serio a tu liquidez hoy, pero aseguras medio año de recibos domésticos más ligeros y duermes mucho más tranquilo."
+    effects:
+      cash_delta: -1200
+      stress: -8
+      moral: 6
+      personal_life: 4
+      add_modifier:
+        id: mod_cuota_vivienda_amortizada
+        label: "Cuota de vivienda aliviada"
+        remaining_months: 6
+        monthly_expense_delta: -80
+        monthly_stress_delta: -1

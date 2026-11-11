@@ -1,0 +1,57 @@
+schema_version: 1
+id: hacienda_embargo_preventivo_cuenta
+category: hacienda
+title: "Datáfono en rojo: diligencia de embargo en cuenta"
+body: "Vas a pagar la compra semanal y el terminal pita con un «Operación denegada» que congela la cola del supermercado. Abres la aplicación del banco con dedos temblorosos: una diligencia recaudatoria por un recibo devuelto ha trabado saldo justo cuando vas más ajustado de liquidez."
+tags:
+  - embargo
+  - recaudacion
+  - tesoreria
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 6
+  stats:
+    money:
+      max: 2400
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: liquidar_carta_pago_inmediata
+    label: "Pagar en el acto principal y apremio reducido para levantar la traba (410 €)"
+    result_text: "Obtienes el justificante electrónico al momento y recuperas el pulso de tu cuenta corriente, aunque el agujero en la caja escuece de verdad."
+    effects:
+      cash_delta: -410
+      stress: 10
+      moral: -6
+      fiscal_risk: -10
+  - id: alzar_traba_urgente_con_gestoria
+    label: "Movilizar a tu gestoría para acreditar cobro parcial y reducir el cargo"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría presenta los resguardos bancarios esa misma mañana, rebaja el recargo y libera el saldo retenido antes del cierre."
+    effects:
+      deductible_expense: 120
+      cash_delta: -170
+      stress: 5
+      moral: -1
+      fiscal_risk: -12
+  - id: solicitar_fraccionamiento_recaudacion
+    label: "Pedir fraccionamiento de emergencia con intereses para no quedarte seco hoy"
+    result_text: "Desbloqueas la cuenta soltando una entrada menor hoy, a cambio de arrastrar cuatro cuotas con intereses durante los próximos meses."
+    effects:
+      cash_delta: -110
+      add_modifier:
+        id: mod_fraccionamiento_apremio
+        label: "Fraccionamiento de deuda en recaudación"
+        remaining_months: 4
+        monthly_expense_delta: 95
+        monthly_stress_delta: 2
+      stress: 8
+      moral: -4
+      fiscal_risk: -5

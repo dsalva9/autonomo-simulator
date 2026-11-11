@@ -1,0 +1,61 @@
+schema_version: 1
+id: empleados_paga_aniversario_estudio
+category: empleados
+title: "Aniversario del estudio y paga de consolidación"
+body: "Tras superar media década en activo, tu estudio cumple otro año sacando adelante encargos complejos en equipo. Llega la conversación inevitable de madurez empresarial: reconocer la trayectoria con una paga extraordinaria de resultados o blindar cada euro líquido ante los próximos vencimientos fiscales."
+tags:
+  - plantilla
+  - veterania
+  - prima
+  - largo_plazo
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 60
+  has_employee: true
+weight: 11
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: abonar_paga_extra_consolidacion
+    label: "Abonar una paga extraordinaria de resultados (850 €) y reforzar el compromiso"
+    result_text: "El desembolso se nota en la cuenta, pero el orgullo compartido impulsa el ritmo comercial del estudio durante todo el semestre siguiente."
+    effects:
+      cash_delta: -850
+      stress: -8
+      moral: 9
+      reputation: 4
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_equipo_veterano_motivado
+        label: "Estudio veterano a pleno rendimiento"
+        remaining_months: 6
+        monthly_billed_delta: 420
+        monthly_stress_delta: -2
+  - id: financiar_formacion_y_dias_libres
+    label: "Compensar con formación avanzada deducible (360 €) y días extra de descanso"
+    result_text: "Equilibras reconocimiento y prudencia fiscal: mejoras capacidades del despacho sin vaciar de golpe la reserva del trimestre."
+    effects:
+      deductible_expense: 360
+      stress: -5
+      moral: 5
+      personal_life: 3
+      reputation: 2
+      clear_flags:
+        - desgaste_plantilla
+  - id: congelar_primas_por_tesoreria
+    label: "Explicar con los números abiertos que este año toca guardar caja sin extras"
+    result_text: "Proteges hasta el último euro disponible en el banco, aunque el aniversario pasa sin pena ni gloria y el ritmo en el despacho se enfría."
+    effects:
+      stress: 7
+      moral: -5
+      set_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_frialdad_sin_prima
+        label: "Desencanto por prima congelada"
+        remaining_months: 4
+        monthly_billed_delta: -220
+        monthly_stress_delta: 2

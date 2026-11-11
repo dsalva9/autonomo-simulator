@@ -1,0 +1,59 @@
+schema_version: 1
+id: familia_malabares_extraescolares
+category: familia
+title: "Días sin cole, fiebre y extraescolares"
+body: "El calendario escolar despliega su ofensiva sorpresa contra la conciliación: tres días no lectivos seguidos de unas décimas de fiebre y el recibo trimestral de actividades extraescolares. Con la criatura en casa a plena energía y dos encargos por cerrar, vuestra agenda salta por los aires."
+tags:
+  - hijos
+  - conciliacion
+  - colegio
+  - gastos_familiares
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 14
+  required_flags:
+    - criatura_en_casa
+weight: 15
+cooldown_months: 10
+max_occurrences: 5
+exclusive_with: []
+choices:
+  - id: contratar_canguro_y_campamento
+    label: "Pagar campamento urbano y refuerzo de canguro para salvar la semana (380 €)"
+    result_text: "La tarjeta echa humo, pero en casa reina el orden, sacáis el trabajo sin gritos y llegáis al viernes conservando el sentido del humor."
+    effects:
+      cash_delta: -380
+      stress: -7
+      moral: 6
+      personal_life: 8
+  - id: turnos_acrobaticos_en_salon
+    label: "Ahorrar el gasto turnándoos entre videollamadas y dibujos animados"
+    outcomes:
+      - id: malabarismo_exitoso
+        weight: 55
+        result_text: "Entregas los archivos con pegatinas fluorescentes en la tapa del portátil y ojeras hasta el suelo, pero sin restar un euro a la cuenta."
+        effects:
+          billed_income: 350
+          stress: 11
+          moral: 2
+          personal_life: -3
+      - id: reunion_interrumpida_y_colapso
+        weight: 45
+        result_text: "Un concierto improvisado de cacerolas se cuela en plena reunión con un cliente serio y acabáis la semana exhaustos y pidiendo comida a domicilio."
+        effects:
+          cash_delta: -140
+          stress: 15
+          moral: -6
+          personal_life: -8
+          reputation: -3
+  - id: frenar_entregas_y_cuidar_en_casa
+    label: "Aplazar encargos secundarios esta semana y volcarte en casa sin mirar el reloj"
+    result_text: "Renuncias a parte de la facturación prevista y gastas en farmacia y planes tranquilos, pero disfrutas unos días irrepetibles en familia."
+    effects:
+      cash_delta: -220
+      stress: -9
+      moral: 9
+      personal_life: 12
+      reputation: -2

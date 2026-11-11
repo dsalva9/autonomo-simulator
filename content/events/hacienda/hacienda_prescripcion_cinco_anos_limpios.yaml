@@ -1,0 +1,57 @@
+schema_version: 1
+id: hacienda_prescripcion_cinco_anos_limpios
+category: hacienda
+title: "Cinco años al sol y primer archivo prescrito"
+body: "Revisando estanterías caes en la cuenta de un milagro estadístico digno de documental: tus primeros ejercicios fiscales han superado el horizonte de prescripción sin una sola tacha y tu historial figura impoluto. Hasta el Inspector Gómez archiva tu expediente de control rutinario con gesto aprobatorio."
+tags:
+  - prescripcion
+  - veterania
+  - expediente_limpio
+  - largo_plazo
+character_id: hacienda_inspector_gomez
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 60
+  stats:
+    fiscal_risk:
+      max: 35
+weight: 12
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: digitalizar_archivo_y_blindar_paz
+    label: "Pagar digitalización certificada del archivo vivo y ganar paz mental (190 €)"
+    result_text: "Liberas medio armario de carpetas polvorientas, ordenas el archivo digital y trabajas durante meses con la serenidad de quien no teme al cartero."
+    effects:
+      deductible_expense: 190
+      stress: -14
+      moral: 10
+      personal_life: 5
+      fiscal_risk: -12
+      add_modifier:
+        id: mod_paz_fiscal_veterana
+        label: "Expediente histórico impoluto"
+        remaining_months: 6
+        monthly_moral_delta: 2
+        monthly_stress_delta: -2
+  - id: usar_certificado_corriente_clientes_serios
+    label: "Descargar certificado de estar al corriente para cerrar un encargo exigente"
+    result_text: "Acreditas solvencia fiscal instantánea ante un cliente corporativo que necesitaba proveedor homologado hoy mismo y facturas con todo en regla."
+    effects:
+      billed_income: 850
+      deductible_expense: 90
+      stress: -6
+      moral: 7
+      reputation: 5
+      fiscal_risk: -6
+  - id: triturar_carpetas_viejas_y_celebrar
+    label: "Pasar la tarde triturando duplicados prescritos y brindar con buena mesa (110 €)"
+    result_text: "El zumbido de la destructora de papel suena a música celestial. Cenas fuera sin mirar el móvil celebrando media década de supervivencia limpia."
+    effects:
+      cash_delta: -110
+      stress: -12
+      moral: 9
+      personal_life: 8
+      fiscal_risk: -5

@@ -1,0 +1,59 @@
+schema_version: 1
+id: familia_impulso_profesional_pareja
+category: familia
+title: "El salto profesional de Álex"
+body: "Álex llega a casa con una mezcla eléctrica de vértigo e ilusión: tiene delante una oportunidad laboral magnífica para crecer de verdad, pero exige unos meses de formación previa y asumir un bache temporal de ingresos en casa. Te pregunta mirándote a los ojos si tu tesorería aguanta sostener el barco común ahora."
+tags:
+  - pareja
+  - apoyo_mutuo
+  - hogar
+  - futuro
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 16
+  family_statuses:
+    - dating
+    - cohabiting
+weight: 10
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: respaldar_salto_cubriendo_colchon
+    label: "Apostar sin reservas por Álex y cubrir tú el grueso del bache inicial (650 €)"
+    result_text: "Arrimas el hombro cuando toca sin echar cuentas mezquinas. Semanas después, el nuevo puesto de Álex consolida la economía y la complicidad de la casa."
+    effects:
+      cash_delta: -650
+      moral: 11
+      stress: 4
+      personal_life: 14
+      clear_flags:
+        - crisis_pareja_latente
+      add_modifier:
+        id: mod_impulso_carrera_alex
+        label: "Nueva etapa profesional de Álex"
+        remaining_months: 6
+        monthly_expense_delta: -110
+        monthly_moral_delta: 2
+        monthly_stress_delta: -2
+  - id: apoyar_recortando_gastos_comunes
+    label: "Respaldar el cambio apretando gastos de ocio entre los dos (280 €)"
+    result_text: "Hacéis números realistas en la mesa de la cocina y sacáis adelante la transición sin poner en jaque la reserva de tus impuestos."
+    effects:
+      cash_delta: -280
+      moral: 6
+      stress: 2
+      personal_life: 8
+      clear_flags:
+        - crisis_pareja_latente
+  - id: pedir_prudencia_y_no_arriesgar
+    label: "Confesar que tus cuentas son demasiado inestables y pedirle que no arriesgue"
+    result_text: "Álex deja pasar la oportunidad por prudencia doméstica. Tus números no sufren ni un rasguño, pero en las cenas flota una decepción difícil de disimular."
+    effects:
+      moral: -6
+      stress: -2
+      personal_life: -10
+      set_flags:
+        - crisis_pareja_latente
