@@ -11,10 +11,12 @@ import {
   resolveEventText,
 } from "../../src/services/i18n/resolveEventText.ts";
 import {
+  CANONICAL_GAME_URL,
   ENDING_METADATA,
   buildShareText,
   createShareSummaryFromState,
   renderShareCardToCanvas,
+  resolveShareUrl,
 } from "../../src/services/share/shareResult.ts";
 
 describe("Share Summary & i18n Helpers", () => {
@@ -50,6 +52,50 @@ describe("Share Summary & i18n Helpers", () => {
     expect(text).toContain("Ricachón (150.000 €)");
     expect(text).toContain("SHARE-SEED-99");
     expect(text).toContain("https://autonomo.example/juego");
+  });
+
+  it("resolves canonical Vercel game URL by default, on localhost, and in non-browser contexts", () => {
+    expect(CANONICAL_GAME_URL).toBe("https://autonomo-simulator.vercel.app/");
+    expect(resolveShareUrl()).toBe("https://autonomo-simulator.vercel.app/");
+    expect(resolveShareUrl("  https://autonomo.example/custom  ")).toBe(
+      "https://autonomo.example/custom",
+    );
+
+    const originalWindow = globalThis.window;
+    try {
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: {
+          location: {
+            href: "http://localhost:4173/",
+            protocol: "http:",
+            hostname: "localhost",
+            origin: "http://localhost:4173",
+            pathname: "/",
+          },
+        },
+      });
+      expect(resolveShareUrl()).toBe("https://autonomo-simulator.vercel.app/");
+
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: {
+          location: {
+            href: "https://autonomo-simulator.vercel.app/",
+            protocol: "https:",
+            hostname: "autonomo-simulator.vercel.app",
+            origin: "https://autonomo-simulator.vercel.app",
+            pathname: "/",
+          },
+        },
+      });
+      expect(resolveShareUrl()).toBe("https://autonomo-simulator.vercel.app/");
+    } finally {
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: originalWindow,
+      });
+    }
   });
 
   it("formats Spanish numbers, durations, calendar trimestres, and choice lock reasons", () => {

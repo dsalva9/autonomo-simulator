@@ -15,7 +15,8 @@
       "biome.json",
       "vite.config.ts",
       "vitest.config.ts",
-      "playwright.config.ts"
+      "playwright.config.ts",
+      "playwright.prod.config.ts"
     ],
     "ignore": [
       "node_modules",

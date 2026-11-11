@@ -24,19 +24,21 @@ Read [ARCHITECTURE.md](./ARCHITECTURE.md) for state/schema contracts and [Autono
 | Run headless balance sims | `pnpm test:sim` |
 | Production build | `pnpm build` |
 | Run Playwright UI / QA (local `dist/`) | `pnpm test:e2e` |
-| Run Playwright UI / QA (deployed URL) | `PLAYWRIGHT_BASE_URL=https://<url> pnpm test:e2e` |
+| Run Playwright UI / QA (live Vercel prod: `https://autonomo-simulator.vercel.app/`) | `pnpm test:e2e:prod` |
+
+> **Custom Preview URL Override**: Pass `PLAYWRIGHT_BASE_URL` when targeting a branch preview URL (PowerShell: `$env:PLAYWRIGHT_BASE_URL="https://<preview-url>"; pnpm test:e2e:prod` · macOS/Linux: `PLAYWRIGHT_BASE_URL=https://<preview-url> pnpm test:e2e:prod`).
 
 ### Pre-Commit / Completion Gate
 ```bash
 pnpm verify
 ```
-Runs `schema:check` -> `validate:assets` -> `validate:content` -> `typecheck` -> `lint` -> `test` -> `build` -> `test:e2e`.
+Runs `schema:check` -> `validate:assets` -> `validate:content` -> `typecheck` -> `lint` -> `test` -> `build` -> `test:e2e` (local `dist/`), followed after `git push` / Vercel CD deployment by `pnpm test:e2e:prod` against `https://autonomo-simulator.vercel.app/`.
 
 ## 3. Roles & Directory Ownership
 
 | Role | Write-Allowed Paths | Forbidden Paths (Read-Only) |
 |---|---|---|
-| **Programmer** | `src/`, `schemas/` *(via `schema:emit`)*, `scripts/`, `tests/`, `docs/adr/`, `docs/qa/`, root build configs (`package.json`, `tsconfig.json`, `vite.config.ts`, `playwright.config.ts`, `biome.json`) | `content/events/`, `content/characters/`, `assets/` *(except initial Phase 0 bootstrap placeholders)* |
+| **Programmer** | `src/`, `schemas/` *(via `schema:emit`)*, `scripts/`, `tests/`, `docs/adr/`, `docs/qa/`, root build configs (`package.json`, `tsconfig.json`, `vite.config.ts`, `playwright.config.ts`, `playwright.prod.config.ts`, `biome.json`) | `content/events/`, `content/characters/`, `assets/` *(except initial Phase 0 bootstrap placeholders)* |
 | **Narrative** | `content/events/`, `content/characters/`, `docs/proposals/` | `src/`, `schemas/`, `scripts/`, `assets/`, `content/config/` |
 | **Art** | `assets/` *(including `assets/manifest.json`)*, `docs/proposals/` | `src/`, `schemas/`, `scripts/`, `content/` |
 | **Human Owner** | All paths; sole approver of `AGENTS.md`, `ARCHITECTURE.md`, `Autonomo_Simulator_PRD_v1.md`, `docs/ART_DIRECTION.md`, `content/config/balance.yaml`, and engine/schema merges | — |
@@ -144,18 +146,18 @@ Co-Authored-By: <Agent Model Name> <noreply@agent.local>
 Every completed feature, slice, or fix MUST execute this full end-to-end pipeline before finishing:
 1. **Code & Contract Checks**: Run `schema:check`, `validate:assets`, `validate:content`, `typecheck`, and `lint` (`biome check`).
 2. **Automated Tests**: Create/update unit, content, simulation, and Playwright regression tests as needed, and run the full automated test suite (`pnpm test`).
-3. **Manual Test Plan & Live Browser Execution (Playwright)**:
+3. **Production Build & Local Playwright QA (Pre-Commit / Pre-Push)**:
    - Document/update human-readable manual QA scenarios in `docs/qa/manual-test-plan.md` (covering mobile `390×844` + desktop `1440×900`, user flows, edge cases, and persistence).
-   - Execute those scenarios via **Playwright** (`pnpm test:e2e` / scripted Playwright walkthroughs with screenshot & zero-console-error verification)—first against the local production preview (`pnpm preview`), and once a live deployment exists, also against the deployed URL (`PLAYWRIGHT_BASE_URL=https://<deployed-url> pnpm test:e2e`).
-4. **Production Build**: Run `pnpm build` and confirm clean output in `dist/`.
-5. **Commit & Push**: Stage changes, commit using Conventional Commits + `Co-Authored-By`, and `git push` to GitHub (`origin`) (and verify deployed URL via Playwright once hosting CD is active).
+   - Run `pnpm build` to emit a clean `dist/`, then execute Playwright E2E + manual QA scenarios locally via `pnpm test:e2e` (against `dist/` via `pnpm preview`) with screenshot & zero-console/page/HTTP-error verification **before** commit/push.
+4. **Commit & Push**: Stage changes, commit using Conventional Commits + `Co-Authored-By`, and `git push` to GitHub (`origin`).
+5. **Live Vercel Production Playwright QA (Post-Deploy)**: Once Vercel CD finishes deploying to `https://autonomo-simulator.vercel.app/`, run `pnpm test:e2e:prod` to verify all Playwright E2E + manual QA scenarios pass against the live production URL with zero console/page/HTTP errors.
 
 ### Programmer DoD
 - [ ] Zero boundary violations (`src/engine/` remains pure; no hardcoded content).
 - [ ] `pnpm schema:emit` run if Zod schemas changed; `ARCHITECTURE.md` / `docs/adr/` updated if contracts changed.
 - [ ] Automated unit/simulation/UI tests added or updated and passing.
-- [ ] Manual QA scenarios updated in `docs/qa/manual-test-plan.md` and executed via Playwright (local `dist/` preview, plus deployed URL once live) with zero console/page errors.
-- [ ] `pnpm verify` (including `pnpm build` and `pnpm test:e2e`) passes, committed, and pushed to `origin`.
+- [ ] Manual QA scenarios updated in `docs/qa/manual-test-plan.md` and executed via Playwright **both** locally (`pnpm test:e2e` against `dist/`) before commit/push **and** against the live Vercel deployment (`https://autonomo-simulator.vercel.app/` via `pnpm test:e2e:prod`) after push/deployment, with zero console/page/HTTP errors.
+- [ ] `pnpm verify` (including `pnpm build` and local `pnpm test:e2e`) passes before commit/push, changes are committed and pushed to `origin`, and post-deploy `pnpm test:e2e:prod` passes against `https://autonomo-simulator.vercel.app/`.
 
 ### Narrative DoD
 - [ ] Files live solely under `content/events/` or `content/characters/` (plus optional `docs/proposals/`).

@@ -1,7 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const externalBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
-const baseURL = externalBaseUrl ?? "http://localhost:4173";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:4173";
 const localChannel = process.env.PLAYWRIGHT_CHANNEL ?? (process.env.CI ? undefined : "chrome");
 
 export default defineConfig({
@@ -33,7 +32,7 @@ export default defineConfig({
       },
     },
   ],
-  webServer: externalBaseUrl
+  webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
         command: "pnpm preview",

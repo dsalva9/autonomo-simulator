@@ -6,10 +6,14 @@ Human-readable and Playwright-automated QA scenarios validating Phase 0 architec
 
 ## 1. Execution Environments & Viewports
 
-| Target | Command | URL |
-|---|---|---|
-| **Local Production Preview** | `pnpm build && pnpm test:e2e` | `http://localhost:4173` |
-| **Live Deployed Build** | `PLAYWRIGHT_BASE_URL=https://<deployed-url> pnpm test:e2e` | `https://<deployed-url>` |
+Both targets below are **mandatory** Playwright verification gates for every user-facing change (execute Local Preview before commit/push, and Live Production Vercel after push/deployment):
+
+| Mandatory Target | Stage | Command | URL |
+|---|---|---|---|
+| **Local Preview (`dist/`)** | Pre-commit / pre-push | `pnpm build && pnpm test:e2e` | `http://localhost:4173` |
+| **Live Production (Vercel)** | Post-push / post-deploy | `pnpm test:e2e:prod` | `https://autonomo-simulator.vercel.app/` |
+
+> **Custom Preview URL Override**: To verify a Vercel preview URL before merging, set `PLAYWRIGHT_BASE_URL` (PowerShell: `$env:PLAYWRIGHT_BASE_URL="https://<preview-url>"; pnpm test:e2e:prod` · macOS/Linux: `PLAYWRIGHT_BASE_URL=https://<preview-url> pnpm test:e2e:prod`).
 
 ### Mandatory Target Viewports
 - **Mobile (`mobile-chromium`)**: `390 × 844` (Pixel 7 touch profile; sticky compact HUD, compact office scene strip, `>= 48px` touch choice buttons, 4-tab bottom navigation bar).

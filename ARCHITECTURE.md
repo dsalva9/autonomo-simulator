@@ -549,17 +549,17 @@ Every completed task or milestone runs a full verification + QA + delivery seque
    - `pnpm lint` — `biome check .`.
    - `pnpm test` — `vitest run` (engine unit tests + content tests + fast seeded simulation smoke suite).
    - `pnpm build` — Production Vite bundle (`dist/`) verifying zero bundling or asset-resolution errors.
-2. **Structured Manual Test Plan & Playwright Execution (Local -> Deployed)**:
+2. **Structured Manual Test Plan & Playwright Execution (Local -> Live Vercel Production)**:
    - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, mobile `390×844` touch layout, and desktop `1440×900` multi-panel layout).
-   - Agents **execute** both automated E2E regressions (`tests/ui/*.spec.ts`) and interactive/manual walkthrough scenarios via **Playwright** against the real production build—verifying DOM layout, visual screenshots, IndexedDB save/reload persistence, and **zero** browser `console.error` / `pageerror` events.
-   - **Local vs Deployed Parity (`PLAYWRIGHT_BASE_URL`)**:
-     - **Local (default)**: Playwright boots `pnpm preview` (`http://localhost:4173` serving `dist/`) and runs all checks locally before commit/push.
-     - **Deployed (post-hosting)**: Passing `PLAYWRIGHT_BASE_URL=https://<deployed-url> pnpm test:e2e` runs the exact same E2E and smoke/manual verification suite against the live production deployment after `git push`.
-3. **Git Delivery**:
-   - Once all checks, automated tests, Playwright manual/E2E runs, and `pnpm build` succeed, changes are committed and pushed to GitHub (`origin`).
+   - Agents **execute** both automated E2E regressions (`tests/ui/*.spec.ts`) and interactive/manual walkthrough scenarios via **Playwright** against the real production build—verifying DOM layout, visual screenshots, IndexedDB save/reload persistence, HTTP asset responses, and **zero** browser `console.error` / `pageerror` events.
+   - **Local vs Live Vercel Production Parity (`playwright.config.ts` & `playwright.prod.config.ts`)**:
+     - **Local Pre-Push Gate (`pnpm test:e2e`)**: Playwright boots `pnpm preview` (`http://localhost:4173` serving `dist/`) and runs all checks locally before commit/push.
+     - **Live Production Post-Deploy Gate (`pnpm test:e2e:prod`)**: Runs the exact same mobile + desktop E2E and QA verification suite against the live Vercel production deployment at `https://autonomo-simulator.vercel.app/` (cross-platform via `playwright.prod.config.ts` with `webServer: undefined`; custom preview URLs can override via `PLAYWRIGHT_BASE_URL`).
+3. **Git Delivery & Post-Deploy Verification**:
+   - Once all checks, automated tests, `pnpm build`, and local `pnpm test:e2e` succeed, changes are committed and pushed to GitHub (`origin`), triggering Vercel CD to `https://autonomo-simulator.vercel.app/`, followed by `pnpm test:e2e:prod` to verify the live deployment.
 
 ### 8.2 Multi-Platform Packaging Roadmap
 All platform-specific capabilities (storage persistence hints, native share, haptics, external links, window quit) sit behind `src/services/platform/PlatformPort.ts`:
-1. **Phase 1 — Web HTML5 (MVP)**: Static Vite build (`dist/`) with relative base path (`base: './'`) so the identical bundle runs at root domain, subpath, or itch.io iframe, plus optional PWA service worker for offline caching.
+1. **Phase 1 — Web HTML5 (MVP — Live on Vercel)**: Static Vite build (`dist/`) with relative base path (`base: './'`) deployed continuously to Vercel production at `https://autonomo-simulator.vercel.app/` (verified post-deploy via `pnpm test:e2e:prod`), while keeping the identical static bundle portable to root domains, subpaths, or itch.io iframes, plus optional PWA service worker for offline caching.
 2. **Phase 2 — Android & iOS (`Capacitor`)**: Wraps `dist/`; swaps `WebShareAdapter` for `@capacitor/share` + `@capacitor/filesystem` (for PNG card sharing), handles notch/gesture insets via CSS `env(safe-area-inset-*)`, and requests persistent storage so OS cache eviction does not wipe `IndexedDB`.
 3. **Phase 3 — Desktop Windows/macOS/Linux (`Tauri v2`)**: Wraps `dist/` in native WebView; routes save/profile files optionally to OS app-data directory via Tauri FS adapter (`StoragePort`) for Steam Cloud compatibility while keeping the entire React + Engine codebase untouched.

@@ -95,14 +95,25 @@ export interface EndRunShareSummary {
   gameUrl: string;
 }
 
+export const CANONICAL_GAME_URL = "https://autonomo-simulator.vercel.app/";
+
 export function resolveShareUrl(explicitUrl?: string): string {
   if (explicitUrl && explicitUrl.trim().length > 0) {
     return explicitUrl.trim();
   }
   if (typeof window !== "undefined" && window.location?.href) {
-    return `${window.location.origin}${window.location.pathname}`;
+    const { protocol, hostname, origin, pathname } = window.location;
+    const isHttp = protocol === "http:" || protocol === "https:";
+    const isLocalhost =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1" ||
+      hostname === "[::1]";
+    if (isHttp && hostname && !isLocalhost) {
+      return `${origin}${pathname}`;
+    }
   }
-  return "https://autonomo-simulator.local";
+  return CANONICAL_GAME_URL;
 }
 
 export function createShareSummaryFromState(
