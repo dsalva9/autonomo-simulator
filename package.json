@@ -8,6 +8,7 @@
     "dev": "tsx scripts/compile-content.ts && vite",
     "prebuild": "tsx scripts/compile-content.ts",
     "build": "vite build",
+    "package:itch": "pnpm build && tsx scripts/package-itch.ts",
     "preview": "vite preview --port 4173 --strictPort",
     "schema:emit": "tsx scripts/emit-schemas.ts",
     "schema:check": "tsx scripts/emit-schemas.ts --check",

@@ -1,4 +1,4 @@
-import type { EndingId, GameState, VictoryBadge } from "../../engine/index.ts";
+import type { EndingId, GameState, HistoryEntryKind, VictoryBadge } from "../../engine/index.ts";
 
 export const ACTIVE_RUN_KEY = "autonomo:active_run";
 export const PROFILE_KEY = "autonomo:profile";
@@ -6,19 +6,25 @@ export const CORRUPT_BACKUP_KEY = "autonomo:corrupt_backup";
 
 export const CURRENT_SAVE_VERSION = 1 as const;
 export const CURRENT_PROFILE_VERSION = 1 as const;
-export const ENGINE_BUILD = "0.2.0-phase1";
+export const ENGINE_BUILD = "0.3.0-phase2";
 export const MAX_HALL_OF_FAME_ENTRIES = 50;
 
 export type AchievementId =
   | "primer_trimestre"
   | "primer_ano"
   | "gestor_contratado"
+  | "aplazamiento_solicitado"
+  | "numeros_rojos_superados"
   | "superviviente_hacienda"
+  | "colchon_10k"
   | "primer_empleado"
   | "familia_formada"
+  | "criatura_en_casa"
   | "cinco_anos"
+  | "facturacion_100k"
   | "heroe_120m"
-  | "ricachon_150k";
+  | "ricachon_150k"
+  | "modo_infinito";
 
 export interface AchievementDefinition {
   id: AchievementId;
@@ -48,11 +54,32 @@ export const ACHIEVEMENT_CATALOG: readonly AchievementDefinition[] = [
       "Contratar los servicios de una gestoría para no pelearte a solas con los modelos fiscales.",
   },
   {
+    id: "aplazamiento_solicitado",
+    code: "MOD-APLZ",
+    title: "Patada Hacia Adelante",
+    description:
+      "Solicitar un aplazamiento trimestral con recargo para ganar tres meses de oxígeno financiero.",
+  },
+  {
+    id: "numeros_rojos_superados",
+    code: "DESC-OK",
+    title: "Equilibrista del Descubierto",
+    description:
+      "Sobrevivir a un episodio en números rojos y remontar la cuenta corriente a saldo positivo.",
+  },
+  {
     id: "superviviente_hacienda",
     code: "AEAT-OK",
     title: "Superviviente de Hacienda",
     description:
       "Resolver tu primer expediente o requerimiento de la Agencia Tributaria y seguir en activo.",
+  },
+  {
+    id: "colchon_10k",
+    code: "CAJA-10K",
+    title: "Colchón de Supervivencia",
+    description:
+      "Reunir al menos 10.000 € de liquidez disponible sin que el trimestre te los volatilice.",
   },
   {
     id: "primer_empleado",
@@ -68,10 +95,24 @@ export const ACHIEVEMENT_CATALOG: readonly AchievementDefinition[] = [
       "Formar un hogar en convivencia o ampliar la familia mientras malabareas entregas.",
   },
   {
+    id: "criatura_en_casa",
+    code: "CONCIL-01",
+    title: "Conciliación Malabarista",
+    description:
+      "Criar al menos una criatura en casa mientras atiendes clientes, guarderías y cierres.",
+  },
+  {
     id: "cinco_anos",
     code: "RETA-60M",
-    title: "Veterano de Cuota",
+    title: "Media Década en el RETA",
     description: "Resistir cinco años (60 meses) entre facturas, clientes y gestorías.",
+  },
+  {
+    id: "facturacion_100k",
+    code: "MOD-390",
+    title: "Cien Mil Facturados",
+    description:
+      "Alcanzar 100.000 € de facturación oficial acumulada ante la mirada atenta del fisco.",
   },
   {
     id: "heroe_120m",
@@ -85,7 +126,53 @@ export const ACHIEVEMENT_CATALOG: readonly AchievementDefinition[] = [
     title: "Ricachón",
     description: "Acumular al menos 150.000 € de liquidez disponible en tu cuenta.",
   },
+  {
+    id: "modo_infinito",
+    code: "RETA-INF",
+    title: "Masoquista Cotizante",
+    description:
+      "Rechazar el retiro tras conquistar una victoria y seguir cotizando en Modo Infinito.",
+  },
 ] as const;
+
+export const KNOWN_ACHIEVEMENT_IDS: ReadonlySet<AchievementId> = new Set<AchievementId>(
+  ACHIEVEMENT_CATALOG.map((entry) => entry.id),
+);
+
+const CASH_MUTATING_HISTORY_KINDS: ReadonlySet<HistoryEntryKind> = new Set<HistoryEntryKind>([
+  "month_start",
+  "event_choice",
+  "quarterly_tax",
+  "invoice_paid",
+]);
+
+function hasRecoveredFromNegativeCash(state: GameState): boolean {
+  if (state.ending !== null || state.indicators.money < 0) {
+    return false;
+  }
+
+  if (state.finances.consecutive_negative_months > 0) {
+    return true;
+  }
+
+  let cursorMoney = state.indicators.money;
+  for (let i = state.history.length - 1; i >= 0; i -= 1) {
+    const entry = state.history[i];
+    if (
+      entry &&
+      CASH_MUTATING_HISTORY_KINDS.has(entry.kind) &&
+      typeof entry.money_delta === "number" &&
+      Number.isFinite(entry.money_delta)
+    ) {
+      cursorMoney -= entry.money_delta;
+      if (cursorMoney < 0) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
 
 export interface SaveEnvelope {
   save_version: typeof CURRENT_SAVE_VERSION;
@@ -185,23 +272,29 @@ export function evaluateUnlockedAchievements(
   maybeUnlock("primer_trimestre", state.month >= 3);
   maybeUnlock("primer_ano", state.month >= 12);
   maybeUnlock("gestor_contratado", state.gestor.tier !== "self");
+  maybeUnlock("aplazamiento_solicitado", state.finances.deferred_tax !== null);
+  maybeUnlock("numeros_rojos_superados", hasRecoveredFromNegativeCash(state));
   maybeUnlock(
     "superviviente_hacienda",
     Object.entries(state.occurrences).some(
       ([id, count]) => id.startsWith("hacienda_") && count > 0,
     ),
   );
+  maybeUnlock("colchon_10k", state.indicators.money >= 10_000);
   maybeUnlock("primer_empleado", state.employee !== null);
   maybeUnlock(
     "familia_formada",
     state.family.status === "cohabiting" || state.family.children_count > 0,
   );
+  maybeUnlock("criatura_en_casa", state.family.children_count >= 1);
   maybeUnlock("cinco_anos", state.month >= 60);
+  maybeUnlock("facturacion_100k", state.finances.lifetime_billed >= 100_000);
   maybeUnlock("heroe_120m", state.month >= 120 || state.earned_victories.includes("hero_120m"));
   maybeUnlock(
     "ricachon_150k",
     state.indicators.money >= 150_000 || state.earned_victories.includes("rich_150k"),
   );
+  maybeUnlock("modo_infinito", state.endless_mode === true);
 
   return { achievements: next, newlyUnlocked };
 }

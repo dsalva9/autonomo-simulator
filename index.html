@@ -3,14 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23b42b24' stroke='%231f2421' stroke-width='4'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='monospace' font-size='22' font-weight='bold' fill='%23fffdf8'%3E036%3C/text%3E%3C/svg%3E"
+    <meta
+      name="description"
+      content="Simulador satírico de supervivencia para autónomos en España. Sobrevive 10 años entre facturas, clientes regateadores, gestorías y el Trimestre."
     />
+    <meta name="theme-color" content="#1f2421" />
+
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+
+    <!-- OpenGraph / WhatsApp / Telegram / Discord Link Preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="Autónomo Simulator" />
+    <meta property="og:title" content="Autónomo Simulator — Sobrevive 10 años en el RETA" />
+    <meta
+      property="og:description"
+      content="Simulador satírico de supervivencia para autónomos en España. Facturas, clientes, cuotas y el temido Trimestre. «Sé tu propio jefe. Descubre por qué era mala idea.»"
+    />
+    <meta property="og:url" content="https://autonomo-simulator.vercel.app/" />
+    <meta property="og:image" content="https://autonomo-simulator.vercel.app/og-preview.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Escritorio de Autónomo Simulator con portátil, cafetera italiana y cuaderno de cuentas"
+    />
+
+    <!-- X / Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Autónomo Simulator — Sobrevive 10 años en el RETA" />
+    <meta
+      name="twitter:description"
+      content="Simulador satírico de supervivencia para autónomos en España. «Sé tu propio jefe. Descubre por qué era mala idea.»"
+    />
+    <meta name="twitter:image" content="https://autonomo-simulator.vercel.app/og-preview.png" />
+
     <title>Autónomo Simulator</title>
   </head>
-  <body class="bg-stone-100 text-stone-900 antialiased">
+  <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

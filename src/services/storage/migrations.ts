@@ -10,6 +10,10 @@ import {
   createDefaultProfileEnvelope,
 } from "./StoragePort.ts";
 
+const LEGACY_ACHIEVEMENT_KEY_MAP: Readonly<Record<string, string>> = {
+  aplazamiento_Solicitado: "aplazamiento_solicitado",
+};
+
 const VALID_PHASES: ReadonlySet<TurnPhase> = new Set<TurnPhase>([
   "month_start",
   "event_resolution",
@@ -185,7 +189,10 @@ export function migrateSaveEnvelope(raw: unknown): MigrateSaveResult {
     ok: true,
     envelope: {
       save_version: CURRENT_SAVE_VERSION,
-      engine_build: typeof working.engine_build === "string" ? working.engine_build : ENGINE_BUILD,
+      engine_build:
+        typeof working.engine_build === "string" && working.engine_build.trim().length > 0
+          ? working.engine_build
+          : ENGINE_BUILD,
       updated_at:
         typeof working.updated_at === "string" ? working.updated_at : new Date(0).toISOString(),
       state: working.state,
@@ -229,7 +236,10 @@ export function migrateProfileEnvelope(raw: unknown): ProfileEnvelope {
   if (isRecord(unpacked.achievements)) {
     for (const [k, v] of Object.entries(unpacked.achievements)) {
       if (typeof v === "string" && v.length > 0) {
-        achievements[k] = v;
+        const normalizedKey = LEGACY_ACHIEVEMENT_KEY_MAP[k] ?? k;
+        if (!achievements[normalizedKey]) {
+          achievements[normalizedKey] = v;
+        }
       }
     }
   }

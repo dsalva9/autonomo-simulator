@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Warm kraft desk background rounded square -->
+  <rect x="16" y="16" width="480" height="480" rx="88" fill="#f6efe0" stroke="#1f2421" stroke-width="20" />
+
+  <!-- Hard offset ink shadow for dossier card -->
+  <rect x="66" y="70" width="392" height="384" rx="44" fill="#1f2421" />
+
+  <!-- Official Stamp Red Modelo 036 Badge -->
+  <rect x="54" y="56" width="392" height="384" rx="44" fill="#b42b24" stroke="#1f2421" stroke-width="16" />
+
+  <!-- Inner archival double-rule frame -->
+  <rect x="82" y="84" width="336" height="328" rx="24" fill="none" stroke="#fce592" stroke-width="6" />
+  <rect x="96" y="98" width="308" height="300" rx="16" fill="none" stroke="#fffdf8" stroke-width="3" stroke-dasharray="14 8" />
+
+  <!-- Top ministry header strip -->
+  <rect x="116" y="122" width="268" height="52" rx="10" fill="#1f2421" />
+  <text
+    x="250"
+    y="158"
+    text-anchor="middle"
+    font-family="'Courier New', Consolas, monospace"
+    font-size="34"
+    font-weight="700"
+    letter-spacing="3"
+    fill="#fce592"
+  >MOD. RETA</text>
+
+  <!-- Crisp 036 bureaucratic numeral -->
+  <text
+    x="250"
+    y="302"
+    text-anchor="middle"
+    font-family="'Courier New', Consolas, monospace"
+    font-size="148"
+    font-weight="900"
+    letter-spacing="2"
+    fill="#fffdf8"
+  >036</text>
+
+  <!-- Bottom archival rule & star seal -->
+  <line x1="124" y1="336" x2="376" y2="336" stroke="#fce592" stroke-width="6" stroke-linecap="round" />
+  <circle cx="250" cy="366" r="14" fill="#fce592" stroke="#1f2421" stroke-width="4" />
+</svg>
