@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "balance.schema.json",
+  "title": "BalanceConfig",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "number",
+      "const": 1
+    },
+    "initial_indicators": {
+      "type": "object",
+      "properties": {
+        "money": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "moral": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "stress": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "personal_life": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fiscal_risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "money",
+        "moral",
+        "stress",
+        "personal_life",
+        "reputation",
+        "fiscal_risk"
+      ],
+      "additionalProperties": false
+    },
+    "base_monthly_billing": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "base_living_cost": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "autonomo_quota": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "child_monthly_cost": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "reputation_multiplier_min": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "reputation_multiplier_max": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "moral_multiplier_min": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "moral_multiplier_max": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "personal_life_recovery_threshold": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "personal_life_monthly_stress_relief": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "effective_quarterly_tax_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "deductible_tax_fraction": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "deferral_surcharge_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "deferral_stress_penalty": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "negative_cash_monthly_stress": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "max_consecutive_negative_months": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "hard_debt_floor": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 0
+    },
+    "victory_month": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "victory_money": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "gestor_tiers": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "type": "object",
+          "properties": {
+            "monthly_fee": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "inspection_shield": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "quarterly_error_prob": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "quarterly_error_surcharge": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "quarterly_error_stress": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "monthly_fee",
+            "inspection_shield",
+            "quarterly_error_prob",
+            "quarterly_error_surcharge",
+            "quarterly_error_stress"
+          ],
+          "additionalProperties": false
+        },
+        "cheap": {
+          "type": "object",
+          "properties": {
+            "monthly_fee": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "inspection_shield": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "quarterly_error_prob": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "quarterly_error_surcharge": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "quarterly_error_stress": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "monthly_fee",
+            "inspection_shield",
+            "quarterly_error_prob",
+            "quarterly_error_surcharge",
+            "quarterly_error_stress"
+          ],
+          "additionalProperties": false
+        },
+        "premium": {
+          "type": "object",
+          "properties": {
+            "monthly_fee": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "inspection_shield": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "quarterly_error_prob": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "quarterly_error_surcharge": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "quarterly_error_stress": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "monthly_fee",
+            "inspection_shield",
+            "quarterly_error_prob",
+            "quarterly_error_surcharge",
+            "quarterly_error_stress"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "self",
+        "cheap",
+        "premium"
+      ],
+      "additionalProperties": false
+    },
+    "default_partner_monthly_cost": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "default_partner_support_modifier": {
+      "type": "number"
+    },
+    "inspection_curve": {
+      "type": "object",
+      "properties": {
+        "min_fiscal_risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "max_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "exponent": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "risk_decay_on_trigger": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "quarterly_natural_risk_decay": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fallback_fine_base": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "fallback_fine_per_risk": {
+          "type": "number",
+          "minimum": 0
+        },
+        "fallback_stress_penalty": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "min_fiscal_risk",
+        "max_probability",
+        "exponent",
+        "risk_decay_on_trigger",
+        "quarterly_natural_risk_decay",
+        "fallback_fine_base",
+        "fallback_fine_per_risk",
+        "fallback_stress_penalty"
+      ],
+      "additionalProperties": false
+    },
+    "max_history_entries": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 9007199254740991
+    },
+    "ending_quotes": {
+      "type": "object",
+      "properties": {
+        "defeat_bankruptcy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "defeat_burnout_stress": {
+          "type": "string",
+          "minLength": 1
+        },
+        "defeat_resignation_moral": {
+          "type": "string",
+          "minLength": 1
+        },
+        "abandon_oposiciones": {
+          "type": "string",
+          "minLength": 1
+        },
+        "abandon_salaried": {
+          "type": "string",
+          "minLength": 1
+        },
+        "abandon_subsidies": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retired_hero": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retired_rich": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "initial_indicators",
+    "base_monthly_billing",
+    "base_living_cost",
+    "autonomo_quota",
+    "child_monthly_cost",
+    "reputation_multiplier_min",
+    "reputation_multiplier_max",
+    "moral_multiplier_min",
+    "moral_multiplier_max",
+    "personal_life_recovery_threshold",
+    "personal_life_monthly_stress_relief",
+    "effective_quarterly_tax_rate",
+    "deductible_tax_fraction",
+    "deferral_surcharge_pct",
+    "deferral_stress_penalty",
+    "negative_cash_monthly_stress",
+    "max_consecutive_negative_months",
+    "hard_debt_floor",
+    "victory_month",
+    "victory_money",
+    "gestor_tiers",
+    "default_partner_monthly_cost",
+    "default_partner_support_modifier",
+    "inspection_curve",
+    "max_history_entries"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,1109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event.schema.json",
+  "title": "EventDef",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "number",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "clientes",
+        "hacienda",
+        "familia",
+        "empleados",
+        "gestor"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "body": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "character_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "illustration_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requirements": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "min_month": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "max_month": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "stats": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "money": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "max": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "moral": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "max": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "stress": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "max": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "personal_life": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "max": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "reputation": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "max": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "fiscal_risk": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "max": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "required_flags": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "forbidden_flags": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "gestor_tiers": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "self",
+                      "cheap",
+                      "premium"
+                    ]
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "family_statuses": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "single",
+                      "dating",
+                      "cohabiting",
+                      "separated"
+                    ]
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "has_employee": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "weight": {
+      "type": "number",
+      "minimum": 0
+    },
+    "cooldown_months": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "max_occurrences": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "exclusive_with": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+      }
+    },
+    "choices": {
+      "minItems": 2,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requirements": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "min_month": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "max_month": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "stats": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "money": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "max": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "moral": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "max": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "stress": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "max": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "personal_life": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "max": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "reputation": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "max": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "fiscal_risk": {
+                            "type": "object",
+                            "properties": {
+                              "min": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "max": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "required_flags": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "forbidden_flags": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "gestor_tiers": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "self",
+                            "cheap",
+                            "premium"
+                          ]
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "family_statuses": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "single",
+                            "dating",
+                            "cohabiting",
+                            "separated"
+                          ]
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "has_employee": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "result_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effects": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "billed_income": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cash_delta": {
+                    "type": "number"
+                  },
+                  "deductible_expense": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "deferred_invoice": {
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      "delay_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "default_prob": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "delay_months",
+                      "default_prob"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "moral": {
+                    "type": "number"
+                  },
+                  "stress": {
+                    "type": "number"
+                  },
+                  "personal_life": {
+                    "type": "number"
+                  },
+                  "reputation": {
+                    "type": "number"
+                  },
+                  "fiscal_risk": {
+                    "type": "number"
+                  },
+                  "set_flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "clear_flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "schedule_events": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "event_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                        },
+                        "delay_months": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "probability": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "event_id",
+                        "delay_months"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "add_modifier": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "remaining_months": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      "monthly_billed_delta": {
+                        "type": "number"
+                      },
+                      "monthly_expense_delta": {
+                        "type": "number"
+                      },
+                      "monthly_moral_delta": {
+                        "type": "number"
+                      },
+                      "monthly_stress_delta": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "remaining_months"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "set_gestor": {
+                    "type": "object",
+                    "properties": {
+                      "tier": {
+                        "type": "string",
+                        "enum": [
+                          "self",
+                          "cheap",
+                          "premium"
+                        ]
+                      },
+                      "character_id": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "tier"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "set_family_status": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "single",
+                          "dating",
+                          "cohabiting",
+                          "separated"
+                        ]
+                      },
+                      "partner_character_id": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "status"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "add_child": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  "hire_employee": {
+                    "type": "object",
+                    "properties": {
+                      "character_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                      }
+                    },
+                    "required": [
+                      "character_id"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "dismiss_employee": {
+                    "type": "object",
+                    "properties": {
+                      "severance_cost": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "severance_cost"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "trigger_ending": {
+                    "type": "string",
+                    "enum": [
+                      "abandon_oposiciones",
+                      "abandon_salaried",
+                      "abandon_subsidies"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outcomes": {
+            "anyOf": [
+              {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                    },
+                    "weight": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "result_text": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "effects": {
+                      "type": "object",
+                      "properties": {
+                        "billed_income": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "cash_delta": {
+                          "type": "number"
+                        },
+                        "deductible_expense": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "deferred_invoice": {
+                          "type": "object",
+                          "properties": {
+                            "amount": {
+                              "type": "number",
+                              "exclusiveMinimum": 0
+                            },
+                            "delay_months": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "default_prob": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            }
+                          },
+                          "required": [
+                            "amount",
+                            "delay_months",
+                            "default_prob"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "moral": {
+                          "type": "number"
+                        },
+                        "stress": {
+                          "type": "number"
+                        },
+                        "personal_life": {
+                          "type": "number"
+                        },
+                        "reputation": {
+                          "type": "number"
+                        },
+                        "fiscal_risk": {
+                          "type": "number"
+                        },
+                        "set_flags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "clear_flags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "schedule_events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "event_id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                              },
+                              "delay_months": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "probability": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              }
+                            },
+                            "required": [
+                              "event_id",
+                              "delay_months"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "add_modifier": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "label": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "remaining_months": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 9007199254740991
+                            },
+                            "monthly_billed_delta": {
+                              "type": "number"
+                            },
+                            "monthly_expense_delta": {
+                              "type": "number"
+                            },
+                            "monthly_moral_delta": {
+                              "type": "number"
+                            },
+                            "monthly_stress_delta": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "label",
+                            "remaining_months"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "set_gestor": {
+                          "type": "object",
+                          "properties": {
+                            "tier": {
+                              "type": "string",
+                              "enum": [
+                                "self",
+                                "cheap",
+                                "premium"
+                              ]
+                            },
+                            "character_id": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "tier"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "set_family_status": {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "single",
+                                "dating",
+                                "cohabiting",
+                                "separated"
+                              ]
+                            },
+                            "partner_character_id": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "status"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "add_child": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "hire_employee": {
+                          "type": "object",
+                          "properties": {
+                            "character_id": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                            }
+                          },
+                          "required": [
+                            "character_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "dismiss_employee": {
+                          "type": "object",
+                          "properties": {
+                            "severance_cost": {
+                              "type": "number",
+                              "minimum": 0
+                            }
+                          },
+                          "required": [
+                            "severance_cost"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "trigger_ending": {
+                          "type": "string",
+                          "enum": [
+                            "abandon_oposiciones",
+                            "abandon_salaried",
+                            "abandon_subsidies"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "weight",
+                    "result_text",
+                    "effects"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "category",
+    "title",
+    "body",
+    "weight",
+    "cooldown_months",
+    "choices"
+  ],
+  "additionalProperties": false
+}

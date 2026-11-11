@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "character.schema.json",
+  "title": "CharacterDef",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "number",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "cliente",
+        "hacienda",
+        "gestor",
+        "pareja",
+        "empleado"
+      ]
+    },
+    "bio": {
+      "type": "string",
+      "minLength": 1
+    },
+    "portrait_asset_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+    },
+    "gestor_params": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "tier": {
+              "type": "string",
+              "enum": [
+                "cheap",
+                "premium"
+              ]
+            },
+            "monthly_fee": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "inspection_shield": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "tier",
+            "monthly_fee",
+            "inspection_shield"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "employee_params": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "role_label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "monthly_cost": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "billing_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "role_label",
+            "monthly_cost",
+            "billing_multiplier"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "family_params": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "monthly_cost": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "support_modifier": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "monthly_cost",
+            "support_modifier"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "role",
+    "bio",
+    "portrait_asset_id"
+  ],
+  "additionalProperties": false
+}

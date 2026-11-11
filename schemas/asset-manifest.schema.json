@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asset-manifest.schema.json",
+  "title": "AssetManifest",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "number",
+      "const": 1
+    },
+    "default_render_mode": {
+      "type": "string",
+      "enum": [
+        "vector_hd",
+        "pixel_art"
+      ]
+    },
+    "assets": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "character",
+              "background",
+              "illustration",
+              "ui"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "height": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "render_mode": {
+            "type": "string",
+            "enum": [
+              "vector_hd",
+              "pixel_art"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "placeholder",
+              "ready"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "category",
+          "width",
+          "height",
+          "render_mode",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fallbacks": {
+      "type": "object",
+      "properties": {
+        "clientes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hacienda": {
+          "type": "string",
+          "minLength": 1
+        },
+        "familia": {
+          "type": "string",
+          "minLength": 1
+        },
+        "empleados": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gestor": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "clientes",
+        "hacienda",
+        "familia",
+        "empleados",
+        "gestor"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "default_render_mode",
+    "assets",
+    "fallbacks"
+  ],
+  "additionalProperties": false
+}
