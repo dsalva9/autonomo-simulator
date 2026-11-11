@@ -38,81 +38,93 @@ export function HistorialPanel({ state, unlockedAchievements }: HistorialPanelPr
   const unlockedCount = ACHIEVEMENT_CATALOG.filter((a) =>
     Boolean(unlockedAchievements[a.id]),
   ).length;
+  const progressPct = Math.round((unlockedCount / ACHIEVEMENT_CATALOG.length) * 100);
 
   return (
     <section
       data-testid="panel-historial"
       aria-label="Historial de decisiones y logros"
-      className="paper-dossier rounded-xl p-4 space-y-4"
+      className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
     >
-      <div className="flex items-center justify-between border-b-2 border-[#1f2421]/20 pb-2">
-        <div className="flex items-center gap-2">
-          <History className="w-4 h-4 text-[#8f510d]" aria-hidden="true" />
-          <h2 className="font-editorial font-bold text-base text-[#1f2421]">
+      <div className="dossier-header">
+        <div className="flex items-center gap-2 min-w-0">
+          <History className="w-4 h-4 text-[#8f510d] shrink-0" aria-hidden="true" />
+          <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
             Diario de Expediente
           </h2>
         </div>
-        <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#8f510d]">
+        <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#8f510d] shrink-0 tabular-nums">
           {state.history.length} APUNTES
         </span>
       </div>
 
-      {/* Compact Achievements Strip */}
-      <div className="rounded-lg border border-[#1f2421]/30 bg-[#f6efe0] p-2.5 space-y-1.5">
-        <div className="flex items-center justify-between text-xs font-bold text-[#1f2421]">
-          <span className="inline-flex items-center gap-1.5">
-            <Award className="w-3.5 h-3.5 text-[#1f5c53]" aria-hidden="true" />
-            Sellos de carrera
-          </span>
-          <span className="font-bureau text-[11px] text-[#1f5c53]">
-            {unlockedCount}/{ACHIEVEMENT_CATALOG.length}
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {ACHIEVEMENT_CATALOG.map((ach) => {
-            const isUnlocked = Boolean(unlockedAchievements[ach.id]);
-            return (
-              <span
-                key={ach.id}
-                className={`font-bureau text-[10px] font-bold px-2 py-0.5 rounded border ${
-                  isUnlocked
-                    ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/50"
-                    : "bg-[#efe4ce] text-[#4a524e] border-[#1f2421]/20 opacity-75"
-                }`}
-              >
-                {isUnlocked ? "★ " : "○ "}
-                {ach.title}
-              </span>
-            );
-          })}
-        </div>
-      </div>
+      <div className="p-3.5 space-y-3">
+        {/* Tidy Career Seals Progress + Compact 2-Column Scrollable Grid */}
+        <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] p-2.5 space-y-2">
+          <div className="flex items-center justify-between text-xs font-bold text-[#1f2421]">
+            <span className="inline-flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
+              Sellos de carrera
+            </span>
+            <span className="font-bureau text-[11px] text-[#1f5c53] tabular-nums">
+              {unlockedCount}/{ACHIEVEMENT_CATALOG.length}
+            </span>
+          </div>
 
-      {/* Reverse-Chronological Timeline */}
-      <ul className="space-y-2 max-h-72 overflow-y-auto pr-1 text-xs">
-        {recentEntries.map((entry) => (
-          <li
-            key={entry.id}
-            className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] px-3 py-2 space-y-1"
+          <div
+            aria-hidden="true"
+            className="h-1.5 w-full rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
           >
-            <div className="flex items-center justify-between gap-2 font-bureau text-[11px]">
-              <span className="font-bold text-[#8f510d]">Mes {entry.month}</span>
-              {entry.money_delta !== undefined && entry.money_delta !== 0 && (
+            <div
+              className="h-full bg-[#1f5c53] transition-all duration-200"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-1 max-h-20 overflow-y-auto dossier-scroll pr-0.5">
+            {ACHIEVEMENT_CATALOG.map((ach) => {
+              const isUnlocked = Boolean(unlockedAchievements[ach.id]);
+              return (
                 <span
-                  className={`font-bold ${
-                    entry.money_delta > 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
+                  key={ach.id}
+                  title={`${ach.title}: ${ach.description}`}
+                  className={`font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded border truncate ${
+                    isUnlocked
+                      ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/45"
+                      : "bg-[#efe4ce]/80 text-[#4a524e] border-[#1f2421]/15 opacity-75"
                   }`}
                 >
-                  {formatSignedEuros(entry.money_delta)}
+                  {isUnlocked ? "★ " : "○ "}
+                  {ach.title}
                 </span>
-              )}
-            </div>
-            <p className="text-[#373f3a] leading-snug line-clamp-2">
-              {describeHistoryEntryEs(entry)}
-            </p>
-          </li>
-        ))}
-      </ul>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Reverse-Chronological Timeline */}
+        <ul className="divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] max-h-52 overflow-y-auto dossier-scroll text-xs">
+          {recentEntries.map((entry) => (
+            <li key={entry.id} className="px-3 py-2 space-y-0.5">
+              <div className="flex items-center justify-between gap-2 font-bureau text-[11px] tabular-nums">
+                <span className="font-bold text-[#8f510d]">Mes {entry.month}</span>
+                {entry.money_delta !== undefined && entry.money_delta !== 0 && (
+                  <span
+                    className={`font-bold whitespace-nowrap ${
+                      entry.money_delta > 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
+                    }`}
+                  >
+                    {formatSignedEuros(entry.money_delta)}
+                  </span>
+                )}
+              </div>
+              <p className="text-[#373f3a] leading-snug line-clamp-2">
+                {describeHistoryEntryEs(entry)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

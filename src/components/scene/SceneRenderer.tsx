@@ -1,3 +1,4 @@
+import { LampDesk } from "lucide-react";
 import type {
   CharacterDef,
   EventCategory,
@@ -78,14 +79,43 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
     ? translateCharacterRoleEs(character.role)
     : "Expediente en mesa";
 
+  const isBurnoutDesk = bgAsset?.id === "bg_despacho_burnout";
+  const deskStatusLabel = isBurnoutDesk
+    ? "Al límite"
+    : showNumerosRojos
+      ? "Descubierto"
+      : showCafe
+        ? "Bajo presión"
+        : "Operativo";
+
+  const deskStatusTone =
+    isBurnoutDesk || showNumerosRojos
+      ? "bg-[#fdf0ef] text-[#b42b24] border border-[#b42b24]/35"
+      : showCafe
+        ? "bg-[#fcf4df] text-[#8f510d] border border-[#8f510d]/35"
+        : "bg-[#efe4ce] text-[#373f3a]";
+
   return (
     <section
       data-testid="scene-renderer"
       aria-label="Escena del despacho"
-      className="paper-dossier rounded-xl overflow-hidden bg-[#f3e8d5]"
+      className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
     >
-      {/* Office Desk Stage: compact strip on mobile, full 16:9 window on desktop */}
-      <div className="relative w-full h-32 sm:h-40 lg:h-auto lg:aspect-video overflow-hidden border-b-2 border-[#1f2421] bg-[#e9decb]">
+      {/* Standardized Desktop Dossier Header */}
+      <div className="hidden lg:flex dossier-header">
+        <div className="flex items-center gap-2 min-w-0">
+          <LampDesk className="w-4 h-4 text-[#8f510d] shrink-0" aria-hidden="true" />
+          <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
+            El Despacho
+          </h2>
+        </div>
+        <span className={`stamp-badge text-[10px] px-2 py-0.5 rounded shrink-0 ${deskStatusTone}`}>
+          {deskStatusLabel}
+        </span>
+      </div>
+
+      {/* Panoramic Desk Stage: clean unobstructed art with 4 non-overlapping prop slots */}
+      <div className="relative w-full h-28 sm:h-36 lg:h-auto lg:aspect-video overflow-hidden border-b border-[#1f2421]/18 bg-[#e9decb]">
         {bgAsset && (
           <img
             data-testid="scene-bg"
@@ -99,46 +129,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           />
         )}
 
-        {/* Reactive Prop: Accrued Tax Stack (Modelo 303) */}
-        {facturasAsset && (
-          <img
-            data-testid="scene-prop-facturas"
-            src={facturasAsset.url}
-            alt="Facturas pendientes del trimestre"
-            width={facturasAsset.width}
-            height={facturasAsset.height}
-            decoding="async"
-            className={`absolute bottom-1 left-2 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
-          />
-        )}
-
-        {/* Reactive Prop: Family Photo Frame when family.status !== "single" */}
-        {familiaAsset && (
-          <img
-            data-testid="scene-prop-familia"
-            src={familiaAsset.url}
-            alt="Fotografía familiar sobre el escritorio"
-            width={familiaAsset.width}
-            height={familiaAsset.height}
-            decoding="async"
-            className={`absolute bottom-1 left-16 sm:left-24 lg:left-auto lg:right-2 w-12 h-12 sm:w-14 sm:h-14 lg:w-20 lg:h-20 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
-          />
-        )}
-
-        {/* Reactive Prop: Survival Coffee Mug when Stress >= 50 */}
-        {cafeAsset && (
-          <img
-            data-testid="scene-prop-cafe"
-            src={cafeAsset.url}
-            alt="Taza de café por estrés elevado"
-            width={cafeAsset.width}
-            height={cafeAsset.height}
-            decoding="async"
-            className={`absolute bottom-1 right-28 lg:right-20 w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
-          />
-        )}
-
-        {/* Reactive Prop: Números Rojos Stamp when Money < 0 */}
+        {/* Slot 1 (Top-Left): Números Rojos Stamp when Money < 0 */}
         {numerosRojosAsset && (
           <img
             data-testid="scene-prop-numeros-rojos"
@@ -147,12 +138,53 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={numerosRojosAsset.width}
             height={numerosRojosAsset.height}
             decoding="async"
-            className={`absolute top-1.5 left-2 w-20 h-20 lg:w-28 lg:h-28 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
+            className={`absolute top-1.5 left-2 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
           />
         )}
 
-        {/* Mobile Docked Subject Portrait / Category Card */}
-        <div className="lg:hidden absolute inset-y-1.5 right-2 flex items-center gap-2 bg-[#fffdf8]/95 border-2 border-[#1f2421] rounded-lg p-1.5 shadow-sm max-w-[54%]">
+        {/* Slot 2 (Bottom-Left): Accrued Tax Stack (Modelo 303) */}
+        {facturasAsset && (
+          <img
+            data-testid="scene-prop-facturas"
+            src={facturasAsset.url}
+            alt="Facturas pendientes del trimestre"
+            width={facturasAsset.width}
+            height={facturasAsset.height}
+            decoding="async"
+            className={`absolute bottom-1 left-2.5 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
+          />
+        )}
+
+        {/* Slot 3 (Bottom-Center-Right): Family Photo Frame when family.status !== "single" */}
+        {familiaAsset && (
+          <img
+            data-testid="scene-prop-familia"
+            src={familiaAsset.url}
+            alt="Fotografía familiar sobre el escritorio"
+            width={familiaAsset.width}
+            height={familiaAsset.height}
+            decoding="async"
+            className={`absolute bottom-1 right-[24%] w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
+          />
+        )}
+
+        {/* Slot 4 (Bottom-Right): Survival Coffee Mug when Stress >= 50 */}
+        {cafeAsset && (
+          <img
+            data-testid="scene-prop-cafe"
+            src={cafeAsset.url}
+            alt="Taza de café por estrés elevado"
+            width={cafeAsset.width}
+            height={cafeAsset.height}
+            decoding="async"
+            className={`absolute bottom-1 right-2.5 w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
+          />
+        )}
+      </div>
+
+      {/* Mobile Slim 1-Line Subject Strip (< 1024px) — Zero Desk Art Occlusion */}
+      <div className="lg:hidden px-3 py-1.5 bg-[#fffdf8] flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <img
             data-testid="scene-subject-mobile-art"
             data-asset-id={subjectArt.id}
@@ -161,19 +193,18 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             width={subjectArt.width}
             height={subjectArt.height}
             decoding="async"
-            className={`w-14 h-14 sm:w-16 sm:h-16 rounded object-cover shrink-0 border border-[#1f2421]/30 ${renderModeClass(subjectArt.render_mode)}`}
+            className={`w-7 h-7 rounded object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
           />
-          <div className="min-w-0 pr-1">
-            <p className="stamp-badge text-[10px] text-[#8f510d] truncate">{subjectSubLabel}</p>
-            <p className="text-xs font-bold text-[#1f2421] leading-tight line-clamp-2">
-              {subjectLabel}
-            </p>
-          </div>
+          <p className="text-xs font-bold text-[#1f2421] truncate">{subjectLabel}</p>
         </div>
+
+        <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#f6efe0] text-[#8f510d] border border-[#1f2421]/18 shrink-0">
+          {subjectSubLabel}
+        </span>
       </div>
 
-      {/* Desktop Interlocutor / Category Dossier Footer */}
-      <div className="hidden lg:flex items-center gap-3.5 p-3.5 bg-[#fffdf8]">
+      {/* Desktop Compact Interlocutor Footer (>= 1024px) */}
+      <div className="hidden lg:flex items-center gap-3 px-3.5 py-2.5 bg-[#fffdf8]">
         <img
           data-testid="scene-subject-art"
           data-asset-id={subjectArt.id}
@@ -182,11 +213,11 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           width={subjectArt.width}
           height={subjectArt.height}
           decoding="async"
-          className={`w-20 h-20 rounded-lg object-cover shrink-0 border-2 border-[#1f2421] bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
+          className={`w-11 h-11 rounded-lg object-cover shrink-0 border border-[#1f2421]/60 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
         />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="stamp-badge text-[11px] px-2 py-0.5 rounded bg-[#efe4ce] text-[#1f2421] border border-[#1f2421]/40">
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a]">
               {subjectSubLabel}
             </span>
             {showCafe && (
@@ -195,18 +226,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
               </span>
             )}
           </div>
-          <h2 className="mt-1 font-editorial font-bold text-base text-[#1f2421] truncate">
-            {subjectLabel}
-          </h2>
-          {character ? (
-            <p className="mt-0.5 text-xs text-[#4a524e] line-clamp-2 leading-relaxed">
-              {character.bio}
-            </p>
-          ) : (
-            <p className="mt-0.5 text-xs text-[#4a524e] leading-relaxed">
-              Mesa de trabajo · Mes {state.month} de actividad en el RETA.
-            </p>
-          )}
+          <p className="font-editorial font-bold text-sm text-[#1f2421] truncate">{subjectLabel}</p>
         </div>
       </div>
     </section>

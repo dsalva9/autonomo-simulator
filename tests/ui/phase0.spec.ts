@@ -137,7 +137,10 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
 
     const viewport = page.viewportSize();
     if (viewport && viewport.width < 1024) {
-      // Mobile (< 1024px): bottom navigation tabs switch workspace panels cleanly
+      // Mobile (< 1024px): slim mobile subject art visible, desktop footer hidden; bottom tabs switch panels
+      await expect(page.getByTestId("scene-subject-mobile-art")).toBeVisible();
+      await expect(page.getByTestId("scene-subject-art")).toBeHidden();
+
       const tabCuentas = page.getByTestId("mobile-tab-cuentas");
       const tabBox = await tabCuentas.boundingBox();
       expect(tabBox!.height).toBeGreaterThanOrEqual(48);
@@ -156,6 +159,8 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     } else {
       // Desktop (>= 1024px): true 3-column workspace displays all panels simultaneously
       await expect(page.getByTestId("scene-renderer")).toBeVisible();
+      await expect(page.getByTestId("scene-subject-art")).toBeVisible();
+      await expect(page.getByTestId("scene-subject-mobile-art")).toBeHidden();
       await expect(page.getByTestId("panel-entorno")).toBeVisible();
       await expect(page.getByTestId("event-card")).toBeVisible();
       await expect(page.getByTestId("panel-cuentas")).toBeVisible();

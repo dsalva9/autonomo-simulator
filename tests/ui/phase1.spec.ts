@@ -235,9 +235,9 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("./");
 
-    // 1. Verify all 9 Phase 1 achievements in Logros tab
+    // 1. Verify Phase 1 achievements remain present in expanded 15-achievement Logros tab
     const achievementsTab = page.getByTestId("title-tab-achievements");
-    await expect(achievementsTab).toContainText("Logros (0/9)");
+    await expect(achievementsTab).toContainText("Logros (0/15)");
     await achievementsTab.click();
 
     await expect(page.getByTestId("achievements-list")).toBeVisible();
@@ -324,8 +324,12 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     await selectChoiceAndAcknowledge(page, "parche_taller_barrio");
 
-    // Month 5: burnout defeat -> EndRunScreen
-    await selectChoiceAndAcknowledge(page, "meter_dinero_por_probar");
+    // Month 5..6: stress reaches 100 -> burnout defeat at Month 6 Trimestre -> EndRunScreen
+    await selectChoiceAndAcknowledge(page, "priorizar_cartera_clientes");
+    await selectChoiceAndAcknowledge(page, "firmar_acta_en_conformidad");
+    await selectChoiceAndAcknowledge(page, "campana_caza_clientes_verano");
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.getByTestId("trimestre-pay-btn").click();
 
     await expect(page.getByTestId("end-run-screen")).toBeVisible();
     const endIllus = page.getByTestId("end-run-illustration");

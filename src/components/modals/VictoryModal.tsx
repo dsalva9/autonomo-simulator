@@ -21,44 +21,48 @@ export function VictoryModal({ state, onDecide }: VictoryModalProps) {
       aria-modal="true"
       aria-labelledby="victory-modal-title"
       data-testid="victory-modal"
-      className="fixed inset-0 z-50 m-0 h-full w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
     >
-      <div className="paper-dossier animate-dossier w-full max-w-lg rounded-xl overflow-hidden my-auto">
-        <div className="bg-[#1f5c53] text-[#fffdf8] px-5 py-4 border-b-2 border-[#1f2421] flex items-center gap-3">
-          <Trophy className="w-7 h-7 text-[#fce592] shrink-0" aria-hidden="true" />
-          <div>
-            <p className="stamp-badge text-xs text-[#fce592]">DIPLOMA DE SUPERVIVENCIA AUTÓNOMA</p>
-            <h2 id="victory-modal-title" className="font-editorial text-2xl font-bold">
+      <div className="paper-dossier animate-dossier w-full max-w-lg max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2.5rem)] flex flex-col rounded-xl overflow-hidden">
+        <div className="bg-[#1f5c53] text-[#fffdf8] px-4 sm:px-5 py-3.5 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
+          <Trophy className="w-6 h-6 sm:w-7 sm:h-7 text-[#fce592] shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <p className="stamp-badge text-[11px] sm:text-xs text-[#fce592]">
+              DIPLOMA DE SUPERVIVENCIA AUTÓNOMA
+            </p>
+            <h2 id="victory-modal-title" className="font-editorial text-xl sm:text-2xl font-bold">
               {headline}
             </h2>
           </div>
         </div>
 
-        <div className="p-5 sm:p-6 space-y-4 text-sm">
-          <p className="text-base text-[#1f2421] leading-relaxed">{subheadline}</p>
+        <div className="p-4 sm:p-5 space-y-4 text-sm overflow-y-auto dossier-scroll">
+          <p className="text-sm sm:text-base text-[#1f2421] leading-relaxed">{subheadline}</p>
 
-          <div className="rounded-lg border-2 border-[#1f5c53] bg-[#e8f5f1] p-3.5 space-y-1 text-xs">
+          <div className="rounded-lg border border-[#1f5c53] bg-[#e8f5f1] p-3.5 space-y-1 text-xs">
             <div className="flex items-center gap-1.5 font-bureau font-bold text-[#1f5c53]">
               <Award className="w-4 h-4 shrink-0" aria-hidden="true" />
               SELLO CONQUISTADO Y BLINDADO EN TU CERTIFICADO
             </div>
             <p className="text-[#373f3a]">
               Tiempo cotizado: <strong>{formatDurationMonthsEs(state.month)}</strong> · Liquidez:{" "}
-              <strong className="font-bureau">{formatEuros(state.indicators.money)}</strong>. Aunque
-              decidas continuar en Modo Infinito y caigas más adelante, este sello aparecerá en tu
-              certificado final.
+              <strong className="font-bureau tabular-nums whitespace-nowrap">
+                {formatEuros(state.indicators.money)}
+              </strong>
+              . Aunque decidas continuar en Modo Infinito y caigas más adelante, este sello
+              aparecerá en tu certificado final.
             </p>
           </div>
 
-          <div className="space-y-2.5 pt-2">
+          <div className="space-y-2 pt-1">
             <button
               type="button"
               data-testid="victory-continue-btn"
               onClick={() => onDecide("continue")}
               className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-4 py-3 font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors"
             >
-              <InfinityIcon className="w-5 h-5" aria-hidden="true" />
-              Seguir cotizando en Modo Infinito
+              <InfinityIcon className="w-5 h-5 shrink-0" aria-hidden="true" />
+              <span>Seguir cotizando en Modo Infinito</span>
             </button>
 
             <button

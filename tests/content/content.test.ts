@@ -17,7 +17,7 @@ import {
   resolveCharacterPortraitAsset,
 } from "../../src/services/content/catalog.ts";
 
-describe("Phase 1 repository assets, manifest & YAML content catalog contracts", () => {
+describe("Phase 2 repository assets, manifest & 60-event YAML content catalog contracts", () => {
   it("validates assets/manifest.json with 54 entries (45 WebP + 9 SVG, 49 ready + 5 fallbacks)", () => {
     const result = validateAssets(process.cwd());
     expect(result.errors).toEqual([]);
@@ -55,7 +55,7 @@ describe("Phase 1 repository assets, manifest & YAML content catalog contracts",
     expect(byCategory.ui).toHaveLength(9);
   });
 
-  it("validates all 8 multi-expression characters and 42 Phase 1 events with exact category distribution", () => {
+  it("validates all 8 multi-expression characters and 60 Phase 2 events with exact category distribution", () => {
     const result = loadAndValidateContent(process.cwd());
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
@@ -72,7 +72,7 @@ describe("Phase 1 repository assets, manifest & YAML content catalog contracts",
       expect(char.expressions?.neutral).toBe(char.portrait_asset_id);
     }
 
-    expect(result.events).toHaveLength(42);
+    expect(result.events).toHaveLength(60);
     const countsByCategory: Record<EventCategory, number> = {
       clientes: 0,
       hacienda: 0,
@@ -84,15 +84,15 @@ describe("Phase 1 repository assets, manifest & YAML content catalog contracts",
       countsByCategory[event.category] += 1;
     }
     expect(countsByCategory).toEqual({
-      clientes: 14,
-      hacienda: 8,
-      gestor: 6,
-      familia: 8,
-      empleados: 6,
+      clientes: 18,
+      hacienda: 12,
+      gestor: 9,
+      familia: 12,
+      empleados: 9,
     });
   });
 
-  it("enforces anti-softlock, NPC expression resolution, illustration refs, and zero orphan chains across all 42 events", () => {
+  it("enforces anti-softlock, NPC expression resolution, illustration refs, zero orphan chains, and late-game repeatable events across all 60 events", () => {
     const result = loadAndValidateContent(process.cwd());
     expect(result.ok).toBe(true);
     const manifest = result.manifest!;
@@ -101,9 +101,10 @@ describe("Phase 1 repository assets, manifest & YAML content catalog contracts",
 
     for (const event of result.events) {
       // Anti-softlock invariant: >= 2 choices and >= 1 unconditional choice
-      expect(event.choices.length, `Event '${event.id}' must have >= 2 choices`).toBeGreaterThanOrEqual(
-        2,
-      );
+      expect(
+        event.choices.length,
+        `Event '${event.id}' must have >= 2 choices`,
+      ).toBeGreaterThanOrEqual(2);
       const unconditionalChoices = event.choices.filter(
         (choice) => !hasActiveRequirements(choice.requirements),
       );
@@ -181,15 +182,29 @@ describe("Phase 1 repository assets, manifest & YAML content catalog contracts",
       }
     }
 
+    // Late-game (min_month >= 60) repeatable events for Years 6-10 & Endless Mode
+    const lateGameRepeatableEvents = result.events.filter(
+      (event) =>
+        (event.requirements?.min_month ?? 0) >= 60 &&
+        event.max_occurrences == null &&
+        event.weight > 0,
+    );
+    expect(lateGameRepeatableEvents.length).toBeGreaterThanOrEqual(4);
+    const lateGameIds = new Set(lateGameRepeatableEvents.map((e) => e.id));
+    expect(lateGameIds.has("clientes_renovacion_cartera_veterana")).toBe(true);
+    expect(lateGameIds.has("hacienda_prescripcion_cinco_anos_limpios")).toBe(true);
+    expect(lateGameIds.has("gestor_inversion_amortizable_diciembre")).toBe(true);
+    expect(lateGameIds.has("empleados_paga_aniversario_estudio")).toBe(true);
+
     // Compiled bundle parity check
     expect(Object.keys(compiledCatalog.characters)).toHaveLength(8);
-    expect(compiledCatalog.events).toHaveLength(42);
+    expect(compiledCatalog.events).toHaveLength(60);
     expect(Object.keys(compiledCatalog.manifest.assets)).toHaveLength(54);
     expect(compiledCatalog.balance).toEqual(result.balance);
   });
 
-  it("plays a multi-year seeded run on the compiled 42-event catalog without errors", () => {
-    let { state } = startNewRun(compiledCatalog, { seed: "LIVE-CONTENT-SMOKE-P1" });
+  it("plays a multi-year seeded run on the compiled 60-event catalog without errors", () => {
+    let { state } = startNewRun(compiledCatalog, { seed: "LIVE-CONTENT-SMOKE-P2" });
     let steps = 0;
 
     while (state.phase !== "game_over" && state.month <= 36) {
