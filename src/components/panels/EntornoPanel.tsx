@@ -1,6 +1,6 @@
 import { Briefcase, Heart, ShieldCheck, Users } from "lucide-react";
-import type { GameState } from "../../engine/index.ts";
-import { compiledCatalog, resolveManifestAsset } from "../../services/content/catalog.ts";
+import type { GameState, RenderMode } from "../../engine/index.ts";
+import { compiledCatalog, resolveCharacterPortraitAsset } from "../../services/content/catalog.ts";
 import {
   formatEuros,
   translateFamilyStatus,
@@ -11,25 +11,23 @@ export interface EntornoPanelProps {
   state: GameState;
 }
 
+function renderModeClass(mode: RenderMode): string {
+  return mode === "pixel_art" ? "render-pixel-art" : "render-vector-hd";
+}
+
 export function EntornoPanel({ state }: EntornoPanelProps) {
   const { characters, manifest } = compiledCatalog;
 
   const gestorChar = state.gestor.character_id ? characters[state.gestor.character_id] : undefined;
-  const gestorPortrait = gestorChar
-    ? resolveManifestAsset(manifest, gestorChar.portrait_asset_id)
-    : null;
+  const gestorPortrait = resolveCharacterPortraitAsset(manifest, gestorChar);
 
   const partnerChar = state.family.partner_character_id
     ? characters[state.family.partner_character_id]
     : undefined;
-  const partnerPortrait = partnerChar
-    ? resolveManifestAsset(manifest, partnerChar.portrait_asset_id)
-    : null;
+  const partnerPortrait = resolveCharacterPortraitAsset(manifest, partnerChar);
 
   const employeeChar = state.employee ? characters[state.employee.character_id] : undefined;
-  const employeePortrait = employeeChar
-    ? resolveManifestAsset(manifest, employeeChar.portrait_asset_id)
-    : null;
+  const employeePortrait = resolveCharacterPortraitAsset(manifest, employeeChar);
 
   return (
     <section
@@ -50,13 +48,23 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
       {/* Gestoría Card */}
       <div className="rounded-lg border border-[#1f2421]/35 bg-[#f6efe0] p-3 flex items-start gap-3">
         {gestorPortrait ? (
-          <img
-            src={gestorPortrait.url}
-            alt={gestorChar?.name ?? "Gestoría"}
-            width={gestorPortrait.width}
-            height={gestorPortrait.height}
-            className="w-12 h-12 rounded-md border border-[#1f2421] object-cover shrink-0 bg-[#fffdf8]"
-          />
+          <div
+            data-testid="entorno-polaroid-gestor"
+            className="polaroid-card shrink-0 p-1 pb-2 rounded-[3px] mt-0.5"
+          >
+            <span className="polaroid-pin polaroid-pin-sm" aria-hidden="true" />
+            <img
+              src={gestorPortrait.url}
+              alt={gestorChar?.name ?? "Gestoría"}
+              width={gestorPortrait.width}
+              height={gestorPortrait.height}
+              loading="lazy"
+              decoding="async"
+              className={`w-11 h-11 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                gestorPortrait.render_mode,
+              )}`}
+            />
+          </div>
         ) : (
           <div className="w-12 h-12 rounded-md border border-[#1f2421]/40 bg-[#fffdf8] flex items-center justify-center shrink-0">
             <ShieldCheck className="w-6 h-6 text-[#8f510d]" aria-hidden="true" />
@@ -77,13 +85,23 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
       {/* Familia / Pareja Card */}
       <div className="rounded-lg border border-[#1f2421]/35 bg-[#f6efe0] p-3 flex items-start gap-3">
         {partnerPortrait ? (
-          <img
-            src={partnerPortrait.url}
-            alt={partnerChar?.name ?? "Pareja"}
-            width={partnerPortrait.width}
-            height={partnerPortrait.height}
-            className="w-12 h-12 rounded-md border border-[#1f2421] object-cover shrink-0 bg-[#fffdf8]"
-          />
+          <div
+            data-testid="entorno-polaroid-partner"
+            className="polaroid-card shrink-0 p-1 pb-2 rounded-[3px] mt-0.5"
+          >
+            <span className="polaroid-pin polaroid-pin-sm" aria-hidden="true" />
+            <img
+              src={partnerPortrait.url}
+              alt={partnerChar?.name ?? "Pareja"}
+              width={partnerPortrait.width}
+              height={partnerPortrait.height}
+              loading="lazy"
+              decoding="async"
+              className={`w-11 h-11 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                partnerPortrait.render_mode,
+              )}`}
+            />
+          </div>
         ) : (
           <div className="w-12 h-12 rounded-md border border-[#1f2421]/40 bg-[#fffdf8] flex items-center justify-center shrink-0">
             <Heart className="w-6 h-6 text-[#b42b24]" aria-hidden="true" />
@@ -105,13 +123,23 @@ export function EntornoPanel({ state }: EntornoPanelProps) {
       {/* Empleado Card (max 1) */}
       <div className="rounded-lg border border-[#1f2421]/35 bg-[#f6efe0] p-3 flex items-start gap-3">
         {state.employee && employeePortrait ? (
-          <img
-            src={employeePortrait.url}
-            alt={employeeChar?.name ?? state.employee.role_label}
-            width={employeePortrait.width}
-            height={employeePortrait.height}
-            className="w-12 h-12 rounded-md border border-[#1f2421] object-cover shrink-0 bg-[#fffdf8]"
-          />
+          <div
+            data-testid="entorno-polaroid-employee"
+            className="polaroid-card shrink-0 p-1 pb-2 rounded-[3px] mt-0.5"
+          >
+            <span className="polaroid-pin polaroid-pin-sm" aria-hidden="true" />
+            <img
+              src={employeePortrait.url}
+              alt={employeeChar?.name ?? state.employee.role_label}
+              width={employeePortrait.width}
+              height={employeePortrait.height}
+              loading="lazy"
+              decoding="async"
+              className={`w-11 h-11 aspect-square object-cover border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                employeePortrait.render_mode,
+              )}`}
+            />
+          </div>
         ) : (
           <div className="w-12 h-12 rounded-md border border-[#1f2421]/40 bg-[#fffdf8] flex items-center justify-center shrink-0">
             <Briefcase className="w-6 h-6 text-[#1f5c53]" aria-hidden="true" />

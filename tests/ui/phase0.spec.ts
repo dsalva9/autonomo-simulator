@@ -293,6 +293,17 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     await expect(page.getByTestId("end-run-screen")).toBeVisible();
     await expect(page.getByTestId("end-run-title")).toContainText("Exilio Voluntario al Temario");
 
+    const endIllustration = page.getByTestId("end-run-illustration");
+    await endIllustration.scrollIntoViewIfNeeded();
+    await expect
+      .poll(async () =>
+        endIllustration.evaluate((el) => {
+          const img = el as HTMLImageElement;
+          return img.complete && img.naturalWidth > 0;
+        }),
+      )
+      .toBe(true);
+
     const canvasMetrics = await page.getByTestId("share-canvas").evaluate((el) => {
       const canvas = el as HTMLCanvasElement;
       return {

@@ -1,7 +1,16 @@
 import { ArrowRight, CheckCircle2, Dices, Lock, Receipt } from "lucide-react";
 import { useEffect } from "react";
-import type { ActiveEventView, GameState, MonthStartSummary } from "../../engine/index.ts";
-import { compiledCatalog } from "../../services/content/catalog.ts";
+import type {
+  ActiveEventView,
+  GameState,
+  MonthStartSummary,
+  RenderMode,
+} from "../../engine/index.ts";
+import {
+  compiledCatalog,
+  resolveCharacterPortraitAsset,
+  resolveEventBannerAsset,
+} from "../../services/content/catalog.ts";
 import {
   explainChoiceLockReasons,
   formatEuros,
@@ -30,6 +39,10 @@ interface DeltaPillProps {
   label: string;
   formatted: string;
   favorable: boolean;
+}
+
+function renderModeClass(mode: RenderMode): string {
+  return mode === "pixel_art" ? "render-pixel-art" : "render-vector-hd";
 }
 
 function DeltaPill({ label, formatted, favorable }: DeltaPillProps) {
@@ -102,6 +115,21 @@ export function EventStage({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [keyboardEnabled, pendingOutcome, activeEventView, onSelectChoice, onContinueOutcome]);
+
+  const activeCharacter = activeEventView?.event.character_id
+    ? compiledCatalog.characters[activeEventView.event.character_id]
+    : undefined;
+  const activeCharacterExpression = activeEventView?.event.character_expression ?? "neutral";
+  const activeCharacterPortrait = activeEventView
+    ? resolveCharacterPortraitAsset(
+        compiledCatalog.manifest,
+        activeCharacter,
+        activeCharacterExpression,
+      )
+    : null;
+  const bannerResolution = activeEventView
+    ? resolveEventBannerAsset(compiledCatalog.manifest, activeEventView.event, state)
+    : null;
 
   return (
     <div className="space-y-3.5">
@@ -264,12 +292,11 @@ export function EventStage({
               <span className="stamp-badge text-xs px-2.5 py-1 rounded bg-[#fcf4df] text-[#8f510d] border border-[#8f510d]/50">
                 EXP. {translateCategoryLabel(activeEventView.event.category)}
               </span>
-              {activeEventView.event.character_id &&
-                compiledCatalog.characters[activeEventView.event.character_id] && (
-                  <span className="text-xs font-semibold text-[#264e7a] bg-[#ebf2fa] border border-[#264e7a]/30 rounded px-2 py-0.5">
-                    {compiledCatalog.characters[activeEventView.event.character_id]?.name}
-                  </span>
-                )}
+              {activeCharacter && (
+                <span className="text-xs font-semibold text-[#264e7a] bg-[#ebf2fa] border border-[#264e7a]/30 rounded px-2 py-0.5">
+                  {activeCharacter.name}
+                </span>
+              )}
             </div>
             {state.current_turn_events.length > 1 && (
               <span className="font-bureau text-xs font-bold px-2 py-0.5 rounded bg-[#efe4ce] text-[#1f2421]">
@@ -277,6 +304,54 @@ export function EventStage({
               </span>
             )}
           </div>
+
+          {/* Visual Comic Header Banner + Pinned Multi-Expression Polaroid */}
+          {bannerResolution && (
+            <div
+              className={`relative ${activeCharacter && activeCharacterPortrait ? "sm:pb-6" : ""}`}
+            >
+              <img
+                data-testid="event-banner-art"
+                data-banner-kind={bannerResolution.kind}
+                data-asset-id={bannerResolution.asset.id}
+                src={bannerResolution.asset.url}
+                alt={`Escena de ${translateCategoryLabel(activeEventView.event.category)}`}
+                width={bannerResolution.asset.width}
+                height={bannerResolution.asset.height}
+                decoding="async"
+                className={`w-full ${
+                  bannerResolution.kind === "milestone" ? "aspect-video" : "aspect-[8/3]"
+                } object-cover rounded-lg border-2 border-[#1f2421] bg-[#f6efe0] shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] ${renderModeClass(
+                  bannerResolution.asset.render_mode,
+                )}`}
+              />
+
+              {activeCharacter && activeCharacterPortrait && (
+                <figure
+                  data-testid="event-character-polaroid"
+                  data-expression={activeCharacterExpression}
+                  data-asset-id={activeCharacterPortrait.id}
+                  className="polaroid-card rounded-[3px] flex sm:block items-center gap-2.5 mx-0 mb-0 mt-3 sm:mt-0 p-1.5 sm:p-1.5 sm:pb-2 w-fit max-w-full sm:w-28 md:w-32 sm:absolute sm:right-3 sm:bottom-0 z-10"
+                >
+                  <span className="polaroid-pin" aria-hidden="true" />
+                  <img
+                    data-testid="event-character-polaroid-img"
+                    src={activeCharacterPortrait.url}
+                    alt={activeCharacter.name}
+                    width={activeCharacterPortrait.width}
+                    height={activeCharacterPortrait.height}
+                    decoding="async"
+                    className={`w-12 h-12 sm:w-full aspect-square object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                      activeCharacterPortrait.render_mode,
+                    )}`}
+                  />
+                  <figcaption className="min-w-0 pr-1 sm:pr-0 sm:mt-1.5 px-0.5 sm:text-center font-bureau text-[11px] font-bold text-[#1f2421] leading-tight line-clamp-2">
+                    {activeCharacter.name}
+                  </figcaption>
+                </figure>
+              )}
+            </div>
+          )}
 
           {/* Title & Body */}
           <div className="space-y-2.5">

@@ -8,6 +8,8 @@ import type {
 import {
   compiledCatalog,
   resolveCategoryFallbackAsset,
+  resolveCharacterPortraitAsset,
+  resolveDeskBackgroundAsset,
   resolveManifestAsset,
 } from "../../services/content/catalog.ts";
 import { translateCategoryLabel } from "../../services/i18n/resolveEventText.ts";
@@ -39,24 +41,28 @@ function translateCharacterRoleEs(role: CharacterDef["role"]): string {
 export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
   const { manifest, characters } = compiledCatalog;
 
-  const bgAsset = resolveManifestAsset(manifest, "bg_despacho_base");
+  const bgAsset = resolveDeskBackgroundAsset(manifest, state);
   const showCafe = state.indicators.stress >= 50;
   const showFacturas = state.finances.accrued_tax_liability > 0;
   const showNumerosRojos = state.indicators.money < 0;
+  const showFamilia = state.family.status !== "single";
 
   const cafeAsset = showCafe ? resolveManifestAsset(manifest, "prop_cafe") : null;
   const facturasAsset = showFacturas ? resolveManifestAsset(manifest, "prop_facturas") : null;
   const numerosRojosAsset = showNumerosRojos
     ? resolveManifestAsset(manifest, "prop_numeros_rojos")
     : null;
+  const familiaAsset = showFamilia ? resolveManifestAsset(manifest, "prop_foto_familia") : null;
 
   const character: CharacterDef | undefined = activeEvent?.character_id
     ? characters[activeEvent.character_id]
     : undefined;
 
-  const portraitAsset = character
-    ? resolveManifestAsset(manifest, character.portrait_asset_id)
-    : null;
+  const portraitAsset = resolveCharacterPortraitAsset(
+    manifest,
+    character,
+    activeEvent?.character_expression,
+  );
 
   const bespokeIllustration = activeEvent?.illustration_id
     ? resolveManifestAsset(manifest, activeEvent.illustration_id)
@@ -66,7 +72,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
     activeEvent?.category ?? (state.phase === "quarterly_tax" ? "hacienda" : "clientes");
   const fallbackAsset = resolveCategoryFallbackAsset(manifest, fallbackCategory);
 
-  const subjectArt = bespokeIllustration ?? portraitAsset ?? fallbackAsset;
+  const subjectArt = portraitAsset ?? bespokeIllustration ?? fallbackAsset;
   const subjectLabel = character ? character.name : translateCategoryLabel(fallbackCategory);
   const subjectSubLabel = character
     ? translateCharacterRoleEs(character.role)
@@ -83,10 +89,12 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
         {bgAsset && (
           <img
             data-testid="scene-bg"
+            data-asset-id={bgAsset.id}
             src={bgAsset.url}
             alt="Despacho de autónomo"
             width={bgAsset.width}
             height={bgAsset.height}
+            decoding="async"
             className={`w-full h-full object-cover object-bottom ${renderModeClass(bgAsset.render_mode)}`}
           />
         )}
@@ -99,7 +107,21 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             alt="Facturas pendientes del trimestre"
             width={facturasAsset.width}
             height={facturasAsset.height}
+            decoding="async"
             className={`absolute bottom-1 left-2 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
+          />
+        )}
+
+        {/* Reactive Prop: Family Photo Frame when family.status !== "single" */}
+        {familiaAsset && (
+          <img
+            data-testid="scene-prop-familia"
+            src={familiaAsset.url}
+            alt="Fotografía familiar sobre el escritorio"
+            width={familiaAsset.width}
+            height={familiaAsset.height}
+            decoding="async"
+            className={`absolute bottom-1 left-16 sm:left-24 lg:left-auto lg:right-2 w-12 h-12 sm:w-14 sm:h-14 lg:w-20 lg:h-20 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
           />
         )}
 
@@ -111,6 +133,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             alt="Taza de café por estrés elevado"
             width={cafeAsset.width}
             height={cafeAsset.height}
+            decoding="async"
             className={`absolute bottom-1 right-28 lg:right-20 w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
           />
         )}
@@ -123,6 +146,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             alt="Aviso bancario de números rojos"
             width={numerosRojosAsset.width}
             height={numerosRojosAsset.height}
+            decoding="async"
             className={`absolute top-1.5 left-2 w-20 h-20 lg:w-28 lg:h-28 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
           />
         )}
@@ -131,10 +155,12 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
         <div className="lg:hidden absolute inset-y-1.5 right-2 flex items-center gap-2 bg-[#fffdf8]/95 border-2 border-[#1f2421] rounded-lg p-1.5 shadow-sm max-w-[54%]">
           <img
             data-testid="scene-subject-mobile-art"
+            data-asset-id={subjectArt.id}
             src={subjectArt.url}
             alt={subjectLabel}
             width={subjectArt.width}
             height={subjectArt.height}
+            decoding="async"
             className={`w-14 h-14 sm:w-16 sm:h-16 rounded object-cover shrink-0 border border-[#1f2421]/30 ${renderModeClass(subjectArt.render_mode)}`}
           />
           <div className="min-w-0 pr-1">
@@ -150,10 +176,12 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
       <div className="hidden lg:flex items-center gap-3.5 p-3.5 bg-[#fffdf8]">
         <img
           data-testid="scene-subject-art"
+          data-asset-id={subjectArt.id}
           src={subjectArt.url}
           alt={subjectLabel}
           width={subjectArt.width}
           height={subjectArt.height}
+          decoding="async"
           className={`w-20 h-20 rounded-lg object-cover shrink-0 border-2 border-[#1f2421] bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
         />
         <div className="min-w-0 flex-1">

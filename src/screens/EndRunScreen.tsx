@@ -1,6 +1,7 @@
 import { Award, Copy, Download, Home, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GameState } from "../engine/index.ts";
+import { compiledCatalog, resolveEndingIllustrationAsset } from "../services/content/catalog.ts";
 import { formatDurationMonthsEs, formatEuros } from "../services/i18n/resolveEventText.ts";
 import {
   ENDING_METADATA,
@@ -26,6 +27,10 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
 
   const shareSummary = useMemo(() => createShareSummaryFromState(state), [state]);
   const endingMeta = ENDING_METADATA[shareSummary.endingId];
+  const endingIllustration = useMemo(
+    () => resolveEndingIllustrationAsset(compiledCatalog.manifest, shareSummary.endingId),
+    [shareSummary.endingId],
+  );
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -96,6 +101,24 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
               </h1>
               <p className="text-sm sm:text-base text-[#373f3a]">{endingMeta.subtitle}</p>
             </div>
+
+            {endingIllustration && (
+              <img
+                data-testid="end-run-illustration"
+                data-asset-id={endingIllustration.id}
+                src={endingIllustration.url}
+                alt={endingMeta.title}
+                width={endingIllustration.width}
+                height={endingIllustration.height}
+                loading="lazy"
+                decoding="async"
+                className={`w-full aspect-video object-cover rounded-xl border-2 border-[#1f2421] bg-[#f6efe0] shadow-[3px_3px_0px_0px_rgba(31,36,33,0.88)] ${
+                  endingIllustration.render_mode === "pixel_art"
+                    ? "render-pixel-art"
+                    : "render-vector-hd"
+                }`}
+              />
+            )}
 
             <blockquote
               data-testid="end-run-quote"
