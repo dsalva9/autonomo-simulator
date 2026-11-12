@@ -22,6 +22,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
   const startRun = useGameStore((s) => s.startRun);
   const returnToTitle = useGameStore((s) => s.returnToTitle);
 
+  const screenRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -67,6 +68,110 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
     }
   };
 
+  const actionsRef = useRef({
+    startNewRun: () => void startRun(),
+    returnToTitle,
+    copyText: () => void handleCopyText(),
+    downloadPng: () => void handleDownloadPng(),
+    nativeShare: () => void handleNativeShare(),
+  });
+  actionsRef.current = {
+    startNewRun: () => void startRun(),
+    returnToTitle,
+    copyText: () => void handleCopyText(),
+    downloadPng: () => void handleDownloadPng(),
+    nativeShare: () => void handleNativeShare(),
+  };
+
+  useEffect(() => {
+    screenRef.current
+      ?.querySelector<HTMLButtonElement>('[data-testid="end-new-run-btn"]')
+      ?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (
+        event.key === "ArrowRight" ||
+        event.key === "ArrowDown" ||
+        event.key === "ArrowLeft" ||
+        event.key === "ArrowUp"
+      ) {
+        const buttons = Array.from(
+          screenRef.current?.querySelectorAll<HTMLButtonElement>(
+            '[data-end-action="true"]:not(:disabled)',
+          ) ?? [],
+        );
+        if (buttons.length > 0) {
+          event.preventDefault();
+          const active = document.activeElement as HTMLButtonElement | null;
+          const currentIndex = active ? buttons.indexOf(active) : -1;
+          const moveForward = event.key === "ArrowRight" || event.key === "ArrowDown";
+          const nextIndex = moveForward
+            ? currentIndex < 0
+              ? 0
+              : (currentIndex + 1) % buttons.length
+            : currentIndex <= 0
+              ? buttons.length - 1
+              : currentIndex - 1;
+          buttons[nextIndex]?.focus({ preventScroll: true });
+        }
+        return;
+      }
+
+      if (event.key === "Enter") {
+        if (target && (target.tagName === "BUTTON" || target.tagName === "A")) {
+          return;
+        }
+        event.preventDefault();
+        actionsRef.current.startNewRun();
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        actionsRef.current.returnToTitle();
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+      if (key === "n") {
+        event.preventDefault();
+        actionsRef.current.startNewRun();
+      } else if (key === "i") {
+        event.preventDefault();
+        actionsRef.current.returnToTitle();
+      } else if (key === "c") {
+        event.preventDefault();
+        actionsRef.current.copyText();
+      } else if (key === "d") {
+        event.preventDefault();
+        actionsRef.current.downloadPng();
+      } else if (key === "s") {
+        event.preventDefault();
+        actionsRef.current.nativeShare();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const bannerHeaderBg =
     endingMeta.tone === "victory"
       ? "bg-[#1f5c53]"
@@ -76,6 +181,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
 
   return (
     <main
+      ref={screenRef}
       data-testid="end-run-screen"
       className="min-h-screen px-3.5 sm:px-5 py-3.5 sm:py-5 max-w-6xl mx-auto"
     >
@@ -209,6 +315,8 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 <button
                   type="button"
                   data-testid="share-native-btn"
+                  data-end-action="true"
+                  title="Compartir certificado (S)"
                   onClick={() => void handleNativeShare()}
                   className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
@@ -219,6 +327,8 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 <button
                   type="button"
                   data-testid="copy-summary-btn"
+                  data-end-action="true"
+                  title="Copiar resumen al portapapeles (C)"
                   onClick={() => void handleCopyText()}
                   className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
@@ -229,6 +339,8 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 <button
                   type="button"
                   data-testid="download-card-btn"
+                  data-end-action="true"
+                  title="Descargar certificado PNG (D)"
                   onClick={() => void handleDownloadPng()}
                   className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
@@ -251,21 +363,31 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 <button
                   type="button"
                   data-testid="end-new-run-btn"
+                  data-end-action="true"
+                  title="Iniciar nueva partida en el RETA (N o Intro)"
                   onClick={() => void startRun()}
                   className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <RotateCcw className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>Nueva alta en el RETA</span>
+                  <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
+                    N
+                  </kbd>
                 </button>
 
                 <button
                   type="button"
                   data-testid="end-return-title-btn"
+                  data-end-action="true"
+                  title="Volver al inicio y Salón de Caídos (I o Esc)"
                   onClick={returnToTitle}
                   className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#efe4ce] hover:bg-[#e5d6ba] text-[#1f2421] font-bold text-sm px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>Inicio y Salón de Caídos</span>
+                  <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/12 text-[#1f2421]">
+                    Esc
+                  </kbd>
                 </button>
               </div>
             </div>

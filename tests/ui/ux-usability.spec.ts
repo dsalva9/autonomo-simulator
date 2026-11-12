@@ -612,51 +612,305 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     );
   });
 
-  test("QA-24: Frictionless keyboard-only 3-month turn loop + Trimestre settlement with zero scroll drift (1366x768)", async ({
+  test("QA-24: Full desktop zero-mouse keyboard navigation across TitleScreen, GameScreen, Modals & EndRunScreen (1366x768)", async ({
     page,
+    context,
   }, testInfo) => {
     test.skip(
       testInfo.project.name !== "desktop-chromium",
       "Desktop keyboard ergonomics flow executes in desktop-chromium",
     );
 
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.goto("./");
-    await page.getByTestId("seed-input").fill("FASE0-TRIMESTRE-PAY");
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+
+    // 1. TitleScreen shortcuts: switch archive tabs (2 / 1) & WAI-ARIA ArrowRight/ArrowLeft on tablist
+    await page.keyboard.press("2");
+    await expect(page.getByTestId("achievements-list")).toBeVisible();
+    await page.keyboard.press("1");
+    await expect(page.getByTestId("hall-of-fame-list")).toBeVisible();
+
+    // Tab until Hall of Fame tab is focused, then use ArrowRight / ArrowLeft + Tab into scrollable tabpanel
+    for (let i = 0; i < 10; i += 1) {
+      const focusedTestId = await page.evaluate(
+        () => document.activeElement?.getAttribute("data-testid") ?? null,
+      );
+      if (focusedTestId === "title-tab-hall-of-fame") break;
+      await page.keyboard.press("Tab");
+    }
+    await expect(page.getByTestId("title-tab-hall-of-fame")).toBeFocused();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByTestId("title-tab-achievements")).toBeFocused();
+    await expect(page.getByTestId("achievements-list")).toBeVisible();
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId("title-archive-panel")).toBeFocused();
+    await page.keyboard.press("1");
+    await expect(page.getByTestId("hall-of-fame-list")).toBeVisible();
+
+    // Desk preference shortcuts on TitleScreen (R, M, F)
+    await page.keyboard.press("r");
+    await expect(page.getByTestId("toggle-reduced-motion")).toHaveAttribute("aria-pressed", "true");
+    await page.keyboard.press("r");
+    await expect(page.getByTestId("toggle-reduced-motion")).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+
+    const initialSfxPressed = await page
+      .getByTestId("toggle-sfx-title-btn")
+      .getAttribute("aria-pressed");
+    await page.keyboard.press("m");
+    await expect(page.getByTestId("toggle-sfx-title-btn")).toHaveAttribute(
+      "aria-pressed",
+      initialSfxPressed === "true" ? "false" : "true",
+    );
+    await page.keyboard.press("m");
+
+    await page.keyboard.press("f");
+    await expect(page.getByTestId("toggle-fast-pacing-title-btn")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await page.keyboard.press("f");
+    await expect(page.getByTestId("toggle-fast-pacing-title-btn")).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+
+    // Focus seed input with 'S', type deterministic seed, Escape to blur, Enter to start run
+    await page.keyboard.press("s");
+    await expect(page.getByTestId("seed-input")).toBeFocused();
+    await page.keyboard.type("FASE0-TRIMESTRE-PAY");
+    await page.keyboard.press("Escape");
     await page.keyboard.press("Enter");
 
     await expect(page.getByTestId("game-screen")).toBeVisible();
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
 
+    // 2. GameScreen Month 1: ArrowDown / ArrowUp choice cycling + Enter confirm + Space outcome continue
+    const enabledMonth1Indices = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLButtonElement>('[data-testid^="choice-btn-"]'))
+        .map((btn, idx) => (btn.disabled ? -1 : idx))
+        .filter((idx) => idx >= 0),
+    );
+    expect(enabledMonth1Indices.length).toBeGreaterThanOrEqual(2);
+
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByTestId(`choice-btn-${enabledMonth1Indices[0]}`)).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByTestId(`choice-btn-${enabledMonth1Indices[1]}`)).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await expect(page.getByTestId(`choice-btn-${enabledMonth1Indices[0]}`)).toBeFocused();
+
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByTestId("outcome-continue-btn")).toBeFocused();
+    await page.keyboard.press("Space");
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
+
+    // HUD hotkeys on GameScreen: I -> return to TitleScreen, C -> continue active run
+    await page.keyboard.press("i");
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.getByTestId("continue-run-card")).toBeVisible();
+    await page.keyboard.press("c");
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
+
+    // 3. Advance to Month 3 QuarterlyTaxModal purely by keyboard
     for (let step = 0; step < 6; step += 1) {
       if (await page.getByTestId("trimestre-modal").isVisible()) {
         break;
       }
       await expect(page.getByTestId("event-card")).toBeVisible();
       expect(await page.evaluate(() => window.scrollY)).toBe(0);
-
-      // Find first eligible 1-based shortcut key
-      const buttons = page.locator('[data-testid^="choice-btn-"]');
-      const count = await buttons.count();
-      let keyToPress = "1";
-      for (let i = 0; i < count; i += 1) {
-        if (await buttons.nth(i).isEnabled()) {
-          keyToPress = String(i + 1);
-          break;
-        }
-      }
-
-      await page.keyboard.press(keyToPress);
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
       await expect(page.getByTestId("outcome-panel")).toBeVisible();
       expect(await page.evaluate(() => window.scrollY)).toBe(0);
-
       await page.keyboard.press("Enter");
     }
 
+    // Verify QuarterlyTaxModal auto-focus, Tab focus trap, ArrowDown/ArrowUp & '1' shortcut
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(page.getByTestId("trimestre-pay-btn")).toBeFocused();
+    for (let t = 0; t < 4; t += 1) {
+      await page.keyboard.press("Tab");
+      const insideTrimestre = await page.evaluate(
+        () => document.activeElement?.closest('[data-testid="trimestre-modal"]') !== null,
+      );
+      expect(insideTrimestre, "Expected Tab focus to stay trapped inside trimestre-modal").toBe(
+        true,
+      );
+    }
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowUp");
+    await expect(page.getByTestId("trimestre-pay-btn")).toBeFocused();
     await page.keyboard.press("1");
     await expect(page.getByTestId("trimestre-modal")).toBeHidden();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+    // Dismiss AchievementToast with Escape if visible
+    if (await page.getByTestId("achievement-toast").isVisible()) {
+      await page.keyboard.press("Escape");
+      await expect(page.getByTestId("achievement-toast")).toBeHidden();
+    }
+
+    // 4. Advance in Fast Pacing ('F') to Month 12 AnnualSummaryModal via keyboard
+    await page.keyboard.press("f");
+    await expect(page.getByTestId("toggle-fast-pacing-btn")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    for (let guard = 0; guard < 30; guard += 1) {
+      if (await page.getByTestId("annual-summary-modal").isVisible()) {
+        break;
+      }
+      if (await page.getByTestId("end-run-screen").isVisible()) {
+        break;
+      }
+      if (await page.getByTestId("trimestre-modal").isVisible()) {
+        await page.keyboard.press("1");
+        continue;
+      }
+      if (await page.getByTestId("outcome-panel").isVisible()) {
+        await page.keyboard.press("Enter");
+        continue;
+      }
+      await page.keyboard.press("ArrowDown");
+      await page.keyboard.press("Enter");
+    }
+
+    await expect(page.getByTestId("annual-summary-modal")).toBeVisible();
+    await expect(page.getByTestId("annual-summary-close-btn")).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByTestId("annual-summary-close-btn")).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("annual-summary-modal")).toBeHidden();
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 2 · Mes 1");
+
+    // 5. Open AbandonRunModal with 'B', verify Tab focus trap + Escape cancel, then select salaried exit via ArrowDown + Enter
+    await page.keyboard.press("b");
+    await expect(page.getByTestId("abandon-modal")).toBeVisible();
+    await expect(page.getByTestId("abandon-oposiciones-btn")).toBeFocused();
+    for (let t = 0; t < 5; t += 1) {
+      await page.keyboard.press("Tab");
+      const insideAbandon = await page.evaluate(
+        () => document.activeElement?.closest('[data-testid="abandon-modal"]') !== null,
+      );
+      expect(insideAbandon, "Expected Tab focus to stay trapped inside abandon-modal").toBe(true);
+    }
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("abandon-modal")).toBeHidden();
+
+    await page.keyboard.press("b");
+    await expect(page.getByTestId("abandon-oposiciones-btn")).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByTestId("abandon-salaried-btn")).toBeFocused();
+    await page.keyboard.press("Enter");
+
+    // 6. EndRunScreen keyboard actions: auto-focus, Arrow navigation, 'C' copy summary, 'Escape' to Title, 'N' new run
+    await expect(page.getByTestId("end-run-screen")).toBeVisible();
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(page.getByTestId("end-new-run-btn")).toBeFocused();
+
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByTestId("end-return-title-btn")).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.getByTestId("end-new-run-btn")).toBeFocused();
+
+    await page.keyboard.press("c");
+    await expect(page.getByTestId("share-feedback")).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.getByTestId("hall-of-fame-list")).toContainText("Regreso a la Nómina Fija");
+    await expect(page.getByTestId("hall-of-fame-list")).toContainText("13 meses");
+
+    await page.keyboard.press("n");
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+  });
+
+  test("QA-25: VictoryModal keyboard focus trap, ArrowDown/ArrowUp cycling & above-the-fold layout (1366x768)", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "desktop-chromium",
+      "Desktop VictoryModal keyboard check executes in desktop-chromium",
+    );
+
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.goto("./");
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    // Stage a valid persisted victory_prompt state in IndexedDB (keyval-store / keyval) and reload
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.phase = "victory_prompt";
+            envelope.state.pending_victory_badge = "rich_150k";
+            envelope.state.earned_victories = ["rich_150k"];
+            envelope.state.indicators.money = 152400;
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByTestId("victory-modal")).toBeVisible();
+    const bounds = { minTop: 0, maxBottom: 768, viewportWidth: 1366 };
+    await assertVisibleInViewportWithoutScroll(
+      page.getByTestId("victory-continue-btn"),
+      bounds,
+      "VictoryModal victory-continue-btn",
+    );
+    await assertVisibleInViewportWithoutScroll(
+      page.getByTestId("victory-retire-btn"),
+      bounds,
+      "VictoryModal victory-retire-btn",
+    );
+
+    await expect(page.getByTestId("victory-continue-btn")).toBeFocused();
+    for (let t = 0; t < 4; t += 1) {
+      await page.keyboard.press("Tab");
+      const insideVictory = await page.evaluate(
+        () => document.activeElement?.closest('[data-testid="victory-modal"]') !== null,
+      );
+      expect(insideVictory, "Expected Tab focus to stay trapped inside victory-modal").toBe(true);
+    }
+
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByTestId("victory-retire-btn")).toBeFocused();
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByTestId("end-run-screen")).toBeVisible();
+    await expect(page.getByTestId("end-run-victory-badges")).toBeVisible();
   });
 });

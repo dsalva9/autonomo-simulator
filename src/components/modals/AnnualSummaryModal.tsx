@@ -1,5 +1,5 @@
 import { Briefcase, CheckCircle2, FileSpreadsheet, Heart, ShieldCheck } from "lucide-react";
-import { useEffect } from "react";
+import { useRef } from "react";
 import { type GameState, buildAnnualSummary, getEventById } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
 import {
@@ -8,6 +8,7 @@ import {
   translateFamilyStatus,
   translateGestorTier,
 } from "../../services/i18n/resolveEventText.ts";
+import { useModalKeyboard } from "./useModalKeyboard.ts";
 
 export interface AnnualSummaryModalProps {
   state: GameState;
@@ -15,6 +16,7 @@ export interface AnnualSummaryModalProps {
 }
 
 export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
   const summary = buildAnnualSummary(state);
   const gestorChar = state.gestor.character_id
     ? compiledCatalog.characters[state.gestor.character_id]
@@ -26,21 +28,16 @@ export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) 
     ? compiledCatalog.characters[state.employee.character_id]
     : undefined;
 
-  useEffect(() => {
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        const target = event.target as HTMLElement | null;
-        if (target?.tagName === "BUTTON") return;
-        event.preventDefault();
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  useModalKeyboard(dialogRef, {
+    onDefaultEnter: onClose,
+    shortcuts: {
+      "1": onClose,
+    },
+  });
 
   return (
     <dialog
+      ref={dialogRef}
       open
       aria-modal="true"
       aria-labelledby="annual-summary-title"
@@ -171,12 +168,17 @@ export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) 
           <button
             type="button"
             data-testid="annual-summary-close-btn"
+            data-autofocus="true"
+            data-modal-option="true"
             onClick={onClose}
             className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#264e7a] hover:bg-[#1c3b5e] text-[#fffdf8] font-bold px-4 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors"
           >
             <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
             <span>
               Archivar Año {summary.year} y abrir Año {summary.year + 1}
+            </span>
+            <span className="hidden sm:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
+              Intro
             </span>
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { AlertOctagon, CalendarClock, Landmark, ShieldAlert } from "lucide-react";
-import { useEffect } from "react";
+import { useRef } from "react";
 import {
   type GameState,
   type QuarterlySettlementMode,
@@ -7,6 +7,7 @@ import {
 } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
 import { formatEuros } from "../../services/i18n/resolveEventText.ts";
+import { useModalKeyboard } from "./useModalKeyboard.ts";
 
 export interface QuarterlyTaxModalProps {
   state: GameState;
@@ -14,6 +15,7 @@ export interface QuarterlyTaxModalProps {
 }
 
 export function QuarterlyTaxModal({ state, onSettle }: QuarterlyTaxModalProps) {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
   const { balance } = compiledCatalog;
   const report = state.quarterly_report;
   const canDefer = canDeferQuarterlyTax(state);
@@ -33,26 +35,17 @@ export function QuarterlyTaxModal({ state, onSettle }: QuarterlyTaxModalProps) {
     }
   }
 
-  useEffect(() => {
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
-      const target = event.target as HTMLElement | null;
-      if (target?.tagName === "BUTTON") return;
-
-      if (event.key === "1") {
-        event.preventDefault();
-        onSettle("pay");
-      } else if (event.key === "2" && canDefer) {
-        event.preventDefault();
-        onSettle("defer");
-      }
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [canDefer, onSettle]);
+  useModalKeyboard(dialogRef, {
+    onDefaultEnter: () => onSettle("pay"),
+    shortcuts: {
+      "1": () => onSettle("pay"),
+      "2": canDefer ? () => onSettle("defer") : undefined,
+    },
+  });
 
   return (
     <dialog
+      ref={dialogRef}
       open
       aria-modal="true"
       aria-labelledby="trimestre-modal-title"
@@ -188,6 +181,8 @@ export function QuarterlyTaxModal({ state, onSettle }: QuarterlyTaxModalProps) {
             <button
               type="button"
               data-testid="trimestre-pay-btn"
+              data-autofocus="true"
+              data-modal-option="true"
               onClick={() => onSettle("pay")}
               className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-3.5 sm:px-4 py-2.5 font-bold text-left flex items-center justify-between gap-3 cursor-pointer transition-colors"
             >
@@ -205,6 +200,7 @@ export function QuarterlyTaxModal({ state, onSettle }: QuarterlyTaxModalProps) {
             <button
               type="button"
               data-testid="trimestre-defer-btn"
+              data-modal-option="true"
               disabled={!canDefer}
               onClick={() => onSettle("defer")}
               className={`w-full min-h-12 rounded-lg border-2 px-3.5 sm:px-4 py-2.5 text-left transition-colors ${

@@ -103,7 +103,14 @@ export function HistorialPanel({ state, unlockedAchievements }: HistorialPanelPr
         </div>
 
         {/* Reverse-Chronological Timeline */}
-        <ul className="historial-timeline divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] max-h-24 xl:max-h-36 overflow-y-auto dossier-scroll text-xs">
+        <ul
+          data-testid="historial-timeline"
+          data-keyboard-scroll="true"
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: WCAG 2.1.1 scrollable log container requires keyboard focus for Arrow/Page scrolling
+          tabIndex={0}
+          aria-label="Apuntes recientes del expediente"
+          className="historial-timeline divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] max-h-24 xl:max-h-36 overflow-y-auto dossier-scroll text-xs"
+        >
           {recentEntries.map((entry) => (
             <li key={entry.id} className="px-2.5 py-1.5 space-y-0.5">
               <div className="flex items-center justify-between gap-2 font-bureau text-[11px] tabular-nums">

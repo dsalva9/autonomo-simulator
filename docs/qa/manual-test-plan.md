@@ -305,9 +305,24 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 
 ---
 
-### QA-24: Frictionless Keyboard-Only 3-Month Turn Loop + Trimestre Settlement (`1366×768`)
-- **Preconditions**: Desktop Chromium at `1366 × 768`, seed `FASE0-TRIMESTRE-PAY` entered in `seed-input`.
+### QA-24: Full Desktop Zero-Mouse Keyboard Navigation Across `TitleScreen`, `GameScreen`, Modals & `EndRunScreen` (`1366×768`)
+- **Preconditions**: Desktop Chromium at `1366 × 768`, zero mouse clicks (`locator.click()` forbidden).
 - **Steps**:
-  1. Press `Enter` to start the run, then play Months 1–3 and settle Month 3 `QuarterlyTaxModal` using only keyboard shortcuts (`1`–`9` and `Enter`) with zero mouse clicks or scroll wheel input.
+  1. On `TitleScreen`, switch archive tabs via `2` / `1` and WAI-ARIA `ArrowRight` / `ArrowLeft` on `role="tablist"`, `Tab` into `title-archive-panel`, toggle `R` (reduced motion), `M` (sound), and `F` (*Modo ágil*), press `S` to focus `seed-input`, type `FASE0-TRIMESTRE-PAY`, press `Escape` to blur, and press `Enter` to start the run.
+  2. On Month 1 `GameScreen`, cycle choices with `ArrowDown` / `ArrowUp`, confirm with `Enter`, focus `outcome-continue-btn` with `ArrowDown` and advance with `Space`; press `I` to return to `TitleScreen` and `C` to resume the active run.
+  3. Advance to Month 3 `QuarterlyTaxModal`, verify `trimestre-pay-btn` auto-focus, press `Tab` 4 times to assert focus remains trapped inside `trimestre-modal`, cycle options with `ArrowDown` / `ArrowUp`, and settle with `1` (dismissing `AchievementToast` with `Escape`).
+  4. Toggle *Modo ágil* with `F` and play by keyboard to Month 12 `AnnualSummaryModal`; verify `annual-summary-close-btn` auto-focus + `Tab` trap, and close with `Enter` into Año 2.
+  5. Press `B` to open `AbandonRunModal`, press `Tab` 5 times to assert focus remains trapped inside `abandon-modal`, press `Escape` to cancel, press `B` again, and select salaried exit via `ArrowDown` + `Enter`.
+  6. On `EndRunScreen`, verify `end-new-run-btn` auto-focus, navigate actions with `ArrowRight` / `ArrowLeft`, press `C` to copy summary (`share-feedback` visible), press `Escape` to return to `TitleScreen` (`hall-of-fame-list` updated), and press `N` to launch a new run.
 - **Expected Result**:
-  - Advances cleanly to `Año 1 · Mes 4` via keyboard alone while `window.scrollY` stays `0` at every single step.
+  - Every screen, preference, archive tab, turn choice, outcome, Trimestre/Annual/Abandon modal, and end-of-run certificate action completes 100% by keyboard with strict modal focus trapping, zero console/page errors, and `window.scrollY === 0` throughout.
+
+---
+
+### QA-25: `VictoryModal` Keyboard Focus Trap, Arrow Cycling & Above-the-Fold Layout (`1366×768`)
+- **Preconditions**: Desktop Chromium at `1366 × 768`, active run staged in `victory_prompt` (`pending_victory_badge: "rich_150k"`).
+- **Steps**:
+  1. Resume the active run on `TitleScreen` via `Enter` so `VictoryModal` (`[data-testid="victory-modal"]`) opens.
+  2. Verify `victory-continue-btn` and `victory-retire-btn` fit 100% inside `[0, 768]`, verify `victory-continue-btn` is auto-focused, press `Tab` 4 times to assert focus remains trapped inside `victory-modal`, press `ArrowDown` to focus `victory-retire-btn`, and press `Enter` to retire.
+- **Expected Result**:
+  - `VictoryModal` traps keyboard focus cleanly, supports `ArrowDown` / `ArrowUp` and `1` / `2` shortcuts, and retires to `EndRunScreen` displaying `[data-testid="end-run-victory-badges"]`.

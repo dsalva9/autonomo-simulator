@@ -1,6 +1,8 @@
 import { Award, Infinity as InfinityIcon, Trophy } from "lucide-react";
+import { useRef } from "react";
 import type { GameState, VictoryDecision } from "../../engine/index.ts";
 import { formatDurationMonthsEs, formatEuros } from "../../services/i18n/resolveEventText.ts";
+import { useModalKeyboard } from "./useModalKeyboard.ts";
 
 export interface VictoryModalProps {
   state: GameState;
@@ -8,6 +10,7 @@ export interface VictoryModalProps {
 }
 
 export function VictoryModal({ state, onDecide }: VictoryModalProps) {
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
   const isRich = state.pending_victory_badge === "rich_150k";
 
   const headline = isRich ? "¡Ricachón!" : "«¡Eres un héroe!»";
@@ -15,8 +18,17 @@ export function VictoryModal({ state, onDecide }: VictoryModalProps) {
     ? "Has superado los 150.000 € limpios en tu cuenta corriente sin que Hacienda ni los clientes acaben contigo."
     : "Has sobrevivido diez años completos (120 meses) dado de alta en el RETA. En tu gestoría te han enmarcado el Modelo 036.";
 
+  useModalKeyboard(dialogRef, {
+    onDefaultEnter: () => onDecide("continue"),
+    shortcuts: {
+      "1": () => onDecide("continue"),
+      "2": () => onDecide("retire"),
+    },
+  });
+
   return (
     <dialog
+      ref={dialogRef}
       open
       aria-modal="true"
       aria-labelledby="victory-modal-title"
@@ -58,20 +70,36 @@ export function VictoryModal({ state, onDecide }: VictoryModalProps) {
             <button
               type="button"
               data-testid="victory-continue-btn"
+              data-autofocus="true"
+              data-modal-option="true"
               onClick={() => onDecide("continue")}
-              className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-4 py-3 font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-4 py-3 font-bold flex items-center justify-between gap-2 cursor-pointer transition-colors"
             >
-              <InfinityIcon className="w-5 h-5 shrink-0" aria-hidden="true" />
-              <span>Seguir cotizando en Modo Infinito</span>
+              <span className="inline-flex items-center gap-2">
+                <span className="font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20 shrink-0 tabular-nums">
+                  1
+                </span>
+                <InfinityIcon className="w-5 h-5 shrink-0" aria-hidden="true" />
+                <span>Seguir cotizando en Modo Infinito</span>
+              </span>
+              <span className="hidden sm:inline-block font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20 shrink-0">
+                Intro
+              </span>
             </button>
 
             <button
               type="button"
               data-testid="victory-retire-btn"
+              data-modal-option="true"
               onClick={() => onDecide("retire")}
-              className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] px-4 py-3 font-bold cursor-pointer transition-colors"
+              className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] px-4 py-3 font-bold flex items-center justify-between gap-2 cursor-pointer transition-colors"
             >
-              Retirarse por todo lo alto y emitir certificado
+              <span className="inline-flex items-center gap-2 text-left">
+                <span className="font-bureau text-xs px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8] shrink-0 tabular-nums">
+                  2
+                </span>
+                <span>Retirarse por todo lo alto y emitir certificado</span>
+              </span>
             </button>
           </div>
         </div>

@@ -11,7 +11,13 @@ import {
   VolumeX,
   Zap,
 } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import {
+  type FormEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { playUiSound } from "../services/audio/soundEffects.ts";
 import {
   formatCalendarBadgeEs,
@@ -41,19 +47,30 @@ export function TitleScreen() {
   const toggleFastPacing = useUIStore((s) => s.toggleFastPacing);
 
   const [seedInput, setSeedInput] = useState("");
+  const seedInputRef = useRef<HTMLInputElement | null>(null);
+  const hallTabRef = useRef<HTMLButtonElement | null>(null);
+  const achievementsTabRef = useRef<HTMLButtonElement | null>(null);
 
   const hasResumableRun = activeRun !== null && activeRun.ending === null;
   const resumableCalendar = hasResumableRun ? formatCalendarBadgeEs(activeRun.month) : null;
 
-  const handleStartFormSubmit = (event: FormEvent) => {
-    event.preventDefault();
+  const handleStartNewRun = () => {
     playUiSound("stamp_thud", { muted: sfxMuted });
     void startRun(seedInput);
+  };
+
+  const handleStartFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    handleStartNewRun();
   };
 
   const handleContinueRun = () => {
     playUiSound("paper_choice", { muted: sfxMuted });
     continueRun();
+  };
+
+  const handleToggleReducedMotion = () => {
+    void setReducedMotionPreference(reducedMotionOverride === true ? null : true);
   };
 
   const handleToggleSfx = () => {
@@ -68,6 +85,134 @@ export function TitleScreen() {
     toggleFastPacing();
     playUiSound("paper_choice", { muted: sfxMuted });
   };
+
+  const handleArchiveTabKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (
+      event.key !== "ArrowLeft" &&
+      event.key !== "ArrowRight" &&
+      event.key !== "Home" &&
+      event.key !== "End"
+    ) {
+      return;
+    }
+    event.preventDefault();
+    const nextTab =
+      event.key === "Home"
+        ? "hall_of_fame"
+        : event.key === "End"
+          ? "achievements"
+          : activeTitleTab === "hall_of_fame"
+            ? "achievements"
+            : "hall_of_fame";
+    setActiveTitleTab(nextTab);
+    if (nextTab === "hall_of_fame") {
+      hallTabRef.current?.focus({ preventScroll: true });
+    } else {
+      achievementsTabRef.current?.focus({ preventScroll: true });
+    }
+  };
+
+  const keyboardActionsRef = useRef({
+    hasResumableRun,
+    corruptedSaveNotice,
+    handleContinueRun,
+    handleStartNewRun,
+    handleToggleReducedMotion,
+    handleToggleSfx,
+    handleToggleFastPacing,
+    setActiveTitleTab,
+    dismissCorruptNotice,
+  });
+  keyboardActionsRef.current = {
+    hasResumableRun,
+    corruptedSaveNotice,
+    handleContinueRun,
+    handleStartNewRun,
+    handleToggleReducedMotion,
+    handleToggleSfx,
+    handleToggleFastPacing,
+    setActiveTitleTab,
+    dismissCorruptNotice,
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          target.blur();
+        }
+        return;
+      }
+
+      const actions = keyboardActionsRef.current;
+
+      if (event.key === "Enter") {
+        if (target && (target.tagName === "BUTTON" || target.tagName === "A")) {
+          return;
+        }
+        event.preventDefault();
+        if (actions.hasResumableRun) {
+          actions.handleContinueRun();
+        } else {
+          actions.handleStartNewRun();
+        }
+        return;
+      }
+
+      if (event.key === "Escape") {
+        if (actions.corruptedSaveNotice) {
+          event.preventDefault();
+          actions.dismissCorruptNotice();
+        } else if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+      if (key === "c" && actions.hasResumableRun) {
+        event.preventDefault();
+        actions.handleContinueRun();
+      } else if (key === "n") {
+        event.preventDefault();
+        actions.handleStartNewRun();
+      } else if (key === "s" || event.key === "/") {
+        event.preventDefault();
+        seedInputRef.current?.focus({ preventScroll: true });
+        seedInputRef.current?.select();
+      } else if (event.key === "1") {
+        event.preventDefault();
+        actions.setActiveTitleTab("hall_of_fame");
+      } else if (event.key === "2") {
+        event.preventDefault();
+        actions.setActiveTitleTab("achievements");
+      } else if (key === "r") {
+        event.preventDefault();
+        actions.handleToggleReducedMotion();
+      } else if (key === "m") {
+        event.preventDefault();
+        actions.handleToggleSfx();
+      } else if (key === "f") {
+        event.preventDefault();
+        actions.handleToggleFastPacing();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const unlockedCount = ACHIEVEMENT_CATALOG.filter((ach) =>
     Boolean(profile.achievements[ach.id]),
@@ -194,11 +339,15 @@ export function TitleScreen() {
                 <button
                   type="button"
                   data-testid="continue-run-btn"
+                  title="Continuar expediente activo (C o Intro)"
                   onClick={handleContinueRun}
                   className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Play className="w-5 h-5 fill-current shrink-0" aria-hidden="true" />
-                  Continuar partida
+                  <span>Continuar partida</span>
+                  <kbd className="hidden xl:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
+                    C
+                  </kbd>
                 </button>
               </div>
             </section>
@@ -221,13 +370,19 @@ export function TitleScreen() {
 
             <div className="p-3.5 space-y-2.5">
               <div className="space-y-1.5">
-                <label
-                  htmlFor="seed-input"
-                  className="block text-xs font-bold text-[#373f3a] uppercase tracking-wide"
-                >
-                  Semilla reproducible (opcional)
-                </label>
+                <div className="flex items-center justify-between gap-2">
+                  <label
+                    htmlFor="seed-input"
+                    className="block text-xs font-bold text-[#373f3a] uppercase tracking-wide"
+                  >
+                    Semilla reproducible (opcional)
+                  </label>
+                  <kbd className="hidden xl:inline-block font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a]">
+                    S
+                  </kbd>
+                </div>
                 <input
+                  ref={seedInputRef}
                   id="seed-input"
                   data-testid="seed-input"
                   type="text"
@@ -242,10 +397,14 @@ export function TitleScreen() {
               <button
                 type="submit"
                 data-testid="start-run-btn"
+                title="Iniciar nueva partida en el RETA (N)"
                 className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-base px-4 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-xs"
               >
                 <Sparkles className="w-5 h-5 shrink-0" aria-hidden="true" />
-                Nueva alta en el RETA
+                <span>Nueva alta en el RETA</span>
+                <kbd className="hidden xl:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
+                  N
+                </kbd>
               </button>
 
               {hasResumableRun && (
@@ -279,9 +438,8 @@ export function TitleScreen() {
                 <button
                   type="button"
                   data-testid="toggle-reduced-motion"
-                  onClick={() =>
-                    void setReducedMotionPreference(reducedMotionOverride === true ? null : true)
-                  }
+                  title="Alternar movimiento reducido (R)"
+                  onClick={handleToggleReducedMotion}
                   aria-pressed={reducedMotionOverride === true}
                   className={`min-h-9 px-3 py-1.5 rounded-lg border font-bureau font-bold shrink-0 cursor-pointer ${
                     reducedMotionOverride === true
@@ -303,6 +461,7 @@ export function TitleScreen() {
                 <button
                   type="button"
                   data-testid="toggle-sfx-title-btn"
+                  title="Alternar sonido de oficina (M)"
                   aria-pressed={!sfxMuted}
                   onClick={handleToggleSfx}
                   className={`min-h-9 px-3 py-1.5 rounded-lg border font-bureau font-bold inline-flex items-center gap-1.5 shrink-0 cursor-pointer ${
@@ -330,6 +489,7 @@ export function TitleScreen() {
                 <button
                   type="button"
                   data-testid="toggle-fast-pacing-title-btn"
+                  title="Alternar modo ágil (F)"
                   aria-pressed={fastPacing}
                   onClick={handleToggleFastPacing}
                   className={`min-h-9 px-3 py-1.5 rounded-lg border font-bureau font-bold inline-flex items-center gap-1.5 shrink-0 cursor-pointer ${
@@ -351,13 +511,19 @@ export function TitleScreen() {
           <div
             role="tablist"
             aria-label="Archivo del jugador"
+            onKeyDown={handleArchiveTabKeyDown}
             className="grid grid-cols-2 border-b-2 border-[#1f2421]/25 bg-[#efe4ce]"
           >
             <button
+              ref={hallTabRef}
+              id="title-tab-hall-of-fame"
               type="button"
               role="tab"
+              tabIndex={activeTitleTab === "hall_of_fame" ? 0 : -1}
               aria-selected={activeTitleTab === "hall_of_fame"}
+              aria-controls="title-archive-panel"
               data-testid="title-tab-hall-of-fame"
+              title="Salón de Caídos (1)"
               onClick={() => setActiveTitleTab("hall_of_fame")}
               className={`min-h-12 px-3 sm:px-4 py-3 font-editorial font-bold text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer ${
                 activeTitleTab === "hall_of_fame"
@@ -369,10 +535,15 @@ export function TitleScreen() {
               <span className="truncate">Salón de Caídos ({profile.hall_of_fame.length})</span>
             </button>
             <button
+              ref={achievementsTabRef}
+              id="title-tab-achievements"
               type="button"
               role="tab"
+              tabIndex={activeTitleTab === "achievements" ? 0 : -1}
               aria-selected={activeTitleTab === "achievements"}
+              aria-controls="title-archive-panel"
               data-testid="title-tab-achievements"
+              title="Logros desbloqueados (2)"
               onClick={() => setActiveTitleTab("achievements")}
               className={`min-h-12 px-3 sm:px-4 py-3 font-editorial font-bold text-sm sm:text-base flex items-center justify-center gap-2 border-l-2 border-[#1f2421]/25 cursor-pointer ${
                 activeTitleTab === "achievements"
@@ -387,7 +558,19 @@ export function TitleScreen() {
             </button>
           </div>
 
-          <div className="p-4 max-h-[480px] overflow-y-auto dossier-scroll">
+          <div
+            id="title-archive-panel"
+            role="tabpanel"
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: WAI-ARIA APG Tabs pattern & WCAG 2.1.1 scrollable tabpanel
+            tabIndex={0}
+            aria-labelledby={
+              activeTitleTab === "hall_of_fame"
+                ? "title-tab-hall-of-fame"
+                : "title-tab-achievements"
+            }
+            data-testid="title-archive-panel"
+            className="p-4 max-h-[480px] overflow-y-auto dossier-scroll"
+          >
             {activeTitleTab === "hall_of_fame" ? (
               <div data-testid="hall-of-fame-list" className="space-y-2.5">
                 {profile.hall_of_fame.length === 0 ? (

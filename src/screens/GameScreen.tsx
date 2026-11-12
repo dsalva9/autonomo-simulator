@@ -49,12 +49,16 @@ export function GameScreen({ state }: GameScreenProps) {
   const closeAnnualSummary = useGameStore((s) => s.closeAnnualSummary);
   const abandonActiveRun = useGameStore((s) => s.abandonActiveRun);
   const returnToTitle = useGameStore((s) => s.returnToTitle);
+  const newlyUnlockedAchievements = useGameStore((s) => s.newlyUnlockedAchievements);
+  const clearUnlockedToastQueue = useGameStore((s) => s.clearUnlockedToastQueue);
 
   const activeMobileTab = useUIStore((s) => s.activeMobileTab);
   const setActiveMobileTab = useUIStore((s) => s.setActiveMobileTab);
   const abandonModalOpen = useUIStore((s) => s.abandonModalOpen);
   const setAbandonModalOpen = useUIStore((s) => s.setAbandonModalOpen);
   const sfxMuted = useUIStore((s) => s.sfxMuted);
+  const toggleSfxMuted = useUIStore((s) => s.toggleSfxMuted);
+  const toggleFastPacing = useUIStore((s) => s.toggleFastPacing);
 
   const activeEventView = getActiveEvent(state, compiledCatalog);
   const sceneEvent = pendingOutcome?.event ?? activeEventView?.event ?? null;
@@ -64,6 +68,85 @@ export function GameScreen({ state }: GameScreenProps) {
   const showAnnualModal = pendingOutcome === null && state.phase === "annual_summary";
   const anyModalOpen =
     showQuarterlyModal || showVictoryModal || showAnnualModal || abandonModalOpen;
+
+  const deskHotkeysRef = useRef({
+    sfxMuted,
+    hasToast: newlyUnlockedAchievements.length > 0,
+    toggleSfxMuted,
+    toggleFastPacing,
+    returnToTitle,
+    openAbandon: () => setAbandonModalOpen(true),
+    clearUnlockedToastQueue,
+  });
+  deskHotkeysRef.current = {
+    sfxMuted,
+    hasToast: newlyUnlockedAchievements.length > 0,
+    toggleSfxMuted,
+    toggleFastPacing,
+    returnToTitle,
+    openAbandon: () => setAbandonModalOpen(true),
+    clearUnlockedToastQueue,
+  };
+
+  useEffect(() => {
+    if (anyModalOpen) {
+      return;
+    }
+
+    const handleDeskKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const actions = deskHotkeysRef.current;
+
+      if (event.key === "Escape") {
+        if (actions.hasToast) {
+          event.preventDefault();
+          actions.clearUnlockedToastQueue();
+        } else if (
+          document.activeElement instanceof HTMLElement &&
+          document.activeElement !== document.body
+        ) {
+          document.activeElement.blur();
+        }
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+      if (key === "m") {
+        event.preventDefault();
+        const willBeUnmuted = actions.sfxMuted;
+        actions.toggleSfxMuted();
+        if (willBeUnmuted) {
+          playUiSound("paper_choice", { muted: false });
+        }
+      } else if (key === "f") {
+        event.preventDefault();
+        actions.toggleFastPacing();
+        playUiSound("paper_choice", { muted: actions.sfxMuted });
+      } else if (key === "i") {
+        event.preventDefault();
+        actions.returnToTitle();
+      } else if (key === "b") {
+        event.preventDefault();
+        actions.openAbandon();
+      }
+    };
+
+    window.addEventListener("keydown", handleDeskKeyDown);
+    return () => window.removeEventListener("keydown", handleDeskKeyDown);
+  }, [anyModalOpen]);
 
   // Chime counter desk-bell once whenever entering a quarterly tax settlement
   const lastTrimestreBellKeyRef = useRef<string>("");

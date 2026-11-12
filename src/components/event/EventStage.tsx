@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle2, Dices, Lock, Receipt } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type {
   ActiveEventView,
   GameState,
@@ -70,6 +70,8 @@ export function EventStage({
   onSelectChoice,
   onContinueOutcome,
 }: EventStageProps) {
+  const stageRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (!keyboardEnabled) {
       return;
@@ -91,6 +93,21 @@ export function EventStage({
       }
 
       if (pendingOutcome) {
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          if (target?.closest('[data-keyboard-scroll="true"]')) {
+            return;
+          }
+          event.preventDefault();
+          stageRef.current
+            ?.querySelector<HTMLButtonElement>('[data-testid="outcome-continue-btn"]')
+            ?.focus({ preventScroll: window.innerWidth >= 1024 });
+          return;
+        }
+        if (event.key === "1") {
+          event.preventDefault();
+          onContinueOutcome();
+          return;
+        }
         if (event.key === "Enter" || event.key === " ") {
           // If focus is already on a button, native click handles Enter/Space; avoid double fire
           if (target?.tagName === "BUTTON") {
@@ -102,7 +119,37 @@ export function EventStage({
         return;
       }
 
-      if (activeEventView && /^[1-9]$/.test(event.key)) {
+      if (!activeEventView) {
+        return;
+      }
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        if (target?.closest('[data-keyboard-scroll="true"]')) {
+          return;
+        }
+        const enabledButtons = Array.from(
+          stageRef.current?.querySelectorAll<HTMLButtonElement>(
+            '[data-testid^="choice-btn-"]:not(:disabled)',
+          ) ?? [],
+        );
+        if (enabledButtons.length > 0) {
+          event.preventDefault();
+          const active = document.activeElement as HTMLButtonElement | null;
+          const currentIndex = active ? enabledButtons.indexOf(active) : -1;
+          const nextIndex =
+            event.key === "ArrowDown"
+              ? currentIndex < 0
+                ? 0
+                : (currentIndex + 1) % enabledButtons.length
+              : currentIndex <= 0
+                ? enabledButtons.length - 1
+                : currentIndex - 1;
+          enabledButtons[nextIndex]?.focus({ preventScroll: window.innerWidth >= 1024 });
+        }
+        return;
+      }
+
+      if (/^[1-9]$/.test(event.key)) {
         const index = Number(event.key) - 1;
         const entry = activeEventView.choices[index];
         if (entry?.eligible) {
@@ -132,7 +179,7 @@ export function EventStage({
     : null;
 
   return (
-    <div data-testid="event-stage" className="space-y-2.5">
+    <div ref={stageRef} data-testid="event-stage" className="space-y-2.5">
       {/* Monthly Recurring Economy Strip: Single-Line Desktop Ticker / 2-Band Mobile Ledger */}
       {lastMonthStart && lastMonthStart.month === state.month && !pendingOutcome && (
         <div

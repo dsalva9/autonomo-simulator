@@ -206,7 +206,7 @@ export function IndicatorBar({
               data-testid="toggle-sfx-btn"
               aria-label="Sonido de oficina"
               aria-pressed={!sfxMuted}
-              title={sfxMuted ? "Sonido silenciado (activar)" : "Sonido activo (silenciar)"}
+              title={sfxMuted ? "Sonido silenciado — activar (M)" : "Sonido activo — silenciar (M)"}
               onClick={handleToggleSfx}
               className={`h-7 min-w-7 px-1.5 xl:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer ${
                 sfxMuted
@@ -229,8 +229,8 @@ export function IndicatorBar({
               aria-pressed={fastPacing}
               title={
                 fastPacing
-                  ? "Modo ágil activado (volver a lectura normal)"
-                  : "Activar Modo ágil (avanzar sin pausa intermedia)"
+                  ? "Modo ágil activado — volver a lectura normal (F)"
+                  : "Activar Modo ágil — avanzar sin pausa intermedia (F)"
               }
               onClick={handleToggleFastPacing}
               className={`h-7 min-w-7 px-1.5 xl:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer ${
@@ -247,6 +247,7 @@ export function IndicatorBar({
               type="button"
               data-testid="return-title-btn"
               aria-label="Volver al inicio"
+              title="Volver al inicio conservando el expediente en curso (I)"
               onClick={onReturnToTitle}
               className="h-7 px-2 inline-flex items-center gap-1 rounded-md border border-[#1f2421]/80 bg-[#fffdf8] hover:bg-[#efe4ce] text-[11px] font-bold text-[#1f2421] transition-colors cursor-pointer whitespace-nowrap"
             >
@@ -258,6 +259,7 @@ export function IndicatorBar({
               type="button"
               data-testid="abandon-run-btn"
               aria-label="Darse de baja voluntaria"
+              title="Tramitar baja voluntaria Modelo 036 (B)"
               onClick={onOpenAbandon}
               className="h-7 px-2 inline-flex items-center gap-1 rounded-md border border-[#b42b24]/75 bg-[#fdf0ef] hover:bg-[#f9dcd9] text-[11px] font-bold text-[#b42b24] transition-colors cursor-pointer whitespace-nowrap"
             >
