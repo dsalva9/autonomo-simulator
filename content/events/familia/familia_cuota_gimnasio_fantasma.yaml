@@ -1,0 +1,47 @@
+schema_version: 1
+id: familia_cuota_gimnasio_fantasma
+category: familia
+title: "Quinto recibo seguido del gimnasio al que no pisas"
+body: "El banco te descuenta otros cuarenta y nueve euros del gimnasio del barrio mientras desayunas galletas frente al monitor. Tu bolsa de deporte acumula polvo detrás de la puerta y subir dos pisos sin ascensor ya cuenta como cardio."
+tags:
+  - salud
+  - deporte
+  - gimnasio
+  - habitos
+requirements:
+  min_month: 3
+weight: 11
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: bloquear_tres_mananas_y_entrenar
+    label: "Bloquear tres huecos sagrados por semana en la agenda e ir de verdad"
+    result_text: "Las agujetas del miércoles son criminales, pero a la segunda semana duermes de un tirón y rinde más la cabeza."
+    effects:
+      cash_delta: -49
+      stress: -11
+      moral: 9
+      personal_life: 8
+      add_modifier:
+        id: mod_rutina_deporte_activa
+        label: "Rutina deportiva cumplida"
+        remaining_months: 4
+        monthly_stress_delta: -2
+        monthly_moral_delta: 1
+  - id: darse_de_baja_y_salir_a_correr
+    label: "Tramitarte la baja sin culpa y cambiar las pesas por caminar al parque"
+    result_text: "Superas la burocracia del mostrador, cortas la sangría mensual y al menos te da el aire media hora al cerrar el día."
+    effects:
+      stress: -4
+      moral: 3
+      personal_life: 4
+  - id: seguir_pagando_autoengano
+    label: "Dejar el recibo vivo porque «el lunes que viene empiezo seguro»"
+    result_text: "Patrocinas generosamente las máquinas elípticas del barrio un mes más sin levantarte de la silla giratoria."
+    effects:
+      cash_delta: -49
+      billed_income: 310
+      stress: 4
+      moral: -3
+      personal_life: -3

@@ -1,0 +1,66 @@
+schema_version: 1
+id: empleados_contraoferta_competencia
+category: empleados
+title: "Contraoferta agresiva de una agencia rival"
+body: "Una consultora competidora le pone sobre la mesa a tu persona en plantilla un veinticinco por ciento más de sueldo si se incorpora en quince días. Te pide hablar hoy mismo antes de firmar nada en pleno pico de entregas."
+tags:
+  - plantilla
+  - retencion
+  - conflicto_laboral
+  - competencia
+illustration_id: illus_hito_conflicto_laboral
+requirements:
+  min_month: 16
+  has_employee: true
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: igualar_con_variable_y_autonomia
+    label: "Retener con prima inmediata (600 €) y participación por proyectos"
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: "Rechaza a la consultora esa misma tarde. Te aprietas el cinturón en caja, pero blindas el conocimiento del estudio y disparas la implicación."
+    effects:
+      cash_delta: -600
+      moral: 7
+      stress: 2
+      reputation: 4
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_retencion_clave_estudio
+        label: "Compromiso reforzado frente a la competencia"
+        remaining_months: 6
+        monthly_billed_delta: 440
+        monthly_expense_delta: 240
+        monthly_stress_delta: -2
+  - id: invocar_clausulas_y_tensar_cuerda
+    label: "Amenazar con cláusulas de permanencia y exigir preaviso estricto"
+    result_text: "Frenas su firma en caliente a golpe de tecnicismos legales, pero el aire del despacho se vuelve irrespirable y el conflicto queda servido."
+    effects:
+      moral: -6
+      stress: 10
+      set_flags:
+        - desgaste_plantilla
+      schedule_events:
+        - event_id: empleados_mediacion_salida_tensa
+          delay_months: 1
+          probability: 1
+  - id: desear_suerte_y_pactar_traspaso
+    label: "Asumir que no puedes igualarlo y pactar dos semanas de relevo limpio"
+    result_text: "Cerráis carpetas con elegancia sin indemnización de salida, apoyándote en un refuerzo puntual para no fallar a tus clientes activos."
+    effects:
+      dismiss_employee:
+        severance_cost: 0
+      billed_income: 900
+      deductible_expense: 350
+      moral: -2
+      stress: 6
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla

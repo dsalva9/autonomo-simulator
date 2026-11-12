@@ -1,0 +1,43 @@
+schema_version: 1
+id: clientes_boda_amigo_encargo_en_b
+category: clientes
+title: «Hombre, entre amigos no me vas a meter el IVA»
+body: "El amigo de un amigo te pide un encargo particular bien pagado pero suelta la frase clásica en la terraza: «Te lo doy en billetes y nos ahorramos el sablazo del IVA, que queda todo en casa»."
+tags:
+  - dinero_b
+  - amigos
+  - dilema_fiscal
+requirements:
+  min_month: 3
+weight: 10
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: hacer_precio_amigo_pero_con_factura
+    label: Aplicar un pequeño detalle comercial pero emitir factura legal
+    result_text: Le haces una rebajita elegante con su IVA reglamentario. Resopla medio minuto, paga por banco y dormís tranquilos los dos.
+    effects:
+      billed_income: 675
+      stress: 10
+      moral: 2
+      reputation: 2
+      fiscal_risk: -2
+  - id: coger_los_billetes_en_la_terraza
+    label: Guardar el fajo en el bolsillo y no emitir ni un recibo
+    result_text: Efectivo limpio directo a la cartera sin pasar por el trimestre, con ese cosquilleo de saber quién más se enterará en la cena.
+    effects:
+      cash_delta: 775
+      stress: 18
+      moral: -6
+      fiscal_risk: 24
+      set_flags:
+        - cobro_en_b_reciente
+  - id: no_mezclar_amistades_y_trabajo
+    label: Excusarte por falta de agenda para no mezclar cañas y facturas
+    result_text: Conservas la amistad intacta recomendándole a otro profesional y te ahorras discusiones incómodas.
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 4
+      reputation: -4

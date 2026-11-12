@@ -18,6 +18,7 @@ import {
 } from "../engine/index.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
 import { compiledCatalog } from "../services/content/catalog.ts";
+import { getUiStrings } from "../services/i18n/uiStrings.ts";
 import { useGameStore } from "../store/gameStore.ts";
 import { type MobileWorkspaceTab, useUIStore } from "../store/uiStore.ts";
 
@@ -25,15 +26,14 @@ export interface GameScreenProps {
   state: GameState;
 }
 
-const MOBILE_TABS: {
+const MOBILE_TAB_ICONS: {
   id: MobileWorkspaceTab;
-  label: string;
   Icon: typeof Briefcase;
 }[] = [
-  { id: "despacho", label: "Despacho", Icon: Briefcase },
-  { id: "cuentas", label: "Cuentas", Icon: BookOpen },
-  { id: "entorno", label: "Entorno", Icon: Users },
-  { id: "historial", label: "Historial", Icon: History },
+  { id: "despacho", Icon: Briefcase },
+  { id: "cuentas", Icon: BookOpen },
+  { id: "entorno", Icon: Users },
+  { id: "historial", Icon: History },
 ];
 
 export function GameScreen({ state }: GameScreenProps) {
@@ -51,6 +51,7 @@ export function GameScreen({ state }: GameScreenProps) {
   const returnToTitle = useGameStore((s) => s.returnToTitle);
   const newlyUnlockedAchievements = useGameStore((s) => s.newlyUnlockedAchievements);
   const clearUnlockedToastQueue = useGameStore((s) => s.clearUnlockedToastQueue);
+  const toggleLocalePreference = useGameStore((s) => s.toggleLocalePreference);
 
   const activeMobileTab = useUIStore((s) => s.activeMobileTab);
   const setActiveMobileTab = useUIStore((s) => s.setActiveMobileTab);
@@ -59,6 +60,9 @@ export function GameScreen({ state }: GameScreenProps) {
   const sfxMuted = useUIStore((s) => s.sfxMuted);
   const toggleSfxMuted = useUIStore((s) => s.toggleSfxMuted);
   const toggleFastPacing = useUIStore((s) => s.toggleFastPacing);
+
+  const locale = profile.settings.locale;
+  const ui = getUiStrings(locale);
 
   const activeEventView = getActiveEvent(state, compiledCatalog);
   const sceneEvent = pendingOutcome?.event ?? activeEventView?.event ?? null;
@@ -74,6 +78,7 @@ export function GameScreen({ state }: GameScreenProps) {
     hasToast: newlyUnlockedAchievements.length > 0,
     toggleSfxMuted,
     toggleFastPacing,
+    toggleLocalePreference,
     returnToTitle,
     openAbandon: () => setAbandonModalOpen(true),
     clearUnlockedToastQueue,
@@ -83,6 +88,7 @@ export function GameScreen({ state }: GameScreenProps) {
     hasToast: newlyUnlockedAchievements.length > 0,
     toggleSfxMuted,
     toggleFastPacing,
+    toggleLocalePreference,
     returnToTitle,
     openAbandon: () => setAbandonModalOpen(true),
     clearUnlockedToastQueue,
@@ -135,6 +141,10 @@ export function GameScreen({ state }: GameScreenProps) {
         event.preventDefault();
         actions.toggleFastPacing();
         playUiSound("paper_choice", { muted: actions.sfxMuted });
+      } else if (key === "l") {
+        event.preventDefault();
+        playUiSound("paper_choice", { muted: actions.sfxMuted });
+        void actions.toggleLocalePreference();
       } else if (key === "i") {
         event.preventDefault();
         actions.returnToTitle();
@@ -226,6 +236,7 @@ export function GameScreen({ state }: GameScreenProps) {
       <IndicatorBar
         state={state}
         lastDeltas={lastDeltas}
+        locale={locale}
         onReturnToTitle={returnToTitle}
         onOpenAbandon={() => setAbandonModalOpen(true)}
       />
@@ -242,17 +253,17 @@ export function GameScreen({ state }: GameScreenProps) {
                   : "hidden lg:block"
               }
             >
-              <SceneRenderer state={state} activeEvent={sceneEvent} />
+              <SceneRenderer state={state} activeEvent={sceneEvent} locale={locale} />
             </div>
 
             <div className={activeMobileTab === "entorno" ? "block" : "hidden lg:block"}>
-              <EntornoPanel state={state} />
+              <EntornoPanel state={state} locale={locale} />
             </div>
           </aside>
 
           {/* Center Stage: Monthly Economy Strip, Event Card, Choices & Outcome Resolution */}
           <section
-            aria-label="Mesa de decisiones"
+            aria-label={ui.game.decisionDeskAria}
             className={activeMobileTab === "despacho" ? "block mt-2 lg:mt-0" : "hidden lg:block"}
           >
             <EventStage
@@ -260,7 +271,7 @@ export function GameScreen({ state }: GameScreenProps) {
               activeEventView={activeEventView}
               pendingOutcome={pendingOutcome}
               lastMonthStart={lastMonthStart}
-              locale={profile.settings.locale}
+              locale={locale}
               keyboardEnabled={!anyModalOpen}
               onSelectChoice={handleSelectChoice}
               onContinueOutcome={handleContinueOutcome}
@@ -270,11 +281,15 @@ export function GameScreen({ state }: GameScreenProps) {
           {/* Right Column: Cuaderno de Cuentas & Historial */}
           <aside className="space-y-2.5 lg:space-y-2.5 lg:sticky lg:top-[88px] lg:max-h-[calc(100vh-98px)] lg:overflow-y-auto lg:pr-1 lg:pb-1 dossier-scroll">
             <div className={activeMobileTab === "cuentas" ? "block" : "hidden lg:block"}>
-              <CuentasPanel state={state} />
+              <CuentasPanel state={state} locale={locale} />
             </div>
 
             <div className={activeMobileTab === "historial" ? "block" : "hidden lg:block"}>
-              <HistorialPanel state={state} unlockedAchievements={profile.achievements} />
+              <HistorialPanel
+                state={state}
+                unlockedAchievements={profile.achievements}
+                locale={locale}
+              />
             </div>
           </aside>
         </div>
@@ -282,12 +297,13 @@ export function GameScreen({ state }: GameScreenProps) {
 
       {/* Mobile Bottom Navigation Bar (< 1024px) */}
       <nav
-        aria-label="Secciones del despacho"
+        aria-label={ui.game.mobileNavAria}
         className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t-2 border-[#1f2421] bg-[#fffdf8]/98 backdrop-blur-xs pb-[env(safe-area-inset-bottom)]"
       >
         <div role="tablist" className="grid grid-cols-4">
-          {MOBILE_TABS.map(({ id, label, Icon }) => {
+          {MOBILE_TAB_ICONS.map(({ id, Icon }) => {
             const isActive = activeMobileTab === id;
+            const label = ui.game.tabs[id];
             return (
               <button
                 key={id}
@@ -312,15 +328,20 @@ export function GameScreen({ state }: GameScreenProps) {
 
       {/* Phase Modals */}
       {showQuarterlyModal && (
-        <QuarterlyTaxModal state={state} onSettle={handleSettleQuarterlyTax} />
+        <QuarterlyTaxModal state={state} locale={locale} onSettle={handleSettleQuarterlyTax} />
       )}
 
-      {showVictoryModal && <VictoryModal state={state} onDecide={handleDecideVictory} />}
+      {showVictoryModal && (
+        <VictoryModal state={state} locale={locale} onDecide={handleDecideVictory} />
+      )}
 
-      {showAnnualModal && <AnnualSummaryModal state={state} onClose={handleCloseAnnualSummary} />}
+      {showAnnualModal && (
+        <AnnualSummaryModal state={state} locale={locale} onClose={handleCloseAnnualSummary} />
+      )}
 
       {abandonModalOpen && (
         <AbandonRunModal
+          locale={locale}
           onConfirmAbandon={(endingId) => void abandonActiveRun(endingId)}
           onCancel={() => setAbandonModalOpen(false)}
         />

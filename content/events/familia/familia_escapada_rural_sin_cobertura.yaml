@@ -1,0 +1,42 @@
+schema_version: 1
+id: familia_escapada_rural_sin_cobertura
+category: familia
+title: "Casa rural con amigos y prohibición de hablar de curro"
+body: "Tu grupo de toda la vida ha alquilado una casa de piedra en la sierra del viernes al domingo con chimenea, rutas por el monte y bote común. Queda una habitación libre si prometes no abrir ni un correo."
+tags:
+  - amigos
+  - descanso
+  - desconexion
+  - fin_de_semana
+requirements:
+  min_month: 6
+weight: 11
+cooldown_months: 10
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: apuntarse_fin_de_semana_entero
+    label: "Pagar tu parte del bote, calzarte las botas y apagar el móvil (155 €)"
+    result_text: "Entre risas hasta las tantas, pan de pueblo y aire frío de montaña, el lunes ni recuerdas tu contraseña a la primera."
+    effects:
+      cash_delta: -155
+      stress: -14
+      moral: 10
+      personal_life: 14
+  - id: subir_solo_el_sabado_a_comer
+    label: "Subir el sábado a pasar el día y volver a dormir a tu cama (55 €)"
+    result_text: "Disfrutas de la barbacoa y la caminata gastando lo justo, y te queda el domingo tranquilo para organizar la semana."
+    effects:
+      cash_delta: -55
+      stress: -8
+      moral: 6
+      personal_life: 8
+  - id: quedarse_rematando_facturacion
+    label: "Borrarte del plan para aprovechar el finde silencioso y facturar"
+    result_text: "Sacas un buen tajo de trabajo en pijama mientras el grupo de mensajería se llena de fotos junto a la chimenea."
+    effects:
+      billed_income: 560
+      stress: 6
+      moral: -4
+      personal_life: -8
+      reputation: 1

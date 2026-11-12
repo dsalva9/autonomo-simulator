@@ -1,0 +1,60 @@
+schema_version: 1
+id: hacienda_comprobacion_operaciones_vinculadas
+category: hacienda
+title: "Lupa veterana sobre gastos compartidos y subcontratas"
+body: "Con los años tu red de colaboradores habituales y gastos compartidos llama la atención del Inspector Gómez, que exige demostrar precios de mercado reales y ausencia total de dependencia encubierta."
+tags:
+  - subcontratas
+  - operaciones_vinculadas
+  - veterania
+  - largo_plazo
+character_id: hacienda_inspector_gomez
+character_expression: angry
+requirements:
+  min_month: 72
+weight: 11
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: acreditar_independencia_y_cartera
+    label: "Aportar contratos mercantiles, medios propios y cartera diversificada"
+    outcomes:
+      - id: autonomia_plena_acreditada
+        weight: 70
+        result_text: "Demuestras organización propia y pluralidad de clientes; Gómez valida las deducciones y archiva las actuaciones."
+        effects:
+          deductible_expense: 110
+          stress: 6
+          moral: 7
+          reputation: 3
+          fiscal_risk: -12
+      - id: recorte_en_gastos_refacturados
+        weight: 30
+        result_text: "Admiten tu independencia pero rechazan dos facturas de gastos compartidos mal desglosadas, girándote diferencia."
+        effects:
+          cash_delta: -410
+          stress: 10
+          moral: -4
+          fiscal_risk: -10
+  - id: blindar_contratos_con_gestoria
+    label: "Presentar memoria jurídica y desglose preparados por tu gestoría"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría documenta cada colaboración a valor de mercado y desactiva el requerimiento sin rasguños."
+    effects:
+      deductible_expense: 210
+      stress: 1
+      moral: 6
+      reputation: 3
+      fiscal_risk: -16
+  - id: asumir_ajuste_sobre_partidas_mixtas
+    label: "Retirar las partidas mixtas discutidas y cerrar el acta hoy (350 €)"
+    result_text: "Sacrificas unos gastos grises para evitar meses de requerimientos cruzados con tus colaboradores."
+    effects:
+      cash_delta: -350
+      stress: 4
+      moral: -3
+      fiscal_risk: -12

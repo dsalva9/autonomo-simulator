@@ -1,0 +1,59 @@
+schema_version: 1
+id: empleados_mudanza_local_calle
+category: empleados
+title: "Salir del cuarto de la plancha"
+body: "Trabajar en zapatillas junto al tendedero ahorra dinero, pero ya no distingues dónde acaba el salón y dónde empieza la oficina. Queda libre un pequeño local compartido a pie de calle y también una mesa fija en un coworking del barrio."
+tags:
+  - estudio
+  - coworking
+  - costes_fijos
+  - conciliacion
+illustration_id: illus_hito_mudanza_oficina
+requirements:
+  min_month: 10
+  has_employee: false
+  forbidden_flags:
+    - estudio_calle_alquilado
+weight: 9
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: alquilar_estudio_compartido
+    label: "Entrar en el local compartido a pie de calle (650 € de entrada)"
+    requirements:
+      stats:
+        money:
+          min: 1500
+    result_text: "Firmas las llaves, montas tu mesa lejos del sofá y recibes visitas con café decente. Sube el gasto mensual, pero tu cabeza respira al cerrar la persiana."
+    effects:
+      deductible_expense: 650
+      moral: 7
+      stress: -6
+      personal_life: 6
+      reputation: 5
+      set_flags:
+        - estudio_calle_alquilado
+      add_modifier:
+        id: mod_estudio_pie_calle
+        label: "Estudio compartido a pie de calle"
+        remaining_months: 6
+        monthly_billed_delta: 290
+        monthly_expense_delta: 180
+        monthly_stress_delta: -2
+  - id: probar_mesa_coworking
+    label: "Contratar una mesa flexible en el coworking cercano (220 €)"
+    result_text: "Cambias el pasillo de casa por luz natural, fibra simétrica y charlas breves junto a la cafetera sin atarte a un contrato largo de alquiler."
+    effects:
+      deductible_expense: 220
+      moral: 3
+      stress: -3
+      personal_life: 3
+      reputation: 2
+  - id: seguir_en_casa_ahorrando
+    label: "Quedarte en casa y ahorrar cada euro de alquiler"
+    result_text: "Tu cuenta corriente lo agradece intacta, aunque el domingo por la noche el escritorio te sigue mirando fijamente desde la esquina del cuarto."
+    effects:
+      moral: -2
+      stress: 2
+      personal_life: -3

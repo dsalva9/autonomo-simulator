@@ -1,0 +1,59 @@
+schema_version: 1
+id: clientes_evento_networking_canapes
+category: clientes
+title: Noche de tarjetas de visita y croquetas tibias
+body: Se celebra en tu ciudad un encuentro empresarial de tarde-noche lleno de pymes locales. La entrada es deducible y promete contactos reales, aunque requiere cambiar sofá por dos horas de charla de ascensor.
+tags:
+  - captacion
+  - networking
+  - gasto_deducible
+requirements:
+  min_month: 2
+weight: 10
+cooldown_months: 9
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: ir_con_objetivo_comercial_claro
+    label: Pagar la entrada deducible (65 €) y hablar con tres empresas serias
+    outcomes:
+      - id: contacto_directo_rentable
+        weight: 65
+        result_text: Esquivas a los vendedores de humo y das con una gerente industrial que necesitaba exactamente tu perfil esta semana.
+        effects:
+          deductible_expense: 65
+          billed_income: 950
+          stress: 12
+          moral: 3
+          personal_life: -2
+          reputation: 2
+      - id: solo_vendedores_cruzados
+        weight: 35
+        result_text: Todo el mundo había ido a vender y nadie a comprar, pero al menos cenas canapés y desgravas el recibo.
+        effects:
+          deductible_expense: 65
+          stress: 4
+          moral: -2
+          personal_life: -2
+          reputation: -4
+  - id: patrocinar_mesa_breve_presentacion
+    label: Invertir en cinco minutos de micrófono ante toda la sala (180 €)
+    requirements:
+      stats:
+        money:
+          min: 700
+    result_text: Hablas claro, sin jerga vacía, y dos asistentes te piden presupuesto cerrado antes de terminar el vino español.
+    effects:
+      deductible_expense: 180
+      billed_income: 1175
+      stress: 7
+      moral: 6
+      reputation: 4
+  - id: quedarse_en_casa_descansando
+    label: Ahorrarte las croquetas frías y descansar en zapatillas
+    result_text: Tu batería social te lo agradece profundamente desde el minuto uno.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 4
+      reputation: -4

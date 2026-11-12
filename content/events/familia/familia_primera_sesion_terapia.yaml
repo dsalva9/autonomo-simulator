@@ -1,0 +1,51 @@
+schema_version: 1
+id: familia_primera_sesion_terapia
+category: familia
+title: "Psicología para autónomos que sueñan en Excel"
+body: "Una amistad te pasa el contacto de una psicóloga que ya atiende a varios autónomos y no necesita que le expliques qué es la cuota ni el miedo a decir que no. Tienes hueco este jueves a las cinco de la tarde."
+tags:
+  - salud_mental
+  - terapia
+  - autocuidado
+  - descanso
+requirements:
+  min_month: 5
+  stats:
+    stress:
+      min: 28
+weight: 13
+cooldown_months: 9
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: iniciar_sesiones_quincenales
+    label: "Empezar sesiones quincenales y trabajar límites saludables (140 €)"
+    result_text: "Salir de consulta nombrando la culpa productiva te quita una mochila de piedras de los hombros desde la primera semana."
+    effects:
+      cash_delta: -140
+      stress: -15
+      moral: 10
+      personal_life: 10
+      add_modifier:
+        id: mod_terapia_limites_sanos
+        label: "Terapia y límites saludables"
+        remaining_months: 4
+        monthly_expense_delta: 110
+        monthly_stress_delta: -3
+        monthly_moral_delta: 2
+  - id: hacer_sesion_puntual_descarga
+    label: "Ir a una sesión suelta para ordenar la cabeza sin gasto fijo (70 €)"
+    result_text: "Una hora hablando claro sin tener que fingir que todo va genial te devuelve aire y perspectiva para el resto del mes."
+    effects:
+      cash_delta: -70
+      stress: -10
+      moral: 6
+      personal_life: 7
+  - id: posponer_porque_no_hay_hueco
+    label: "Dejarlo para «cuando baje el lío» y meter una reunión facturable"
+    result_text: "Rellenas el jueves con otro presupuesto urgente. Ganas algo de caja hoy, pero el nudo en el estómago sigue intacto."
+    effects:
+      billed_income: 390
+      stress: 6
+      moral: -3
+      personal_life: -5

@@ -1,0 +1,56 @@
+schema_version: 1
+id: empleados_relevo_senior_proyecto_clave
+category: empleados
+title: "Respaldo sénior para cuentas de primera fila"
+body: "Con varios años de oficio a tus espaldas, una cuenta potente te exige garantías de continuidad por si un día caes con gripe. Laura está disponible para integrarse en plantilla o firmar un pacto mutuo de cobertura profesional."
+tags:
+  - contratacion
+  - senior
+  - largo_plazo
+  - continuidad
+character_id: empleada_senior_laura
+character_expression: neutral
+requirements:
+  min_month: 48
+  has_employee: false
+weight: 9
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: fichar_laura_etapa_consolidada
+    label: "Incorporar a Laura en plantilla para escalar (2.150 €/mes, ×1,65)"
+    requirements:
+      has_employee: false
+      stats:
+        money:
+          min: 3000
+    result_text: "Con Laura al mando técnico, el cliente firma el contrato anual sin pestañear y tu estudio deja de depender exclusivamente de tu garganta y tus ojeras."
+    effects:
+      hire_employee:
+        character_id: empleada_senior_laura
+      deductible_expense: 320
+      moral: 7
+      stress: -8
+      reputation: 7
+      set_flags:
+        - empleada_laura_activa
+      clear_flags:
+        - empleado_dani_activo
+        - desgaste_plantilla
+  - id: firmar_pacto_cobertura_mutua
+    label: "Firmar con Laura una alianza deducible de respaldo cruzado"
+    result_text: "Presentáis al cliente un protocolo serio de sustitución entre especialistas independientes: aseguras la cuenta grande sin atarte a nómina fija."
+    effects:
+      billed_income: 2400
+      deductible_expense: 980
+      moral: 4
+      stress: -5
+      reputation: 5
+  - id: defender_estudio_unipersonal
+    label: "Defender tu modelo de autor en solitario asumiendo menor alcance"
+    result_text: "El cliente recorta el volumen del contrato por prudencia, pero conservas el control absoluto de tu agenda y cero estructura pesada."
+    effects:
+      billed_income: 1350
+      stress: 2
+      reputation: -1

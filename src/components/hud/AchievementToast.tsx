@@ -1,15 +1,18 @@
 import { Award, X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { getLocalizedAchievement } from "../../services/achievements/definitions.ts";
 import { playUiSound } from "../../services/audio/soundEffects.ts";
-import { ACHIEVEMENT_CATALOG } from "../../services/storage/index.ts";
+import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 import { useGameStore } from "../../store/gameStore.ts";
 import { useUIStore } from "../../store/uiStore.ts";
 
 export function AchievementToast() {
   const newlyUnlockedAchievements = useGameStore((s) => s.newlyUnlockedAchievements);
   const clearUnlockedToastQueue = useGameStore((s) => s.clearUnlockedToastQueue);
+  const locale = useGameStore((s) => s.profile.settings.locale);
   const sfxMuted = useUIStore((s) => s.sfxMuted);
 
+  const ui = getUiStrings(locale);
   const lastPlayedSignatureRef = useRef<string>("");
 
   const queueSignature = newlyUnlockedAchievements.join(",");
@@ -37,9 +40,9 @@ export function AchievementToast() {
 
   const unlockedEntries = newlyUnlockedAchievements.map(
     (id) =>
-      ACHIEVEMENT_CATALOG.find((a) => a.id === id) ?? {
+      getLocalizedAchievement(id, locale) ?? {
         id,
-        code: "SELLO",
+        code: ui.toast.defaultCode,
         title: id,
         description: "",
       },
@@ -59,8 +62,8 @@ export function AchievementToast() {
           <div className="min-w-0 text-xs leading-snug">
             <span className="stamp-badge block text-[10px] text-[#fce592]">
               {unlockedEntries.length > 1
-                ? `${unlockedEntries.length} SELLOS DESBLOQUEADOS`
-                : `SELLO DESBLOQUEADO · ${unlockedEntries[0]?.code}`}
+                ? ui.toast.multipleUnlocked(unlockedEntries.length)
+                : ui.toast.singleUnlocked(unlockedEntries[0]?.code ?? ui.toast.defaultCode)}
             </span>
             <strong className="font-editorial text-sm font-bold block truncate">
               {unlockedEntries.map((e) => e.title).join(" · ")}
@@ -76,7 +79,7 @@ export function AchievementToast() {
         <button
           type="button"
           onClick={clearUnlockedToastQueue}
-          aria-label="Cerrar aviso de logro"
+          aria-label={ui.toast.dismissAria}
           className="rounded p-1 text-[#fce592] hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
         >
           <X className="w-3.5 h-3.5" aria-hidden="true" />

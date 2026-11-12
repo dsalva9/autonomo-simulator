@@ -21,7 +21,9 @@ import {
   resolveEventBody,
   resolveEventTitle,
   translateCategoryLabel,
+  translateCharacterName,
 } from "../../services/i18n/resolveEventText.ts";
+import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 import type { PendingOutcomeView } from "../../store/gameStore.ts";
 
 export interface EventStageProps {
@@ -71,6 +73,7 @@ export function EventStage({
   onContinueOutcome,
 }: EventStageProps) {
   const stageRef = useRef<HTMLDivElement | null>(null);
+  const ui = getUiStrings(locale);
 
   useEffect(() => {
     if (!keyboardEnabled) {
@@ -166,6 +169,9 @@ export function EventStage({
   const activeCharacter = activeEventView?.event.character_id
     ? compiledCatalog.characters[activeEventView.event.character_id]
     : undefined;
+  const activeCharacterName = activeCharacter
+    ? translateCharacterName(activeCharacter, locale)
+    : "";
   const activeCharacterExpression = activeEventView?.event.character_expression ?? "neutral";
   const activeCharacterPortrait = activeEventView
     ? resolveCharacterPortraitAsset(
@@ -177,6 +183,15 @@ export function EventStage({
   const bannerResolution = activeEventView
     ? resolveEventBannerAsset(compiledCatalog.manifest, activeEventView.event, state)
     : null;
+
+  const pendingChoiceObj = pendingOutcome
+    ? pendingOutcome.event.choices.find((c) => c.id === pendingOutcome.choiceId)
+    : undefined;
+  const displayedChoiceLabel = pendingOutcome
+    ? pendingChoiceObj
+      ? resolveChoiceLabel(pendingOutcome.event.id, pendingChoiceObj, locale)
+      : pendingOutcome.choiceLabel
+    : "";
 
   return (
     <div ref={stageRef} data-testid="event-stage" className="space-y-2.5">
@@ -190,9 +205,9 @@ export function EventStage({
             <div className="flex items-center gap-1.5 font-semibold text-[#1f2421] min-w-0">
               <Receipt className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
               <span className="truncate">
-                <span className="hidden xl:inline">Liquidación fija · </span>
-                <span className="xl:hidden">Liq. </span>
-                Mes {lastMonthStart.month}
+                <span className="hidden xl:inline">{ui.eventStage.recurringLongPrefix}</span>
+                <span className="xl:hidden">{ui.eventStage.recurringShortPrefix}</span>
+                {ui.eventStage.monthLabel(lastMonthStart.month)}
               </span>
             </div>
 
@@ -201,26 +216,27 @@ export function EventStage({
                 lastMonthStart.net_recurring_cash >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
               }`}
             >
-              Caja fija: {formatSignedEuros(lastMonthStart.net_recurring_cash)}
+              {ui.eventStage.fixedCashLabel}{" "}
+              {formatSignedEuros(lastMonthStart.net_recurring_cash, locale)}
             </span>
 
             <div className="w-full sm:w-auto sm:order-2 flex items-center justify-between sm:justify-start gap-x-2 xl:gap-x-3 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#1f2421]/14 font-bureau text-[11px] tabular-nums">
               <span>
-                <span className="text-[#4a524e]">Fact.: </span>
+                <span className="text-[#4a524e]">{ui.eventStage.billedShort}</span>
                 <strong className="font-bold text-[#1f5c53] whitespace-nowrap">
-                  +{formatEuros(lastMonthStart.gross_billing)}
+                  +{formatEuros(lastMonthStart.gross_billing, locale)}
                 </strong>
               </span>
               <span>
-                <span className="text-[#4a524e]">Fijos: </span>
+                <span className="text-[#4a524e]">{ui.eventStage.fixedCostsShort}</span>
                 <strong className="font-bold text-[#b42b24] whitespace-nowrap">
-                  -{formatEuros(lastMonthStart.total_expenses)}
+                  -{formatEuros(lastMonthStart.total_expenses, locale)}
                 </strong>
               </span>
               <span>
-                <span className="text-[#4a524e]">IVA/IRPF: </span>
+                <span className="text-[#4a524e]">{ui.eventStage.vatIrpfShort}</span>
                 <strong className="font-bold text-[#264e7a] whitespace-nowrap">
-                  +{formatEuros(lastMonthStart.tax_accrued_on_billing)}
+                  +{formatEuros(lastMonthStart.tax_accrued_on_billing, locale)}
                 </strong>
               </span>
             </div>
@@ -234,8 +250,8 @@ export function EventStage({
                   className={inv.paid ? "text-[#1f5c53]" : "text-[#b42b24]"}
                 >
                   {inv.paid
-                    ? `✓ Factura cobrada: +${formatEuros(inv.amount)}`
-                    : `✗ Factura impagada (${formatEuros(inv.amount)})`}
+                    ? ui.eventStage.invoicePaid(formatEuros(inv.amount, locale))
+                    : ui.eventStage.invoiceDefaulted(formatEuros(inv.amount, locale))}
                 </span>
               ))}
             </div>
@@ -252,7 +268,7 @@ export function EventStage({
         >
           <div className="dossier-header">
             <span className="stamp-badge text-[11px] px-2 py-0.5 rounded bg-[#e8f5f1] text-[#1f5c53] border border-[#1f5c53]/45 shrink-0">
-              {state.ending ? "Expediente cerrado" : "Resolución registrada"}
+              {state.ending ? ui.eventStage.dossierClosedBadge : ui.eventStage.rulingRecordedBadge}
             </span>
             <span className="font-bureau text-xs font-bold text-[#4a524e] truncate">
               {resolveEventTitle(pendingOutcome.event, locale)}
@@ -261,8 +277,8 @@ export function EventStage({
 
           <div className="p-3.5 sm:p-4 space-y-3">
             <div className="rounded-lg bg-[#f6efe0] border border-[#1f2421]/20 px-3 py-2 text-xs text-[#373f3a]">
-              <span className="font-bold text-[#1f2421]">Decisión tomada: </span>
-              <span>{pendingOutcome.choiceLabel}</span>
+              <span className="font-bold text-[#1f2421]">{ui.eventStage.decisionTakenLabel}</span>
+              <span>{displayedChoiceLabel}</span>
             </div>
 
             <p
@@ -275,58 +291,60 @@ export function EventStage({
                 pendingOutcome.outcome.outcome_id,
                 pendingOutcome.outcome.result_text,
                 locale,
-              ) ?? "La decisión queda anotada en tu libro de contabilidad y el mes sigue su curso."}
+              ) ?? ui.eventStage.defaultResultFallback}
             </p>
 
             {/* Applied Deltas Breakdown */}
             <div data-testid="outcome-deltas" className="flex flex-wrap gap-1.5 pt-0.5">
               {pendingOutcome.outcome.money_delta !== 0 && (
                 <DeltaPill
-                  label="Caja"
-                  formatted={formatSignedEuros(pendingOutcome.outcome.money_delta)}
+                  label={ui.eventStage.deltaCash}
+                  formatted={formatSignedEuros(pendingOutcome.outcome.money_delta, locale)}
                   favorable={pendingOutcome.outcome.money_delta > 0}
                 />
               )}
               {pendingOutcome.outcome.moral_delta !== 0 && (
                 <DeltaPill
-                  label="Moral"
+                  label={ui.eventStage.deltaMoral}
                   formatted={formatSignedInt(pendingOutcome.outcome.moral_delta)}
                   favorable={pendingOutcome.outcome.moral_delta > 0}
                 />
               )}
               {pendingOutcome.outcome.stress_delta !== 0 && (
                 <DeltaPill
-                  label="Estrés"
+                  label={ui.eventStage.deltaStress}
                   formatted={formatSignedInt(pendingOutcome.outcome.stress_delta)}
                   favorable={pendingOutcome.outcome.stress_delta < 0}
                 />
               )}
               {pendingOutcome.outcome.personal_life_delta !== 0 && (
                 <DeltaPill
-                  label="Vida personal"
+                  label={ui.eventStage.deltaPersonalLife}
                   formatted={formatSignedInt(pendingOutcome.outcome.personal_life_delta)}
                   favorable={pendingOutcome.outcome.personal_life_delta > 0}
                 />
               )}
               {pendingOutcome.outcome.reputation_delta !== 0 && (
                 <DeltaPill
-                  label="Reputación"
+                  label={ui.eventStage.deltaReputation}
                   formatted={formatSignedInt(pendingOutcome.outcome.reputation_delta)}
                   favorable={pendingOutcome.outcome.reputation_delta > 0}
                 />
               )}
               {pendingOutcome.outcome.fiscal_risk_delta !== 0 && (
                 <DeltaPill
-                  label="Tensión Hacienda"
+                  label={ui.eventStage.deltaTaxTension}
                   formatted={
-                    pendingOutcome.outcome.fiscal_risk_delta > 0 ? "Aumenta ▲" : "Se relaja ▼"
+                    pendingOutcome.outcome.fiscal_risk_delta > 0
+                      ? ui.eventStage.taxTensionUp
+                      : ui.eventStage.taxTensionDown
                   }
                   favorable={pendingOutcome.outcome.fiscal_risk_delta < 0}
                 />
               )}
               {pendingOutcome.outcome.scheduled_event_ids.length > 0 && (
                 <span className="inline-flex items-center gap-1 rounded-md border border-[#8f510d]/50 bg-[#fcf4df] px-2.5 py-1 font-bureau text-xs font-bold text-[#8f510d]">
-                  ⏳ Tendrá consecuencias más adelante
+                  {ui.eventStage.futureConsequencesBadge}
                 </span>
               )}
             </div>
@@ -341,13 +359,13 @@ export function EventStage({
                 <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
                 <span>
                   {state.ending
-                    ? "Ver certificado final del expediente"
+                    ? ui.eventStage.continueToFinalCert
                     : state.phase === "quarterly_tax"
-                      ? "Continuar al cierre trimestral"
-                      : "Continuar"}
+                      ? ui.eventStage.continueToQuarter
+                      : ui.eventStage.continueBtn}
                 </span>
                 <span className="hidden sm:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
-                  Intro
+                  {ui.eventStage.enterKeyLabel}
                 </span>
                 <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
               </button>
@@ -363,17 +381,17 @@ export function EventStage({
           {/* Standardized Bureaucratic Dossier Header */}
           <div className="dossier-header">
             <span className="stamp-badge text-[11px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#8f510d] border border-[#8f510d]/45 truncate">
-              EXP. {translateCategoryLabel(activeEventView.event.category)}
+              {ui.eventStage.dossierPrefix}{" "}
+              {translateCategoryLabel(activeEventView.event.category, locale)}
             </span>
 
             {state.current_turn_events.length > 1 ? (
               <span className="font-bureau text-[11px] font-bold px-2 py-0.5 rounded bg-[#efe4ce] text-[#1f2421] shrink-0 tabular-nums">
-                +{state.current_turn_events.length - 1} pendiente
-                {state.current_turn_events.length - 1 > 1 ? "s" : ""}
+                {ui.eventStage.pendingEventsCount(state.current_turn_events.length - 1)}
               </span>
             ) : (
               <span className="font-bureau text-[11px] font-bold text-[#4a524e] shrink-0 tabular-nums">
-                Mes {state.month}
+                {ui.eventStage.monthLabel(state.month)}
               </span>
             )}
           </div>
@@ -389,7 +407,9 @@ export function EventStage({
                   data-banner-kind={bannerResolution.kind}
                   data-asset-id={bannerResolution.asset.id}
                   src={bannerResolution.asset.url}
-                  alt={`Escena de ${translateCategoryLabel(activeEventView.event.category)}`}
+                  alt={ui.eventStage.sceneAltPrefix(
+                    translateCategoryLabel(activeEventView.event.category, locale),
+                  )}
                   width={bannerResolution.asset.width}
                   height={bannerResolution.asset.height}
                   decoding="async"
@@ -413,7 +433,7 @@ export function EventStage({
                     <img
                       data-testid="event-character-polaroid-img"
                       src={activeCharacterPortrait.url}
-                      alt={activeCharacter.name}
+                      alt={activeCharacterName}
                       width={activeCharacterPortrait.width}
                       height={activeCharacterPortrait.height}
                       decoding="async"
@@ -422,7 +442,7 @@ export function EventStage({
                       )}`}
                     />
                     <figcaption className="min-w-0 pr-1 sm:pr-0 sm:mt-1 px-0.5 sm:text-center font-bureau text-[10px] font-bold text-[#1f2421] leading-tight line-clamp-2">
-                      {activeCharacter.name}
+                      {activeCharacterName}
                     </figcaption>
                   </figure>
                 )}
@@ -448,13 +468,13 @@ export function EventStage({
             {/* Choice Buttons (min-height >= 48px on touch & desktop, >= 8px vertical separation) */}
             <fieldset
               className="space-y-2 pt-0.5 border-0 p-0 m-0 min-w-0"
-              aria-label="Opciones de decisión"
+              aria-label={ui.eventStage.choicesAria}
             >
               {activeEventView.choices.map((entry, index) => {
                 const { choice, eligible } = entry;
                 const lockReasons = eligible
                   ? []
-                  : explainChoiceLockReasons(state, choice.requirements);
+                  : explainChoiceLockReasons(state, choice.requirements, locale);
                 const hasWeightedOutcomes = Boolean(choice.outcomes && choice.outcomes.length > 0);
 
                 return (
@@ -491,7 +511,7 @@ export function EventStage({
                         {hasWeightedOutcomes && eligible && (
                           <span className="inline-flex items-center gap-1 font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#8f510d] border border-[#8f510d]/30 shrink-0 w-fit">
                             <Dices className="w-3 h-3 shrink-0" aria-hidden="true" />
-                            <span>Incertidumbre</span>
+                            <span>{ui.eventStage.uncertaintyBadge}</span>
                           </span>
                         )}
                       </span>
@@ -503,10 +523,10 @@ export function EventStage({
                         >
                           <Lock className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                           <span>
-                            Bloqueado:{" "}
+                            {ui.eventStage.lockedPrefix}{" "}
                             {lockReasons.length > 0
                               ? lockReasons.join(" · ")
-                              : "No cumples los requisitos actuales"}
+                              : ui.eventStage.lockedFallback}
                           </span>
                         </span>
                       )}
@@ -519,7 +539,7 @@ export function EventStage({
         </article>
       ) : (
         <div className="paper-dossier rounded-xl p-6 text-center text-sm text-[#4a524e]">
-          Procesando trámite administrativo del mes {state.month}...
+          {ui.eventStage.processingMonth(state.month)}
         </div>
       )}
     </div>

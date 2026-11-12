@@ -5,17 +5,31 @@ import { compiledCatalog } from "../../services/content/catalog.ts";
 import {
   formatEuros,
   formatSignedEuros,
+  resolveEventTitle,
+  translateCharacterName,
+  translateEmployeeRoleLabel,
   translateFamilyStatus,
   translateGestorTier,
 } from "../../services/i18n/resolveEventText.ts";
+import { getUiStrings } from "../../services/i18n/uiStrings.ts";
+import { useGameStore } from "../../store/gameStore.ts";
 import { useModalKeyboard } from "./useModalKeyboard.ts";
 
 export interface AnnualSummaryModalProps {
   state: GameState;
+  locale?: string;
   onClose: () => void;
 }
 
-export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) {
+export function AnnualSummaryModal({
+  state,
+  locale: localeProp,
+  onClose,
+}: AnnualSummaryModalProps) {
+  const storeLocale = useGameStore((s) => s.profile.settings.locale);
+  const locale = localeProp ?? storeLocale;
+  const a = getUiStrings(locale).modals.annual;
+
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const summary = buildAnnualSummary(state);
   const gestorChar = state.gestor.character_id
@@ -48,106 +62,109 @@ export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) 
         <div className="bg-[#264e7a] text-[#fffdf8] px-4 sm:px-5 py-3.5 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
           <FileSpreadsheet className="w-6 h-6 text-[#fce592] shrink-0" aria-hidden="true" />
           <div className="min-w-0">
-            <p className="stamp-badge text-[11px] text-[#fce592]">
-              MODELO 390 · RESUMEN CONTABLE ANUAL
-            </p>
+            <p className="stamp-badge text-[11px] text-[#fce592]">{a.formBadge}</p>
             <h2 id="annual-summary-title" className="font-editorial text-lg sm:text-xl font-bold">
-              Cierre del Año {summary.year} (Mes {summary.month})
+              {a.heading(summary.year, summary.month)}
             </h2>
           </div>
         </div>
 
         <div className="p-4 sm:p-5 space-y-3.5 text-sm overflow-y-auto dossier-scroll">
-          <p className="text-xs sm:text-sm text-[#373f3a]">
-            Otro año natural superado sin cerrar la persiana. Balance oficial y estructura al cierre
-            del ejercicio:
-          </p>
+          <p className="text-xs sm:text-sm text-[#373f3a]">{a.intro}</p>
 
           {/* Annual Accounting Ledger */}
           <div className="rounded-lg border border-[#1f2421]/35 bg-[#f6efe0] p-3.5 space-y-1.5 text-xs sm:text-sm">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[#373f3a]">Facturación bruta del año:</span>
+              <span className="text-[#373f3a]">{a.grossBilled}</span>
               <span className="font-bureau font-bold text-[#1f5c53] tabular-nums whitespace-nowrap shrink-0">
-                +{formatEuros(summary.billed)}
+                +{formatEuros(summary.billed, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[#373f3a]">Gastos operativos y personales:</span>
+              <span className="text-[#373f3a]">{a.operatingPersonalExpenses}</span>
               <span className="font-bureau font-bold text-[#b42b24] tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(summary.expenses)}
+                -{formatEuros(summary.expenses, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[#373f3a]">Impuestos trimestrales abonados:</span>
+              <span className="text-[#373f3a]">{a.quarterlyTaxesPaid}</span>
               <span className="font-bureau font-bold text-[#264e7a] tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(summary.taxes_paid)}
+                -{formatEuros(summary.taxes_paid, locale)}
               </span>
             </div>
             <div className="border-t border-[#1f2421]/25 pt-1.5 flex items-center justify-between gap-2 font-bold">
-              <span>Variación neta de tesorería:</span>
+              <span>{a.netCashChange}</span>
               <span
                 className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
                   summary.net_cash_change >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
                 }`}
               >
-                {formatSignedEuros(summary.net_cash_change)}
+                {formatSignedEuros(summary.net_cash_change, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2 text-xs text-[#4a524e]">
-              <span>Liquidez al cierre del año:</span>
+              <span>{a.yearEndCash}</span>
               <span className="font-bureau font-bold tabular-nums whitespace-nowrap shrink-0">
-                {formatEuros(summary.ending_money)}
+                {formatEuros(summary.ending_money, locale)}
               </span>
             </div>
           </div>
 
           {/* Resumen de Estructura: Gestoría, Familia, Plantilla */}
           <div data-testid="annual-structure-summary" className="space-y-1.5">
-            <p className="stamp-badge text-[10px] text-[#4a524e]">
-              RESUMEN DE ESTRUCTURA AL CIERRE
-            </p>
+            <p className="stamp-badge text-[10px] text-[#4a524e]">{a.structureHeading}</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
               <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2.5 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#8f510d]">
                   <ShieldCheck className="w-3 h-3 shrink-0" aria-hidden="true" />
-                  Gestoría
+                  {a.gestorCardLabel}
                 </span>
                 <p className="font-bold text-[#1f2421] truncate">
-                  {gestorChar ? gestorChar.name : translateGestorTier(state.gestor.tier)}
+                  {gestorChar
+                    ? translateCharacterName(gestorChar, locale)
+                    : translateGestorTier(state.gestor.tier, locale)}
                 </p>
                 <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums">
-                  {formatEuros(state.gestor.monthly_fee)}/mes
+                  {formatEuros(state.gestor.monthly_fee, locale)}
+                  {a.perMonthSuffix}
                 </p>
               </div>
 
               <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2.5 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#b42b24]">
                   <Heart className="w-3 h-3 shrink-0" aria-hidden="true" />
-                  Familia
+                  {a.familyCardLabel}
                 </span>
                 <p className="font-bold text-[#1f2421] truncate">
-                  {partnerChar ? partnerChar.name : translateFamilyStatus(state.family.status)}
+                  {partnerChar
+                    ? translateCharacterName(partnerChar, locale)
+                    : translateFamilyStatus(state.family.status, locale)}
                 </p>
                 <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums">
                   {state.family.children_count > 0
-                    ? `${state.family.children_count} ${state.family.children_count === 1 ? "hijo" : "hijos"} · `
+                    ? a.childrenCountPrefix(state.family.children_count)
                     : ""}
-                  {formatEuros(state.family.monthly_cost)}/mes
+                  {formatEuros(state.family.monthly_cost, locale)}
+                  {a.perMonthSuffix}
                 </p>
               </div>
 
               <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2.5 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#1f5c53]">
                   <Briefcase className="w-3 h-3 shrink-0" aria-hidden="true" />
-                  Plantilla
+                  {a.staffCardLabel}
                 </span>
                 <p className="font-bold text-[#1f2421] truncate">
                   {state.employee
-                    ? (employeeChar?.name ?? state.employee.role_label)
-                    : "En solitario"}
+                    ? employeeChar
+                      ? translateCharacterName(employeeChar, locale)
+                      : translateEmployeeRoleLabel(state.employee.role_label, locale)
+                    : a.soloLabel}
                 </p>
                 <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums">
-                  {state.employee ? `${formatEuros(state.employee.monthly_cost)}/mes` : "0 €/mes"}
+                  {state.employee
+                    ? `${formatEuros(state.employee.monthly_cost, locale)}${a.perMonthSuffix}`
+                    : `${formatEuros(0, locale)}${a.perMonthSuffix}`}
                 </p>
               </div>
             </div>
@@ -155,11 +172,11 @@ export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) 
 
           {summary.highlight_event_ids.length > 0 && (
             <div className="space-y-1">
-              <p className="stamp-badge text-[10px] text-[#4a524e]">Momentos memorables del año</p>
+              <p className="stamp-badge text-[10px] text-[#4a524e]">{a.highlightsHeading}</p>
               <ul className="space-y-0.5 text-xs text-[#373f3a] list-disc list-inside">
                 {summary.highlight_event_ids.map((eventId) => {
                   const ev = getEventById(compiledCatalog, eventId);
-                  return <li key={eventId}>{ev ? ev.title : eventId}</li>;
+                  return <li key={eventId}>{ev ? resolveEventTitle(ev, locale) : eventId}</li>;
                 })}
               </ul>
             </div>
@@ -174,11 +191,9 @@ export function AnnualSummaryModal({ state, onClose }: AnnualSummaryModalProps) 
             className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#264e7a] hover:bg-[#1c3b5e] text-[#fffdf8] font-bold px-4 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors"
           >
             <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
-            <span>
-              Archivar Año {summary.year} y abrir Año {summary.year + 1}
-            </span>
+            <span>{a.closeBtn(summary.year, summary.year + 1)}</span>
             <span className="hidden sm:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
-              Intro
+              {a.enterKeyLabel}
             </span>
           </button>
         </div>

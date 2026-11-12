@@ -1,0 +1,59 @@
+schema_version: 1
+id: gestor_bucle_sms_clave_pin
+category: gestor
+title: "El bucle infinito del SMS de Cl@ve PIN"
+body: "Un cliente importante exige tu certificado de estar al corriente tributario antes de las dos para liberar un pago. Pides el código por SMS, llega once minutos tarde con la sesión ya caducada y el portal entra en bucle."
+tags:
+  - autogestion
+  - clave_pin
+  - sede_electronica
+requirements:
+  min_month: 2
+  gestor_tiers:
+    - self
+weight: 12
+cooldown_months: 8
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: insistir_pegado_a_la_ventana
+    label: "Sacar medio cuerpo por la ventana y reintentar hasta que entre"
+    outcomes:
+      - id: codigo_entra_al_quinto_intento
+        weight: 65
+        result_text: "Al quinto intento llega el SMS en tiempo récord, descargas el PDF sellado y desbloqueas la transferencia del cliente sobre la bocina."
+        effects:
+          stress: 7
+          moral: 3
+          reputation: 2
+          fiscal_risk: -2
+      - id: bloqueo_temporal_por_reintentos
+        weight: 35
+        result_text: "El sistema bloquea tu usuario por exceso de peticiones y el cliente retrasa tu orden de pago hasta la remesa de la semana siguiente."
+        effects:
+          cash_delta: -90
+          stress: 10
+          moral: -5
+          reputation: -3
+  - id: instalar_lector_dni_electronico
+    label: "Bajar al bazar a por un lector USB de DNI electrónico (35 €)"
+    result_text: "Tras media hora peleándote con los controladores del navegador, el chip engancha a la primera y sacas el certificado impecable."
+    effects:
+      deductible_expense: 35
+      stress: 2
+      moral: 4
+      reputation: 3
+      fiscal_risk: -3
+  - id: pedir_tramite_puntual_gestoria
+    label: "Encargar la obtención urgente a una asesoría colegiada (70 €)"
+    requirements:
+      stats:
+        money:
+          min: 120
+    result_text: "Con su apoderamiento profesional descargan el documento en tres clics y quedas como un reloj suizo ante administración del cliente."
+    effects:
+      deductible_expense: 70
+      stress: -5
+      moral: 3
+      reputation: 4
+      fiscal_risk: -4

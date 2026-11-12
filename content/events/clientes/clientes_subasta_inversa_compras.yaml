@@ -1,0 +1,53 @@
+schema_version: 1
+id: clientes_subasta_inversa_compras
+category: clientes
+title: Subasta inversa en el portal de proveedores
+body: "Marta te invita a participar en el nuevo invento de Compras: una puja electrónica en vivo de treinta minutos donde tres proveedores ven quién baja más el precio en pantalla para llevarse el lote."
+tags:
+  - corporativo
+  - compras
+  - precios
+  - dignidad
+character_id: cliente_corporativo_marta
+character_expression: neutral
+requirements:
+  min_month: 12
+weight: 9
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: pujar_a_la_baja_por_volumen
+    label: Entrar al trapo y rebajar al límite para ganar facturación rápida
+    result_text: Ganas la subasta por veinte euros de diferencia y pasas tres semanas trabajando con margen de supermercado descuento.
+    effects:
+      billed_income: 750
+      stress: 11
+      moral: -7
+      reputation: -2
+  - id: plantar_tarifa_fija_sin_bajar_un_euro
+    label: Subir tu tarifa normal en el minuto uno y no tocar el ratón
+    outcomes:
+      - id: el_barato_falla_y_te_llaman
+        weight: 45
+        result_text: El ganador temerario renuncia a los cuatro días al ver el alcance real y Marta te adjudica el lote a tu precio original.
+        effects:
+          billed_income: 1275
+          stress: 5
+          moral: 8
+          reputation: 4
+      - id: pierdes_la_puja_con_honra
+        weight: 55
+        result_text: Otro temerario se lleva el encargo a mitad de coste. Cierras la pestaña intacto y te ahorras trabajar gratis.
+        effects:
+          stress: -1
+          moral: 1
+          reputation: -3
+  - id: rechazar_participar_en_subastas
+    label: "Declinar la invitación: vendes criterio profesional, no pescado"
+    result_text: Le respondes con elegancia que no participas en pujas a la baja y dedicas la mañana a clientes que valoran calidad.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 2
+      reputation: -3

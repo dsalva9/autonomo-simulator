@@ -1,0 +1,52 @@
+schema_version: 1
+id: empleados_evaluacion_fin_practicas
+category: empleados
+title: "Cierre de prácticas y futuro en el estudio"
+body: "Termina el periodo formativo y Dani ya domina tus plantillas, atajos y manías mejor que medio sector. Con el diploma bajo el brazo, te pregunta con ilusión si hay hueco real para quedarse en nómina o empezar a colaborar facturando."
+tags:
+  - practicas
+  - contratacion
+  - junior
+  - cantera
+character_id: empleado_junior_dani
+character_expression: pleased
+requirements:
+  has_employee: false
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: contratar_dani_tras_practicas
+    label: "Hacerle contrato en plantilla ya rodado (1.400 €/mes, ×1,35)"
+    requirements:
+      has_employee: false
+    result_text: "Te ahorras semanas de adaptación: el lunes entra sabiendo dónde está cada carpeta y el estudio despega sin perder ni media mañana."
+    effects:
+      hire_employee:
+        character_id: empleado_junior_dani
+      deductible_expense: 120
+      moral: 7
+      stress: -6
+      reputation: 5
+      set_flags:
+        - empleado_dani_activo
+      clear_flags:
+        - empleada_laura_activa
+        - desgaste_plantilla
+  - id: estrenar_colaboracion_puntual
+    label: "Firmar una carta brillante y darle su primer encargo externo"
+    result_text: "Aún no asumes nómina fija, pero cerráis un proyecto real compartido que inaugura su cartera profesional y alivia tu bandeja de entrada."
+    effects:
+      billed_income: 1150
+      deductible_expense: 480
+      moral: 4
+      stress: -2
+      reputation: 3
+  - id: despedida_cordial_sin_hueco
+    label: "Cerrar el acta con sobresaliente y seguir en solitario por ahora"
+    result_text: "Le entregas referencias impecables y un detalle de despedida. Da cierta pena volver al silencio del despacho, pero mantienes tus gastos fijos a raya."
+    effects:
+      cash_delta: -60
+      moral: 2
+      stress: 1

@@ -1,0 +1,49 @@
+schema_version: 1
+id: gestor_paco_audio_cuatro_minutos
+category: gestor
+title: "Audio de Paco de cuatro minutos que no aclara nada"
+body: "Preguntas a Paco si una factura a un cliente europeo lleva IVA o inversión del sujeto pasivo. Te responde con un audio de cuatro minutos con ruido de cucharillas, dos toses y un «tú ponlo normal, campeón, que nunca miran»."
+tags:
+  - gestoria
+  - paco
+  - intracomunitario
+character_id: gestor_barato_paco
+character_expression: neutral
+requirements:
+  min_month: 3
+  gestor_tiers:
+    - cheap
+weight: 13
+cooldown_months: 8
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: pagar_microconsulta_intracomunitaria
+    label: "Pagar una consulta puntual a un especialista internacional (110 €)"
+    requirements:
+      stats:
+        money:
+          min: 180
+    result_text: "Tramitas el alta en el registro de operadores intracomunitarios como manda el reglamento y emites una factura europea impecable."
+    effects:
+      deductible_expense: 110
+      stress: -5
+      moral: 4
+      reputation: 4
+      fiscal_risk: -7
+  - id: descifrar_normativa_por_tu_cuenta
+    label: "Poner el audio a velocidad doble y estudiarte tú mismo la ley"
+    result_text: "Pierdes media tarde navegando foros fiscales y manuales oficiales, pero sacas la factura correcta a pesar de tu propio gestor."
+    effects:
+      stress: 7
+      moral: -2
+      reputation: 2
+      fiscal_risk: -2
+  - id: facturar_como_dice_paco_sin_mirar
+    label: "Hacerle caso a ciegas, meter IVA nacional y enviarla ya"
+    result_text: "El departamento financiero del cliente te devuelve la factura con cara de póker y el chapuzón tributario queda anotado."
+    effects:
+      stress: 4
+      moral: -3
+      reputation: -4
+      fiscal_risk: 8

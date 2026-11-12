@@ -1,0 +1,42 @@
+schema_version: 1
+id: clientes_reunion_diaria_falso_autonomo
+category: clientes
+title: Reunión diaria a las nueve, fichaje y olor a falso autónomo
+body: Marta te crea correo corporativo interno, te convoca a una reunión obligatoria cada mañana a las nueve y te pide que avises a Recursos Humanos si sales al médico. Todo ello pagándote tú la cuota.
+tags:
+  - falso_autonomo
+  - limites
+  - corporativo
+character_id: cliente_corporativo_marta
+character_expression: angry
+requirements:
+  min_month: 4
+weight: 10
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: marcar_autonomia_mercantil_por_escrito
+    label: Recordar por escrito tu independencia horaria y trabajar por hitos
+    result_text: En cuanto Recursos Humanos lee «autonomía organizativa», cancelan el fichaje al instante por pánico a Inspección de Trabajo.
+    effects:
+      billed_income: 1025
+      stress: 6
+      moral: 5
+      reputation: 2
+  - id: tragar_horario_por_ingreso_seguro
+    label: Tragar con la rutina de oficina sin tener vacaciones pagadas
+    result_text: Sufres lo peor de ser asalariado y lo peor de ser autónomo a la vez, aunque la factura entra íntegra.
+    effects:
+      billed_income: 1125
+      stress: 19
+      moral: -11
+      personal_life: -5
+  - id: rescindir_acuerdo_encubierto
+    label: Cerrar el acuerdo antes de acabar fichando hasta para el café
+    result_text: Devuelves las credenciales internas y recuperas el control real de tus mañanas.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 4
+      reputation: -4

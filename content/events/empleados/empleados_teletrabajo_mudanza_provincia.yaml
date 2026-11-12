@@ -1,0 +1,55 @@
+schema_version: 1
+id: empleados_teletrabajo_mudanza_provincia
+category: empleados
+title: "Mudanza fuera de la ciudad y teletrabajo total"
+body: "Asfixiada por el precio del alquiler urbano, tu persona en plantilla planea mudarse a dos horas en tren y solicita pasar a teletrabajo completo, viniendo al estudio una vez al mes para planificar entregas."
+tags:
+  - plantilla
+  - teletrabajo
+  - vivienda
+  - retencion
+requirements:
+  min_month: 15
+  has_employee: true
+weight: 8
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: aprobar_remoto_con_compensacion
+    label: "Aprobar el remoto cubriendo compensación de gastos y billete (240 €)"
+    result_text: "Sin dos horas diarias de transporte, su concentración mejora de forma notable y te ahorras hasta el café de cápsulas de media mañana."
+    effects:
+      deductible_expense: 240
+      moral: 7
+      stress: -5
+      personal_life: 3
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_remoto_estable_provincia
+        label: "Trabajo remoto estable y enfocado"
+        remaining_months: 6
+        monthly_billed_delta: 210
+        monthly_stress_delta: -2
+  - id: pactar_trimestre_prueba_remoto
+    label: "Firmar un anexo reversible de tres meses sujeto a objetivos claros"
+    result_text: "Fijáis reuniones breves los lunes y entregables medibles: transición prudente sin soltar un euro extra ni perder talento."
+    effects:
+      moral: 3
+      stress: -2
+      clear_flags:
+        - desgaste_plantilla
+  - id: exigir_presencialidad_o_extincion
+    label: "Mantener que el puesto es presencial y pactar la baja liquidando (650 €)"
+    result_text: "No cedes en tu forma de trabajar, pero pierdes a alguien ya formado y te toca asumir de golpe toda la cola pendiente."
+    effects:
+      dismiss_employee:
+        severance_cost: 650
+      moral: -6
+      stress: 9
+      reputation: -2
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla

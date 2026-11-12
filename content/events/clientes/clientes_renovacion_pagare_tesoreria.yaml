@@ -1,0 +1,53 @@
+schema_version: 1
+id: clientes_renovacion_pagare_tesoreria
+category: clientes
+title: Tesorería pide «reperfilar el vencimiento» por cierre
+body: "A pocos días de vencer el pagaré, Marta llama con voz tensa: Financiero quiere fraccionar un pico para maquillar su cierre trimestral y a cambio te ofrece adjudicarte un anexo extra sin concurso."
+tags:
+  - pagare
+  - tesoreria
+  - ley_morosidad
+  - cadena_pagare
+character_id: cliente_corporativo_marta
+character_expression: angry
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: invocar_ley_morosidad_firme
+    label: Citar la Ley de Morosidad y exigir liquidación íntegra en fecha
+    outcomes:
+      - id: pago_integro_con_intereses
+        weight: 70
+        result_text: En cuanto mencionas intereses legales de demora, aparece saldo en su cuenta por arte de magia y cobras hasta el recargo.
+        effects:
+          billed_income: 825
+          stress: 5
+          moral: 7
+          reputation: 2
+      - id: cobro_seco_y_nevera
+        weight: 30
+        result_text: Pagan al céntimo en la fecha límite, pero Marta te mete una temporada en el congelador de proveedores rebeldes.
+        effects:
+          billed_income: 700
+          stress: 7
+          moral: 3
+          reputation: -4
+  - id: aceptar_anexo_compensatorio
+    label: Tragar con el ajuste contable a cambio del encargo extra firmado
+    result_text: Les salvas la foto financiera del trimestre y sacas un encargo complementario jugoso, aunque acabas la semana agotado.
+    effects:
+      billed_income: 1325
+      stress: 10
+      moral: -3
+      personal_life: -3
+      reputation: 3
+  - id: cerrar_carpeta_sin_mas_pagares
+    label: Cobrar lo vencido sin aceptar anexos y vetar futuros pagarés
+    result_text: "Cierras el expediente en paz y añades una frase en negrita a tus presupuestos: solo transferencia bancaria."
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      reputation: -4

@@ -1,0 +1,54 @@
+schema_version: 1
+id: clientes_consejo_asesor_mensual
+category: clientes
+title: Silla externa en comité de dirección
+body: "Tras cuatro años curtiéndote en el mercado, Marta propone incorporarte como asesor externo en el comité mensual de una mediana empresa: menos ejecución manual y honorarios de prestigio, pero máxima presión ejecutiva."
+tags:
+  - veterania
+  - prestigio
+  - iguala
+  - largo_plazo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+requirements:
+  min_month: 48
+weight: 11
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: aceptar_silla_consejero_seis_meses
+    label: Aceptar la iguala ejecutiva de seis meses y asumir el timón
+    result_text: Facturas por criterio más que por teclear horas, aunque cada reunión mensual parece un examen oral ante cinco tiburones.
+    effects:
+      billed_income: 600
+      add_modifier:
+        id: mod_consejero_externo
+        label: Consejero externo de comité
+        remaining_months: 6
+        monthly_billed_delta: 440
+        monthly_stress_delta: 4
+      stress: 6
+      moral: 5
+      reputation: 4
+  - id: acotar_a_informes_trimestrales
+    label: Limitar el rol a dictámenes escritos sin política de pasillo
+    requirements:
+      stats:
+        reputation:
+          min: 55
+    result_text: Cobras por tus diagnósticos estratégicos ahorrándote las luchas de poder internas del consejo.
+    effects:
+      billed_income: 1425
+      stress: 3
+      moral: 6
+      personal_life: 2
+      reputation: 3
+  - id: declinar_corbata_y_cuidar_ritmo
+    label: Declinar el sillón ejecutivo para proteger tu tranquilidad
+    result_text: Renuncias al lustre corporativo y conservas tardes libres lejos de juntas interminables.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 5
+      reputation: -3

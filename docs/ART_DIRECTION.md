@@ -96,7 +96,7 @@ All production assets use `render_mode: "vector_hd"` in `assets/manifest.json` (
 | **Reactive Props & UI Stamps** | `assets/ui/` | `.svg` | `256×256` *(props)* / `512×320` *(fallbacks)* | `1:1` / `8:5` | `<= 15 KB` | Valid standalone SVG (`xmlns`, `width`, `height`, `viewBox`), clean paths |
 
 ### Performance & Loading Budget
-- **Total `assets/` payload target**: `<= 2.2 MB` across the entire Phase 1 MVP catalog.
+- **Total `assets/` payload target**: `<= 3.5 MB` across the full 60-asset Phase 3B catalog (`<= 2.2 MB` in Phase 1 MVP).
 - **Loading strategy**: Eager-load `bg_despacho_base` and active turn assets; apply `decoding="async"` on all `<img>` tags and `loading="lazy"` on secondary drawer/ending illustrations so initial 4G interactive paint stays instant.
 
 ---
@@ -128,7 +128,7 @@ Each recurring character in `content/characters/<id>.yaml` has **2–3 expressio
 *(Any additional NPCs introduced in Phase 1 Narrative expansion MUST follow this exact `char_<slug>` + `char_<slug>_<estado>` pattern.)*
 
 ### 6.3 Modular Category & Mood Banners (`assets/illustrations/banner_*.webp`)
-Used on `EventStage` (`960×360`, `8:3`) whenever an event omits a bespoke `illustration_id`:
+Used on `EventStage` (`960×360`, `8:3`, `<= 90 KB`) whenever an event omits a bespoke `illustration_id`:
 1. `banner_clientes_base` — Hands across a café/office table exchanging a project folder beside a steaming *cortado*.
 2. `banner_clientes_tension` — Impatient client hand tapping a wristwatch beside an unpaid red-tabbed invoice folder and ringing smartphone.
 3. `banner_hacienda_base` — Official stone-facade bureaucratic counter / mailbox slot with sealed registered envelope and brass ink stamp.
@@ -136,6 +136,9 @@ Used on `EventStage` (`960×360`, `8:3`) whenever an event omits a bespoke `illu
 5. `banner_familia_base` — Warm Spanish apartment dining table at dusk: two plates, keys in a ceramic bowl, and a glowing laptop left half-open on the side.
 6. `banner_empleados_base` — Two side-by-side studio desks exchanging sticky notes, cables, and coffee mugs.
 7. `banner_gestor_base` — Gestoría desk stacked with color-tabbed *archivadores*, adding-machine paper ribbon, and blue rubber stamp.
+8. `banner_familia_tension` — Wide late-night dining table crop: cold dinner plate covered in foil, two untouched glasses, tick-only wall clock at 11:30 (zero digits), and a glowing phone face-up on the tablecloth.
+9. `banner_empleados_tension` — Wide studio desk crop: corkboard overloaded with blank colored sticky notes, tangled cables, blinking router LEDs, and three empty espresso cups.
+10. `banner_gestor_urgencia` — Wide overhead desk crop: smoking vintage calculator with curling paper tape (abstract horizontal lines only, zero numbers), red-tabbed manila folders, and a brass desk bell.
 
 *(Category SVG fallbacks `ui_fallback_{clientes,hacienda,familia,empleados,gestor}` remain in `assets/ui/` as lightweight emergency zero-network/test fallbacks.)*
 
@@ -156,6 +159,16 @@ Rendered on `EndRunScreen` (`960×540`, `16:9`, first-person / environmental sto
 - `prop_numeros_rojos` (`256×256` SVG) — Tilted red warning emblem (`€` + downward arrow, wordless or graphic stamp).
 - `prop_foto_familia` (`256×256` SVG) — Small wooden tabletop photo frame with warm abstract couple/family silhouette when `family.status !== "single"`.
 
+### 6.6 Bespoke Career & Life Milestone Panels (`assets/illustrations/illus_hito_*.webp`)
+Rendered on `EventStage` (`960×540`, `16:9`, `<= 120 KB`, first-person / environmental storytelling, zero text, zero protagonist face) when `event.illustration_id` is set on major narrative milestones:
+1. `illus_hito_primer_trimestre` — First quarterly tax reckoning: desktop calculator with blank keys, stack of color-tabbed folders, wordless calendar grid with one red-circled box, steaming espresso under dramatic desk lamp light.
+2. `illus_hito_inspeccion_hacienda` — Tax inspection across an austere official desk: civil-servant hands holding a magnifying glass over spread ledger sheets and a red fountain pen.
+3. `illus_hito_primer_empleado` — Sunlit studio onboarding milestone: setting up a second workstation with monitor, welcome mug, headphones, and cropped hands shaking in foreground.
+4. `illus_hito_crisis_familiar` — Dusk Spanish apartment dining table with two untouched cooling plates and house keys contrasted against cold blue laptop glow down the hallway.
+5. `illus_hito_criatura_casa` — Spanish apartment table split down the middle between newborn baby items (pastel pacifier, unnumbered baby bottle, wooden rattle, slatted crib shadow) and freelance chaos (open laptop with abstract color blocks, espresso-ringed coffee cup, stacked folders).
+6. `illus_hito_mudanza_oficina` — First-person view holding brass keys unlocking the glass door of a sunlit Spanish street-level studio/*local*, with blank taped cardboard moving boxes, rolled chair mat, and terracotta potted plant inside.
+7. `illus_hito_conflicto_laboral` — Tense small-studio workstation in dramatic late-afternoon venetian blind (*persiana*) shadows: empty pushed-back office chair, unplugged over-ear headphones resting on a blank crimson-ribboned folder, and two espresso cups.
+
 ---
 
 ## 7. Prompt Engineering Contract for the Art Agent (`image-generator`)
@@ -171,8 +184,8 @@ STRICT REQUIREMENT — ZERO TEXT: Absolutely NO words, NO letters, NO numbers, N
 
 ### Mandatory Post-Generation Visual Inspection
 Before registering any `.webp` file as `"status": "ready"` in `assets/manifest.json`, the Art Agent MUST view the image via `read_file` and verify:
-1. **Zero accidental text/letters/gibberish** on papers, mugs, badges, monitors, or stamps.
-2. **No protagonist face/body** in `bg_despacho_*`, `banner_*`, or `illus_final_*`.
+1. **Zero accidental text/letters/gibberish** on papers, mugs, badges, monitors, clocks, calculator tapes, or stamps.
+2. **No protagonist face/body** in `bg_despacho_*`, `banner_*`, `illus_hito_*`, or `illus_final_*`.
 3. **No baked-in white Polaroid frame or pushpin** inside `char_*.webp` (`1:1` full-bleed bust portrait so UI CSS frames it cleanly).
 4. **Exact target pixel dimensions and `<=` KB budget** after WebP conversion.
 
@@ -204,4 +217,4 @@ To support the visual decisions locked in §§4–6 cleanly across roles during 
 - [ ] Every asset lives under `assets/{backgrounds,characters,illustrations,ui}/` and is registered in `assets/manifest.json` with `render_mode: "vector_hd"` and accurate `width`, `height`, and `status`.
 - [ ] Every `.webp` file has been visually inspected via `read_file` and confirmed to have **zero baked-in text**, **consistent Style A ink + gouache**, **no fixed player avatar**, and **no baked-in Polaroid border on `char_*`**.
 - [ ] Every recurring NPC has its neutral default portrait plus its registered expression variants with consistent facial features and wardrobe.
-- [ ] `pnpm validate:assets` passes with zero errors and total `assets/` size stays within the `<= 2.2 MB` mobile budget.
+- [ ] `pnpm validate:assets` passes with zero errors and total `assets/` size stays within the `<= 3.5 MB` mobile budget.

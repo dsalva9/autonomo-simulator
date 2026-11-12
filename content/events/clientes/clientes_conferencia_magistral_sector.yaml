@@ -1,0 +1,43 @@
+schema_version: 1
+id: clientes_conferencia_magistral_sector
+category: clientes
+title: Ponencia pagada y formación para directivos
+body: Un congreso nacional y una escuela de negocios te invitan el mismo mes a impartir una jornada magistral sobre tu oficio. Pagan caché de ponente sénior y te ponen delante de decenas de decisores.
+tags:
+  - veterania
+  - formacion
+  - prestigio
+  - largo_plazo
+requirements:
+  min_month: 60
+weight: 10
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: aceptar_congreso_y_masterclass
+    label: Preparar las dos sesiones a fondo y exprimir el escaparate sénior
+    result_text: Llegas afónico al viernes, pero cobras un caché espléndido y sales con tarjetas de clientes que no discuten presupuestos.
+    effects:
+      billed_income: 2025
+      deductible_expense: 150
+      stress: 10
+      moral: 7
+      personal_life: -4
+      reputation: 6
+  - id: hacer_solo_formacion_ejecutiva
+    label: Aceptar únicamente el taller privado mejor pagado sin viajar
+    result_text: Impartes cuatro horas impecables sin maletas ni hoteles y ingresas una factura limpia con esfuerzo medido.
+    effects:
+      billed_income: 1150
+      stress: 3
+      moral: 5
+      reputation: 3
+  - id: declinar_escenarios_este_semestre
+    label: Agradecer la invitación y quedarte tranquilo en tu despacho
+    result_text: Te ahorras preparar ochenta diapositivas de madrugada y disfrutas de una semana plácida en casa.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 4
+      reputation: -3

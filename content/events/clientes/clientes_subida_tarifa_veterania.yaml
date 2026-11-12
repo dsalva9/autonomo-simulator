@@ -1,0 +1,61 @@
+schema_version: 1
+id: clientes_subida_tarifa_veterania
+category: clientes
+title: "Filtro de seis años: presupuesto mínimo o puerta"
+body: Al cumplir seis años cotizando notas que los microencargos te comen la energía de los proyectos grandes. Borja asoma con tres encargos pequeños regateando cada partida mientras tienes clientes serios esperando.
+tags:
+  - veterania
+  - tarifas
+  - posicionamiento
+  - largo_plazo
+character_id: cliente_regateador
+character_expression: angry
+requirements:
+  min_month: 72
+weight: 11
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: implantar_ticket_minimo_alto
+    label: Implantar importe mínimo de proyecto y soltar el menudeo
+    outcomes:
+      - id: salto_a_clientes_solventes
+        weight: 70
+        result_text: Borja sale despavorido, pero el hueco libre lo ocupa de inmediato una cuenta solvente que valora tu experiencia.
+        effects:
+          billed_income: 1425
+          add_modifier:
+            id: mod_ticket_minimo_senior
+            label: Posicionamiento sénior de alto margen
+            remaining_months: 6
+            monthly_billed_delta: 340
+            monthly_stress_delta: -1
+          moral: 7
+          reputation: 4
+          stress: 1
+      - id: mes_de_transicion_flojo
+        weight: 30
+        result_text: El primer mes tras subir el listón entra menos volumen, aunque ganas una paz mental asombrosa y ordenas el estudio.
+        effects:
+          billed_income: 475
+          stress: -7
+          moral: 4
+          personal_life: 5
+          reputation: 2
+  - id: agrupar_menudeo_en_bono_prepago
+    label: Obligar a comprar bonos cerrados de diez horas por adelantado
+    result_text: "Se acabó emitir facturas ridículas: quien quiera encargos sueltos paga el bono completo hoy mismo antes de empezar."
+    effects:
+      billed_income: 1250
+      stress: -1
+      moral: 5
+      reputation: 2
+  - id: dejar_pasar_menudeo_y_descansar
+    label: Rechazar los microencargos de Borja y tomarte un respiro
+    result_text: Dejas pasar la calderilla sin remordimientos y dedicas la semana a recuperar sueño atrasado.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 5
+      reputation: -3

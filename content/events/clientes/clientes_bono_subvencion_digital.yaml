@@ -1,0 +1,61 @@
+schema_version: 1
+id: clientes_bono_subvencion_digital
+category: clientes
+title: El laberinto del bono público subvencionado
+body: "Borja quiere contratarte con cargo a una ayuda pública de modernización: cuarenta páginas de memorias justificativas con capturas fechadas, cobro diferido oficial y una insinuación turbia de «repartir la ayuda»."
+tags:
+  - subvencion
+  - burocracia
+  - dilema_fiscal
+character_id: cliente_regateador
+character_expression: pleased
+requirements:
+  min_month: 5
+weight: 10
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: ejecutar_expediente_legal_impecable
+    label: Hacer el proyecto real y justificar hasta la última coma legal
+    result_text: Rellenas memorias hasta soñar con sellos oficiales, pero entregas valor real y aseguras un cobro limpio garantizado.
+    effects:
+      deferred_invoice:
+        amount: 1650
+        delay_months: 3
+        default_prob: 0.04
+      deductible_expense: 90
+      stress: 16
+      moral: 1
+      reputation: 1
+      fiscal_risk: -3
+  - id: entrar_en_chanchullo_comision_borja
+    label: Inflar conceptos y devolverle una mordida en mano como sugiere
+    outcomes:
+      - id: cuela_de_momento
+        weight: 50
+        result_text: Cobras tu parte rápida en efectivo mientras rezas para que ningún auditor cruce las capturas justificativas dentro de un año.
+        effects:
+          cash_delta: 950
+          stress: 22
+          moral: -11
+          fiscal_risk: 30
+          set_flags:
+            - cobro_en_b_reciente
+      - id: expediente_denegado_y_bronca
+        weight: 50
+        result_text: El organismo detecta incoherencias, tumba la subvención y Borja desaparece dejándote las horas perdidas y el susto en el cuerpo.
+        effects:
+          cash_delta: -150
+          stress: 14
+          moral: -9
+          fiscal_risk: 20
+          reputation: -4
+  - id: huir_de_papeleo_subvencionado
+    label: Negarte en redondo a tramitar bonos con trampa o papeleo eterno
+    result_text: Le cierras la puerta al chanchullo y a las cuarenta páginas de anexos en un solo gesto saludable.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 2
+      reputation: -4

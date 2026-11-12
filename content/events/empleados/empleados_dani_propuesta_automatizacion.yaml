@@ -1,0 +1,56 @@
+schema_version: 1
+id: empleados_dani_propuesta_automatizacion
+category: empleados
+title: "El invento de fin de semana de Dani"
+body: "Dani llega el lunes con brillo peligroso en los ojos: ha programado en su tiempo libre un robot que genera informes y borradores para quince cuentas de golpe. Si funciona ahorraréis media semana; si falla, lo verán todos los clientes."
+tags:
+  - plantilla
+  - junior
+  - automatizacion
+  - riesgo
+character_id: empleado_junior_dani
+character_expression: neutral
+requirements:
+  min_month: 14
+  has_employee: true
+  required_flags:
+    - empleado_dani_activo
+weight: 8
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: auditar_juntos_antes_de_activar
+    label: "Dedicar dos tardes a probarlo con datos ficticios antes de salir"
+    result_text: "Cazáis tres errores tontos en entorno cerrado y lanzáis la herramienta pulida: facturáis extras limpios sin un solo susto."
+    effects:
+      billed_income: 850
+      deductible_expense: 140
+      moral: 6
+      stress: -4
+      reputation: 4
+  - id: enchufarlo_directo_en_produccion
+    label: "Confiar en su entusiasmo y activarlo hoy mismo con clientes reales"
+    outcomes:
+      - id: ahorro_espectacular_de_horas
+        weight: 55
+        result_text: "El invento va como la seda y despacháis en dos días el trabajo rutinario de medio mes ante el aplauso general."
+        effects:
+          billed_income: 1200
+          moral: 5
+          stress: -6
+          reputation: 3
+      - id: envio_cruzado_de_borradores
+        weight: 45
+        result_text: "Un bucle manda informes cruzados a cuatro clientes distintos. Toca pedir perdón uno por uno y aplicar descuentos comerciales."
+        effects:
+          cash_delta: -420
+          moral: -4
+          stress: 11
+          reputation: -5
+  - id: prohibir_experimentos_en_estudio
+    label: "Agradecer la iniciativa pero mantener el método manual de siempre"
+    result_text: "Evitas cualquier susto técnico, aunque Dani guarda su prototipo en una carpeta olvidada con evidente decepción."
+    effects:
+      moral: -3
+      stress: 1

@@ -1,0 +1,45 @@
+schema_version: 1
+id: gestor_paco_caja_zapatos_tickets
+category: gestor
+title: "La caja de zapatos térmica de Paco se ha borrado"
+body: "Paco guardó tu caja de zapatos con tickets de comidas de trabajo y parkings encima del radiador del despacho. El calor ha dejado el térmico blanco nuclear y ahora no se lee ni el importe ni el NIF de ningún local."
+tags:
+  - gestoria
+  - paco
+  - tickets
+character_id: gestor_barato_paco
+character_expression: stressed
+requirements:
+  min_month: 3
+  gestor_tiers:
+    - cheap
+weight: 12
+cooldown_months: 9
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: reclamar_facturas_nominativas_locales
+    label: "Llamar local por local pidiendo duplicados con tus cargos de tarjeta"
+    result_text: "Recuperas dos tercios de las facturas completas a base de paciencia telefónica y obligas a Paco a escanearlas al momento."
+    effects:
+      deductible_expense: 130
+      stress: 7
+      moral: 2
+      personal_life: -3
+      fiscal_risk: -4
+  - id: renunciar_a_tickets_borrados
+    label: "Descartar los papeles en blanco y presentar solo lo legible"
+    result_text: "Pagas algo más de trimestre por culpa del radiador de Paco, pero duermes tranquilo sabiendo que no hay ni un ticket fantasma."
+    effects:
+      cash_delta: -110
+      stress: 3
+      moral: -3
+      fiscal_risk: -3
+  - id: meter_cifra_redonda_estimada
+    label: "Hacer caso a Paco y anotar una cifra redonda «aproximada»"
+    result_text: "Te ahorras un buen pellizco hoy en la liquidación, aunque como pidan los justificantes enseñarás cartulina blanca."
+    effects:
+      cash_delta: 195
+      stress: 4
+      moral: -4
+      fiscal_risk: 17

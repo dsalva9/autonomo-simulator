@@ -1,0 +1,44 @@
+schema_version: 1
+id: familia_muela_juicio_semana_pico
+category: familia
+title: "La muela del juicio despierta en mitad de semana"
+body: "El miércoles de madrugada un latido feroz en la mandíbula te recuerda que los autónomos tampoco tienen dolor remunerado. Para el desayuno tienes media cara como un hámster y dos presentaciones por videollamada."
+tags:
+  - salud
+  - dentista
+  - gastos_imprevistos
+  - urgencias
+requirements:
+  min_month: 5
+weight: 10
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: clinica_dental_privada_hoy
+    label: "Ir directo al dentista privado, quitarte el problema y reposar (230 €)"
+    result_text: "Sales con anestesia hasta la oreja y la cartera más flaca, pero el viernes ya masticas y duermes como un bendito."
+    effects:
+      cash_delta: -230
+      stress: -8
+      moral: 5
+      personal_life: 6
+  - id: urgencias_antibiotico_y_espera
+    label: "Pasar por urgencias a por antibiótico y aguantar con cámara apagada"
+    result_text: "Ahorras el sablazo dental inmediato hablando vocalizando lo justo, a cambio de cinco días a base de purés tibios."
+    effects:
+      cash_delta: -25
+      billed_income: 370
+      stress: 6
+      moral: -2
+      personal_life: -3
+  - id: presentar_hinchado_sin_cancelar
+    label: "Pagar el dentista por la tarde tras hacer todas las reuniones antes"
+    result_text: "Defiendes el presupuesto con hielo en el carrillo antes de entrar al sillón dental. Profesionalidad rozando el masoquismo."
+    effects:
+      cash_delta: -230
+      billed_income: 520
+      stress: 10
+      moral: 1
+      personal_life: -4
+      reputation: 2

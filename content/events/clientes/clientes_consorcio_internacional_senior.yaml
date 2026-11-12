@@ -1,0 +1,44 @@
+schema_version: 1
+id: clientes_consorcio_internacional_senior
+category: clientes
+title: Consultor principal en consorcio internacional
+body: Tu trayectoria atrae a un consorcio de tres países que busca especialista veterano en España para coordinar un entregable estratégico de alto presupuesto, con plazos exigentes y pagos puntuales.
+tags:
+  - veterania
+  - internacional
+  - alto_ticket
+  - largo_plazo
+requirements:
+  min_month: 78
+weight: 11
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: asumir_coordinacion_completa_consorcio
+    label: Asumir la coordinación completa y facturar tarifa internacional
+    result_text: Malabareas tres husos horarios y cien correos en inglés, pero entra una de las facturas más redondas de tu carrera.
+    effects:
+      billed_income: 2875
+      stress: 13
+      moral: 6
+      personal_life: -5
+      reputation: 5
+  - id: subcontratar_apoyo_tecnico_puntual
+    label: Aceptar apoyándote en un colaborador externo deducible (550 €)
+    result_text: Repartes la carga pesada con un colega de confianza, cumples como un reloj suizo y salvas tus tardes.
+    effects:
+      billed_income: 2700
+      deductible_expense: 550
+      stress: 5
+      moral: 7
+      personal_life: 1
+      reputation: 4
+  - id: declinar_consorcio_por_conciliacion
+    label: Declinar la coordinación internacional y priorizar tu vida fuera
+    result_text: "A estas alturas sabes cuánto vale cenar en paz: dejas pasar el megacontrato sin un ápice de culpa."
+    effects:
+      stress: -3
+      moral: 1
+      personal_life: 6
+      reputation: -3

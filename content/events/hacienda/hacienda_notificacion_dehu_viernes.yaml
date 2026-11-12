@@ -1,0 +1,49 @@
+schema_version: 1
+id: hacienda_notificacion_dehu_viernes
+category: hacienda
+title: "Viernes, 23:58: aviso en tu buzón electrónico DEHú"
+body: "Justo al apagar el portátil para el puente vibra el móvil con el correo más temido del país: nueva notificación en DEHú. El plazo de diez días corre igual aunque finjas que te han robado el router."
+tags:
+  - dehu
+  - notificaciones
+  - plazos
+character_id: null
+requirements:
+  min_month: 5
+weight: 12
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: abrir_y_presentar_reposicion
+    label: "Abrirla esta noche y presentar recurso de reposición con tus facturas"
+    result_text: "Sacrificas la madrugada del viernes escaneando libros de IVA y registras el recurso en plazo. Ahora toca esperar el veredicto oficial."
+    effects:
+      deductible_expense: 70
+      stress: 7
+      personal_life: -4
+      schedule_events:
+        - event_id: hacienda_resolucion_recurso_reposicion
+          delay_months: 2
+          probability: 1
+  - id: reenviar_aviso_lunes_gestoria
+    label: "Reenviar el aviso a tu gestoría para que conteste el lunes a primera"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría descarga el acto administrativo el lunes a las nueve, cuadra el desajuste menor y te salva el fin de semana entero."
+    effects:
+      deductible_expense: 130
+      cash_delta: -90
+      stress: 1
+      moral: 2
+      fiscal_risk: -8
+  - id: apurar_nueve_dias_y_pagar
+    label: "No abrirla hasta el noveno día para salvar el puente y abonar el ajuste"
+    result_text: "Disfrutas del puente con una nube negra en la nuca y el lunes siguiente pagas la liquidación menor sin hacer preguntas."
+    effects:
+      cash_delta: -260
+      stress: -3
+      personal_life: 5
+      fiscal_risk: 6

@@ -1,0 +1,53 @@
+schema_version: 1
+id: hacienda_encuesta_ine_obligatoria
+category: hacienda
+title: "Susto en el buzón: encuesta obligatoria de coyuntura del INE"
+body: "Ves un sobre oficial con membrete del Estado y casi pides un desfibrilador, pero no es Gómez: te ha tocado la lotería estadística trimestral obligatoria bajo apercibimiento de sanción administrativa."
+tags:
+  - ine
+  - burocracia
+  - estadistica
+character_id: null
+requirements:
+  min_month: 4
+weight: 10
+cooldown_months: 15
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: rellenar_tablas_el_domingo
+    label: "Respirar aliviado y rellenar las catorce pantallas el domingo tarde"
+    result_text: "Pierdes media tarde calculando horas trabajadas y porcentajes de facturación, pero cumples sin gastar un euro."
+    effects:
+      stress: 3
+      moral: 2
+      personal_life: -4
+      fiscal_risk: -2
+  - id: volcar_datos_con_gestoria
+    label: "Pagar un suplemento a tu gestoría para que vuelque tus libros al INE"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría exporta las cifras trimestrales en diez minutos y te regala el domingo libre de formularios."
+    effects:
+      deductible_expense: 80
+      stress: -4
+      moral: 3
+  - id: completar_a_ojo_en_cinco_minutos
+    label: "Completar las casillas a ojo de buen cubero en cinco minutos"
+    outcomes:
+      - id: formulario_validado_verde
+        weight: 70
+        result_text: "El validador web traga tus redondeos creativos a la primera y escupe el ansiado acuse de recibo en PDF."
+        effects:
+          stress: -3
+          moral: 3
+          personal_life: 2
+      - id: aviso_incoherencia_estadistica
+        weight: 30
+        result_text: "Tus porcentajes suman ciento doce por ciento y te reclaman subsanación urgente con recargo administrativo."
+        effects:
+          cash_delta: -90
+          stress: 7
+          moral: -4

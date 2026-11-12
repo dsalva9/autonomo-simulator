@@ -1,0 +1,47 @@
+schema_version: 1
+id: gestor_elena_escudo_requerimiento
+category: gestor
+title: "Elena intercepta un requerimiento envenenado el lunes"
+body: "Un cruce automático cuestiona tres facturas clave de tus proveedores y exige libros auxiliares en diez días hábiles. Antes de que te dé taquicardia, Elena ya tiene redactado un escrito de alegaciones con anexos."
+tags:
+  - gestoria
+  - elena
+  - requerimiento
+  - blindaje
+character_id: gestor_premium_elena
+character_expression: pleased
+requirements:
+  min_month: 8
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: firmar_defensa_documental_completa
+    label: "Autorizar la defensa jurídica completa con peritaje contable (160 €)"
+    requirements:
+      stats:
+        money:
+          min: 250
+    result_text: "El expediente vuelve archivado de oficio en tiempo récord y sin un solo euro de sanción. Hoy bendices cada euro de su iguala."
+    effects:
+      deductible_expense: 160
+      stress: -10
+      moral: 7
+      fiscal_risk: -16
+  - id: revisar_y_firmar_respuesta_estandar
+    label: "Aportar tú los justificantes bancarios y enviar el escrito base"
+    result_text: "Dedicas un par de horas a recopilar extractos de transferencias y Elena cierra el requerimiento con solvencia profesional."
+    effects:
+      stress: -4
+      moral: 4
+      fiscal_risk: -10
+  - id: aprovechar_para_meter_ticket_dudoso
+    label: "Pedirle que aproveche el envío para reclamar un gasto discutible"
+    result_text: "Reabrir debates con quien te está revisando las costuras enfría el archivo y deja tu NIF anotado para futuras comprobaciones."
+    effects:
+      stress: 5
+      moral: -3
+      fiscal_risk: 11

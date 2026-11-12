@@ -1,0 +1,58 @@
+schema_version: 1
+id: empleados_curso_especializacion_ia
+category: empleados
+title: "Dani pide financiar un curso intensivo"
+body: "Dani aparece entusiasmado con el folleto de un curso práctico de automatización y flujos digitales que promete reducir a la mitad las tareas mecánicas. Pide que el estudio cubra la matrícula deducible y las tardes de los jueves."
+tags:
+  - plantilla
+  - junior
+  - formacion
+  - productividad
+character_id: empleado_junior_dani
+character_expression: pleased
+requirements:
+  min_month: 8
+  has_employee: true
+  required_flags:
+    - empleado_dani_activo
+weight: 9
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: financiar_matricula_y_tardes
+    label: "Pagar el curso deducible (480 €) y reservarle las tardes de jueves"
+    result_text: "A la tercera semana Dani ya ha montado plantillas que ahorran horas de picar datos y presume de estudio en todas partes."
+    effects:
+      deductible_expense: 480
+      moral: 6
+      stress: -3
+      reputation: 3
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_dani_formacion_aplicada
+        label: "Flujos ágiles tras formación técnica"
+        remaining_months: 5
+        monthly_billed_delta: 340
+        monthly_stress_delta: -1
+  - id: cofinanciar_fuera_de_jornada
+    label: "Pagar la mitad de la matrícula (240 €) si lo cursa fuera de horario"
+    result_text: "Dani acepta el trato a medias: aprovecha parte del temario sin restar horas facturables, aunque acaba el mes con buenas ojeras."
+    effects:
+      deductible_expense: 240
+      moral: 1
+      stress: 2
+      add_modifier:
+        id: mod_dani_mejora_parcial
+        label: "Mejora parcial de herramientas internas"
+        remaining_months: 4
+        monthly_billed_delta: 180
+  - id: aplazar_formacion_por_entregas
+    label: "Denegarlo este trimestre porque la cola de clientes no da tregua"
+    result_text: "Ahorras el gasto hoy mismo, pero Dani cierra la pestaña del curso desinflado y vuelve a copiar celdas a mano en silencio."
+    effects:
+      moral: -4
+      stress: 3
+      set_flags:
+        - desgaste_plantilla

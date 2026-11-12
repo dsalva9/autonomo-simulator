@@ -1,0 +1,49 @@
+schema_version: 1
+id: familia_estreno_nuevo_piso
+category: familia
+title: "Cajas sin abrir y el técnico de la fibra no viene"
+body: "Ya duermes en el piso nuevo rodeado de torres de cartón donde es imposible encontrar una sartén. Lo peor llega el lunes: la compañía telefónica retrasa tres días la instalación de fibra óptica y tienes entregas urgentes."
+tags:
+  - vivienda
+  - mudanza
+  - internet
+  - hogar
+weight: 0
+cooldown_months: 12
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: alquilar_puesto_coworking_dias
+    label: "Pagar pase semanal de coworking y montar la casa por las tardes (130 €)"
+    result_text: "Salvas todas las entregas con internet decente y para el viernes ya tienes cortinas, escritorio firme y cafetera funcionando."
+    effects:
+      cash_delta: -130
+      deductible_expense: 90
+      billed_income: 460
+      stress: -6
+      moral: 7
+      personal_life: 8
+      clear_flags:
+        - mudanza_reciente
+  - id: tirar_de_datos_moviles_en_cajas
+    label: "Compartir datos del móvil sentado sobre una caja de libros"
+    result_text: "Fundes tu tarifa de datos a mitad de semana y te dejas el cuello doblado, pero ahorras dinero y terminas de colocar el salón."
+    effects:
+      cash_delta: -35
+      billed_income: 340
+      stress: 7
+      moral: 2
+      personal_life: 3
+      clear_flags:
+        - mudanza_reciente
+  - id: inaugurar_piso_con_amigos
+    label: "Tomarte dos días para ordenar de verdad y cenar pizzas con amigos"
+    result_text: "Aplazas un encargo menor, pero conviertes cuatro paredes llenas de eco en un hogar habitable en tiempo récord."
+    effects:
+      cash_delta: -85
+      stress: -10
+      moral: 9
+      personal_life: 13
+      reputation: -1
+      clear_flags:
+        - mudanza_reciente

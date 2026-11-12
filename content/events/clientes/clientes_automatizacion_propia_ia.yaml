@@ -1,0 +1,48 @@
+schema_version: 1
+id: clientes_automatizacion_propia_ia
+category: clientes
+title: «Enséñanos tus plantillas e IA para no depender de ti»
+body: Con total candidez corporativa, Marta te pide una formación y tus plantillas internas automatizadas para que su equipo júnior «pueda hacerlo en casa sin contratar autónomos externos cada mes».
+tags:
+  - ia
+  - formacion
+  - propiedad_intelectual
+character_id: cliente_corporativo_marta
+character_expression: neutral
+requirements:
+  min_month: 15
+weight: 10
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: cobrar_licencia_consultoria_precio_oro
+    label: Vender la implantación y licencia de uso a precio de consultoría alta
+    result_text: Si quieren comprar la caña de pescar, la pagan a precio de yate. Ingresas una factura redonda por dos tardes de taller.
+    effects:
+      billed_income: 1900
+      stress: 5
+      moral: 7
+      reputation: 4
+  - id: vender_mantenimiento_mensual_sistema
+    label: Implantarles un flujo básico atado a una iguala de supervisión
+    result_text: Ellos automatizan lo repetitivo y tú te quedas cuatro meses cobrando por revisar que no rompan nada.
+    effects:
+      billed_income: 650
+      add_modifier:
+        id: mod_supervision_flujo_ia
+        label: Supervisión mensual de flujos
+        remaining_months: 4
+        monthly_billed_delta: 280
+        monthly_stress_delta: 2
+      moral: 6
+      reputation: 3
+      stress: 1
+  - id: negar_cesion_metodologia_interna
+    label: Declinar entregar tu cocina interna y vender solo resultado final
+    result_text: "Proteges tus herramientas propias con una sonrisa amable: los trucos del mago no entran en la entrada general."
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 2
+      reputation: -3

@@ -1,0 +1,48 @@
+schema_version: 1
+id: clientes_auditoria_senior_corporativa
+category: clientes
+title: Operación rescate de alto nivel a tarifa de veterano
+body: Con cinco años largos de oficio a las espaldas, una empresa grande te llama para auditar y enderezar un proyecto encallado que ya ha quemado a dos consultoras. Pagan tarifa de especialista sin pestañear.
+tags:
+  - veterania
+  - consultoria
+  - alto_ticket
+  - largo_plazo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+requirements:
+  min_month: 60
+weight: 12
+cooldown_months: 10
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: liderar_intervencion_en_solitario
+    label: Ejecutar la auditoría e intervención intensiva de cabo a rabo
+    result_text: Desatascas en tres semanas lo que llevaba un año bloqueado. Facturas un pico memorable a cambio de acabar soñando con diagramas.
+    effects:
+      billed_income: 3000
+      stress: 14
+      moral: 4
+      personal_life: -6
+      reputation: 5
+  - id: apoyarse_en_empleado_para_ejecucion
+    label: Dirigir el diagnóstico y repartir la carga operativa con tu empleado
+    requirements:
+      has_employee: true
+    result_text: Tú pones el bisturí sénior y tu plantilla ejecuta las pruebas con orden. Facturación de primera división sin quemarte las pestañas.
+    effects:
+      billed_income: 3100
+      deductible_expense: 320
+      stress: 5
+      moral: 7
+      personal_life: -1
+      reputation: 5
+  - id: declinar_marron_ajeno_y_descansar
+    label: Pasar de apagar incendios heredados y cuidar las cervicales
+    result_text: Decir que no a tres mil euros da vértigo medio segundo; luego estiras la espalda en el sofá y sonríes.
+    effects:
+      stress: -3
+      moral: 1
+      personal_life: 6
+      reputation: -3

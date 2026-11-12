@@ -199,7 +199,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
-      await page.getByTestId("seed-input").fill("FASE1-BURNOUT-1601");
+      await page.getByTestId("seed-input").fill("FASE3-BURNOUT-8928");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -290,13 +290,16 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       };
 
       // Play Months 1..3 + Trimestre + Month 4 (16:9 milestone illustration + Inspector Polaroid)
-      await clickChoiceAndVerifyOutcomeFitsWithoutScroll("aceptar_sobre_en_b", `${vp.label} M1`);
       await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
-        "tragar_para_no_discutir",
+        "quedarse_adelantando_entregas",
+        `${vp.label} M1`,
+      );
+      await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
+        "entrega_express_contado",
         `${vp.label} M2`,
       );
       await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
-        "aplicar_tarifa_emergencia_nocturna",
+        "coger_los_billetes_en_la_terraza",
         `${vp.label} M3`,
       );
 
@@ -912,5 +915,235 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     await expect(page.getByTestId("end-run-screen")).toBeVisible();
     await expect(page.getByTestId("end-run-victory-badges")).toBeVisible();
+  });
+
+  test("QA-26: Full English ('en') localization, ES<->EN toggle + 'L' hotkey, reload persistence, modifier translation & zero-scroll UX (1366x768 & 360x780)", async ({
+    page,
+  }, testInfo) => {
+    const isMobile = testInfo.project.name === "mobile-chromium";
+    const vp = isMobile ? { width: 360, height: 780 } : { width: 1366, height: 768 };
+    await page.setViewportSize(vp);
+    await page.goto("./");
+
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    await expect(page.getByTestId("start-run-btn")).toContainText("Nueva alta en el RETA");
+
+    // 1. Toggle ES -> EN via locale-toggle-btn and 'L' hotkey on TitleScreen
+    const titleLocaleBtn = page.getByTestId("locale-toggle-btn");
+    await assertCenterHitTargetUnoccluded(titleLocaleBtn, "TitleScreen locale-toggle-btn");
+    await titleLocaleBtn.click();
+
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByTestId("start-run-btn")).toContainText("Register as Self-Employed");
+    await expect(page.getByTestId("title-tab-hall-of-fame")).toContainText(
+      "Hall of the Fallen (0)",
+    );
+    await expect(page.getByTestId("title-tab-achievements")).toContainText("Achievements (0/15)");
+
+    await page.keyboard.press("l");
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    await expect(page.getByTestId("start-run-btn")).toContainText("Nueva alta en el RETA");
+
+    await page.keyboard.press("l");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByTestId("start-run-btn")).toContainText("Register as Self-Employed");
+
+    const titleScrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(titleScrollWidth).toBeLessThanOrEqual(vp.width);
+
+    // 2. Start deterministic English run (FASE3-EN-LOCALE-5)
+    await page.getByTestId("seed-input").fill("FASE3-EN-LOCALE-5");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    // Verify English HUD, comma thousands formatting, and IndicatorBar ES<->EN hotkey + button
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 1");
+    await expect(page.getByTestId("indicator-money-value")).toHaveText("3,216 €");
+    await expect(page.getByTestId("indicator-net-cash")).toContainText("Net:");
+    await expect(page.getByTestId("indicator-net-cash")).toContainText("2,596 €");
+
+    const hudLocaleBtn = page.getByTestId("locale-toggle-btn");
+    await assertCenterHitTargetUnoccluded(hudLocaleBtn, "IndicatorBar locale-toggle-btn");
+
+    await page.keyboard.press("l");
+    await expect(page.locator("html")).toHaveAttribute("lang", "es");
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
+
+    await hudLocaleBtn.click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 1");
+
+    // Verify English event copy & translated NPC Polaroid name
+    await expect(page.getByTestId("event-card")).toHaveAttribute(
+      "data-event-id",
+      "clientes_encargo_urgente",
+    );
+    await expect(page.getByTestId("event-character-polaroid")).toContainText("Mr. Exposure");
+    await assertZeroSilentTextTruncation(page.getByTestId("event-title"), "EN event-title");
+    await assertZeroSilentTextTruncation(page.getByTestId("event-body"), "EN event-body");
+
+    const choiceButtons = page.locator('[data-testid^="choice-btn-"]');
+    const choiceCount = await choiceButtons.count();
+    expect(choiceCount).toBeGreaterThanOrEqual(2);
+    for (let i = 0; i < choiceCount; i += 1) {
+      await assertZeroSilentTextTruncation(choiceButtons.nth(i), `EN choice-btn-${i}`);
+    }
+
+    if (!isMobile) {
+      // Desktop 1366x768: zero yo-yo scroll, above-the-fold bounds & English side panels
+      const scrollState = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+      }));
+      expect(scrollState.scrollY).toBe(0);
+      expect(scrollState.scrollHeight).toBeLessThanOrEqual(scrollState.innerHeight + 2);
+
+      const headerBox = await page.locator("header").first().boundingBox();
+      expect(headerBox).not.toBeNull();
+      const bounds = {
+        minTop: headerBox!.y + headerBox!.height,
+        maxBottom: vp.height,
+        viewportWidth: vp.width,
+      };
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("event-title"),
+        bounds,
+        "EN 1366x768 event-title",
+      );
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("event-body"),
+        bounds,
+        "EN 1366x768 event-body",
+      );
+      for (let i = 0; i < choiceCount; i += 1) {
+        await assertVisibleInViewportWithoutScroll(
+          choiceButtons.nth(i),
+          bounds,
+          `EN 1366x768 choice-btn-${i}`,
+        );
+        await assertCenterHitTargetUnoccluded(choiceButtons.nth(i), `EN choice-btn-${i}`);
+      }
+
+      await expect(page.getByTestId("panel-cuentas")).toContainText("Account Ledger");
+      await expect(page.getByTestId("panel-entorno")).toContainText("Support Network");
+      await expect(page.getByTestId("panel-historial")).toContainText("Dossier Logbook");
+
+      // Click Month 1 choice WITHOUT scrollIntoViewIfNeeded() and verify outcome fits above fold
+      await page.locator('[data-choice-id="entrega_express_contado"]').click();
+      await expect(page.getByTestId("outcome-panel")).toBeVisible();
+      expect(await page.evaluate(() => window.scrollY)).toBe(0);
+      expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+        vp.height + 2,
+      );
+      await assertZeroSilentTextTruncation(
+        page.getByTestId("outcome-result-text"),
+        "EN outcome-result-text",
+      );
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("outcome-continue-btn"),
+        bounds,
+        "EN 1366x768 outcome-continue-btn",
+      );
+      await assertCenterHitTargetUnoccluded(
+        page.getByTestId("outcome-continue-btn"),
+        "EN outcome-continue-btn",
+      );
+      await expect(page.getByTestId("outcome-continue-btn")).toContainText("Continue");
+      await page.getByTestId("outcome-continue-btn").click();
+    } else {
+      // Narrow mobile 360x780: zero horizontal overflow, English bottom nav clearance & scroll-reset
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+        vp.width,
+      );
+      const bottomNav = page.locator('nav[aria-label="Office sections"]');
+      await expect(bottomNav).toBeVisible();
+      await expect(page.getByTestId("mobile-tab-despacho")).toContainText("Desk");
+      await expect(page.getByTestId("mobile-tab-cuentas")).toContainText("Ledger");
+      await expect(page.getByTestId("mobile-tab-entorno")).toContainText("Network");
+      await expect(page.getByTestId("mobile-tab-historial")).toContainText("Logbook");
+      for (const tabId of [
+        "mobile-tab-despacho",
+        "mobile-tab-cuentas",
+        "mobile-tab-entorno",
+        "mobile-tab-historial",
+      ] as const) {
+        await assertCenterHitTargetUnoccluded(page.getByTestId(tabId), `EN 360x780 ${tabId}`);
+      }
+
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      const navBox = await bottomNav.boundingBox();
+      const lastChoiceBox = await choiceButtons.nth(choiceCount - 1).boundingBox();
+      expect(navBox).not.toBeNull();
+      expect(lastChoiceBox).not.toBeNull();
+      expect(lastChoiceBox!.y + lastChoiceBox!.height).toBeLessThanOrEqual(navBox!.y - 4);
+
+      const m1Btn = page.locator('[data-choice-id="entrega_express_contado"]');
+      await m1Btn.scrollIntoViewIfNeeded();
+      await m1Btn.click();
+
+      await expect(page.getByTestId("outcome-panel")).toBeVisible();
+      await expect.poll(async () => page.evaluate(() => window.scrollY)).toBe(0);
+      await assertZeroSilentTextTruncation(
+        page.getByTestId("outcome-result-text"),
+        "EN 360x780 outcome-result-text",
+      );
+      await assertCenterHitTargetUnoccluded(
+        page.getByTestId("outcome-continue-btn"),
+        "EN 360x780 outcome-continue-btn",
+      );
+      await page.getByTestId("outcome-continue-btn").click();
+    }
+
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 2");
+
+    // 3. Reload persistence: locale 'en' and active run survive browser reload
+    await page.waitForTimeout(120);
+    await page.reload();
+
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByTestId("continue-run-card")).toBeVisible();
+    await expect(page.getByTestId("continue-run-calendar")).toContainText("Year 1 · Month 2");
+    await expect(page.getByTestId("continue-run-btn")).toContainText("Continue run");
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 2");
+
+    // 4. Advance Month 2 -> Month 3, add temporal modifier, settle English QuarterlyTaxModal, and verify translated modifier in Account Ledger
+    const m2Btn = page.locator('[data-choice-id="parar_a_tomar_cafe_y_comer_juntos"]');
+    if (isMobile) {
+      await m2Btn.scrollIntoViewIfNeeded();
+    }
+    await m2Btn.click();
+    await page.getByTestId("outcome-continue-btn").click();
+
+    await expect(page.getByTestId("event-card")).toHaveAttribute(
+      "data-event-id",
+      "clientes_averia_equipo_trabajo",
+    );
+    const m3Btn = page.locator('[data-choice-id="renting_equipo_sustitucion"]');
+    if (isMobile) {
+      await m3Btn.scrollIntoViewIfNeeded();
+    } else {
+      expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+        vp.height + 2,
+      );
+    }
+    await m3Btn.click();
+    await page.getByTestId("outcome-continue-btn").click();
+
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await expect(page.getByTestId("trimestre-modal")).toContainText("FORM 303 / 130");
+    await page.getByTestId("trimestre-pay-btn").click();
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 4");
+
+    if (isMobile) {
+      await page.getByTestId("mobile-tab-cuentas").click();
+    }
+    const cuentasPanel = page.getByTestId("panel-cuentas");
+    await expect(cuentasPanel).toBeVisible();
+    await expect(cuentasPanel).toContainText("Work equipment lease");
+    await expect(cuentasPanel).not.toContainText("Renting equipo de trabajo");
   });
 });

@@ -1,0 +1,45 @@
+schema_version: 1
+id: hacienda_dias_cortesia_vacaciones
+category: hacienda
+title: "El oasis legal: treinta días de cortesía sin notificaciones"
+body: "Un colega curtido te revela el secreto mejor guardado del gremio: puedes blindar hasta treinta días al año en el calendario electrónico para que Hacienda no deposite notificaciones mientras descansas."
+tags:
+  - dias_cortesia
+  - dehu
+  - descanso
+character_id: null
+requirements:
+  min_month: 7
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: bloquear_mes_vacacional_a_tiempo
+    label: "Solicitar los días con una semana de margen y apagar alertas móviles"
+    result_text: "Ver las casillas marcadas en verde produce una paz espiritual superior a cualquier retiro en un balneario."
+    effects:
+      stress: -10
+      moral: 6
+      personal_life: 7
+      fiscal_risk: -2
+  - id: planificar_calendario_con_gestor
+    label: "Coordinar con tu gestoría los tramos críticos de todo el ejercicio"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría sincroniza festivos, cierres y vacaciones para que ningún plazo empiece a correr a traición."
+    effects:
+      deductible_expense: 45
+      stress: -8
+      moral: 6
+      personal_life: 4
+      fiscal_risk: -5
+  - id: dejarlo_para_la_vispera_del_viaje
+    label: "Posponer el trámite hasta la víspera de salir con la maleta hecha"
+    result_text: "Descubres horrorizado que exige siete días de antelación mínima y pasas las vacaciones mirando el buzón."
+    effects:
+      stress: 6
+      moral: -3
+      personal_life: -3

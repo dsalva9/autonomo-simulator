@@ -18,7 +18,11 @@ import {
   startNewRun,
 } from "../engine/index.ts";
 import { compiledCatalog } from "../services/content/catalog.ts";
-import { resolveChoiceLabel } from "../services/i18n/resolveEventText.ts";
+import {
+  type UILocale,
+  normalizeLocale,
+  resolveChoiceLabel,
+} from "../services/i18n/resolveEventText.ts";
 import { defaultPlatformAdapter } from "../services/platform/PlatformPort.ts";
 import {
   type AchievementId,
@@ -82,6 +86,8 @@ export interface GameStoreState {
   dismissCorruptNotice: () => void;
   clearUnlockedToastQueue: () => void;
   setReducedMotionPreference: (value: boolean | null) => Promise<void>;
+  setLocalePreference: (locale: UILocale) => Promise<void>;
+  toggleLocalePreference: () => Promise<void>;
 }
 
 export function getVisibleGameState(
@@ -454,5 +460,24 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
     };
     set({ profile: nextProfile });
     await activeStoragePort.saveProfile(nextProfile);
+  },
+
+  setLocalePreference: async (locale: UILocale) => {
+    const normalized = normalizeLocale(locale);
+    const nextProfile: ProfileEnvelope = {
+      ...get().profile,
+      settings: {
+        ...get().profile.settings,
+        locale: normalized,
+      },
+    };
+    set({ profile: nextProfile });
+    await activeStoragePort.saveProfile(nextProfile);
+  },
+
+  toggleLocalePreference: async () => {
+    const current = normalizeLocale(get().profile.settings.locale);
+    const next: UILocale = current === "en" ? "es-ES" : "en";
+    await get().setLocalePreference(next);
   },
 }));

@@ -1,0 +1,42 @@
+schema_version: 1
+id: clientes_rescate_desastre_generativo
+category: clientes
+title: "Incendio en vivo: el entregable automático inventó datos"
+body: "Un mes después Borja te llama al borde del llanto: el trabajo del sobrino publicó datos inventados ante su mejor cliente y ha roto todo el flujo comercial. Necesita que lo rehagas de cero para el lunes."
+tags:
+  - ia
+  - rescate
+  - urgencia
+  - cadena_ia
+character_id: cliente_regateador
+character_expression: angry
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: aplicar_tarifa_demolicion_doble
+    label: Aplicar tarifa doble de demolición y reconstrucción al contado
+    result_text: Paga sin rechistar el doble del presupuesto original antes de que abras una sola carpeta. La justicia poética desgrava poco, pero alimenta el alma.
+    effects:
+      billed_income: 1850
+      stress: 11
+      moral: 9
+      personal_life: -4
+      reputation: 3
+  - id: apagar_fuego_critico_en_semana
+    label: Rehacer solo lo crítico en horario laboral a tarifa sénior
+    result_text: Contienes la hemorragia en tres días ordenados, cobras bien tus horas y evitas hipotecar el fin de semana por su imprudencia.
+    effects:
+      billed_income: 1125
+      stress: 5
+      moral: 6
+      reputation: 2
+  - id: remitirle_al_soporte_del_chatbot
+    label: Sugerirle amablemente que le pida otro prompt a su sobrino
+    result_text: Cuelgas saboreando el silencio más dulce del trimestre y disfrutas de tu fin de semana íntegro.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 5
+      reputation: -4

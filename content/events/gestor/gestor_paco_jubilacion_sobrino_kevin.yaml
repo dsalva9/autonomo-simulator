@@ -1,0 +1,48 @@
+schema_version: 1
+id: gestor_paco_jubilacion_sobrino_kevin
+category: gestor
+title: "Paco amaga con prejubilarse y te pasa con Kevin"
+body: "Con los años encima, Paco reduce su horario de mañanas y delega tus cuentas veteranas en su sobrino Kevin, que promete modernizar el despacho usando plantillas bajadas de vídeos cortos de finanzas."
+tags:
+  - gestoria
+  - paco
+  - veterania
+  - largo_plazo
+character_id: gestor_barato_paco
+character_expression: stressed
+requirements:
+  min_month: 54
+  gestor_tiers:
+    - cheap
+weight: 12
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: pagar_plus_atencion_directa_paco
+    label: "Pagar un suplemento senior para que tus libros los firme Paco (145 €)"
+    requirements:
+      stats:
+        money:
+          min: 250
+    result_text: "Paco guarda tu expediente en su cajón personal bajo llave y revisa cada trimestre de su puño y letra antes de irse al dominó."
+    effects:
+      deductible_expense: 145
+      stress: -6
+      moral: 3
+      fiscal_risk: -8
+  - id: auditar_borradores_de_kevin
+    label: "Exigir borrador previo cada trimestre y repasar tú las sumas"
+    result_text: "Cazas un par de redondeos alegres de Kevin cada cierre, manteniendo la cuota barata a costa de hacer de policía contable."
+    effects:
+      stress: 7
+      moral: -2
+      fiscal_risk: -3
+  - id: dejar_que_kevin_innove_sin_filtro
+    label: "Dejar que Kevin aplique sus «trucos virales de ahorro fiscal»"
+    result_text: "Te rasca unos euros inmediatos con deducciones creativas de dudosa jurisprudencia que disparan todas las alarmas estadísticas."
+    effects:
+      cash_delta: 160
+      stress: 2
+      moral: -3
+      fiscal_risk: 15

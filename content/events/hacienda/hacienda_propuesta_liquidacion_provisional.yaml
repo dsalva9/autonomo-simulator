@@ -1,0 +1,55 @@
+schema_version: 1
+id: hacienda_propuesta_liquidacion_provisional
+category: hacienda
+title: "Propuesta de liquidación por ingresos no justificados"
+body: "Tras pasar la lupa por tus cuentas bancarias, el Inspector Gómez presume que varios abonos sin factura corresponden a servicios profesionales no declarados y te notifica propuesta de regularización."
+tags:
+  - liquidacion
+  - bancos
+  - sancion
+character_id: hacienda_inspector_gomez
+character_expression: angry
+weight: 0
+cooldown_months: 8
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: firmar_conformidad_pronto_pago
+    label: "Aceptar la propuesta aplicando reducción por conformidad y pago (490 €)"
+    result_text: "Asumes la liquidación bonificada para cerrar el expediente hoy mismo y juras separar cuentas personales y profesionales."
+    effects:
+      cash_delta: -490
+      stress: 6
+      moral: -4
+      fiscal_risk: -18
+  - id: aportar_recibos_ventas_usadas
+    label: "Rebuscar recibos de segunda mano y gastos compartidos para rebatirlo"
+    outcomes:
+      - id: mitad_apuntes_justificados
+        weight: 55
+        result_text: "Acreditas que dos abonos eran ventas de equipo viejo y cenas a escote, reduciendo la liquidación a menos de la mitad."
+        effects:
+          cash_delta: -220
+          stress: 8
+          moral: 4
+          fiscal_risk: -14
+      - id: presuncion_mantenida_integra
+        weight: 45
+        result_text: "Sin contratos ni facturas de compra originales, Gómez mantiene la presunción íntegra y añade intereses de demora."
+        effects:
+          cash_delta: -740
+          stress: 14
+          moral: -8
+          fiscal_risk: -16
+  - id: defensa_trazabilidad_premium
+    label: "Encargar a Elena la trazabilidad documental completa de tus cuentas"
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: "Elena reconstruye el origen fiscal de cada euro con precisión forense y desmonta casi toda la presunción administrativa."
+    effects:
+      deductible_expense: 240
+      cash_delta: -90
+      stress: 2
+      moral: 6
+      fiscal_risk: -22

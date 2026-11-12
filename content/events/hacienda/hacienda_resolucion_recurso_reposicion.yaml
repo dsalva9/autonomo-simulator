@@ -1,0 +1,55 @@
+schema_version: 1
+id: hacienda_resolucion_recurso_reposicion
+category: hacienda
+title: "Resolución expresa al recurso de reposición"
+body: "Dos meses después de tu recurso nocturno llega el fallo firmado electrónicamente por el Inspector Gómez. El PDF de seis páginas con código seguro de verificación decide el destino de tu cuota discutida."
+tags:
+  - recurso
+  - reposicion
+  - resolucion
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+weight: 0
+cooldown_months: 6
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: abrir_fallo_y_liquidar
+    label: "Descargar la resolución y comprobar qué facturas han admitido"
+    outcomes:
+      - id: estimacion_total_con_abono
+        weight: 55
+        result_text: "¡Milagro documental! Gómez estima tus pruebas íntegras, anula el ajuste provisional y te abonan un saldo pendiente a tu favor."
+        effects:
+          cash_delta: 140
+          stress: -8
+          moral: 8
+          fiscal_risk: -12
+      - id: estimacion_parcial_mitad
+        weight: 45
+        result_text: "Te dan la razón en la mitad de las facturas y tumban el resto por defectos formales; abonas un pellizco mucho menor."
+        effects:
+          cash_delta: -190
+          stress: 4
+          moral: -1
+          fiscal_risk: -8
+  - id: elevar_punto_restante_asesoria
+    label: "Dejar que Elena cierre el fleco técnico invocando doctrina vinculante"
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: "Elena presenta un escrito quirúrgico de cierre, consolida el criterio a tu favor y deja tu expediente reluciente."
+    effects:
+      deductible_expense: 160
+      cash_delta: 90
+      stress: -4
+      moral: 6
+      fiscal_risk: -15
+  - id: acatar_criterio_y_archivar
+    label: "Acatar el ajuste residual hoy mismo y dar carpeta al expediente"
+    result_text: "Pagas la diferencia reducida sin abrir más frentes y archivas el justificante respirando por fin tranquilo."
+    effects:
+      cash_delta: -160
+      stress: -3
+      moral: 1
+      fiscal_risk: -10

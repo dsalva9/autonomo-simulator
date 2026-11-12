@@ -1,0 +1,47 @@
+schema_version: 1
+id: hacienda_epigrafe_iae_kafkiano
+category: hacienda
+title: "Arqueología en el IAE: buscando tu oficio en tablas de 1990"
+body: "Un cliente nuevo pide revisar tu alta censal antes de contratarte, pero tu especialidad digital no existía cuando redactaron los epígrafes entre perforadores de fichas y mecanógrafos a máquina."
+tags:
+  - iae
+  - modelo_036
+  - censo
+character_id: null
+requirements:
+  min_month: 3
+weight: 10
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: alta_epigrafe_adicional_036
+    label: "Presentar un Modelo 036 añadiendo un segundo epígrafe aproximado"
+    result_text: "Peleas cuarenta minutos con casillas censales de otra época, pero dejas tu actividad blindada ante el cliente."
+    effects:
+      deductible_expense: 30
+      stress: 5
+      moral: 2
+      reputation: 2
+      fiscal_risk: -4
+  - id: encuadre_exacto_via_gestoria
+    label: "Encargar a tu gestoría el encuadre profesional con retención exacta"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría elige el epígrafe perfecto según doctrina reciente y el departamento legal del cliente aplaude."
+    effects:
+      deductible_expense: 95
+      stress: -2
+      moral: 4
+      reputation: 3
+      fiscal_risk: -8
+  - id: facturar_bajo_concepto_generico
+    label: "No tocar el censo y facturar el trabajo como «servicios varios»"
+    result_text: "Cobras rápido sin pisar trámites censales, aunque el concepto ambiguo queda cantando en tus libros anuales."
+    effects:
+      billed_income: 350
+      stress: 3
+      moral: -2
+      fiscal_risk: 16

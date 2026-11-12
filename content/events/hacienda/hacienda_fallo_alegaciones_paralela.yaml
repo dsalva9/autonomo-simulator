@@ -1,0 +1,47 @@
+schema_version: 1
+id: hacienda_fallo_alegaciones_paralela
+category: hacienda
+title: "Liquidación definitiva tras alegaciones de IRPF"
+body: "La administración termina de cruzar tus justificantes bancarios con las declaraciones tardías del cliente moroso. El Inspector Gómez emite el acuerdo definitivo sobre tu autoliquidación del ejercicio."
+tags:
+  - irpf
+  - alegaciones
+  - resolucion
+character_id: hacienda_inspector_gomez
+character_expression: pleased
+weight: 0
+cooldown_months: 6
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: comprobar_acuerdo_definitivo
+    label: "Abrir el acuerdo definitivo y revisar la liquidación resultante"
+    outcomes:
+      - id: paralela_anulada_con_saldo
+        weight: 70
+        result_text: "Tus transferencias acreditan la retención soportada: Hacienda archiva tu paralela, reclama al cliente y libera tu saldo retenido."
+        effects:
+          cash_delta: 120
+          stress: -9
+          moral: 8
+          fiscal_risk: -10
+      - id: ajuste_menor_base_imponible
+        weight: 30
+        result_text: "Validan casi todo salvo un baile de céntimos en una base imponible; abonas un ajuste simbólico y cierras carpeta."
+        effects:
+          cash_delta: -130
+          stress: 4
+          moral: -2
+          fiscal_risk: -6
+  - id: reclamar_intereses_a_favor
+    label: "Solicitar además el abono de intereses legales sobre el saldo trabado"
+    requirements:
+      stats:
+        moral:
+          min: 45
+    result_text: "Con la ley en la mano logras que añadan unos euros de intereses legales a tu favor. Pequeña victoria moral para enmarcar."
+    effects:
+      cash_delta: 180
+      stress: -5
+      moral: 6
+      fiscal_risk: -6

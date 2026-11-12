@@ -550,7 +550,7 @@ function runSingleSimulation(
   };
 }
 
-describe("Phase 2 Monte Carlo simulation suite over rebalanced economy & 60-event catalog", () => {
+describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-event catalog", () => {
   const allEventsSeen = new Set<string>();
   const allCategoriesSeen = new Set<EventCategory>();
   const distinctEndings = new Set<EndingId>();
@@ -586,7 +586,7 @@ describe("Phase 2 Monte Carlo simulation suite over rebalanced economy & 60-even
       const endings: Record<string, number> = {};
 
       for (let i = 0; i < runs; i += 1) {
-        const m = runSingleSimulation(compiledCatalog, bot, `P2-${bot}-${i}`);
+        const m = runSingleSimulation(compiledCatalog, bot, `P3-${bot}-${i}`);
         if (m.survived) survivedCount += 1;
         if (m.endingId) {
           distinctEndings.add(m.endingId);
@@ -637,7 +637,7 @@ describe("Phase 2 Monte Carlo simulation suite over rebalanced economy & 60-even
     let sumFinalMoney = 0;
 
     for (let i = 0; i < passiveRuns; i += 1) {
-      const m = runSingleSimulation(compiledCatalog, "PassiveRejectBot", `P2-PassiveReject-${i}`);
+      const m = runSingleSimulation(compiledCatalog, "PassiveRejectBot", `P3-PassiveReject-${i}`);
       if (m.survived) survivedCount += 1;
       if (m.endingId === "defeat_bankruptcy") bankruptcyCount += 1;
       sumFinalMoney += m.finalMoney;
@@ -655,19 +655,19 @@ describe("Phase 2 Monte Carlo simulation suite over rebalanced economy & 60-even
     expect(summary.WorkaholicGrowthBot.runs).toBe(250);
     expect(totalStarvedMonths).toBe(0);
 
-    const replay1 = runSingleSimulation(compiledCatalog, "RandomBot", "DETERMINISM-PHASE2-CHECK");
-    const replay2 = runSingleSimulation(compiledCatalog, "RandomBot", "DETERMINISM-PHASE2-CHECK");
+    const replay1 = runSingleSimulation(compiledCatalog, "RandomBot", "DETERMINISM-PHASE3-CHECK");
+    const replay2 = runSingleSimulation(compiledCatalog, "RandomBot", "DETERMINISM-PHASE3-CHECK");
     expect(replay1.finalMonth).toBe(replay2.finalMonth);
     expect(replay1.finalMoney).toBe(replay2.finalMoney);
     expect(replay1.lifetimeBilled).toBe(replay2.lifetimeBilled);
     expect(replay1.endingId).toBe(replay2.endingId);
   });
 
-  it("reaches all 5 categories, all 60 Phase 2 events, deferred invoices, quarterly settlements, and >= 6 distinct EndingIds", () => {
+  it("reaches all 5 categories, all 200 Phase 3B events, deferred invoices, quarterly settlements, and >= 6 distinct EndingIds", () => {
     expect(allCategoriesSeen).toEqual(
       new Set<EventCategory>(["clientes", "hacienda", "familia", "empleados", "gestor"]),
     );
-    expect(allEventsSeen.size).toBe(60);
+    expect(allEventsSeen.size).toBe(200);
     expect(totalInvoicesPaid).toBeGreaterThan(100);
     expect(totalInvoicesDefaulted).toBeGreaterThan(10);
     expect(totalQuartersPaid).toBeGreaterThan(1000);
@@ -721,7 +721,7 @@ describe("Phase 2 Monte Carlo simulation suite over rebalanced economy & 60-even
     let endlessStarvedMonths = 0;
 
     for (let i = 0; i < endlessRuns; i += 1) {
-      const m = runSingleSimulation(compiledCatalog, "ConservativeLegalBot", `P2-Endless-${i}`, {
+      const m = runSingleSimulation(compiledCatalog, "ConservativeLegalBot", `P3-Endless-${i}`, {
         maxMonths: 180,
         victoryDecision: "continue",
       });

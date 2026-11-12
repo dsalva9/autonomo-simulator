@@ -1,0 +1,40 @@
+schema_version: 1
+id: familia_recaida_ciatica_urgencias
+category: familia
+title: "Ciática a traición y pulsera de urgencias"
+body: "Ignorar el aviso lumbar pasa factura: la pierna derecha se duerme antes del desayuno y acabas en urgencias con un pinchazo intramuscular. El médico te prohíbe sentarte ocho horas seguidas bajo amenaza de hernia."
+tags:
+  - salud
+  - espalda
+  - urgencias
+  - descanso
+weight: 0
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: bono_rehabilitacion_completa
+    label: "Pagar bono intensivo de rehabilitación y respetar las pausas (260 €)"
+    result_text: "Entre punción seca, ejercicios diarios y paseos cortos vuelves a ser bípedo funcional y recuperas el sueño sin dolor."
+    effects:
+      cash_delta: -260
+      stress: -10
+      moral: 6
+      personal_life: 7
+  - id: trabajar_de_pie_en_encimera
+    label: "Improvisar escritorio de pie sobre cajas en la cocina y seguir al lío"
+    result_text: "Salvas parte de la semana tecleando de pie junto al microondas, aunque acabas con los gemelos cargados y un humor de perros."
+    effects:
+      billed_income: 390
+      stress: 10
+      moral: -4
+      personal_life: -5
+  - id: parar_tres_dias_en_horizontal
+    label: "Pedir aplazamientos educados y guardar reposo real tres días"
+    result_text: "Los clientes refunfuñan un poco, pero el reposo apaga el incendio del nervio ciático sin vaciarte la cuenta."
+    effects:
+      cash_delta: -30
+      stress: -8
+      moral: 3
+      personal_life: 5
+      reputation: -3

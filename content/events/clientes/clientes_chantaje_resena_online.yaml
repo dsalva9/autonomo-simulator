@@ -1,0 +1,47 @@
+schema_version: 1
+id: clientes_chantaje_resena_online
+category: clientes
+title: Amenaza de reseña de una estrella si no regalas extras
+body: Tras entregar todo lo firmado en el presupuesto, Borja exige dos piezas nuevas gratis e insinúa con poca sutileza que «una mala reseña en internet hace mucho daño a un estudio pequeño».
+tags:
+  - clientes_toxicos
+  - reputacion
+  - limites
+character_id: cliente_regateador
+character_expression: angry
+requirements:
+  min_month: 5
+weight: 9
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: responder_con_pruebas_y_firmeza
+    label: No ceder al chantaje y responder en público con datos elegantes
+    result_text: Tu respuesta templada y profesional deja tan retratado a Borja que dos clientes nuevos te escriben felicitándote por tu templanza.
+    effects:
+      billed_income: 600
+      stress: 13
+      moral: 5
+      reputation: 2
+  - id: enviar_aviso_legal_con_gestoria
+    label: Mandar apercibimiento formal por coacción y difamación (75 €)
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: En cuanto ve membrete jurídico borra cualquier amago de reseña, abona lo pendiente y enmudece.
+    effects:
+      billed_income: 600
+      deductible_expense: 75
+      stress: 3
+      moral: 7
+      reputation: 2
+  - id: regalar_un_remate_rapido_y_bloquear
+    label: Hacerle un apaño mínimo en media hora para quitártelo de encima
+    result_text: Sales del paso rápido bloqueando su número nada más enviar el archivo, aunque te queda regusto amargo en la boca.
+    effects:
+      stress: 4
+      moral: -6
+      personal_life: 1
+      reputation: -4

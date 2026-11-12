@@ -1,0 +1,56 @@
+schema_version: 1
+id: empleados_subcontratacion_pico_trabajo
+category: empleados
+title: "Embudo de entregas en quincena crítica"
+body: "Tres presupuestos que llevaban meses dormidos se aprueban el mismo martes por la mañana. Sin nadie en plantilla, toca decidir rápido si subcontratas apoyo externo, pruebas suerte en plataformas baratas o recortas alcance."
+tags:
+  - subcontratacion
+  - pico_trabajo
+  - autonomo_solo
+  - calidad
+requirements:
+  min_month: 12
+  has_employee: false
+weight: 10
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: subcontratar_especialista_fiable
+    label: "Subcontratar a un colega sénior de confianza con factura deducible"
+    result_text: "Pagas tarifas justas a quien sabe lo que hace: entregas los tres encargos a tiempo, ganas margen limpio y duermes tus siete horas."
+    effects:
+      billed_income: 2200
+      deductible_expense: 1150
+      moral: 4
+      stress: -4
+      reputation: 4
+  - id: encargar_en_plataforma_gangas
+    label: "Externalizar bloques al mejor postor en una web de encargos rápidos"
+    outcomes:
+      - id: cumple_con_retoques_tuyos
+        weight: 45
+        result_text: "Tras un par de tardes puliendo aristas, el material da el pego y te embolsas casi todo el margen comercial del pico."
+        effects:
+          billed_income: 2100
+          deductible_expense: 420
+          stress: 4
+          reputation: 1
+      - id: chapuza_rehecha_de_madrugada
+        weight: 55
+        result_text: "Recibes un engendro inutilizable a horas de la entrega. Pierdes lo pagado y empalmas todo el fin de semana rehaciéndolo tú."
+        effects:
+          billed_income: 1900
+          deductible_expense: 420
+          moral: -5
+          stress: 14
+          personal_life: -6
+          reputation: -3
+  - id: aceptar_solo_lo_abarcable
+    label: "Aceptar solo lo que dan tus manos y derivar el resto sin comisión"
+    result_text: "Facturas menos este mes, pero cumples con excelencia quirúrgica y los clientes agradecen que no les vendas humo."
+    effects:
+      billed_income: 1150
+      moral: 2
+      stress: 1
+      personal_life: 2

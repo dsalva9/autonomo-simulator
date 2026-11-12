@@ -1,0 +1,44 @@
+schema_version: 1
+id: familia_reencuentro_generacion_quemada
+category: familia
+title: "Cena de promoción: funcionarios, emigrados y tú"
+body: "Casi siete años después os juntáis la vieja pandilla de estudios alrededor de una mesa larga. La mitad aprobó oposiciones, dos viven fuera y todos te miran como a un espécimen mitológico por seguir siendo autónomo."
+tags:
+  - amigos
+  - generacion
+  - veterania
+  - vida_social
+requirements:
+  min_month: 82
+weight: 11
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: brindar_orgulloso_y_cerrar_el_bar
+    label: "Pagar una ronda, reírte de tus batallas y disfrutar la noche (85 €)"
+    result_text: "Ver con perspectiva todo lo que has sobrevivido te llena de un orgullo sereno y salís abrazados a medianoche."
+    effects:
+      cash_delta: -85
+      stress: -11
+      moral: 11
+      personal_life: 13
+  - id: intercambiar_contactos_sin_postureo
+    label: "Cenar tranquilo y retomar contacto con quienes mueven proyectos (45 €)"
+    result_text: "Pasas una velada estupenda sin vender humo y, de propina, surge una colaboración natural con una vieja amistad."
+    effects:
+      cash_delta: -45
+      billed_income: 480
+      stress: -5
+      moral: 7
+      personal_life: 8
+      reputation: 2
+  - id: marcharse_pronto_agotado
+    label: "Tomar el entrante e irte pronto porque mañana madrugas con entregas"
+    result_text: "Cumples con el saludo de rigor y salvas la mañana siguiente, aunque vuelves en taxi sintiéndote un poco marciano."
+    effects:
+      cash_delta: -25
+      billed_income: 350
+      stress: 3
+      moral: -2
+      personal_life: -3

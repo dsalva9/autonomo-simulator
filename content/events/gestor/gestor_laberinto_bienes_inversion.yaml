@@ -1,0 +1,46 @@
+schema_version: 1
+id: gestor_laberinto_bienes_inversion
+category: gestor
+title: "Tabla de amortización o sudoku contable"
+body: "Has comprado equipamiento de trabajo de más de mil euros y al rellenar tus modelos en solitario te topas con el muro de los bienes de inversión: porcentajes anuales, prorrata temporal y casillas que parecen jeroglíficos."
+tags:
+  - autogestion
+  - amortizacion
+  - bienes_inversion
+requirements:
+  min_month: 5
+  gestor_tiers:
+    - self
+weight: 11
+cooldown_months: 10
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: deducir_todo_de_golpe
+    label: "Meter la factura entera como gasto corriente y cruzar los dedos"
+    result_text: "Recortas de un plumazo el pago de este trimestre y respiras aliviado hoy, dejando una bomba de relojería si cruzan tus libros."
+    effects:
+      cash_delta: 230
+      stress: 4
+      moral: -3
+      fiscal_risk: 16
+  - id: calcular_tabla_lineal_a_mano
+    label: "Estudiar el manual oficial y calcular la amortización lineal"
+    result_text: "Inviertes toda la tarde del sábado entre tablas oficiales y decimales, pero dejas el asiento blindado para los próximos cuatro años."
+    effects:
+      stress: 7
+      moral: 3
+      personal_life: -4
+      fiscal_risk: -5
+  - id: pagar_consulta_fiscal_una_hora
+    label: "Pagar una consulta exprés para que te dejen el cuadro hecho (110 €)"
+    requirements:
+      stats:
+        money:
+          min: 180
+    result_text: "Un técnico te entrega el cuadro exacto trimestre a trimestre y aprovecha para rescatar un pequeño incentivo de amortización acelerada."
+    effects:
+      deductible_expense: 110
+      stress: -5
+      moral: 4
+      fiscal_risk: -8

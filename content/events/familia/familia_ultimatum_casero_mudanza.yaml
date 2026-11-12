@@ -1,0 +1,66 @@
+schema_version: 1
+id: familia_ultimatum_casero_mudanza
+category: familia
+title: "El sobrino imaginario de tu casero necesita el piso"
+body: "Vence tu contrato y el propietario llama con voz melosa: o aceptas un «pequeño ajuste» desorbitado para igualar el barrio, o casualmente un sobrino suyo necesita mudarse el mes que viene. Toca elegir entre tragar o empaquetar tu vida."
+tags:
+  - vivienda
+  - alquiler
+  - mudanza
+  - coste_vida
+requirements:
+  min_month: 8
+weight: 11
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: buscar_piso_y_mudarse
+    label: "Mandarle a paseo, alquilar en otro barrio y hacer mudanza (640 €)"
+    result_text: "Entre fianza, furgoneta y cajas de cartón se va un pico serio, pero te libras del chantaje anual y ganas un techo más razonable."
+    effects:
+      cash_delta: -640
+      stress: 8
+      moral: 7
+      personal_life: 4
+      set_flags:
+        - mudanza_reciente
+      schedule_events:
+        - event_id: familia_estreno_nuevo_piso
+          delay_months: 2
+  - id: plantarse_con_la_ley_en_mano
+    label: "Revisar cláusulas legales y exigir la prórroga obligatoria firmada"
+    outcomes:
+      - id: prorroga_respetada
+        weight: 55
+        result_text: "En cuanto citas el artículo exacto por burofax, el supuesto sobrino desaparece por arte de magia y conservas tu renta actual."
+        effects:
+          cash_delta: -45
+          moral: 9
+          stress: -4
+          personal_life: 5
+      - id: guerra_fria_y_mudanza
+        weight: 45
+        result_text: "La negociación acaba a gritos y prefieres buscar otro piso antes que vivir pendiente de cada avería que se niegue a arreglar."
+        effects:
+          cash_delta: -580
+          stress: 12
+          moral: -3
+          set_flags:
+            - mudanza_reciente
+          schedule_events:
+            - event_id: familia_estreno_nuevo_piso
+              delay_months: 2
+  - id: tragar_con_el_nuevo_alquiler
+    label: "Firmar la subida apretando los dientes por no perder semanas de curro"
+    result_text: "No pierdes ni una hora facturable haciendo cajas, aunque cada día uno del mes sientes que trabajas medio lunes para tu casero."
+    effects:
+      moral: -6
+      stress: 6
+      personal_life: -4
+      add_modifier:
+        id: mod_alquiler_inflado_casero
+        label: "Alquiler inflado tras renovación"
+        remaining_months: 6
+        monthly_expense_delta: 165
+        monthly_stress_delta: 2

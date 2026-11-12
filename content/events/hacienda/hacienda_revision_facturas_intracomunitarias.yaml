@@ -1,0 +1,58 @@
+schema_version: 1
+id: hacienda_revision_facturas_intracomunitarias
+category: hacienda
+title: "Descuadre en el censo VIES y software extranjero sin IVA"
+body: "Tus herramientas digitales facturan desde Irlanda y un cliente europeo te pagó sin IVA antes de que tu alta en operadores intracomunitarios fuera firme. Salta un requerimiento automático por el Modelo 349."
+tags:
+  - vies
+  - modelo_349
+  - intracomunitario
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+requirements:
+  min_month: 14
+weight: 10
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: alta_roi_y_descargo_gestoria
+    label: "Tramitar con tu gestoría la regularización censal y neutralidad de IVA"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesoría acredita que la inversión del sujeto pasivo es neutra y deja tu NIF validado en Europa como un reloj."
+    effects:
+      deductible_expense: 150
+      stress: 3
+      moral: 4
+      reputation: 2
+      fiscal_risk: -8
+  - id: abonar_recargo_formal_y_corregir
+    label: "Pagar la sanción formal del modelo informativo y pasar página (270 €)"
+    result_text: "Abonas el peaje burocrático por haber facturado fuera antes de tener el sello europeo y corriges tus plantillas."
+    effects:
+      cash_delta: -270
+      stress: 6
+      moral: -3
+      fiscal_risk: -8
+  - id: alegar_directiva_europea_por_libre
+    label: "Alegar tú mismo primacía europea traduciendo contratos a medianoche"
+    outcomes:
+      - id: neutralidad_estimada
+        weight: 50
+        result_text: "Admiten que no hubo perjuicio recaudatorio alguno y archivan el expediente con un simple apercibimiento formal."
+        effects:
+          deductible_expense: 50
+          stress: 8
+          moral: 6
+          fiscal_risk: -6
+      - id: multa_fija_por_dato_omitido
+        weight: 50
+        result_text: "Te dan la razón en el fondo pero te clavan la multa fija reglamentaria por presentar fuera de plazo el resumen europeo."
+        effects:
+          cash_delta: -390
+          stress: 11
+          moral: -5
+          fiscal_risk: 6

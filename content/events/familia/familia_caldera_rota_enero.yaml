@@ -1,0 +1,47 @@
+schema_version: 1
+id: familia_caldera_rota_enero
+category: familia
+title: "Error E04: la caldera muere un lunes de enero"
+body: "Te metes en la ducha a las siete y media en pleno enero y sale agua del Ártico mientras la caldera pita con un código críptico. Teclear con abrigo y bufanda resta glamour emprendedor, y el servicio urgente cobra hasta por respirar."
+tags:
+  - hogar
+  - averia
+  - invierno
+  - gastos_imprevistos
+requirements:
+  min_month: 3
+weight: 12
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: pagar_tecnico_urgente_placa
+    label: "Pagar reparación urgente hoy mismo y recuperar la calefacción (410 €)"
+    result_text: "La factura duele como un sabañón, pero a mediodía vuelven a calentar los radiadores y trabajas sin parecer un pingüino."
+    effects:
+      cash_delta: -410
+      stress: -7
+      moral: 5
+      personal_life: 6
+  - id: comprar_estufa_y_esperar_pieza
+    label: "Tirar de calefactor eléctrico y esperar al técnico sin urgencia (165 €)"
+    result_text: "Sobrevives cinco días calentando solo tu metro cuadrado de mesa y recibes un pequeño susto después en la factura de la luz."
+    effects:
+      cash_delta: -165
+      stress: 5
+      moral: -2
+      personal_life: -3
+      add_modifier:
+        id: mod_pico_luz_invierno
+        label: "Pico de luz por calefactor"
+        remaining_months: 2
+        monthly_expense_delta: 55
+  - id: refugiarse_en_casa_familiar
+    label: "Mudarte tres días con el portátil al salón caldeado de tus padres"
+    result_text: "Ahorras la tarifa de urgencia y comes sopa casera caliente, a cambio de explicar cada hora por qué sigues mirando la pantalla."
+    effects:
+      cash_delta: -190
+      billed_income: 260
+      stress: 3
+      moral: 2
+      personal_life: 4

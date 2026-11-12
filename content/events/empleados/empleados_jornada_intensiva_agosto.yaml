@@ -1,0 +1,47 @@
+schema_version: 1
+id: empleados_jornada_intensiva_agosto
+category: empleados
+title: "Choque térmico y jornada intensiva de agosto"
+body: "Con el termómetro rozando los cuarenta grados, tu persona en plantilla pide activar jornada intensiva hasta las tres y cuadrar quincena de vacaciones, justo cuando un cliente extranjero pretende montar reuniones cada tarde."
+tags:
+  - plantilla
+  - verano
+  - conciliacion_laboral
+  - horarios
+requirements:
+  min_month: 8
+  has_employee: true
+weight: 8
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: aprobar_intensiva_y_reordenar_citas
+    label: "Aprobar la intensiva y mover al cliente extranjero a las mañanas"
+    result_text: "Concentráis el trabajo fresco temprano y a las tres cae el cierre. Rindes menos horas brutas, pero nadie muere derretido frente al teclado."
+    effects:
+      billed_income: 950
+      moral: 6
+      stress: -6
+      personal_life: 5
+      clear_flags:
+        - desgaste_plantilla
+  - id: abonar_plus_guardia_tardes
+    label: "Pagar un plus voluntario (450 €) por cubrir dos tardes por semana"
+    result_text: "El incentivo compensa el calor de agosto: atendéis las videollamadas internacionales y cerráis un buen suplemento de verano."
+    effects:
+      billed_income: 1750
+      cash_delta: -450
+      moral: 2
+      stress: 3
+      reputation: 3
+  - id: mantener_horario_partido_estricto
+    label: "Exigir horario partido completo porque el contrato internacional manda"
+    result_text: "Se cumplen todas las reuniones bajo el chorro del aire acondicionado, aunque el humor en el estudio queda bajo mínimos."
+    effects:
+      billed_income: 1450
+      moral: -7
+      stress: 8
+      personal_life: -4
+      set_flags:
+        - desgaste_plantilla

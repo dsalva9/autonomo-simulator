@@ -1,0 +1,46 @@
+schema_version: 1
+id: clientes_silencio_radio_mitad_entrega
+category: clientes
+title: Silencio de radio con el proyecto al setenta por ciento
+body: Han pasado semanas desde aquel arranque entusiasta y el cliente se ha evaporado. No contesta correos ni llamadas, el hito gordo sigue sin facturar y tu calendario tiene un agujero en forma de incógnita.
+tags:
+  - ghosting
+  - bloqueo
+  - cadena_fantasma
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: congelar_expediente_por_escrito
+    label: Enviar aviso formal de parada técnica y liberar tu agenda
+    result_text: Archivas el proyecto ordenadamente advirtiendo que reabrirlo tendrá coste de reactivación y llenas la semana con otros encargos.
+    effects:
+      billed_income: 600
+      stress: -1
+      moral: 4
+      reputation: 2
+      schedule_events:
+        - event_id: clientes_reaparicion_urgente_fantasma
+          delay_months: 2
+  - id: perseguir_cada_semana_reservando_hueco
+    label: Seguir persiguiéndoles por teléfono guardándoles el hueco
+    result_text: Pierdes mañanas mandando recordatorios educados al vacío mientras dejas escapar otros trabajos pequeños por si reaparecen hoy.
+    effects:
+      stress: 8
+      moral: -5
+      personal_life: -3
+      schedule_events:
+        - event_id: clientes_reaparicion_urgente_fantasma
+          delay_months: 1
+      reputation: -4
+  - id: liquidar_fase_hecha_y_cerrar
+    label: Dar el expediente por cerrado quedándote la señal cobrada
+    result_text: "Cierras la carpeta sin mirar atrás: menos facturación total de la prevista, pero cero incertidumbre colgando sobre tu cabeza."
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      clear_flags:
+        - clausula_pausa_firmada
+      reputation: -4

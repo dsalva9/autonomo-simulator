@@ -1,0 +1,48 @@
+schema_version: 1
+id: clientes_dilema_sabatico_cartera
+category: clientes
+title: "Siete años al pie del cañón: cuerpo vs. facturación"
+body: Tras siete años encadenando trimestres, coinciden sobre tu mesa un proyecto exprés muy bien pagado y una fatiga acumulada que ya no se quita con un domingo de sofá. Toca decidir cómo gestionar el mes.
+tags:
+  - veterania
+  - burnout
+  - salud
+  - largo_plazo
+requirements:
+  min_month: 84
+weight: 12
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: exprimir_sprint_bien_pagado
+    label: Apretar los dientes una vez más y facturar el proyecto exprés
+    result_text: Sacas el oficio de memoria muscular y engordas la cuenta corriente, aunque tu cuerpo toma nota silenciosa del sobreesfuerzo.
+    effects:
+      billed_income: 2450
+      stress: 15
+      moral: -3
+      personal_life: -6
+      reputation: 3
+  - id: derivar_a_red_cobrando_supervision
+    label: Derivar la ejecución a tu red de confianza cobrando supervisión
+    requirements:
+      stats:
+        reputation:
+          min: 50
+    result_text: "Revisas calidad dos horas por semana mientras un colega ejecuta el grueso: margen digno y neuronas frescas."
+    effects:
+      billed_income: 1000
+      stress: -3
+      moral: 6
+      personal_life: 4
+      reputation: 2
+  - id: mes_a_medio_gas_regenerador
+    label: Cerrar el grifo de encargos nuevos treinta días para resetear
+    result_text: Atiendes solo lo mínimo indispensable, caminas al sol por las mañanas y recuerdas por qué querías trabajar por tu cuenta.
+    effects:
+      cash_delta: -250
+      stress: -3
+      moral: 1
+      personal_life: 9
+      reputation: -3

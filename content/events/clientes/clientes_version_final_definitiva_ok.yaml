@@ -1,0 +1,46 @@
+schema_version: 1
+id: clientes_version_final_definitiva_ok
+category: clientes
+title: Entrega_v12_FINAL_definitivo_este_si
+body: Van nueve rondas de microcambios corporativos y Marta acaba de reenviar comentarios de un directivo recién aterrizado que pide volver exactamente al planteamiento que descartaron en la versión dos.
+tags:
+  - alcance
+  - revisiones
+  - corporativo
+character_id: cliente_corporativo_marta
+character_expression: angry
+requirements:
+  min_month: 3
+weight: 11
+cooldown_months: 9
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: facturar_bolsa_cambios_adicional
+    label: Bloquear la versión doce hasta que aprueben anexo de horas extra
+    result_text: Les muestras el historial de aprobaciones firmadas. Gruñen en tres departamentos, pero validan una orden de compra complementaria.
+    effects:
+      billed_income: 825
+      stress: 13
+      moral: 3
+      reputation: 1
+  - id: rescatar_archivo_antiguo_y_cerrar
+    label: Recuperar tu archivo guardado del mes pasado y facturar cierre
+    requirements:
+      stats:
+        reputation:
+          min: 40
+    result_text: "Bendita manía de no borrar versiones antiguas: en veinte minutos les devuelves su propio capricho reluciente y cobras el hito."
+    effects:
+      billed_income: 675
+      stress: -1
+      moral: 7
+      reputation: 3
+  - id: plantarse_en_alcance_firmado
+    label: Entregar la última ronda incluida en contrato y dar por concluido
+    result_text: Cierras el bucle infinito con educación férrea. No sacas extras, pero salvas tu salud mental de otro mes de rotondas.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      reputation: -4

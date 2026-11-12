@@ -1,0 +1,58 @@
+schema_version: 1
+id: empleados_actualizacion_convenio_ipc
+category: empleados
+title: "Revisión anual de tablas salariales e inflación"
+body: "Cierra otro ejercicio con precios al alza y llega el ajuste anual del convenio frente al coste de la vida. Toca decidir si aplicas una subida real sobre tablas, compensas en especie deducible o congelas al mínimo."
+tags:
+  - plantilla
+  - convenio
+  - salario
+  - largo_plazo
+requirements:
+  min_month: 54
+  has_employee: true
+weight: 10
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: actualizar_sueldo_sobre_ipc
+    label: "Aplicar la subida íntegra y repercutir tarifas nuevas a clientes"
+    result_text: "Ajustas precios sin complejos, sostienes el poder adquisitivo en casa y mantienes una rotación cero digna de estudio veterano."
+    effects:
+      billed_income: 850
+      moral: 6
+      stress: -4
+      reputation: 3
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_revision_ipc_plantilla
+        label: "Revisión salarial anual consolidada"
+        remaining_months: 6
+        monthly_billed_delta: 360
+        monthly_expense_delta: 230
+        monthly_stress_delta: -1
+  - id: compensar_con_retribucion_flexible
+    label: "Cubrir formación y equipamiento deducible (390 €) con ajuste moderado"
+    result_text: "Amortiguas la subida fija mensual combinando mejoras deducibles y horario cómodo sin desencajar la tesorería del trimestre."
+    effects:
+      deductible_expense: 390
+      moral: 3
+      stress: -2
+      clear_flags:
+        - desgaste_plantilla
+  - id: absorber_subida_en_complementos
+    label: "Absorber el alza en complementos antiguos para no subir el gasto"
+    result_text: "Es perfectamente legal sobre el papel de la gestoría, pero la nómina idéntica mes tras mes enfría las ganas de dar el extra."
+    effects:
+      moral: -5
+      stress: 6
+      set_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_malestar_absorcion_salarial
+        label: "Apatía por sueldo congelado de facto"
+        remaining_months: 4
+        monthly_billed_delta: -190
+        monthly_stress_delta: 2

@@ -1,14 +1,25 @@
 import { LogOut, X } from "lucide-react";
 import { useRef } from "react";
 import type { AbandonEndingId } from "../../engine/index.ts";
+import { getUiStrings } from "../../services/i18n/uiStrings.ts";
+import { useGameStore } from "../../store/gameStore.ts";
 import { useModalKeyboard } from "./useModalKeyboard.ts";
 
 export interface AbandonRunModalProps {
+  locale?: string;
   onConfirmAbandon: (endingId: AbandonEndingId) => void;
   onCancel: () => void;
 }
 
-export function AbandonRunModal({ onConfirmAbandon, onCancel }: AbandonRunModalProps) {
+export function AbandonRunModal({
+  locale: localeProp,
+  onConfirmAbandon,
+  onCancel,
+}: AbandonRunModalProps) {
+  const storeLocale = useGameStore((s) => s.profile.settings.locale);
+  const locale = localeProp ?? storeLocale;
+  const ab = getUiStrings(locale).modals.abandon;
+
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   useModalKeyboard(dialogRef, {
@@ -34,15 +45,15 @@ export function AbandonRunModal({ onConfirmAbandon, onCancel }: AbandonRunModalP
           <div className="flex items-center gap-2 min-w-0">
             <LogOut className="w-5 h-5 shrink-0 text-[#fce592]" aria-hidden="true" />
             <h2 id="abandon-modal-title" className="font-editorial text-base sm:text-lg font-bold">
-              Tramitar baja voluntaria (Modelo 036)
+              {ab.heading}
             </h2>
           </div>
           <button
             type="button"
             data-testid="abandon-cancel-btn"
             onClick={onCancel}
-            aria-label="Cerrar ventana"
-            title="Cancelar y volver al despacho (Esc)"
+            aria-label={ab.closeAria}
+            title={ab.closeTitle}
             className="inline-flex items-center gap-1 rounded px-1.5 py-1 hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
           >
             <span className="hidden sm:inline font-bureau text-[10px] font-bold text-[#fce592]">
@@ -53,9 +64,7 @@ export function AbandonRunModal({ onConfirmAbandon, onCancel }: AbandonRunModalP
         </div>
 
         <div className="p-4 sm:p-5 space-y-2.5 text-sm overflow-y-auto dossier-scroll">
-          <p className="text-[#373f3a]">
-            ¿Cómo quieres cerrar definitivamente esta partida y emitir tu certificado final?
-          </p>
+          <p className="text-[#373f3a]">{ab.prompt}</p>
 
           <button
             type="button"
@@ -66,13 +75,13 @@ export function AbandonRunModal({ onConfirmAbandon, onCancel }: AbandonRunModalP
             className="w-full min-h-12 text-left rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] px-3.5 py-2.5 font-semibold cursor-pointer transition-colors"
           >
             <span className="flex items-center justify-between gap-2">
-              <span>📚 Encerrarse a preparar oposiciones</span>
+              <span>{ab.oposicionesTitle}</span>
               <span className="font-bureau text-[11px] font-bold px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8] shrink-0 tabular-nums">
                 1
               </span>
             </span>
             <span className="block text-xs font-normal text-[#4a524e] mt-0.5">
-              Cambias las facturas urgentes por el temario y los subrayadores.
+              {ab.oposicionesDesc}
             </span>
           </button>
 
@@ -84,13 +93,13 @@ export function AbandonRunModal({ onConfirmAbandon, onCancel }: AbandonRunModalP
             className="w-full min-h-12 text-left rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] px-3.5 py-2.5 font-semibold cursor-pointer transition-colors"
           >
             <span className="flex items-center justify-between gap-2">
-              <span>💼 Volver a un empleo asalariado en oficina</span>
+              <span>{ab.salariedTitle}</span>
               <span className="font-bureau text-[11px] font-bold px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8] shrink-0 tabular-nums">
                 2
               </span>
             </span>
             <span className="block text-xs font-normal text-[#4a524e] mt-0.5">
-              Vuelves a tener jefe, pero recuperas las vacaciones pagadas.
+              {ab.salariedDesc}
             </span>
           </button>
 
@@ -102,14 +111,12 @@ export function AbandonRunModal({ onConfirmAbandon, onCancel }: AbandonRunModalP
             className="w-full min-h-12 text-left rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] px-3.5 py-2.5 font-semibold cursor-pointer transition-colors"
           >
             <span className="flex items-center justify-between gap-2">
-              <span>📄 Solicitar el cese de actividad</span>
+              <span>{ab.ceseTitle}</span>
               <span className="font-bureau text-[11px] font-bold px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8] shrink-0 tabular-nums">
                 3
               </span>
             </span>
-            <span className="block text-xs font-normal text-[#4a524e] mt-0.5">
-              Cierras la persiana tras comprobar la letra pequeña de emprender.
-            </span>
+            <span className="block text-xs font-normal text-[#4a524e] mt-0.5">{ab.ceseDesc}</span>
           </button>
         </div>
       </div>

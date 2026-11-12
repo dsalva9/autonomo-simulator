@@ -1,0 +1,54 @@
+schema_version: 1
+id: gestor_elena_subida_iguala_anual
+category: gestor
+title: "Elena actualiza tarifas por nueva carga normativa"
+body: "El despacho de Elena Montes comunica una revisión de honorarios ante la avalancha de obligaciones digitales. Te ofrece sumar defensa integral ante requerimientos, pactar entregas tempranas o rescindir sin cargos."
+tags:
+  - gestoria
+  - elena
+  - honorarios
+character_id: gestor_premium_elena
+character_expression: stressed
+requirements:
+  min_month: 10
+  gestor_tiers:
+    - premium
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: aceptar_anexo_defensa_integral
+    label: "Suscribir el anexo de blindaje total ante comprobaciones (175 €)"
+    requirements:
+      stats:
+        money:
+          min: 300
+    result_text: "Pagas un suplemento deducible, pero cualquier carta certificada pasa directa a su mesa jurídica sin quitarte ni media hora de sueño."
+    effects:
+      deductible_expense: 175
+      stress: -7
+      moral: 3
+      fiscal_risk: -11
+      add_modifier:
+        id: mod_anexo_defensa_elena
+        label: "Cobertura jurídica tributaria"
+        remaining_months: 4
+        monthly_expense_delta: 30
+        monthly_stress_delta: -2
+  - id: pactar_descuento_por_orden_estricto
+    label: "Congelar la subida subiendo tus facturas ordenadas el día uno"
+    result_text: "Elena acepta mantenerte la tarifa si entregas todo masticado el primer lunes de mes: ahorras dinero a cambio de disciplina marcial."
+    effects:
+      stress: 5
+      moral: 3
+      personal_life: -3
+      fiscal_risk: -5
+  - id: darse_de_baja_y_volver_a_autogestion
+    label: "Rechazar la subida, cerrar contrato y gestionar tú los modelos"
+    result_text: "Elena te entrega un pendrive impecablemente indexado con tus libros y vuelves al ruedo solitario de la sede electrónica."
+    effects:
+      set_gestor:
+        tier: self
+      stress: 7
+      moral: -2

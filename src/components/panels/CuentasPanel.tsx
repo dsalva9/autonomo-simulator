@@ -9,13 +9,22 @@ import {
   formatEuros,
   formatSignedEuros,
   formatSignedInt,
+  translateEmployeeRoleLabel,
+  translateModifierLabel,
 } from "../../services/i18n/resolveEventText.ts";
+import { getUiStrings } from "../../services/i18n/uiStrings.ts";
+import { useGameStore } from "../../store/gameStore.ts";
 
 export interface CuentasPanelProps {
   state: GameState;
+  locale?: string;
 }
 
-export function CuentasPanel({ state }: CuentasPanelProps) {
+export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
+  const storeLocale = useGameStore((s) => s.profile.settings.locale);
+  const locale = localeProp ?? storeLocale;
+  const ui = getUiStrings(locale);
+
   const { balance } = compiledCatalog;
   const baselineBilling = computeBaselineMonthlyBilling(state, compiledCatalog);
   const totalFixedExpenses = computeMonthlyRecurringExpenses(state, compiledCatalog);
@@ -31,18 +40,18 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
   return (
     <section
       data-testid="panel-cuentas"
-      aria-label="Cuaderno de Cuentas"
+      aria-label={ui.cuentas.sectionAria}
       className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
     >
       <div className="dossier-header">
         <div className="flex items-center gap-2 min-w-0">
           <BookOpen className="w-4 h-4 text-[#1f5c53] shrink-0" aria-hidden="true" />
           <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
-            Cuaderno de Cuentas
+            {ui.cuentas.heading}
           </h2>
         </div>
         <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] shrink-0">
-          LIBRO REGISTRO
+          {ui.cuentas.badge}
         </span>
       </div>
 
@@ -52,55 +61,59 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
           <div className="flex items-center justify-between gap-2 font-bold text-[#1f2421]">
             <span className="inline-flex items-center gap-1 min-w-0">
               <TrendingUp className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
-              <span className="truncate">Facturación base mensual</span>
+              <span className="truncate">{ui.cuentas.baselineBilling}</span>
             </span>
             <span className="font-bureau text-[#1f5c53] tabular-nums whitespace-nowrap shrink-0">
-              +{formatEuros(baselineBilling)}
+              +{formatEuros(baselineBilling, locale)}
             </span>
           </div>
 
           <div className="border-t border-[#1f2421]/14 pt-1 space-y-0.5 text-[#373f3a]">
             <div className="flex items-center justify-between gap-2">
-              <span className="truncate">Coste de vida básico</span>
+              <span className="truncate">{ui.cuentas.livingCost}</span>
               <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(balance.base_living_cost)}
+                -{formatEuros(balance.base_living_cost, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <span className="truncate">Cuota fija RETA</span>
+              <span className="truncate">{ui.cuentas.autonomoQuota}</span>
               <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(balance.autonomo_quota)}
+                -{formatEuros(balance.autonomo_quota, locale)}
               </span>
             </div>
             {state.gestor.monthly_fee > 0 && (
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate">Iguala de gestoría</span>
+                <span className="truncate">{ui.cuentas.gestorRetainer}</span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  -{formatEuros(state.gestor.monthly_fee)}
+                  -{formatEuros(state.gestor.monthly_fee, locale)}
                 </span>
               </div>
             )}
             {state.family.monthly_cost > 0 && (
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate">Gastos familiares</span>
+                <span className="truncate">{ui.cuentas.familyCosts}</span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  -{formatEuros(state.family.monthly_cost)}
+                  -{formatEuros(state.family.monthly_cost, locale)}
                 </span>
               </div>
             )}
             {state.employee && (
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate">Nómina ({state.employee.role_label})</span>
+                <span className="truncate">
+                  {ui.cuentas.payrollLabel(
+                    translateEmployeeRoleLabel(state.employee.role_label, locale),
+                  )}
+                </span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  -{formatEuros(state.employee.monthly_cost)}
+                  -{formatEuros(state.employee.monthly_cost, locale)}
                 </span>
               </div>
             )}
             {modifierExpenseDelta !== 0 && (
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate">Efectos temporales</span>
+                <span className="truncate">{ui.cuentas.tempEffects}</span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  {formatSignedEuros(-modifierExpenseDelta)}
+                  {formatSignedEuros(-modifierExpenseDelta, locale)}
                 </span>
               </div>
             )}
@@ -108,32 +121,32 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
 
           <div className="border-t border-[#1f2421]/18 pt-1.5 space-y-1">
             <div className="flex items-center justify-between gap-2 font-semibold text-[#1f2421]">
-              <span className="truncate">Margen antes de impuestos</span>
+              <span className="truncate">{ui.cuentas.marginBeforeTax}</span>
               <span
                 className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
                   netMonthlyBaseline >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
                 }`}
               >
-                {formatSignedEuros(netMonthlyBaseline)}
+                {formatSignedEuros(netMonthlyBaseline, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2 text-[11px] text-[#4a524e]">
               <span className="truncate">
-                Provisión fiscal est. ({Math.round(balance.effective_quarterly_tax_rate * 100)}%)
+                {ui.cuentas.estTaxProvision(Math.round(balance.effective_quarterly_tax_rate * 100))}
               </span>
               <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(estMonthlyTax)}
+                -{formatEuros(estMonthlyTax, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2 font-bold pt-0.5 text-[#1f2421]">
-              <span className="truncate">Margen tras provisión fiscal</span>
+              <span className="truncate">{ui.cuentas.marginAfterTax}</span>
               <span
                 data-testid="ledger-net-after-tax"
                 className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
                   netMonthlyAfterTax >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
                 }`}
               >
-                {formatSignedEuros(netMonthlyAfterTax)}
+                {formatSignedEuros(netMonthlyAfterTax, locale)}
               </span>
             </div>
           </div>
@@ -145,27 +158,27 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
           className="rounded-lg border border-[#264e7a]/40 bg-[#ebf2fa]/85 px-3 py-2 space-y-1"
         >
           <div className="stamp-badge text-[10px] text-[#264e7a]">
-            PROVISIÓN TRIMESTRAL (IVA + IRPF)
+            {ui.cuentas.quarterProvisionHeading}
           </div>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[#373f3a] truncate">Facturado trimestre:</span>
+            <span className="text-[#373f3a] truncate">{ui.cuentas.quarterBilled}</span>
             <span className="font-bureau font-bold text-[#1f2421] tabular-nums whitespace-nowrap shrink-0">
-              {formatEuros(state.finances.current_quarter_billed)}
+              {formatEuros(state.finances.current_quarter_billed, locale)}
             </span>
           </div>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[#373f3a] truncate">Impuestos devengados:</span>
+            <span className="text-[#373f3a] truncate">{ui.cuentas.accruedTaxes}</span>
             <span
               data-testid="ledger-accrued-tax"
               className="font-bureau font-bold text-[#b42b24] tabular-nums whitespace-nowrap shrink-0"
             >
-              {formatEuros(state.finances.accrued_tax_liability)}
+              {formatEuros(state.finances.accrued_tax_liability, locale)}
             </span>
           </div>
           <div className="flex items-center justify-between gap-2 border-t border-[#264e7a]/20 pt-1">
-            <span className="text-[#373f3a] truncate">Facturación oficial acum.:</span>
+            <span className="text-[#373f3a] truncate">{ui.cuentas.lifetimeBilled}</span>
             <span className="font-bureau font-bold text-[#264e7a] tabular-nums whitespace-nowrap shrink-0">
-              {formatEuros(state.finances.lifetime_billed)}
+              {formatEuros(state.finances.lifetime_billed, locale)}
             </span>
           </div>
         </div>
@@ -178,14 +191,17 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
           >
             <div className="flex items-center gap-1.5 stamp-badge text-[10px] text-[#b42b24]">
               <FileWarning className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-              APLAZAMIENTO ACTIVO (VENCE MES {state.finances.deferred_tax.due_month})
+              {ui.cuentas.activeDeferralHeading(state.finances.deferred_tax.due_month)}
             </div>
             <p className="text-[11px] text-[#373f3a] tabular-nums">
-              Principal {formatEuros(state.finances.deferred_tax.principal)} + recargo{" "}
-              {formatEuros(state.finances.deferred_tax.surcharge)} ={" "}
+              {ui.cuentas.principalWord}{" "}
+              {formatEuros(state.finances.deferred_tax.principal, locale)} +{" "}
+              {ui.cuentas.surchargeWord}{" "}
+              {formatEuros(state.finances.deferred_tax.surcharge, locale)} ={" "}
               <strong className="font-bureau text-[#b42b24] whitespace-nowrap">
                 {formatEuros(
                   state.finances.deferred_tax.principal + state.finances.deferred_tax.surcharge,
+                  locale,
                 )}
               </strong>
             </p>
@@ -197,10 +213,12 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
           <div className="flex items-center justify-between gap-2">
             <h3 className="stamp-badge text-[10px] text-[#4a524e] flex items-center gap-1">
               <Clock className="w-3 h-3 shrink-0" aria-hidden="true" />
-              Facturas a plazo ({state.finances.pending_invoices.length})
+              {ui.cuentas.deferredInvoicesHeading(state.finances.pending_invoices.length)}
             </h3>
             {state.finances.pending_invoices.length === 0 && (
-              <span className="text-[11px] text-[#4a524e] italic">Sin cobros pendientes</span>
+              <span className="text-[11px] text-[#4a524e] italic">
+                {ui.cuentas.noPendingPayments}
+              </span>
             )}
           </div>
           {state.finances.pending_invoices.length > 0 && (
@@ -212,10 +230,10 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
                 >
                   <div className="min-w-0">
                     <span className="font-bureau font-bold text-[#1f5c53] tabular-nums whitespace-nowrap">
-                      +{formatEuros(inv.amount)}
+                      +{formatEuros(inv.amount, locale)}
                     </span>
                     <span className="text-[11px] text-[#4a524e] ml-1.5">
-                      · Impago {Math.round(inv.default_prob * 100)}%
+                      {ui.cuentas.defaultRiskPct(Math.round(inv.default_prob * 100))}
                     </span>
                   </div>
                   <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#8f510d] shrink-0">
@@ -231,7 +249,7 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
         {state.modifiers.length > 0 && (
           <div className="border-t border-[#1f2421]/14 pt-2.5 space-y-1.5">
             <h3 className="stamp-badge text-[10px] text-[#4a524e]">
-              Efectos temporales ({state.modifiers.length})
+              {ui.cuentas.temporalModifiersHeading(state.modifiers.length)}
             </h3>
             <ul className="space-y-1 max-h-24 overflow-y-auto dossier-scroll pr-0.5">
               {state.modifiers.map((mod) => (
@@ -240,23 +258,37 @@ export function CuentasPanel({ state }: CuentasPanelProps) {
                   className="rounded border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5"
                 >
                   <div className="flex items-center justify-between gap-2 font-bold text-[#1f2421]">
-                    <span className="truncate">{mod.label}</span>
+                    <span className="truncate">{translateModifierLabel(mod, locale)}</span>
                     <span className="font-bureau text-[10px] text-[#8f510d] tabular-nums whitespace-nowrap shrink-0">
-                      {mod.remaining_months} {mod.remaining_months === 1 ? "mes" : "meses"}
+                      {ui.cuentas.remainingMonths(mod.remaining_months)}
                     </span>
                   </div>
                   <div className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 font-bureau text-[10px] text-[#373f3a] tabular-nums">
                     {mod.monthly_billed_delta ? (
-                      <span>Fact.: {formatSignedEuros(mod.monthly_billed_delta)}/m</span>
+                      <span>
+                        {ui.cuentas.modBilledShort}:{" "}
+                        {formatSignedEuros(mod.monthly_billed_delta, locale)}
+                        {ui.cuentas.perMonthSuffix}
+                      </span>
                     ) : null}
                     {mod.monthly_expense_delta ? (
-                      <span>Gasto: {formatSignedEuros(mod.monthly_expense_delta)}/m</span>
+                      <span>
+                        {ui.cuentas.modExpenseShort}:{" "}
+                        {formatSignedEuros(mod.monthly_expense_delta, locale)}
+                        {ui.cuentas.perMonthSuffix}
+                      </span>
                     ) : null}
                     {mod.monthly_moral_delta ? (
-                      <span>Moral: {formatSignedInt(mod.monthly_moral_delta)}/m</span>
+                      <span>
+                        {ui.cuentas.modMoralShort}: {formatSignedInt(mod.monthly_moral_delta)}
+                        {ui.cuentas.perMonthSuffix}
+                      </span>
                     ) : null}
                     {mod.monthly_stress_delta ? (
-                      <span>Estrés: {formatSignedInt(mod.monthly_stress_delta)}/m</span>
+                      <span>
+                        {ui.cuentas.modStressShort}: {formatSignedInt(mod.monthly_stress_delta)}
+                        {ui.cuentas.perMonthSuffix}
+                      </span>
                     ) : null}
                   </div>
                 </li>

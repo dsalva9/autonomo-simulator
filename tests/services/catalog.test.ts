@@ -115,6 +115,14 @@ function buildPhase1Manifest(): AssetManifest {
         render_mode: "vector_hd",
         status: "ready",
       },
+      banner_familia_tension: {
+        path: "illustrations/banner_familia_tension.webp",
+        category: "illustration",
+        width: 960,
+        height: 360,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
       banner_empleados_base: {
         path: "illustrations/banner_empleados_base.webp",
         category: "illustration",
@@ -123,8 +131,24 @@ function buildPhase1Manifest(): AssetManifest {
         render_mode: "vector_hd",
         status: "ready",
       },
+      banner_empleados_tension: {
+        path: "illustrations/banner_empleados_tension.webp",
+        category: "illustration",
+        width: 960,
+        height: 360,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
       banner_gestor_base: {
         path: "illustrations/banner_gestor_base.webp",
+        category: "illustration",
+        width: 960,
+        height: 360,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
+      banner_gestor_urgencia: {
+        path: "illustrations/banner_gestor_urgencia.webp",
         category: "illustration",
         width: 960,
         height: 360,
@@ -450,7 +474,7 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
         ).asset.id,
       ).toBe("banner_hacienda_inspeccion");
 
-      // Familia, empleados, gestor
+      // Familia, empleados, gestor base vs tension/urgencia
       expect(
         resolveEventBannerAsset(
           manifest,
@@ -461,6 +485,30 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
       expect(
         resolveEventBannerAsset(
           manifest,
+          {
+            category: "familia",
+            illustration_id: null,
+            character_expression: "stressed",
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_familia_tension");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "familia",
+            illustration_id: null,
+            character_expression: null,
+            tags: ["hogar", "averia"],
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_familia_tension");
+
+      expect(
+        resolveEventBannerAsset(
+          manifest,
           { category: "empleados", illustration_id: null, character_expression: null },
           baseState,
         ).asset.id,
@@ -468,10 +516,48 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
       expect(
         resolveEventBannerAsset(
           manifest,
+          {
+            category: "empleados",
+            illustration_id: null,
+            character_expression: "stressed",
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_empleados_tension");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          { category: "empleados", illustration_id: null, character_expression: null },
+          { ...baseState, flags: { desgaste_plantilla: true } },
+        ).asset.id,
+      ).toBe("banner_empleados_tension");
+
+      expect(
+        resolveEventBannerAsset(
+          manifest,
           { category: "gestor", illustration_id: null, character_expression: null },
           baseState,
         ).asset.id,
       ).toBe("banner_gestor_base");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          { category: "gestor", illustration_id: null, character_expression: "stressed" },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_gestor_urgencia");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "gestor",
+            illustration_id: null,
+            character_expression: null,
+            tags: ["autogestion", "excel"],
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_gestor_urgencia");
     });
 
     it("falls back to resolveCategoryFallbackAsset when banner_* is absent from manifest", () => {

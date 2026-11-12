@@ -1,6 +1,6 @@
-# Manual Test Plan — Autónomo Simulator (Phase 2)
+# Manual Test Plan — Autónomo Simulator (Phase 3A & 3B)
 
-Human-readable and Playwright-automated QA scenarios validating Phase 0–2 gameplay, the 60-event / 8-character Spanish catalog, two-step cashflow & tax-adjusted liquidity (`Caja` vs `Libre`), Style A Franco-Spanish editorial comic `.webp` art & reactive `.svg` props, zero-clip mobile/desktop geometry, procedural Web Audio & *Modo ágil* preferences, offline PWA + OpenGraph metadata, IndexedDB persistence, 15 achievements, and illustrated `1080×1350` shareable certificate generation.
+Human-readable and Playwright-automated QA scenarios validating Phase 0–3B gameplay, the 200-event (`clientes: 60`, `hacienda: 38`, `familia: 40`, `empleados: 31`, `gestor: 31`) / 8-character catalog, full Spanish (`es-ES`) and English (`en`) localization (`ES | EN` switcher + `L` hotkey), two-step cashflow & tax-adjusted liquidity (`Caja` vs `Libre`), 60 Style A Franco-Spanish editorial comic `.webp` & reactive `.svg` assets, zero-clip mobile/desktop geometry, procedural Web Audio & *Modo ágil* preferences, offline PWA + OpenGraph + portable `itch.io` bundle (`pnpm build:itch`), IndexedDB persistence, 15 achievements, and illustrated `1080×1350` shareable certificate generation.
 
 ---
 
@@ -10,7 +10,8 @@ Both targets below are **mandatory** Playwright verification gates for every use
 
 | Mandatory Target | Stage | Command | URL |
 |---|---|---|---|
-| **Local Preview (`dist/`)** | Pre-commit / pre-push | `pnpm build && pnpm test:e2e` | `http://localhost:4173` |
+| **Local Preview (`dist/`)** | Pre-commit / pre-push & CI (`.github/workflows/verify.yml`) | `pnpm build && pnpm test:e2e` | `http://localhost:4173` |
+| **Portable `itch.io` Zip** | Pre-release / CI artifact | `pnpm build:itch` | `release/autonomo-simulator-web.zip` |
 | **Live Production (Vercel)** | Post-push / post-deploy | `pnpm test:e2e:prod` | `https://autonomo-simulator.vercel.app/` |
 
 > **Custom Preview URL Override**: To verify a Vercel preview URL before merging, set `PLAYWRIGHT_BASE_URL` (PowerShell: `$env:PLAYWRIGHT_BASE_URL="https://<preview-url>"; pnpm test:e2e:prod` · macOS/Linux: `PLAYWRIGHT_BASE_URL=https://<preview-url> pnpm test:e2e:prod`).
@@ -113,21 +114,21 @@ Both targets below are **mandatory** Playwright verification gates for every use
 ## 3. Phase 1 Art, Polaroids, Achievements & Endings Scenarios (`tests/ui/phase1.spec.ts`)
 
 ### QA-08: Style A `.webp` Reactive Desk States & `.svg` Desk Props
-- **Preconditions**: Active runs exercising calm desk (`FASE1-BANNER-1`), dating/family (`FASE1-ALEX-3`), and high-stress escalation (`FASE1-BURNOUT-1601`).
+- **Preconditions**: Active runs exercising calm desk (`FASE1-BANNER-1`), dating/family (`FASE3-ALEX-15`), and high-stress escalation (`FASE3-BURNOUT-8928`).
 - **Steps**:
   1. Start `FASE1-BANNER-1` and inspect `[data-testid="scene-bg"]` and `[data-testid="scene-prop-facturas"]`.
-  2. In `FASE1-ALEX-3`, advance to Month 2 (`familia_cita_con_alex`), select `apostar_por_citas_con_alex`, and inspect `[data-testid="scene-prop-familia"]`.
-  3. In `FASE1-BURNOUT-1601`, escalate stress past `50` (verify `[data-testid="scene-prop-cafe"]`) and past `75` (verify `[data-testid="scene-bg"]` switches `data-asset-id` to `bg_despacho_burnout`).
+  2. In `FASE3-ALEX-15`, advance to Month 2 (`familia_cita_con_alex`), select `apostar_por_citas_con_alex`, and inspect `[data-testid="scene-prop-familia"]`.
+  3. In `FASE3-BURNOUT-8928`, escalate stress past `50` (verify `[data-testid="scene-prop-cafe"]`) and past `75` (verify `[data-testid="scene-bg"]` switches `data-asset-id` to `bg_despacho_burnout`).
 - **Expected Result**:
   - Desk `.webp` backgrounds decode at `1280 × 720` and `.svg` props decode at `256 × 256` with HTTP `200` and zero broken images.
 
 ---
 
 ### QA-09: Modular `8:3` Category Banners vs `16:9` Bespoke Milestone Panels
-- **Preconditions**: Seed `FASE1-BANNER-1` (standard event) and `FASE1-BURNOUT-1601` at Month 4 (`hacienda_carta_certificada`).
+- **Preconditions**: Seed `FASE1-BANNER-1` (standard event) and `FASE3-BURNOUT-8928` at Month 4 (`hacienda_carta_certificada`), alongside the 60-asset catalog (including `banner_familia_tension`, `banner_empleados_tension`, `banner_gestor_urgencia`, `illus_hito_criatura_casa`, `illus_hito_mudanza_oficina`, `illus_hito_conflicto_laboral`).
 - **Steps**:
   1. On `FASE1-BANNER-1` Month 1 (`gestor_oferta_servicios`), inspect `[data-testid="event-banner-art"]`.
-  2. On `FASE1-BURNOUT-1601` Month 4 (`hacienda_carta_certificada`), inspect `[data-testid="event-banner-art"]`.
+  2. On `FASE3-BURNOUT-8928` Month 4 (`hacienda_carta_certificada`), inspect `[data-testid="event-banner-art"]`.
 - **Expected Result**:
   - Standard events render modular `8:3` banner (`data-banner-kind="banner"`, `960 × 360` `.webp`).
   - Milestone events with `illustration_id` render bespoke `16:9` comic scene (`data-banner-kind="milestone"`, `960 × 540` `.webp`).
@@ -151,7 +152,7 @@ Both targets below are **mandatory** Playwright verification gates for every use
 - **Preconditions**: Fresh `TitleScreen` with OS `prefers-reduced-motion: no-preference`.
 - **Steps**:
   1. Click **Logros (0/15)** (`[data-testid="title-tab-achievements"]`) and inspect `[data-testid="achievements-list"]`.
-  2. Click `[data-testid="toggle-reduced-motion"]` (`Reducido: SÍ`), then start a run with an NPC card (`FASE1-ALEX-3`).
+  2. Click `[data-testid="toggle-reduced-motion"]` (`Reducido: SÍ`), then start a run with an NPC card (`FASE3-ALEX-15`).
   3. Inspect `getComputedStyle(polaroid).transform` on `[data-testid="event-character-polaroid"]`.
 - **Expected Result**:
   - `achievements-list` preserves all 9 original Phase 1 achievement IDs within the expanded 15-achievement catalog.
@@ -160,9 +161,9 @@ Both targets below are **mandatory** Playwright verification gates for every use
 ---
 
 ### QA-12: Deterministic Burnout Game Over, Bespoke `16:9` Ending Comic Panel & Achievement Sync
-- **Preconditions**: Seed `FASE1-BURNOUT-1601` played through Month 6 (`defeat_burnout_stress`).
+- **Preconditions**: Seed `FASE3-BURNOUT-8928` played through Month 8 (`defeat_burnout_stress`).
 - **Steps**:
-  1. Complete the high-stress escalation path through Month 6 (`priorizar_cartera_clientes` → `firmar_acta_en_conformidad` → `campana_caza_clientes_verano`) and settle Month 6 Trimestre (`[data-testid="trimestre-pay-btn"]`).
+  1. Complete the high-stress escalation path (`quedarse_adelantando_entregas` → `entrega_express_contado` → `coger_los_billetes_en_la_terraza` → Month 3 `trimestre-defer-btn` → Month 4 `presentar_escrito_casero` → Month 5 `ejecutar_expediente_legal_impecable` → Month 6 `exigir_factura_legal` + `trimestre-pay-btn` → Month 7 `cobrar_prototipo_cerrado` → Month 8 `exportar_csv_y_rehacer_a_mano`).
   2. Inspect `[data-testid="end-run-illustration"]`, `[data-testid="end-run-quote"]`, fiscal breakdown cards, and `[data-testid="share-canvas"]`.
   3. Click `[data-testid="end-return-title-btn"]` and open **Logros**.
 - **Expected Result**:
@@ -183,9 +184,9 @@ Both targets below are **mandatory** Playwright verification gates for every use
 ## 4. Phase 2 Cashflow Timing, Tidy Geometry, PWA & Share Card Scenarios (`tests/ui/phase2.spec.ts`)
 
 ### QA-14: Two-Step Cashflow Timing & Tax-Adjusted Liquidity (`Caja` vs `Libre`)
-- **Preconditions**: Fresh seeded run (`FASE2-CASH-3`) with `fastPacing` disabled (`Normal`).
+- **Preconditions**: Fresh seeded run (`FASE3-CASH-93`) with `fastPacing` disabled (`Normal`).
 - **Steps**:
-  1. Start `FASE2-CASH-3` (`initial_indicators.money = 2.600 €` + Month 1 net recurring `+616 €`) and inspect `[data-testid="indicator-money"]`, `[data-testid="indicator-net-cash"]`, and `[data-testid="ledger-net-after-tax"]` in `CuentasPanel`.
+  1. Start `FASE3-CASH-93` (`initial_indicators.money = 2.600 €` + Month 1 net recurring `+616 €`) and inspect `[data-testid="indicator-money"]`, `[data-testid="indicator-net-cash"]`, and `[data-testid="ledger-net-after-tax"]` in `CuentasPanel`.
   2. Select cash-reducing choice `escapada_desconexion_total` (`-90 €`) on Month 1 and inspect HUD **before** clicking **Continuar**.
   3. Click `[data-testid="outcome-continue-btn"]` and inspect HUD transition to Month 2.
   4. Select cash-increasing choice `exigir_factura_legal` (`+1.400 €`) on Month 2 and inspect HUD **before** clicking **Continuar**, then acknowledge.
@@ -223,7 +224,7 @@ Both targets below are **mandatory** Playwright verification gates for every use
 ---
 
 ### QA-17: Fast Pacing (*Modo ágil*) & Procedural Web Audio Mute Toggles
-- **Preconditions**: Active run (`FASE2-CASH-3`) at Month 1 on `GameScreen`.
+- **Preconditions**: Active run (`FASE3-CASH-93`) at Month 1 on `GameScreen`.
 - **Steps**:
   1. Click `[data-testid="toggle-sfx-btn"]` twice, checking `aria-pressed` and `localStorage["autonomo:sfx_muted"]`.
   2. Click `[data-testid="toggle-fast-pacing-btn"]` (`aria-pressed="true"`), then click non-terminal Month 1 choice `quedarse_adelantando_entregas`.
@@ -258,7 +259,7 @@ Both targets below are **mandatory** Playwright verification gates for every use
 Fast, deterministic UX checks executed on every major change so obvious usability regressions (yo-yo scrolling, below-the-fold buttons, toast/header click occlusion, stranded scroll state, or silent text clipping) are caught immediately without playing a 120-month run.
 
 ### QA-20: Zero Desktop Yo-Yo Scroll — Event Banner, Body, All Choices & Outcome Fit 100% Above the Fold (`1366×768` & `1440×900`)
-- **Preconditions**: Desktop Chromium resized to both `1366 × 768` (laptop) and `1440 × 900` (desktop), seeded run `FASE1-BURNOUT-1601`.
+- **Preconditions**: Desktop Chromium resized to both `1366 × 768` (laptop) and `1440 × 900` (desktop), seeded run `FASE3-BURNOUT-8928`.
 - **Steps**:
   1. Play Months 1 through 3, settle Trimestre (`trimestre-defer-btn`), and reach Month 4 (`hacienda_carta_certificada` featuring a `16:9` milestone comic banner + NPC Inspector Polaroid + 3 choices).
   2. On every active event card and every post-choice `outcome-panel`, measure `window.scrollY`, `document.documentElement.scrollHeight`, `window.innerHeight`, and the live viewport bounding boxes of `event-title`, `event-body`, every `choice-btn-*`, `outcome-panel`, `outcome-result-text`, and `outcome-continue-btn` **without** calling `scrollIntoViewIfNeeded()`.
@@ -326,3 +327,16 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
   2. Verify `victory-continue-btn` and `victory-retire-btn` fit 100% inside `[0, 768]`, verify `victory-continue-btn` is auto-focused, press `Tab` 4 times to assert focus remains trapped inside `victory-modal`, press `ArrowDown` to focus `victory-retire-btn`, and press `Enter` to retire.
 - **Expected Result**:
   - `VictoryModal` traps keyboard focus cleanly, supports `ArrowDown` / `ArrowUp` and `1` / `2` shortcuts, and retires to `EndRunScreen` displaying `[data-testid="end-run-victory-badges"]`.
+
+---
+
+### QA-26: Full English (`en`) Localization, `ES <-> EN` Toggle + `L` Hotkey, Reload Persistence, Modifier Translation & Zero-Scroll UX (`1366×768` & `360×780`)
+- **Preconditions**: Executed in both `desktop-chromium` (`1366 × 768`) and `mobile-chromium` (`360 × 780`), using deterministic seed `FASE3-EN-LOCALE-5`.
+- **Steps**:
+  1. On `TitleScreen`, verify default `<html lang="es">`, click `[data-testid="locale-toggle-btn"]` (`ES | EN`), verify `<html lang="en">` and English CTAs/tabs (`Register as Self-Employed`, `Hall of the Fallen (0)`, `Achievements (0/15)`), and toggle `EN -> ES -> EN` using the `L` hotkey.
+  2. Start `FASE3-EN-LOCALE-5` and verify English HUD (`Year 1 · Month 1`, comma-formatted `3,216 €` and `Net: 2,596 €`), toggle `EN -> ES -> EN` via `L` and `locale-toggle-btn` on `IndicatorBar`, and verify English event copy (`clientes_encargo_urgente`) + translated NPC Polaroid (`Borja "Mr. Exposure"`).
+  3. On `1366×768` desktop, verify `window.scrollY === 0`, `scrollHeight <= innerHeight + 2`, all narrative/choice/outcome controls fit 100% inside `[headerBottom, 768]` without `scrollIntoViewIfNeeded()`, hit targets are unoccluded (`document.elementFromPoint`), narrative/choice text has zero silent truncation, and English side panels (`Account Ledger`, `Support Network`, `Dossier Logbook`) are visible. On `360×780` mobile, verify `scrollWidth <= 360`, unoccluded `Office sections` bottom tabs (`Desk`, `Ledger`, `Network`, `Logbook`), bottom-nav clearance, and automatic `scrollY === 0` reset on turn transitions.
+  4. Select `entrega_express_contado`, verify English `outcome-panel` + `Continue`, advance to `Year 1 · Month 2`, reload the browser (`page.reload()`), verify `<html lang="en">` + `Continue run` (`Year 1 · Month 2`) persist in IndexedDB, and resume.
+  5. Advance through Month 2 (`parar_a_tomar_cafe_y_comer_juntos`) and Month 3 (`clientes_averia_equipo_trabajo` → `renting_equipo_sustitucion`), settle the English `QuarterlyTaxModal` (`FORM 303 / 130`), and inspect `[data-testid="panel-cuentas"]`.
+- **Expected Result**:
+  - `ES | EN` switching works instantaneously via both `[data-testid="locale-toggle-btn"]` and `L`, persists across reloads, maintains 100% single-screen `1366×768` zero-scroll & `360×780` zero-clip ergonomics, and renders active temporal modifiers in idiomatic English (`Work equipment lease`, never raw Spanish `Renting equipo de trabajo`).

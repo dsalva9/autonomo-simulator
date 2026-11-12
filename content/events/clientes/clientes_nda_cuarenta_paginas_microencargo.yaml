@@ -1,0 +1,51 @@
+schema_version: 1
+id: clientes_nda_cuarenta_paginas_microencargo
+category: clientes
+title: Confidencialidad nuclear para un presupuesto de bolsillo
+body: Antes de contarte siquiera de qué trata el encargo, Borja exige firmar un acuerdo de confidencialidad de cuarenta páginas traducido del inglés con penalizaciones de cincuenta mil euros.
+tags:
+  - nda
+  - contratos
+  - humo
+character_id: cliente_regateador
+character_expression: neutral
+requirements:
+  min_month: 1
+weight: 10
+cooldown_months: 9
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: enviar_tu_propio_acuerdo_razonable
+    label: Sustituirlo por tu cláusula estándar de confidencialidad de una hoja
+    result_text: Acepta tu modelo sensato, desvela un proyecto normalísimo de tienda de barrio y cierras un encargo limpio sin hipotecar tu casa.
+    effects:
+      billed_income: 650
+      stress: 10
+      moral: 2
+      reputation: 1
+  - id: firmar_sin_leer_por_curiosidad
+    label: Firmar el mamotreto tal cual a ver qué joya esconde
+    outcomes:
+      - id: encargo_normalito_pagado
+        weight: 55
+        result_text: Tanto misterio era para renovar un catálogo corriente, pero al menos paga sin dar demasiada guerra.
+        effects:
+          billed_income: 600
+          stress: 14
+          moral: -2
+      - id: presupuesto_ridiculo_y_susto
+        weight: 45
+        result_text: Su presupuesto total eran ciento cincuenta euros y ahora encima te amenaza con cláusulas penales si comentas la anécdota.
+        effects:
+          stress: 10
+          moral: -6
+          reputation: -4
+  - id: rechazar_firmar_penalizaciones_absurdas
+    label: Negarte a firmar multas millonarias sin conocer el presupuesto
+    result_text: Ahorras una tarde entera de jerga jurídica desproporcionada.
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 2
+      reputation: -4

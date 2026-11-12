@@ -1,0 +1,42 @@
+schema_version: 1
+id: familia_visita_sorpresa_tuppers
+category: familia
+title: "Timbrazo a media mañana y seis táperes de lentejas"
+body: "Suena el telefonillo a las once de un martes sin previo aviso: son tus padres de paso por el barrio con bolsas de compra, croquetas caseras y ganas de pasar revista al estado de tu nevera y tus ojeras."
+tags:
+  - padres
+  - familia
+  - comida_casera
+  - teletrabajo
+requirements:
+  min_month: 2
+weight: 11
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: parar_a_tomar_cafe_y_comer_juntos
+    label: "Aparcar el teclado dos horas, poner café y comer juntos sin prisas"
+    result_text: "Pierdes media mañana productiva, pero tienes el congelador lleno para dos semanas y el corazón bastante más templado."
+    effects:
+      cash_delta: 65
+      stress: -8
+      moral: 7
+      personal_life: 9
+  - id: recibirles_con_auricular_puesto
+    label: "Agradecer los táperes en la puerta porque entras en reunión ya"
+    result_text: "Salvas tu agenda intacta y te quedas las lentejas, aunque el suspiro materno en el rellano resuena hasta el jueves."
+    effects:
+      cash_delta: 50
+      billed_income: 290
+      stress: 4
+      moral: -3
+      personal_life: -5
+  - id: invitarles_tu_al_menu_del_dia
+    label: "Bajar con ellos al bar de abajo e invitar tú al menú del día (48 €)"
+    result_text: "Les hace una ilusión tremenda ver que invitas sin temblar y regresas al escritorio por la tarde con una sonrisa."
+    effects:
+      cash_delta: -48
+      stress: -7
+      moral: 8
+      personal_life: 10

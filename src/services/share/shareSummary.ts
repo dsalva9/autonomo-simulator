@@ -1,0 +1,18 @@
+export {
+  CANONICAL_GAME_URL,
+  ENDING_METADATA,
+  VICTORY_BADGE_LABELS,
+  buildShareText,
+  canvasToPngBlob,
+  copyShareText,
+  createShareSummaryFromState,
+  downloadShareCardPng,
+  loadAndRenderShareCard,
+  preloadShareIllustration,
+  renderShareCardToCanvas,
+  resolveShareUrl,
+  shareRunResult,
+  type EndRunShareSummary,
+  type EndingMetadata,
+  type RenderShareCardOptions,
+} from "./shareResult.ts";

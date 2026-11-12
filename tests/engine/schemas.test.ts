@@ -513,8 +513,8 @@ describe("Zod contracts, JSON schema emission & semantic validators", () => {
       expect(catCapRes.errors.some((e) => e.includes("exceeds 'character' cap"))).toBe(true);
       rmSync(join(dir, "assets", "characters", "char_pesado.webp"));
 
-      // Total assets/ payload cap violation (> 2.2 MB across individually compliant <= 145 KB backgrounds)
-      for (let i = 1; i <= 16; i += 1) {
+      // Total assets/ payload cap violation (> 3.50 MB across individually compliant <= 145 KB backgrounds)
+      for (let i = 1; i <= 26; i += 1) {
         const id = `bg_lote_${i}`;
         const rel = `backgrounds/${id}.webp`;
         manifest.assets[id] = {
@@ -531,7 +531,9 @@ describe("Zod contracts, JSON schema emission & semantic validators", () => {
       const totalCapRes = validateAssets(dir);
       expect(totalCapRes.ok).toBe(false);
       expect(
-        totalCapRes.errors.some((e) => e.includes("Total assets/ payload") && e.includes("2.2 MB")),
+        totalCapRes.errors.some(
+          (e) => e.includes("Total assets/ payload") && e.includes("3.50 MB"),
+        ),
       ).toBe(true);
     } finally {
       rmSync(dir, { recursive: true, force: true });

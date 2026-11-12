@@ -1,0 +1,59 @@
+schema_version: 1
+id: gestor_reajuste_tramos_cotizacion
+category: gestor
+title: "Regularización de tramos por rendimientos netos reales"
+body: "Llega la ventana para calibrar tu tramo de cotización frente a tus rendimientos netos de autónomo veterano. Toca decidir si cuadrar al milímetro, mejorar tu base de protección o apurar al mínimo provisional."
+tags:
+  - gestoria
+  - cotizacion
+  - veterania
+  - largo_plazo
+requirements:
+  min_month: 72
+weight: 12
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: calibrar_tramo_exacto_con_estudio
+    label: "Calcular tu rendimiento neto exacto y clavar el tramo oficial (220 €)"
+    requirements:
+      stats:
+        money:
+          min: 400
+    result_text: "Evitas liquidaciones sorpresa el año que viene y navegas los próximos meses con tus cuotas perfectamente previstas."
+    effects:
+      deductible_expense: 220
+      stress: -6
+      moral: 5
+      fiscal_risk: -8
+      add_modifier:
+        id: mod_tramo_reta_calibrado
+        label: "Tramo de cotización calibrado"
+        remaining_months: 5
+        monthly_stress_delta: -2
+  - id: ampliar_base_proteccion_veterana
+    label: "Subir voluntariamente un escalón para blindar bajas y retiro (310 €)"
+    requirements:
+      stats:
+        money:
+          min: 850
+    result_text: "Asumes algo más de cuota mensual deducible, pero ganas una tranquilidad enorme pensando en bajas médicas y jubilación futura."
+    effects:
+      deductible_expense: 310
+      stress: -5
+      moral: 7
+      personal_life: 4
+      add_modifier:
+        id: mod_cobertura_social_veterana
+        label: "Cobertura profesional reforzada"
+        remaining_months: 5
+        monthly_expense_delta: 50
+        monthly_moral_delta: 2
+  - id: apurar_tramo_minimo_provisional
+    label: "Dejar la base mínima provisional y ya regularizarán más adelante"
+    result_text: "Conservas toda tu liquidez intacta este trimestre, sabiendo que el cruce definitivo acabará llamando a tu puerta bancaria."
+    effects:
+      stress: 5
+      moral: -2
+      fiscal_risk: 8

@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_propuesta_remota_berlin
+category: clientes
+title: Cliente remoto en Berlín y el alta en el ROI
+body: Una empresa tecnológica alemana descubre tu trabajo y quiere contratarte una primera fase bien pagada en inglés. Para facturarles sin IVA intracomunitario necesitas tener al día el registro europeo VIES.
+tags:
+  - internacional
+  - europa
+  - vies
+  - cadena_berlin
+requirements:
+  min_month: 6
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: tramitar_alta_europea_y_firmar
+    label: Tramitar el alta intracomunitaria y lanzarse en inglés
+    result_text: Sobrevives al papeleo censal y a dos videollamadas puntuales al minuto. Pagan el día acordado sin regatear ni media coma.
+    effects:
+      billed_income: 1325
+      stress: 14
+      moral: 3
+      reputation: 2
+      schedule_events:
+        - event_id: clientes_auditoria_alcance_berlin
+          delay_months: 2
+  - id: delegar_revision_fiscal_y_traduccion
+    label: Pagar apoyo de traducción y gestoría para blindar el contrato
+    result_text: Inviertes en presentar un contrato bilingüe y fiscalmente impoluto. Los alemanes quedan impresionados por tu rigor.
+    effects:
+      billed_income: 1450
+      deductible_expense: 210
+      stress: 11
+      moral: 3
+      reputation: 3
+      fiscal_risk: -3
+      schedule_events:
+        - event_id: clientes_auditoria_alcance_berlin
+          delay_months: 2
+  - id: quedarse_en_mercado_nacional
+    label: "Declinar educadamente: bastante tienes con el BOE en castellano"
+    result_text: Agradeces el interés sin complicarte con modelos intracomunitarios ni reuniones en otro idioma.
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 3
+      reputation: -4

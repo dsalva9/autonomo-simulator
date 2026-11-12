@@ -152,7 +152,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     page,
   }) => {
     await page.goto("./");
-    await page.getByTestId("seed-input").fill("FASE2-CASH-3");
+    await page.getByTestId("seed-input").fill("FASE3-CASH-93");
     await page.getByTestId("start-run-btn").click();
 
     await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -190,7 +190,9 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     // Step 1 (Negative Cash Effect, -90 €): click choice on Month 1 and verify immediate Month 1 preview
     const negChoice = page.locator('[data-choice-id="escapada_desconexion_total"]');
     await expect(negChoice).toBeEnabled();
-    await negChoice.scrollIntoViewIfNeeded();
+    if (viewport && viewport.width < 1024) {
+      await negChoice.scrollIntoViewIfNeeded();
+    }
     await negChoice.click();
 
     await expect(page.getByTestId("outcome-panel")).toBeVisible();
@@ -215,7 +217,9 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     // Step 2 (Positive Cash Effect, +1.400 €): verify positive green delta stays on Month 2 until acknowledged
     const posChoice = page.locator('[data-choice-id="exigir_factura_legal"]');
     await expect(posChoice).toBeEnabled();
-    await posChoice.scrollIntoViewIfNeeded();
+    if (viewport && viewport.width < 1024) {
+      await posChoice.scrollIntoViewIfNeeded();
+    }
     await posChoice.click();
 
     await expect(page.getByTestId("outcome-panel")).toBeVisible();
@@ -542,7 +546,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     }
 
     // 3. Start run and verify HUD Audio Mute (toggle-sfx-btn) & Fast Pacing (toggle-fast-pacing-btn)
-    await page.getByTestId("seed-input").fill("FASE2-CASH-3");
+    await page.getByTestId("seed-input").fill("FASE3-CASH-93");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -565,9 +569,12 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(fastPacingBtn).toHaveAttribute("aria-pressed", "true");
 
     // With Modo ágil active, clicking a non-terminal choice advances directly to Month 2 without stopping at outcome-panel
+    const viewport = page.viewportSize();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
     const month1Choice = page.locator('[data-choice-id="quedarse_adelantando_entregas"]');
-    await month1Choice.scrollIntoViewIfNeeded();
+    if (viewport && viewport.width < 1024) {
+      await month1Choice.scrollIntoViewIfNeeded();
+    }
     await month1Choice.click();
 
     await expect(page.getByTestId("outcome-panel")).toHaveCount(0);

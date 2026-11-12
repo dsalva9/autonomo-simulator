@@ -1,0 +1,55 @@
+schema_version: 1
+id: familia_urgencia_veterinaria_nocturna
+category: familia
+title: "Urgencia veterinaria a las once y media de la noche"
+body: "Tu fiel compañero peludo de despacho decide tragarse medio calcetín justo cuando cerrabas el ordenador un miércoles de noche. La clínica de guardia 24 horas te recibe con radiografía urgente y tarifa nocturna sin anestesia."
+tags:
+  - mascota
+  - urgencias
+  - gastos_imprevistos
+  - hogar
+requirements:
+  min_month: 5
+weight: 10
+cooldown_months: 15
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: pagar_pruebas_y_observacion
+    label: "Pagar radiografía, tratamiento completo y quedarte a su lado (370 €)"
+    result_text: "El sablazo nocturno escuece de lo lindo, pero vuelves a casa de madrugada con el bicho sano, coleando y fuera de peligro."
+    effects:
+      cash_delta: -370
+      stress: -6
+      moral: 9
+      personal_life: 10
+  - id: consulta_basica_y_vigilar_en_vela
+    label: "Cubrir la pauta básica en clínica y pasar tú la noche vigilando (160 €)"
+    outcomes:
+      - id: susto_superado_en_casa
+        weight: 70
+        result_text: "Pasas la noche en el sofá contando respiraciones, pero al amanecer pide desayuno como si nada hubiera pasado."
+        effects:
+          cash_delta: -160
+          stress: 4
+          moral: 5
+          personal_life: 5
+      - id: segunda_visita_por_la_manana
+        weight: 30
+        result_text: "A las ocho toca volver corriendo a la clínica, perder toda la mañana de trabajo y abonar el resto de pruebas."
+        effects:
+          cash_delta: -310
+          stress: 10
+          moral: -2
+          personal_life: 2
+          reputation: -2
+  - id: empalmar_consulta_y_entregas
+    label: "Pagar la urgencia y empalmar sin dormir para no retrasar al cliente"
+    result_text: "El peludo duerme plácidamente con collar isabelino junto a tus pies mientras tú facturas con cuatro cafés en vena."
+    effects:
+      cash_delta: -340
+      billed_income: 560
+      stress: 11
+      moral: 2
+      personal_life: -2
+      reputation: 2

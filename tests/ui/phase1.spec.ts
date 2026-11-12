@@ -252,7 +252,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     await expect(page.locator('[data-reduced-motion="true"]')).toBeAttached();
 
     // 3. Start run and verify .polaroid-card transform is flattened
-    await page.getByTestId("seed-input").fill("FASE1-ALEX-3");
+    await page.getByTestId("seed-input").fill("FASE3-ALEX-15");
     await page.getByTestId("start-run-btn").click();
 
     const polaroid = page.getByTestId("event-character-polaroid");
@@ -282,13 +282,13 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
       testInfo.project.name === "mobile-chromium" ? "mobile-390x844" : "desktop-1440x900";
 
     await page.goto("./");
-    await page.getByTestId("seed-input").fill("FASE1-BURNOUT-1601");
+    await page.getByTestId("seed-input").fill("FASE3-BURNOUT-8928");
     await page.getByTestId("start-run-btn").click();
 
     // Month 1..3 escalation
-    await selectChoiceAndAcknowledge(page, "aceptar_sobre_en_b");
-    await selectChoiceAndAcknowledge(page, "tragar_para_no_discutir");
-    await selectChoiceAndAcknowledge(page, "aplicar_tarifa_emergencia_nocturna");
+    await selectChoiceAndAcknowledge(page, "quedarse_adelantando_entregas");
+    await selectChoiceAndAcknowledge(page, "entrega_express_contado");
+    await selectChoiceAndAcknowledge(page, "coger_los_billetes_en_la_terraza");
 
     // Month 3 Trimestre deferral -> Stress reaches 63
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
@@ -314,7 +314,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     await assertPolaroidDoesNotOverlapChoices(page);
     await selectChoiceAndAcknowledge(page, "presentar_escrito_casero");
 
-    // Month 4 card 2: stress >= 75 switches desk background to bg_despacho_burnout
+    // Month 5: stress >= 75 switches desk background to bg_despacho_burnout
     await expect(page.getByTestId("scene-bg")).toHaveAttribute(
       "data-asset-id",
       "bg_despacho_burnout",
@@ -322,14 +322,15 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     const burnoutBgDims = await waitForImageDimensions(page.getByTestId("scene-bg"));
     expect(burnoutBgDims).toEqual({ naturalWidth: 1280, naturalHeight: 720 });
 
-    await selectChoiceAndAcknowledge(page, "parche_taller_barrio");
+    await selectChoiceAndAcknowledge(page, "ejecutar_expediente_legal_impecable");
 
-    // Month 5..6: stress reaches 100 -> burnout defeat at Month 6 Trimestre -> EndRunScreen
-    await selectChoiceAndAcknowledge(page, "priorizar_cartera_clientes");
-    await selectChoiceAndAcknowledge(page, "firmar_acta_en_conformidad");
-    await selectChoiceAndAcknowledge(page, "campana_caza_clientes_verano");
+    // Month 6..8: settle Month 6 Trimestre (primer_trimestre), then escalate stress to 100 -> EndRunScreen
+    await selectChoiceAndAcknowledge(page, "exigir_factura_legal");
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-pay-btn").click();
+
+    await selectChoiceAndAcknowledge(page, "cobrar_prototipo_cerrado");
+    await selectChoiceAndAcknowledge(page, "exportar_csv_y_rehacer_a_mano");
 
     await expect(page.getByTestId("end-run-screen")).toBeVisible();
     const endIllus = page.getByTestId("end-run-illustration");

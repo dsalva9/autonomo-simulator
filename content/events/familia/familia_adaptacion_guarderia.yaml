@@ -1,0 +1,61 @@
+schema_version: 1
+id: familia_adaptacion_guarderia
+category: familia
+title: "Periodo de adaptación y el primer virus escolar"
+body: "La escuela infantil estrena su famoso horario progresivo: cuarenta y cinco minutos el lunes, hora y media el martes y mocos radiactivos el jueves. Justo cuando abrías el ordenador, te llaman porque la criatura tiene décimas."
+tags:
+  - hijos
+  - guarderia
+  - conciliacion
+  - salud
+character_id: pareja_alex
+character_expression: stressed
+requirements:
+  family_statuses:
+    - dating
+    - cohabiting
+  required_flags:
+    - criatura_en_casa
+weight: 0
+cooldown_months: 12
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: contratar_canguro_apoyo
+    label: "Pagar refuerzo de canguro por horas para salvar las entregas (290 €)"
+    result_text: "El bolsillo nota el golpe, pero logras cerrar la semana sin cancelar reuniones ni contestar correos en la sala de espera del pediatra."
+    effects:
+      cash_delta: -290
+      billed_income: 380
+      stress: -5
+      moral: 5
+      personal_life: 7
+  - id: turnarse_con_alex_en_casa
+    label: "Repartir mañanas y noches con Álex a base de café cargado"
+    outcomes:
+      - id: relevo_sincronizado
+        weight: 60
+        result_text: "Os pasáis el termómetro y el ratón como velocistas olímpicos. Salváis la semana agotados, pero unidos."
+        effects:
+          cash_delta: -60
+          stress: 7
+          moral: 4
+          personal_life: 4
+      - id: contagio_general_en_casa
+        weight: 40
+        result_text: "El virus escolar no hace prisioneros y caéis los dos con fiebre el viernes. Toca pedir prórrogas con voz cavernosa."
+        effects:
+          cash_delta: -95
+          stress: 12
+          moral: -5
+          personal_life: -4
+          reputation: -3
+  - id: cancelar_semana_y_cuidar
+    label: "Pausar encargos menores, apagar alertas y quedarte cuidando en casa"
+    result_text: "Pierdes facturación inmediata entre cuentos y jarabes, pero la criatura remonta rápido y evitas convertir el salón en un hospital de campaña."
+    effects:
+      cash_delta: -80
+      stress: -8
+      moral: 7
+      personal_life: 11
+      reputation: -2

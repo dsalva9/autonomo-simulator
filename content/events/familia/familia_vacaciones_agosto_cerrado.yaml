@@ -1,0 +1,50 @@
+schema_version: 1
+id: familia_vacaciones_agosto_cerrado
+category: familia
+title: "Agosto en España y el cartel de «cerrado por descanso»"
+body: "Media clientela ha puesto ya la respuesta automática hasta septiembre y Álex te enseña una reserva frente al mar a precio razonable. Es tu oportunidad anual de descansar diez días seguidos sin fingir que sigues operativo."
+tags:
+  - pareja
+  - verano
+  - vacaciones
+  - descanso
+character_id: pareja_alex
+character_expression: pleased
+requirements:
+  min_month: 11
+  family_statuses:
+    - dating
+    - cohabiting
+weight: 11
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: diez_dias_de_playa_sin_portatil
+    label: "Reservar, activar respuesta automática y pisar arena diez días (460 €)"
+    result_text: "Los tres primeros días miras el móvil por inercia; al quinto descubres que nadie ha muerto y vuelves con las pilas llenas."
+    effects:
+      cash_delta: -460
+      stress: -16
+      moral: 12
+      personal_life: 16
+      clear_flags:
+        - crisis_pareja_latente
+  - id: escapada_corta_de_cinco_dias
+    label: "Pactar cinco días de costa y aprovechar la quincena tranquila (240 €)"
+    result_text: "Combinas chiringuito moderado con media quincena sin llamadas que te cunde el doble para adelantar trabajo limpio."
+    effects:
+      cash_delta: -240
+      billed_income: 420
+      stress: -8
+      moral: 7
+      personal_life: 9
+  - id: quedarse_de_guardia_en_agosto
+    label: "Decir que no puedes cerrar en agosto por si entra algún marrón urgente"
+    result_text: "Cazas dos encargos huérfanos con el asfalto derritiéndose fuera, mientras Álex hace la maleta con media sonrisa triste."
+    effects:
+      billed_income: 740
+      stress: 8
+      moral: -6
+      personal_life: -11
+      reputation: 2

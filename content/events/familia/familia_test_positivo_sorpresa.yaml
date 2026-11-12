@@ -1,0 +1,66 @@
+schema_version: 1
+id: familia_test_positivo_sorpresa
+category: familia
+title: "Dos rayitas en el baño y calculadora en mano"
+body: "Álex sale del baño sosteniendo la prueba con una sonrisa nerviosa mientras tú calculas pañales, cuna y guardería mentalmente. Ampliar la tribu suma gastos fijos (+280 €/mes), aunque promete poner vuestras prioridades patas arriba."
+tags:
+  - hijos
+  - crianza
+  - convivencia
+  - hito_familiar
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: illus_hito_criatura_casa
+requirements:
+  min_month: 14
+  family_statuses:
+    - cohabiting
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: bajar_marcha_primeros_meses
+    label: "Celebrarlo, frenar encargos unos meses y vivir la crianza (+280 €/mes)"
+    result_text: "Cambias reuniones eternas por ecografías, cunas y madrugadas de biberón. Facturas menos durante una temporada, pero la casa rebosa vida."
+    effects:
+      add_child: 1
+      cash_delta: -550
+      moral: 15
+      stress: 5
+      personal_life: 18
+      set_flags:
+        - criatura_en_casa
+      add_modifier:
+        id: mod_permiso_bebe_casa
+        label: "Crianza intensiva en casa"
+        remaining_months: 4
+        monthly_billed_delta: -300
+        monthly_moral_delta: 3
+        monthly_stress_delta: 1
+      schedule_events:
+        - event_id: familia_adaptacion_guarderia
+          delay_months: 3
+  - id: organizar_turnos_y_abuelos
+    label: "Dar el paso organizando turnos milimétricos para sostener ingresos"
+    result_text: "Montáis un cuadrante digno de torre de control aéreo. Las facturas salen a tiempo entre siesta y pañal, aunque bostezas hasta en las llamadas."
+    effects:
+      add_child: 1
+      billed_income: 520
+      cash_delta: -680
+      moral: 11
+      stress: 12
+      personal_life: 11
+      set_flags:
+        - criatura_en_casa
+      schedule_events:
+        - event_id: familia_adaptacion_guarderia
+          delay_months: 3
+  - id: pedir_un_ano_de_margen
+    label: "Frenar el susto: resulta ser falsa alarma y decidís esperar un poco"
+    result_text: "La segunda prueba sale negativa y soltáis medio suspiro de alivio y medio de pena. Acordáis blindar antes el colchón financiero."
+    effects:
+      cash_delta: -35
+      moral: -2
+      stress: -4
+      personal_life: -2

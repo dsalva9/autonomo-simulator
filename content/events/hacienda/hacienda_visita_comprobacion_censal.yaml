@@ -1,0 +1,61 @@
+schema_version: 1
+id: hacienda_visita_comprobacion_censal
+category: hacienda
+title: "Timbre a las diez: visita de comprobación censal"
+body: "Suena el telefonillo un martes a media mañana y no es mensajería: un agente tributario con carpeta oficial viene a verificar sobre el terreno que los medios y metros afectos a tu actividad existen de verdad."
+tags:
+  - censo
+  - inspeccion
+  - visita
+character_id: hacienda_inspector_gomez
+character_expression: angry
+requirements:
+  min_month: 8
+  stats:
+    fiscal_risk:
+      min: 45
+weight: 24
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: mostrar_puesto_trabajo_y_equipos
+    label: "Invitarle a pasar y enseñar tu mesa, tus equipos y el libro registro"
+    outcomes:
+      - id: diligencia_censal_conforme
+        weight: 50
+        result_text: "Tus herramientas de trabajo coinciden con el censo declarado; levanta diligencia favorable y te deja temblando pero indemne."
+        effects:
+          deductible_expense: 90
+          stress: 10
+          moral: 5
+          fiscal_risk: -22
+      - id: recorte_metros_y_sancion
+        weight: 50
+        result_text: "Un tendedero portátil junto al router arruina tu exclusividad espacial: recortan superficie afecta y te giran sanción."
+        effects:
+          cash_delta: -680
+          stress: 15
+          moral: -7
+          fiscal_risk: -20
+  - id: atender_con_gestor_al_altavoz
+    label: "Poner a tu gestoría en manos libres antes de firmar ni media línea"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu asesor guía cada respuesta por teléfono, acota el alcance de la diligencia y cierra el susto con un ajuste moderado."
+    effects:
+      deductible_expense: 190
+      cash_delta: -210
+      stress: 6
+      moral: 2
+      fiscal_risk: -25
+  - id: aceptar_rectificacion_censal_rapida
+    label: "Asumir rectificación censal inmediata para abreviar la visita (460 €)"
+    result_text: "Firmas la regularización en diez minutos para verle salir por el rellano cuanto antes, jurando bajar el perfil fiscal."
+    effects:
+      cash_delta: -460
+      stress: 8
+      moral: -5
+      fiscal_risk: -24

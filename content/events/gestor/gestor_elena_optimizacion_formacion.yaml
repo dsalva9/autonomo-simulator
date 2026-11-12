@@ -1,0 +1,54 @@
+schema_version: 1
+id: gestor_elena_optimizacion_formacion
+category: gestor
+title: "Elena detecta deducciones por formación e innovación"
+body: "Revisando tus licencias y cursos técnicos, Elena Montes identifica una vía limpia para bonificar gastos de capacitación y prototipado. Además, certificar ese expediente refuerza tu solvencia ante grandes cuentas."
+tags:
+  - gestoria
+  - elena
+  - formacion
+  - optimizacion_fiscal
+character_id: gestor_premium_elena
+character_expression: pleased
+requirements:
+  min_month: 5
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 9
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: ejecutar_memoria_tecnica_completa
+    label: "Aprobar la memoria técnica y ampliar formación certificada (320 €)"
+    requirements:
+      stats:
+        money:
+          min: 500
+    result_text: "Amortizas impuestos con respaldo documental blindado y mejoras tu tarifa media gracias a las nuevas acreditaciones técnicas."
+    effects:
+      deductible_expense: 320
+      stress: -5
+      moral: 5
+      reputation: 5
+      fiscal_risk: -8
+      add_modifier:
+        id: mod_acreditacion_tecnica_elena
+        label: "Acreditación técnica deducible"
+        remaining_months: 4
+        monthly_billed_delta: 165
+  - id: aplicar_solo_recibos_ya_pagados
+    label: "Aplicar solo las facturas ya emitidas sin desembolsar nada extra"
+    result_text: "Elena reclasifica tus cursos del semestre con pulcritud y te deja el próximo trimestre más ligero sin tocar tu liquidez actual."
+    effects:
+      stress: -4
+      moral: 3
+      fiscal_risk: -6
+  - id: intentar_meter_escapada_como_congreso
+    label: "Pedirle que cuele también un hotel de puente como congreso"
+    result_text: "Elena te envía una captura del reglamento subrayada en rojo, rechaza el hotel y anota una advertencia en tu ficha interna."
+    effects:
+      cash_delta: 180
+      stress: 4
+      moral: -3
+      fiscal_risk: 13

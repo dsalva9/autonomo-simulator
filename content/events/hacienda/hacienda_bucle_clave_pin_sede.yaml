@@ -1,0 +1,45 @@
+schema_version: 1
+id: hacienda_bucle_clave_pin_sede
+category: hacienda
+title: "Pesadilla digital: Autofirma, Java y el bucle de Cl@ve PIN"
+body: "Intentas descargar un simple justificante censal y entras en la cuarta dimensión administrativa: el SMS llega caducado, Autofirma exige permisos fantasma y la Sede Electrónica te devuelve a la casilla uno."
+tags:
+  - sede_electronica
+  - clave_pin
+  - burocracia
+character_id: null
+requirements:
+  min_month: 2
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: pelear_con_tres_navegadores
+    label: "Borrar caché, probar tres navegadores y jurar en arameo dos horas"
+    result_text: "En el quinto intento desde una ventana de incógnito se obra el milagro y descargas el PDF con un tic en el párpado."
+    effects:
+      stress: 7
+      moral: -3
+      personal_life: -3
+      fiscal_risk: -2
+  - id: madrugar_por_cita_presencial
+    label: "Refrescar cita previa a las ocho en punto e ir a una oficina comarcal"
+    result_text: "Gastas media mañana y dos billetes de transporte, pero un funcionario amable te imprime el papel en dos minutos."
+    effects:
+      cash_delta: -55
+      stress: 4
+      moral: 1
+      fiscal_risk: -4
+  - id: comprar_lector_dnie_profesional
+    label: "Comprar un lector de DNI electrónico y dejar copia cifrada lista (75 €)"
+    requirements:
+      stats:
+        money:
+          min: 100
+    result_text: "Pequeña inversión bendita: conectas el lector por USB y entras a cualquier trámite público a la primera."
+    effects:
+      deductible_expense: 75
+      stress: -4
+      moral: 5
+      fiscal_risk: -5

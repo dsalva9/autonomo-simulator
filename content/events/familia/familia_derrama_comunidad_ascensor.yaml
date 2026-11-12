@@ -1,0 +1,59 @@
+schema_version: 1
+id: familia_derrama_comunidad_ascensor
+category: familia
+title: "Junta extraordinaria, derrama y obras a las ocho"
+body: "Tras años en el edificio estalla la tormenta vecinal perfecta: fachada y ascensor piden reforma urgente con martillos neumáticos bajo tu ventana desde las ocho en punto y recargo extraordinario de vivienda."
+tags:
+  - vivienda
+  - comunidad
+  - ruido
+  - gastos_imprevistos
+requirements:
+  min_month: 48
+weight: 11
+cooldown_months: 15
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: pagar_cuota_y_huir_a_biblioteca
+    label: "Asumir el recargo y refugiarte por las mañanas fuera de casa (340 €)"
+    result_text: "Escapas del taladro con auriculares y café fuera. La cuenta baja un escalón, pero conservas el tímpano y los clientes."
+    effects:
+      cash_delta: -340
+      billed_income: 420
+      stress: -4
+      moral: 3
+      personal_life: 4
+  - id: bajar_a_pelear_presupuestos_junta
+    label: "Bajar a la junta con una hoja de cálculo y auditar tres presupuestos"
+    outcomes:
+      - id: ahorro_vecinal_aplaudido
+        weight: 60
+        result_text: "Cazas partidas infladas en cinco minutos y reduces el golpe a la mitad; el peligro ahora es que quieran hacerte presidente."
+        effects:
+          cash_delta: -180
+          stress: 4
+          moral: 8
+          personal_life: 5
+      - id: tres_horas_de_gritos_en_portal
+        weight: 40
+        result_text: "Acabas debatiendo el color del felpudo hasta medianoche y sales con la misma cuota y dolor de cabeza."
+        effects:
+          cash_delta: -340
+          stress: 10
+          moral: -4
+          personal_life: -4
+  - id: trabajar_con_tapones_en_casa
+    label: "Pagar a plazos y aguantar el estruendo en casa con tapones de obra"
+    result_text: "Cada videollamada parece retransmitida desde una cantera, pero evitas soltar el dinero de golpe este mes."
+    effects:
+      cash_delta: -110
+      stress: 9
+      moral: -3
+      personal_life: -5
+      add_modifier:
+        id: mod_obras_edificio_ruido
+        label: "Obras y derrama en el bloque"
+        remaining_months: 3
+        monthly_expense_delta: 90
+        monthly_stress_delta: 2

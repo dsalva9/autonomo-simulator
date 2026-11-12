@@ -1,0 +1,51 @@
+schema_version: 1
+id: hacienda_recargo_cinco_por_ciento
+category: hacienda
+title: "Recibo devuelto por catorce euros y recargo del 5 %"
+body: "Un cargo de luz entró cinco minutos antes que el impuesto domiciliado, dejó tu cuenta catorce euros corta y devolvió el recibo. Pagas tres días después y el sistema estrena contigo el recargo creciente."
+tags:
+  - recargo
+  - domiciliacion
+  - tesoreria
+character_id: null
+requirements:
+  min_month: 5
+weight: 10
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: liquidar_recargo_reducido_ya
+    label: "Abonar el recargo reducido al instante y activar alertas en el banco"
+    result_text: "Sueltas el pellizco por el despiste bancario y configuras un aviso de saldo mínimo para no repetir la broma."
+    effects:
+      cash_delta: -145
+      stress: 5
+      moral: -2
+      fiscal_risk: -5
+  - id: pedir_miniaplazamiento_automatico
+    label: "Fraccionar el pico en tres plazos automáticos para no vaciar caja hoy"
+    result_text: "Sales del paso soltando calderilla hoy y repartes el resto en tres mensualidades diminutas con intereses."
+    effects:
+      cash_delta: -40
+      add_modifier:
+        id: mod_mini_aplazamiento_aeat
+        label: "Miniaplazamiento con intereses"
+        remaining_months: 3
+        monthly_expense_delta: 45
+        monthly_stress_delta: 1
+      stress: 3
+      fiscal_risk: -2
+  - id: generar_nrc_urgente_con_gestor
+    label: "Pedir a tu gestoría emitir código NRC urgente y pelear la comisión"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu gestor cierra el pago telemático en diez minutos y encima logra que el banco te devuelva su comisión."
+    effects:
+      deductible_expense: 60
+      cash_delta: -75
+      stress: 1
+      moral: 2
+      fiscal_risk: -6

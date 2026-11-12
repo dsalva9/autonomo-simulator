@@ -1,0 +1,59 @@
+schema_version: 1
+id: empleados_convenio_becario_universidad
+category: empleados
+title: "Convenio de prácticas formativas"
+body: "Un centro formativo local te propone acoger durante un trimestre a alguien en prácticas curriculares. Bien enfocado aporta aire fresco al despacho, pero tutorizar de verdad exige tiempo y no confundir aprendizaje con mano de obra barata."
+tags:
+  - practicas
+  - formacion
+  - talento
+  - etica
+requirements:
+  min_month: 8
+  has_employee: false
+weight: 8
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: acoger_con_bolsa_y_tutoria
+    label: "Firmar convenio con bolsa de ayuda digna (450 €) y horas de tutoría"
+    result_text: "Organizas tareas formativas reales y revisas cada avance con calma. Pierdes un rato cada mañana explicando procesos, pero el despacho gana orden y frescura."
+    effects:
+      deductible_expense: 450
+      moral: 5
+      stress: 2
+      reputation: 3
+      schedule_events:
+        - event_id: empleados_evaluacion_fin_practicas
+          delay_months: 3
+          probability: 1
+  - id: exprimir_practicas_en_entregas
+    label: "Aceptar el convenio para sacarte de encima encargos urgentes"
+    outcomes:
+      - id: saca_trabajo_con_quejas
+        weight: 55
+        result_text: "Adelantas facturación a base de encargarle tareas repetitivas sin apenas guía. El centro aprueba el acta por los pelos con una nota fría del tutor."
+        effects:
+          billed_income: 950
+          moral: -6
+          stress: 5
+          reputation: -4
+          schedule_events:
+            - event_id: empleados_evaluacion_fin_practicas
+              delay_months: 2
+              probability: 1
+      - id: renuncia_a_mitad_de_mes
+        weight: 45
+        result_text: "A la tercera tarde apagando fuegos sin supervisión, solicita anular el convenio. Te toca rehacer entregables a contrarreloj con mala fama en la escuela."
+        effects:
+          cash_delta: -200
+          moral: -5
+          stress: 8
+          reputation: -5
+  - id: declinar_por_falta_de_margen
+    label: "Agradecer la propuesta y declinar hasta tener tiempo para enseñar"
+    result_text: "Reconoces con honestidad que este trimestre vas con la lengua fuera para tutorizar a nadie. El coordinador agradece tu franqueza y guarda tu contacto."
+    effects:
+      moral: 2
+      stress: -2

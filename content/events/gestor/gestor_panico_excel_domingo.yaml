@@ -1,0 +1,49 @@
+schema_version: 1
+id: gestor_panico_excel_domingo
+category: gestor
+title: "Domingo a medianoche: celda #¡REF! en tu libro"
+body: "Son las 23:45 del domingo previo al cierre trimestral y tu hoja de cálculo escupe errores en cascada. Tres facturas han bailado de columna y el total de IVA a ingresar duplica tu saldo real en cuenta."
+tags:
+  - autogestion
+  - excel
+  - trimestre
+requirements:
+  min_month: 2
+  gestor_tiers:
+    - self
+weight: 13
+cooldown_months: 7
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: rehacer_formulas_de_madrugada
+    label: "Trinchar un termo de café y cuadrar línea a línea hasta el alba"
+    result_text: "Cazas un paréntesis rebelde a las tres de la mañana y salvas el trimestre sin gastar un euro, aunque mañana serás un zombi."
+    effects:
+      stress: 9
+      moral: 2
+      personal_life: -5
+      fiscal_risk: -3
+  - id: comprar_plantilla_fiscal_auditada
+    label: "Comprar una plantilla contable validada y volcar datos (85 €)"
+    requirements:
+      stats:
+        money:
+          min: 150
+    result_text: "Importas tus movimientos en media hora, detectas dos gastos olvidados y dejas el modelo cuadrado con precisión decente."
+    effects:
+      deductible_expense: 85
+      stress: -4
+      moral: 4
+      fiscal_risk: -6
+  - id: rendirse_y_llamar_a_paco
+    label: "Mandar el archivo a Paco el lunes a primera hora (60 €/mes)"
+    result_text: "Le entregas tus recibos arrugados encima de la churrería y juras no volver a programar macros fiscales de madrugada."
+    effects:
+      set_gestor:
+        tier: cheap
+        character_id: gestor_barato_paco
+      deductible_expense: 45
+      stress: -6
+      moral: 2
+      fiscal_risk: -4

@@ -1,0 +1,56 @@
+schema_version: 1
+id: clientes_archivos_perdidos_hace_dos_anos
+category: clientes
+title: «Formateamos el portátil y perdimos todo lo de hace dos años»
+body: "Un cliente del que no sabías nada desde hace veinte meses escribe angustiado: han perdido todos los archivos editables que les entregaste en su día y asumen que tú eres su copia de seguridad gratuita eterna."
+tags:
+  - archivo
+  - soporte
+  - tarifas
+character_id: cliente_regateador
+character_expression: angry
+requirements:
+  min_month: 16
+weight: 9
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: cobrar_tasa_recuperacion_y_actualizacion
+    label: Cobrar rescate de archivo histórico más puesta al día técnica
+    result_text: Desempolvas tu disco duro externo, actualizas formatos obsoletos y conviertes su descuido en una factura limpísima de media tarde.
+    effects:
+      billed_income: 650
+      stress: 3
+      moral: 6
+      reputation: 2
+  - id: enviar_copia_cortesia_y_vender_mantenimiento
+    label: Mandar el respaldo como gesto comercial proponiendo mantenimiento
+    outcomes:
+      - id: contratan_mantenimiento_agradecidos
+        weight: 60
+        result_text: "El susto les sirve de escarmiento: agradecen el salvavidas y firman tres meses de soporte preventivo contigo."
+        effects:
+          add_modifier:
+            id: mod_soporte_custodia
+            label: Mantenimiento y custodia
+            remaining_months: 3
+            monthly_billed_delta: 250
+            monthly_stress_delta: 2
+          moral: 6
+          reputation: 3
+          stress: 1
+      - id: descargan_y_ni_gracias
+        weight: 40
+        result_text: Descargan el enlace en tres minutos y solo responden con un icono de pulgar arriba.
+        effects:
+          stress: 4
+          moral: -3
+          reputation: -3
+  - id: remitir_a_politica_borrado_anual
+    label: Explicar que tras doce meses se purgan copias no contratadas
+    result_text: Cierras la consulta en dos líneas educadas sin ponerte a rebuscar entre discos antiguos gratis.
+    effects:
+      stress: -1
+      moral: 1
+      reputation: -3

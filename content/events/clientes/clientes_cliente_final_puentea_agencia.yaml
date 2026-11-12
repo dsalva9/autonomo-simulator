@@ -1,0 +1,47 @@
+schema_version: 1
+id: clientes_cliente_final_puentea_agencia
+category: clientes
+title: El cliente final descubre quién hacía el trabajo
+body: "Dos meses después te llama Marta desde la empresa final: la agencia de Borja ha hecho aguas intentando ejecutar tu propuesta sin ti. Han rescindido su contrato y quieren contratarte directamente."
+tags:
+  - cliente_directo
+  - agencia
+  - rescate
+  - cadena_puenteo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: firmar_contrato_directo_sin_peaje
+    label: Firmar directamente con la empresa cobrando tarifa íntegra
+    result_text: Sin intermediarios ni futbolines de por medio, cobras el cien por cien del presupuesto y salvas el lanzamiento con solvencia.
+    effects:
+      billed_income: 1925
+      stress: 9
+      moral: 8
+      reputation: 5
+  - id: revisar_no_competencia_con_gestor
+    label: Revisar antes con tu gestoría que no haya cláusula trampa (90 €)
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Confirmas que Borja ni siquiera redactó exclusividad válida. Entras por la puerta grande blindado legalmente y sin sobresaltos.
+    effects:
+      billed_income: 1850
+      deductible_expense: 90
+      stress: 3
+      moral: 7
+      reputation: 5
+      fiscal_risk: -2
+  - id: declinar_para_evitar_lios_cruzados
+    label: No meterte en fuegos cruzados y seguir con tu cartera actual
+    result_text: Prefieres ahorrarte llamadas airadas de Borja y disfrutas desde la barrera del espectáculo kármico.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      reputation: -4

@@ -1,0 +1,42 @@
+schema_version: 1
+id: clientes_subcontrata_cascada_impago
+category: clientes
+title: La muñeca rusa de la subcontratación
+body: "Reclamas una factura vencida y descubres que quien te encargó el trabajo con Borja era subcontrata de una agencia que a su vez trabajaba para otra consultora: alegan que «hasta que pague el de arriba no cobras»."
+tags:
+  - subcontrata
+  - impago
+  - agencia
+character_id: cliente_regateador
+character_expression: neutral
+requirements:
+  min_month: 7
+weight: 10
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: exigir_pago_a_tu_contratante_directo
+    label: "Enviar requerimiento formal: tu contrato es con ellos, no con la cima"
+    result_text: Les recuerdas por escrito que su riesgo comercial no es asunto tuyo. Refunfuñan, pero sueltan la transferencia para evitar juzgado.
+    effects:
+      billed_income: 950
+      deductible_expense: 50
+      stress: 14
+      moral: 3
+      reputation: 2
+  - id: aceptar_quita_por_cobro_hoy
+    label: Aceptar una quita del 20 % para cobrar hoy y cortar la cadena
+    result_text: Pierdes un bocado injusto de tu trabajo, pero rescatas la liquidez hoy mismo y juras no volver a ser el cuarto eslabón.
+    effects:
+      billed_income: 750
+      stress: 11
+      moral: -7
+  - id: dar_factura_por_incobrable
+    label: Asumir el quebranto hoy antes de gastar más dinero en reclamar
+    result_text: Tachas la deuda con rabia contenida, cortas toda relación con intermediarios piramidales y pasas página.
+    effects:
+      cash_delta: -90
+      stress: -1
+      moral: -5
+      reputation: -4

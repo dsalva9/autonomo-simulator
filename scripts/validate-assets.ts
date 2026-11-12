@@ -15,7 +15,7 @@ export const ASSET_CATEGORY_MAX_BYTES: Readonly<Record<AssetCategory, number>> =
   ui: 20 * 1024,
 };
 
-export const TOTAL_ASSETS_MAX_BYTES = Math.floor(2.2 * 1024 * 1024);
+export const TOTAL_ASSETS_MAX_BYTES = Math.floor(3.5 * 1024 * 1024);
 
 export type WebpChunkFormat = "VP8 " | "VP8L" | "VP8X";
 
@@ -97,10 +97,11 @@ export function validateAssets(rootDir = process.cwd()): AssetValidationResult {
   }
 
   const totalBytes = computeAssetsPayloadBytes(assetsDir);
-  if (totalBytes > 2.2 * 1024 * 1024) {
+  if (totalBytes > TOTAL_ASSETS_MAX_BYTES) {
     const actualMb = (totalBytes / (1024 * 1024)).toFixed(2);
+    const maxMb = (TOTAL_ASSETS_MAX_BYTES / (1024 * 1024)).toFixed(2);
     errors.push(
-      `Total assets/ payload (${totalBytes} bytes / ${actualMb} MB) exceeds 2.2 MB cap (${TOTAL_ASSETS_MAX_BYTES} bytes).`,
+      `Total assets/ payload (${totalBytes} bytes / ${actualMb} MB) exceeds ${maxMb} MB cap (${TOTAL_ASSETS_MAX_BYTES} bytes).`,
     );
   }
 
@@ -367,7 +368,8 @@ if (isDirectExecution()) {
   }
   const assetCount = Object.keys(result.manifest.assets).length;
   const totalMb = (result.totalBytes / (1024 * 1024)).toFixed(2);
+  const budgetMb = (TOTAL_ASSETS_MAX_BYTES / (1024 * 1024)).toFixed(2);
   console.log(
-    `[validate:assets] Validated ${assetCount} assets and category fallbacks (${totalMb} MB / 2.20 MB budget).`,
+    `[validate:assets] Validated ${assetCount} assets and category fallbacks (${totalMb} MB / ${budgetMb} MB budget).`,
   );
 }

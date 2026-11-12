@@ -1,0 +1,62 @@
+schema_version: 1
+id: gestor_elena_dilema_sociedad_limitada
+category: gestor
+title: "¿Seguir como autónomo o dar el paso a Sociedad Limitada?"
+body: "Con tu facturación consolidándose, Elena Montes pone sobre la mesa el gran dilema del gremio: estudiar una estructura mercantil para vestir mejor ante corporaciones o mantener la agilidad ligera de persona física."
+tags:
+  - gestoria
+  - elena
+  - sociedad_limitada
+  - estrategia
+character_id: gestor_premium_elena
+character_expression: neutral
+requirements:
+  min_month: 16
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: encargar_protocolo_mercantil_sl
+    label: "Encargar el proyecto mercantil y reserva de denominación (640 €)"
+    requirements:
+      stats:
+        money:
+          min: 1200
+    result_text: "Elena pone en marcha el dossier societario y prepara la cita con notaría para blindar tu operativa comercial del próximo ciclo."
+    effects:
+      deductible_expense: 640
+      stress: 2
+      moral: 5
+      reputation: 6
+      fiscal_risk: -8
+      set_flags:
+        - dossier_sl_elena
+      schedule_events:
+        - event_id: gestor_elena_escritura_notarial_sl
+          delay_months: 2
+          probability: 1
+  - id: pedir_informe_comparativo_previo
+    label: "Pagar solo el estudio fiscal comparativo antes de decidir (180 €)"
+    result_text: "Recibes una simulación honesta al céntimo con pros, contras y costes reales de registro mercantil para decidir en frío."
+    effects:
+      deductible_expense: 180
+      stress: -4
+      moral: 3
+      fiscal_risk: -5
+      schedule_events:
+        - event_id: gestor_elena_escritura_notarial_sl
+          delay_months: 2
+          probability: 0.9
+  - id: mantener_estructura_ligera_actual
+    label: "Descartar notarías por ahora y seguir ligero como persona física"
+    result_text: "Ahorras costes fijos de libros mercantiles hoy, aunque Elena deja programada una revisión de seguimiento en dos meses."
+    effects:
+      stress: -3
+      moral: 1
+      schedule_events:
+        - event_id: gestor_elena_escritura_notarial_sl
+          delay_months: 2
+          probability: 0.65

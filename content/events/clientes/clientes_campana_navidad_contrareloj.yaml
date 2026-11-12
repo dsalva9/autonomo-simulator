@@ -1,0 +1,46 @@
+schema_version: 1
+id: clientes_campana_navidad_contrareloj
+category: clientes
+title: "16 de diciembre: Borja descubre hoy que ya es Navidad"
+body: Con las luces navideñas puestas desde noviembre, Borja cae hoy en la cuenta de que necesita su campaña de fiestas para pasado mañana. Ofrece pagar recargo oficial o «arreglarnos en efectivo con aguinaldo».
+tags:
+  - navidad
+  - urgencia
+  - dinero_b
+character_id: cliente_regateador
+character_expression: angry
+requirements:
+  min_month: 11
+weight: 10
+cooldown_months: 12
+max_occurrences: 5
+exclusive_with: []
+choices:
+  - id: facturar_urgencia_navidena_legal
+    label: Salvarle la campaña con factura legal y recargo de urgencia
+    result_text: Dos días de cafeína intensa producen el milagro navideño y entra una transferencia limpia para empezar enero con colchón.
+    effects:
+      billed_income: 1025
+      stress: 10
+      moral: 3
+      personal_life: -4
+      reputation: 2
+  - id: aceptar_aguinaldo_en_sobre
+    label: Aceptar el sobre navideño sin factura y entregar en 48 horas
+    result_text: Sales con efectivo para todos los regalos y un jamón mediocre bajo el brazo, sumando papeletas para el sorteo de Hacienda.
+    effects:
+      cash_delta: 1050
+      stress: 14
+      moral: -4
+      personal_life: -4
+      fiscal_risk: 27
+      set_flags:
+        - cobro_en_b_reciente
+  - id: mandarle_villancico_y_cerrar
+    label: Desearle felices fiestas y recordarle el calendario gregoriano
+    result_text: "La Navidad cae el 25 de diciembre todos los años: no es culpa tuya que se entere el día dieciséis."
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 5
+      reputation: -3

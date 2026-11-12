@@ -1,0 +1,40 @@
+schema_version: 1
+id: familia_padres_sermon_oposiciones
+category: familia
+title: "El recorte de oposiciones junto al plato de croquetas"
+body: "Comida familiar de domingo. Antes del postre, tus padres despliegan en la mesa un recorte subrayado con plazas de administrativo municipal y la pregunta ritual: «¿Y tú cuándo te vas a buscar algo fijo de verdad?»."
+tags:
+  - padres
+  - oposiciones
+  - familia
+  - domingo
+requirements:
+  min_month: 3
+weight: 12
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: explicar_proyecto_con_paciencia
+    label: "Respirar hondo, enseñarles tus últimos logros y agradecer el cariño"
+    result_text: "Siguen sin entender qué facturas exactamente, pero se quedan más tranquilos y te llenan el bolso de fruta y táperes."
+    effects:
+      cash_delta: 40
+      stress: -4
+      moral: 6
+      personal_life: 7
+  - id: guardar_convocatoria_en_cajon
+    label: "Doblarte el recorte en el bolsillo «por si acaso» y cambiar de tema"
+    result_text: "Sales ileso de la sobremesa sin discutir, aunque el papelito te mira desde la mesilla cada vez que sube la cuota."
+    effects:
+      stress: 3
+      moral: -3
+      personal_life: 4
+  - id: defender_orgullo_autonomo_en_mesa
+    label: "Dar un discurso épico sobre ser tu propio jefe mientras friegas platos"
+    result_text: "Te quedas muy a gusto defendiendo tu independencia, aunque vuelves a casa picado y repasando facturas el domingo tarde."
+    effects:
+      billed_income: 280
+      stress: 6
+      moral: 4
+      personal_life: -5

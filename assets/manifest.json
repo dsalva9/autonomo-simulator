@@ -162,6 +162,30 @@
       "render_mode": "vector_hd",
       "status": "ready"
     },
+    "banner_familia_tension": {
+      "path": "illustrations/banner_familia_tension.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_empleados_tension": {
+      "path": "illustrations/banner_empleados_tension.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_gestor_urgencia": {
+      "path": "illustrations/banner_gestor_urgencia.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 360,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
     "illus_hito_primer_trimestre": {
       "path": "illustrations/illus_hito_primer_trimestre.webp",
       "category": "illustration",
@@ -188,6 +212,30 @@
     },
     "illus_hito_crisis_familiar": {
       "path": "illustrations/illus_hito_crisis_familiar.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_criatura_casa": {
+      "path": "illustrations/illus_hito_criatura_casa.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_mudanza_oficina": {
+      "path": "illustrations/illus_hito_mudanza_oficina.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "illus_hito_conflicto_laboral": {
+      "path": "illustrations/illus_hito_conflicto_laboral.webp",
       "category": "illustration",
       "width": 960,
       "height": 540,

@@ -1,0 +1,42 @@
+schema_version: 1
+id: familia_tarde_canas_amigos_oficina
+category: familia
+title: "Juernes de terraza con tus amigos asalariados"
+body: "Son las seis en punto de un jueves templado y tu cuadrilla ficha la salida rumbo a una terraza al sol. Tú sigues en chándal peleándote con una tabla rebelde cuando te llega su ubicación en tiempo real."
+tags:
+  - amigos
+  - ocio
+  - desconexion
+  - vida_social
+requirements:
+  min_month: 2
+weight: 12
+cooldown_months: 9
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: cerrar_todo_y_bajar_a_la_terraza
+    label: "Ponerte unos vaqueros decentes y bajar a por cañas y bravas (42 €)"
+    result_text: "Ríes hasta que te duele la tripa escuchando chismes de oficina ajena y vuelves a casa sintiéndote persona otra vez."
+    effects:
+      cash_delta: -42
+      stress: -10
+      moral: 7
+      personal_life: 11
+  - id: pasar_una_hora_a_por_un_refresco
+    label: "Bajar una horita justa a saludar y rematar luego media tarde (18 €)"
+    result_text: "Te da el aire en la cara, ves a tu gente y aún te sobra energía para dejar cerrada la entrega pendiente."
+    effects:
+      cash_delta: -18
+      billed_income: 210
+      stress: -4
+      moral: 4
+      personal_life: 5
+  - id: responder_con_sticker_triste
+    label: "Mandar foto del monitor diciendo «imposible hoy» y seguir al lío"
+    result_text: "Adelantas facturación en penumbra mientras cenas un sándwich frío frente a tres hojas de cálculo abiertas."
+    effects:
+      billed_income: 420
+      stress: 5
+      moral: -3
+      personal_life: -7

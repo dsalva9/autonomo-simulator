@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_avalancha_cierre_presupuesto_diciembre
+category: clientes
+title: "20 de diciembre: «Hay que gastar esta partida antes del 31»"
+body: "Marta llama con urgencia navideña: a su departamento le sobra presupuesto anual y si no queda facturado y entregado antes de Nochevieja se lo recortan el año que viene. Pagan bien, pero adiós fiestas."
+tags:
+  - navidad
+  - diciembre
+  - corporativo
+  - urgencia
+character_id: cliente_corporativo_marta
+character_expression: angry
+requirements:
+  min_month: 11
+weight: 11
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: maraton_entre_polvorones
+    label: Aceptar el maratón navideño y facturar todo antes de las uvas
+    result_text: Tecleas con gorro imaginario entre Nochebuena y Nochevieja, cerrando el año con un subidón de caja espectacular.
+    effects:
+      billed_income: 1675
+      stress: 13
+      moral: 2
+      personal_life: -8
+      reputation: 3
+  - id: vender_auditoria_ejecutable_en_cinco_dias
+    label: Acotar un entregable estratégico realista de cinco días hábiles
+    requirements:
+      stats:
+        reputation:
+          min: 45
+    result_text: Les das justo el documento impecable que necesitan para justificar su partida y llegas libre a las cenas festivas.
+    effects:
+      billed_income: 1125
+      stress: 5
+      moral: 7
+      personal_life: 1
+      reputation: 3
+  - id: proteger_vacaciones_navidenas
+    label: "Cerrar por fiestas: en enero tendrán presupuesto nuevo igual"
+    result_text: Brindas sin abrir el portátil ni una sola vez en todas las fiestas.
+    effects:
+      stress: -3
+      moral: 1
+      personal_life: 8
+      reputation: -3

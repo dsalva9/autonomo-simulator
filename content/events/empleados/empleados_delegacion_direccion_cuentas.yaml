@@ -1,0 +1,48 @@
+schema_version: 1
+id: empleados_delegacion_direccion_cuentas
+category: empleados
+title: "Soltar el volante en las reuniones de seguimiento"
+body: "Tras años revisando tú hasta la última coma, tu persona en plantilla ya conoce la cartera al dedillo y te propone llevar directamente la interlocución semanal con varias cuentas para que dejes de ser el cuello de botella."
+tags:
+  - plantilla
+  - delegacion
+  - veterania
+  - largo_plazo
+requirements:
+  min_month: 66
+  has_employee: true
+weight: 10
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: delegar_cuentas_con_incentivo
+    label: "Ceder la gestión directa con prima de responsabilidad (500 €)"
+    result_text: "Desaparecen seis reuniones semanales de tu calendario, entran ampliaciones de alcance mejor vendidas y por fin respiras como titular de estudio."
+    effects:
+      billed_income: 1650
+      cash_delta: -500
+      moral: 7
+      stress: -8
+      personal_life: 5
+      reputation: 4
+      clear_flags:
+        - desgaste_plantilla
+  - id: delegar_con_revision_quincenal
+    label: "Delegar el día a día manteniendo un comité interno cada dos viernes"
+    result_text: "Sueltas lastre operativo sin perder visibilidad comercial y el despacho gana agilidad sin sobresaltos."
+    effects:
+      billed_income: 950
+      moral: 4
+      stress: -5
+      personal_life: 3
+      reputation: 2
+  - id: seguir_supervisando_cada_correo
+    label: "Seguir pasando cada respuesta por tu filtro personal por si acaso"
+    result_text: "Nada sale sin tu sello, pero acabas agotado revisando borradores ajenos a última hora y frenas el techo del estudio."
+    effects:
+      moral: -4
+      stress: 7
+      personal_life: -4
+      set_flags:
+        - desgaste_plantilla

@@ -1,0 +1,43 @@
+schema_version: 1
+id: familia_sabatico_corto_salud_mental
+category: familia
+title: "Dos semanas de parada técnica tras años al pie del cañón"
+body: "Con más de media década cotizada a tus espaldas notas ese cansancio hondo que no se quita durmiendo un domingo largo. Tienes margen de agenda para regalarte quince días reales de desconexión preventiva."
+tags:
+  - salud_mental
+  - descanso
+  - veterania
+  - desconexion
+requirements:
+  min_month: 70
+weight: 12
+cooldown_months: 10
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: hacer_parada_quince_dias_reales
+    label: "Cerrar agenda dos semanas, viajar ligero y leer por placer (330 €)"
+    result_text: "Vuelves acordándote de por qué elegiste este oficio y con la cabeza despejada para aguantar otra temporada larga."
+    effects:
+      cash_delta: -330
+      stress: -17
+      moral: 12
+      personal_life: 15
+  - id: semana_tranquila_a_medio_gas
+    label: "Trabajar solo por las mañanas y dedicarte las tardes libres (90 €)"
+    result_text: "Mantienes el correo domado sin quemarte y recuperas paseos largos antes de que anochezca."
+    effects:
+      cash_delta: -90
+      billed_income: 260
+      stress: -9
+      moral: 6
+      personal_life: 8
+  - id: exprimir_inercia_y_no_parar
+    label: "Aprovechar que tienes rodaje veterano para facturar el doble"
+    result_text: "La cuenta suma un buen pellizco gracias a tus tablas, aunque el cuerpo te pide tregua en voz cada vez más alta."
+    effects:
+      billed_income: 790
+      stress: 10
+      moral: -4
+      personal_life: -8
+      reputation: 2

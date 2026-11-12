@@ -1,0 +1,55 @@
+schema_version: 1
+id: empleados_laura_auditoria_clientes_toxicos
+category: empleados
+title: "El cuaderno implacable de rentabilidad"
+body: "Laura abre su libreta de anillas con gráficos demoledores: dos clientes históricos consumen casi la mitad de las horas de soporte del estudio mientras aportan apenas migajas de facturación. Propone subirles tarifa o soltar lastre."
+tags:
+  - plantilla
+  - senior
+  - rentabilidad
+  - cartera
+character_id: empleada_senior_laura
+character_expression: neutral
+requirements:
+  min_month: 22
+  has_employee: true
+  required_flags:
+    - empleada_laura_activa
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: aplicar_subida_tarifa_selectiva
+    label: "Dejar que Laura les envíe nuevas tarifas con alcance acotado"
+    result_text: "Uno acepta la subida sin rechistar y el otro aprende de golpe a agrupar sus dudas en un solo correo semanal. Mano de santo."
+    effects:
+      billed_income: 1950
+      moral: 6
+      stress: -6
+      reputation: 4
+      clear_flags:
+        - desgaste_plantilla
+  - id: rescindir_cuentas_deficitarias
+    label: "Cerrar esas cuentas con preaviso elegante para liberar agenda"
+    result_text: "Renuncias a un pequeño ingreso inmediato, pero el estudio gana foco comercial para cerrar encargos mucho más rentables."
+    effects:
+      cash_delta: -250
+      moral: 5
+      stress: -8
+      personal_life: 4
+      add_modifier:
+        id: mod_cartera_saneada_laura
+        label: "Cartera depurada de alta rentabilidad"
+        remaining_months: 5
+        monthly_billed_delta: 360
+        monthly_stress_delta: -2
+  - id: mantenerlos_por_miedo_al_vacio
+    label: "Conservarlos igual por pánico supersticioso a perder ingresos"
+    result_text: "Entra el goteo habitual de euros, pero Laura suspira resignada cada vez que vuelven a escribir pidiendo cambios absurdos."
+    effects:
+      billed_income: 650
+      moral: -5
+      stress: 7
+      set_flags:
+        - desgaste_plantilla

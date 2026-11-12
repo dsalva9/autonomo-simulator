@@ -1,0 +1,52 @@
+schema_version: 1
+id: clientes_proyecto_fantasma_anticipo
+category: clientes
+title: Arranque entusiasta con señal del treinta por ciento
+body: Un cliente nuevo aprueba tu presupuesto en media hora, abona el anticipo inicial y pide bloquear dos semanas enteras de tu agenda. Promete enviarte el material clave «mañana a primera hora sin falta».
+tags:
+  - anticipo
+  - planificacion
+  - cadena_fantasma
+requirements:
+  min_month: 4
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: bloquear_agenda_y_arrancar
+    label: Bloquear las dos semanas, cobrar la señal y preparar la base
+    result_text: Facturas el anticipo y dejas toda la estructura lista esperando sus archivos. De momento todo huele a cliente ejemplar.
+    effects:
+      billed_income: 600
+      stress: 11
+      moral: 1
+      reputation: 2
+      schedule_events:
+        - event_id: clientes_silencio_radio_mitad_entrega
+          delay_months: 2
+  - id: incluir_clausula_caducidad_agenda
+    label: Firmar con cláusula de caducidad si no envían material a tiempo
+    requirements:
+      stats:
+        reputation:
+          min: 42
+    result_text: "Cobras la señal blindando tus fechas por escrito: si desaparecen, su turno salta al final de la cola sin penalización para ti."
+    effects:
+      billed_income: 600
+      stress: 2
+      moral: 6
+      reputation: 2
+      set_flags:
+        - clausula_pausa_firmada
+      schedule_events:
+        - event_id: clientes_silencio_radio_mitad_entrega
+          delay_months: 2
+  - id: declinar_por_agenda_saturada
+    label: Declinar el encargo para no comprometer dos semanas seguidas
+    result_text: Prefieres no hipotecar medio mes de golpe y guardas hueco para encargos ya cerrados.
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 3
+      reputation: -4

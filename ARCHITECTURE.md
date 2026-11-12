@@ -35,14 +35,17 @@ Autónomo Simulator is a **mobile-first, offline-capable, single-codebase satiri
 ```mermaid
 flowchart TB
     subgraph BuildTime["Build & Validation Pipeline (Node / Scripts)"]
-        YAML["content/**/*.yaml\n(Events, Characters, Balance)"]
-        MAN["assets/manifest.json\n(Logical IDs & Fallbacks)"]
+        YAML["content/**/*.yaml\n(200 Events, 8 Characters, Balance)"]
+        LOC["content/locales/en/*.yaml\n(English Event Copy Overlays)"]
+        MAN["assets/manifest.json\n(60 Logical IDs & Fallbacks)"]
         ZOD["src/engine/schemas/\n(Authoritative Zod Schemas)"]
         JSONS["schemas/*.schema.json\n(Emitted JSON Schemas)"]
         BUNDLE["src/generated/content-bundle.json\n(Validated Static Catalog)"]
+        LOCBUNDLE["src/content/compiled-locales.json\n(Compiled Locale Dictionary)"]
 
         ZOD -->|"pnpm schema:emit"| JSONS
-        YAML -->|"pnpm build:content"| BUNDLE
+        YAML -->|"pnpm compile:content"| BUNDLE
+        LOC -->|"pnpm validate:locales +\npnpm compile:content"| LOCBUNDLE
         MAN -->|"cross-ref check"| BUNDLE
         ZOD -->|"validate"| BUNDLE
     end
@@ -71,6 +74,9 @@ autonomo-simulator/
 ├── AGENTS.md                        # Canonical multi-agent rules, permissions, commands & DoD
 ├── ARCHITECTURE.md                  # System design, state contracts, turn pipeline & packaging
 ├── Autonomo_Simulator_PRD_v1.md     # Product Requirements Document (es-ES)
+├── .github/
+│   └── workflows/
+│       └── verify.yml               # GitHub Actions CI gate (pnpm verify + pnpm build:itch)
 ├── docs/
 │   ├── ART_DIRECTION.md             # Visual style guide, palette, specs (authored before scale art)
 │   ├── qa/                          # Structured manual test plans & live QA checklists
@@ -85,20 +91,24 @@ autonomo-simulator/
 │   ├── config/
 │   │   └── balance.yaml             # Parameterized initial stats, tax rates, caps, thresholds
 │   ├── characters/                  # Recurring NPC definitions (gestores, partners, employees)
-│   └── events/
-│       ├── clientes/
-│       ├── hacienda/
-│       ├── familia/
-│       ├── empleados/
-│       └── gestor/
+│   ├── locales/
+│   │   └── en/                      # Category-sharded English ('en') event copy overlays (*.yaml)
+│   └── events/                      # 200 Spanish ('es-ES') narrative events across 5 categories
+│       ├── clientes/                # 60 events
+│       ├── hacienda/                # 38 events
+│       ├── familia/                 # 40 events
+│       ├── empleados/               # 31 events
+│       └── gestor/                  # 31 events
 ├── assets/
-│   ├── manifest.json                # Logical asset registry (status: placeholder | ready)
+│   ├── manifest.json                # Logical asset registry (60 assets, status: placeholder | ready)
 │   ├── characters/
 │   ├── backgrounds/
 │   ├── illustrations/
 │   ├── animations/
 │   └── ui/
 ├── src/
+│   ├── content/
+│   │   └── compiled-locales.json    # Build-time compiled English ('en') event copy map
 │   ├── engine/                      # Pure TS simulation package (NO React/DOM/IO imports)
 │   │   ├── schemas/                 # Zod schemas (single source of truth)
 │   │   ├── prng.ts                  # Seeded serializable PRNG (mulberry32/sfc32)
@@ -108,17 +118,17 @@ autonomo-simulator/
 │   │   ├── effects.ts               # Declarative effect & weighted outcome applicator
 │   │   ├── turn.ts                  # Deterministic turn state machine
 │   │   └── index.ts                 # Public engine API
-│   ├── generated/                   # Build-time compiled catalog (gitignored or deterministic artifact)
+│   ├── generated/                   # Build-time compiled catalog (content-bundle.json)
 │   ├── store/
 │   │   ├── gameStore.ts             # Zustand wrapper around pure engine + autosave trigger
 │   │   └── uiStore.ts               # Ephemeral UI state (tabs, modals, drawers, motion prefs)
 │   ├── services/
 │   │   ├── storage/                 # StoragePort + IndexedDB adapter + save migrations
 │   │   ├── share/                   # Canvas PNG renderer + Web Share / Clipboard adapter
-│   │   ├── i18n/                    # Lightweight string resolver (inline es-ES + future overlay)
+│   │   ├── i18n/                    # Bilingual string & event resolver (es-ES + compiled en overlays)
 │   │   └── platform/                # Capacitor / Tauri / Web runtime capability detection
 │   ├── components/
-│   │   ├── hud/                     # 5-indicator bar, calendar badge, Números Rojos alert
+│   │   ├── hud/                     # 5-indicator bar, ES|EN toggle, calendar badge, Números Rojos alert
 │   │   ├── event/                   # Event card, choice buttons, outcome toast/panel
 │   │   ├── scene/                   # Style-agnostic office scene renderer & asset resolver
 │   │   └── modals/                  # Quarterly Trimestre, Annual Summary, Victory, Game Over
@@ -130,7 +140,9 @@ autonomo-simulator/
 │   ├── emit-schemas.ts              # Exports Zod schemas -> schemas/*.schema.json
 │   ├── validate-content.ts          # Schema + semantic graph + asset manifest validator
 │   ├── validate-assets.ts           # Verifies file existence, formats, dimensions vs manifest.json
-│   └── compile-content.ts           # Compiles validated YAML -> src/generated/content-bundle.json
+│   ├── validate-locales.ts          # Enforces 100% locale key parity & zero orphan keys vs events
+│   ├── compile-content.ts           # Compiles validated YAML -> content-bundle.json + compiled-locales.json
+│   └── package-itch.ts              # Stages portable relative-path web build -> release/autonomo-simulator-web.zip
 └── tests/
     ├── engine/                      # Unit tests for economy, taxes, insolvency, PRNG, effects
     ├── content/                     # Automated validation of real content/ YAML files
@@ -454,9 +466,10 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
    - Runs 1,000+ headless seeded games across 4 bots (`PrudentBot`, `GreedyEnBBot`, `WorkaholicBot`, `RandomBot`).
    - Asserts zero runtime exceptions, zero deadlocked turns, target survival curve bounds (neither 0% nor 95% survival on `RandomBot`), and reachability metrics across categories.
 
-### 5.5 Localization Readiness
-- YAML events store Spanish (`es-ES`) copy inline for minimal Narrative authoring friction.
-- All UI renders event copy through `resolveEventText(locale, eventId, fieldPath, fallbackText)`. In MVP (`es-ES`), it returns `fallbackText` directly; future locales (`content/locales/en/*.yaml`) overlay translations keyed by deterministic IDs (`<event_id>.title`, `<event_id>.choices.<choice_id>.label`, `<event_id>.choices.<choice_id>.outcomes.<outcome_id>.result_text`) without altering event schemas.
+### 5.5 Bilingual Localization (`es-ES` & `en`)
+- YAML events store Spanish (`es-ES`) copy inline for minimal Narrative authoring friction, while category-sharded English overlays in `content/locales/en/*.yaml` map deterministic keys (`<event_id>.title`, `<event_id>.body`, `<event_id>.choices.<choice_id>.label`, `<event_id>.choices.<choice_id>.result_text`, `<event_id>.choices.<choice_id>.outcomes.<outcome_id>.result_text`).
+- `pnpm validate:locales` enforces 100% key parity across all 200 events with zero missing or orphan keys, and `pnpm compile:content` emits `src/content/compiled-locales.json`.
+- At runtime, `resolveEventText(locale, eventId, fieldPath, fallbackText)` resolves event copy, `getUiStrings(locale)` (`src/services/i18n/uiStrings.ts`) translates all screens/HUD/modals/achievements/endings/share cards, and `translateModifierLabel(modifier, locale)` / `translateCharacterName` / `formatFlagLabel` translate every `add_modifier`, NPC nameplate, and narrative flag. Users switch instantly via `[data-testid="locale-toggle-btn"]` (`ES | EN`) or the `L` hotkey on `TitleScreen` and `IndicatorBar`, persisted to `profile.settings.locale` in IndexedDB and synced to `<html lang="es|en">`.
 
 ---
 
@@ -535,15 +548,15 @@ Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/00
 }
 ```
 
-- **Multi-Expression NPC Resolution**: Character YAMLs (`content/characters/<id>.yaml`) optionally declare `expressions: { neutral?, stressed?, angry?, pleased? }` mapping to `character` entries in `assets/manifest.json`, while events optionally set `character_expression`. UI resolves `character.expressions?.[expression] ?? character.portrait_asset_id` inside a modular CSS Polaroid frame.
-- **Binary Dimension & Budget Validation (`scripts/validate-assets.ts`)**: Accepts only `.webp` (verifying `RIFF....WEBP` magic bytes and exact `VP8 ` / `VP8L` / `VP8X` pixel `width` × `height`) and standalone `.svg` (`xmlns` + dimensions), enforcing per-category caps (`background <= 145 KB`, `illustration <= 125 KB`, `character <= 70 KB`, `ui <= 20 KB`) and a `<= 2.2 MB` total `assets/` payload ceiling.
+- **Multi-Expression NPC & Dynamic Tension Banner Resolution**: Character YAMLs (`content/characters/<id>.yaml`) declare `expressions: { neutral?, stressed?, angry?, pleased? }` mapping to `character` entries in `assets/manifest.json`, while events optionally set `character_expression` and `illustration_id` (7 bespoke `16:9` milestone panels across 8 milestone events). For non-milestone cards, `resolveEventBannerAsset` selects category tension/urgency variants (`banner_clientes_tension`, `banner_hacienda_inspeccion`, `banner_familia_tension`, `banner_empleados_tension`, `banner_gestor_urgencia`) when expressions, stress/fiscal thresholds, or crisis tags fire, falling back cleanly to `banner_<category>_base` and category SVG fallbacks.
+- **Binary Dimension & Budget Validation (`scripts/validate-assets.ts`)**: Accepts only `.webp` (verifying `RIFF....WEBP` magic bytes and exact `VP8 ` / `VP8L` / `VP8X` pixel `width` × `height`) and standalone `.svg` (`xmlns` + dimensions) across all 60 registered assets, enforcing per-category caps (`background <= 145 KB`, `illustration <= 125 KB`, `character <= 70 KB`, `ui <= 20 KB`) and a `<= 3.50 MB` total `assets/` payload ceiling.
 - `SceneRenderer` applies CSS scaling rules per asset's `render_mode` (`image-rendering: pixelated` for `"pixel_art"` sprites vs smooth high-DPI scaling for `"vector_hd"` WebP/SVG).
 - Upgrading an asset from `"placeholder"` to `"ready"` requires zero changes to `src/` or `content/`.
 
 ### 7.3 Accessibility, UX Ergonomics & Performance Budgets
 - **100% Zero-Mouse Desktop Keyboard Playability**:
-  - `TitleScreen`: `Enter` (continue active run or start new run), `C` (continue run), `N` (new run), `S` / `/` (focus seed input, `Esc` blurs), `1` / `2` and WAI-ARIA `ArrowLeft` / `ArrowRight` (`role="tablist"`) for `Salón de Caídos` & `Logros` + scrollable `role="tabpanel"` (`tabIndex={0}`), and `R` / `M` / `F` for reduced motion, office sound, and *Modo ágil*.
-  - `GameScreen` & `EventStage`: `1`–`9` direct choice hotkeys, `ArrowDown` / `ArrowUp` cycling across enabled `choice-btn-*` buttons + `Enter` / `Space` confirm, `Enter` / `Space` / `1` on `outcome-panel`, HUD hotkeys (`M` sound, `F` *Modo ágil*, `I` return to `TitleScreen` preserving autosave, `B` open `AbandonRunModal`, `Esc` dismiss `AchievementToast`), and focusable `historial-timeline` (`tabIndex={0}`) for scrolling journal entries.
+  - `TitleScreen`: `Enter` (continue active run or start new run), `C` (continue run), `N` (new run), `S` / `/` (focus seed input, `Esc` blurs), `1` / `2` and WAI-ARIA `ArrowLeft` / `ArrowRight` (`role="tablist"`) for `Salón de Caídos` & `Logros` + scrollable `role="tabpanel"` (`tabIndex={0}`), `L` (`ES | EN` language switcher), and `R` / `M` / `F` for reduced motion, office sound, and *Modo ágil*.
+  - `GameScreen` & `EventStage`: `1`–`9` direct choice hotkeys, `ArrowDown` / `ArrowUp` cycling across enabled `choice-btn-*` buttons + `Enter` / `Space` confirm, `Enter` / `Space` / `1` on `outcome-panel`, HUD hotkeys (`L` language `ES | EN`, `M` sound, `F` *Modo ágil*, `I` return to `TitleScreen` preserving autosave, `B` open `AbandonRunModal`, `Esc` dismiss `AchievementToast`), and focusable `historial-timeline` (`tabIndex={0}`) for scrolling journal entries.
   - All 4 Modals (`QuarterlyTaxModal`, `VictoryModal`, `AnnualSummaryModal`, `AbandonRunModal` via `useModalKeyboard`): automatic initial focus (`preventScroll: true`), focus restoration on close, strict `Tab` / `Shift+Tab` focus trapping inside `<dialog>`, `ArrowDown` / `ArrowUp` option cycling, `1`–`3` direct option shortcuts, and `Esc` to cancel `AbandonRunModal`.
   - `EndRunScreen`: automatic focus on `end-new-run-btn`, `ArrowLeft` / `ArrowRight` / `ArrowUp` / `ArrowDown` across all 5 actions, `N` / `Enter` (new run), `I` / `Esc` (return to `TitleScreen` & `Salón de Caídos`), `C` (copy summary), `D` (download PNG), and `S` (native share).
   - Crisp `:focus-visible` rings (with inner negative offset on flush tabs/scroll panels so `overflow-hidden` cards never clip focus halos), no hover-only disclosures, and zero scroll drift across keyboard turns.
@@ -559,14 +572,18 @@ Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/00
 ### 8.1 Verification, Live QA & Release Pipeline
 Every completed task or milestone runs a full verification + QA + delivery sequence before completion:
 
-1. **Automated Static, Unit & Build Gate (`pnpm verify`)**:
+1. **Automated Static, Unit, Build & CI Gate (`pnpm verify` + `.github/workflows/verify.yml`)**:
    - `pnpm schema:check` — Ensures `schemas/*.schema.json` matches `src/engine/schemas/`.
-   - `pnpm validate:assets` — Verifies every entry in `assets/manifest.json` exists on disk and matches declared format/dimensions.
-   - `pnpm validate:content` — Validates all YAML files against Zod + semantic graph + manifest references, and compiles `src/generated/content-bundle.json`.
+   - `pnpm validate:assets` — Verifies every entry in `assets/manifest.json` (60 assets) exists on disk, matches declared format/dimensions, and stays within the `<= 3.50 MB` payload cap.
+   - `pnpm validate:content` — Validates `balance.yaml`, 8 characters, and all 200 YAML events against Zod + semantic graph + manifest references.
+   - `pnpm validate:locales` — Verifies 100% English (`en`) translation key parity (1,676 keys across 200 events) with zero orphan keys.
+   - `pnpm compile:content` — Emits `src/generated/content-bundle.json` and `src/content/compiled-locales.json`.
    - `pnpm typecheck` — `tsc --noEmit`.
    - `pnpm lint` — `biome check .`.
-   - `pnpm test` — `vitest run` (engine unit tests + content tests + fast seeded simulation smoke suite).
+   - `pnpm test` — `vitest run` (engine, schema, service, i18n, content, itch packager, and 200-event Monte Carlo simulation suites).
    - `pnpm build` — Production Vite bundle (`dist/`) verifying zero bundling or asset-resolution errors.
+   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-26`) against `dist/`.
+   - **GitHub Actions CI (`.github/workflows/verify.yml`)**: Runs the full `pnpm verify` + `pnpm build:itch` pipeline on pushes and pull requests targeting `main` and uploads `release/autonomo-simulator-web.zip` as a workflow artifact.
 2. **Structured Manual Test Plan, Usability Audit & Playwright Execution (Local -> Live Vercel Production)**:
    - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, narrow mobile `360×780`, mobile `390×844`, compact laptop `1366×768`, and desktop `1440×900` multi-panel layout).
    - Agents **execute** automated E2E regressions (`tests/ui/phase*.spec.ts`), the dedicated **Usability & UX Audit Suite (`tests/ui/ux-usability.spec.ts`)** (verifying zero desktop yo-yo scroll without `scrollIntoViewIfNeeded()`, above-the-fold CTAs, mobile scroll-reset + bottom-nav clearance, `document.elementFromPoint` hit-target non-occlusion including live toasts, zero silent text truncation, legibility floors, and keyboard ergonomics), and interactive walkthrough scenarios via **Playwright** against the real production build—verifying DOM layout, visual screenshots, IndexedDB save/reload persistence, HTTP asset responses, and **zero** browser `console.error` / `pageerror` events.
@@ -578,6 +595,6 @@ Every completed task or milestone runs a full verification + QA + delivery seque
 
 ### 8.2 Multi-Platform Packaging Roadmap
 All platform-specific capabilities (storage persistence hints, native share, haptics, external links, window quit) sit behind `src/services/platform/PlatformPort.ts`:
-1. **Phase 1 — Web HTML5 (MVP — Live on Vercel)**: Static Vite build (`dist/`) with relative base path (`base: './'`) deployed continuously to Vercel production at `https://autonomo-simulator.vercel.app/` (verified post-deploy via `pnpm test:e2e:prod`), while keeping the identical static bundle portable to root domains, subpaths, or itch.io iframes, plus optional PWA service worker for offline caching.
+1. **Phase 1 — Web HTML5 (Live on Vercel + Portable `itch.io` Zip)**: Static Vite build (`dist/`) with relative base path (`base: './'`) deployed continuously to Vercel production at `https://autonomo-simulator.vercel.app/` (verified post-deploy via `pnpm test:e2e:prod`). `pnpm build:itch` (`scripts/package-itch.ts`) stages a clean, zero-sourcemap static bundle with relative asset paths into `release/autonomo-simulator-web.zip` (`< 10 MB`), ready for direct `itch.io` HTML5 iframe upload alongside the offline PWA service worker.
 2. **Phase 2 — Android & iOS (`Capacitor`)**: Wraps `dist/`; swaps `WebShareAdapter` for `@capacitor/share` + `@capacitor/filesystem` (for PNG card sharing), handles notch/gesture insets via CSS `env(safe-area-inset-*)`, and requests persistent storage so OS cache eviction does not wipe `IndexedDB`.
 3. **Phase 3 — Desktop Windows/macOS/Linux (`Tauri v2`)**: Wraps `dist/` in native WebView; routes save/profile files optionally to OS app-data directory via Tauri FS adapter (`StoragePort`) for Steam Cloud compatibility while keeping the entire React + Engine codebase untouched.

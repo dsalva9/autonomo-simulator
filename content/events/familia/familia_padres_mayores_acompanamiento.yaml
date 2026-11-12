@@ -1,0 +1,43 @@
+schema_version: 1
+id: familia_padres_mayores_acompanamiento
+category: familia
+title: "Mañanas de especialista y papeleo con tus padres"
+body: "El tiempo también corre fuera del estudio: tus padres encadenan citas médicas y trámites digitales imposibles para su móvil, y tu flexibilidad horaria te convierte en la persona de referencia entre semana."
+tags:
+  - padres
+  - cuidados
+  - conciliacion
+  - veterania
+requirements:
+  min_month: 58
+weight: 11
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: despejar_mananas_y_acompanarles
+    label: "Bloquear esas mañanas sin mirar el reloj y desayunar luego con ellos"
+    result_text: "Para esto querías ser dueño de tu agenda: resuelves médicos y certificados, y te llevas un abrazo que vale un imperio."
+    effects:
+      cash_delta: -55
+      stress: -7
+      moral: 11
+      personal_life: 13
+      reputation: -1
+  - id: contratar_apoyo_puntual_y_turnar
+    label: "Pagar taxis y apoyo puntual para cuadrar cuidados y entregas (170 €)"
+    result_text: "Todo queda bien atendido sin descuidar tus compromisos clave, aunque acabas el mes haciendo equilibrios."
+    effects:
+      cash_delta: -170
+      billed_income: 390
+      stress: 2
+      moral: 6
+      personal_life: 7
+  - id: resolverlo_por_telefono_corriendo
+    label: "Gestionar las citas a distancia sin mover tus reuniones de trabajo"
+    result_text: "Salvas la semana facturable íntegra, pero te queda un pellizco amargo al oírles pelearse solos con el turno médico."
+    effects:
+      billed_income: 540
+      stress: 7
+      moral: -7
+      personal_life: -8

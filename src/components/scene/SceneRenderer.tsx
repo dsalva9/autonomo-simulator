@@ -13,33 +13,39 @@ import {
   resolveDeskBackgroundAsset,
   resolveManifestAsset,
 } from "../../services/content/catalog.ts";
-import { translateCategoryLabel } from "../../services/i18n/resolveEventText.ts";
+import {
+  translateCategoryLabel,
+  translateCharacterName,
+  translateCharacterRole,
+} from "../../services/i18n/resolveEventText.ts";
+import { getUiStrings } from "../../services/i18n/uiStrings.ts";
+import { useGameStore } from "../../store/gameStore.ts";
 
 export interface SceneRendererProps {
   state: GameState;
   activeEvent: EventDef | null;
+  locale?: string;
 }
 
 function renderModeClass(mode: RenderMode): string {
   return mode === "pixel_art" ? "render-pixel-art" : "render-vector-hd";
 }
 
-function translateCharacterRoleEs(role: CharacterDef["role"]): string {
-  switch (role) {
-    case "cliente":
-      return "Cliente";
-    case "hacienda":
-      return "Agencia Tributaria";
-    case "gestor":
-      return "Gestoría";
-    case "pareja":
-      return "Vínculo personal";
-    case "empleado":
-      return "Plantilla";
+function resolveSceneCharacterRoleLabel(role: CharacterDef["role"], locale: string): string {
+  const ui = getUiStrings(locale);
+  if (role === "hacienda") {
+    return ui.scene.roleTaxAgency;
   }
+  if (role === "pareja") {
+    return ui.scene.rolePersonalBond;
+  }
+  return translateCharacterRole(role, locale);
 }
 
-export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
+export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneRendererProps) {
+  const storeLocale = useGameStore((s) => s.profile.settings.locale);
+  const locale = localeProp ?? storeLocale;
+  const ui = getUiStrings(locale);
   const { manifest, characters } = compiledCatalog;
 
   const bgAsset = resolveDeskBackgroundAsset(manifest, state);
@@ -74,19 +80,21 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
   const fallbackAsset = resolveCategoryFallbackAsset(manifest, fallbackCategory);
 
   const subjectArt = portraitAsset ?? bespokeIllustration ?? fallbackAsset;
-  const subjectLabel = character ? character.name : translateCategoryLabel(fallbackCategory);
+  const subjectLabel = character
+    ? translateCharacterName(character, locale)
+    : translateCategoryLabel(fallbackCategory, locale);
   const subjectSubLabel = character
-    ? translateCharacterRoleEs(character.role)
-    : "Expediente en mesa";
+    ? resolveSceneCharacterRoleLabel(character.role, locale)
+    : ui.scene.dossierOnDesk;
 
   const isBurnoutDesk = bgAsset?.id === "bg_despacho_burnout";
   const deskStatusLabel = isBurnoutDesk
-    ? "Al límite"
+    ? ui.scene.statusAtLimit
     : showNumerosRojos
-      ? "Descubierto"
+      ? ui.scene.statusOverdraft
       : showCafe
-        ? "Bajo presión"
-        : "Operativo";
+        ? ui.scene.statusUnderPressure
+        : ui.scene.statusOperational;
 
   const deskStatusTone =
     isBurnoutDesk || showNumerosRojos
@@ -98,7 +106,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
   return (
     <section
       data-testid="scene-renderer"
-      aria-label="Escena del despacho"
+      aria-label={ui.scene.sectionAria}
       className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
     >
       {/* Standardized Desktop Dossier Header */}
@@ -106,7 +114,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
         <div className="flex items-center gap-2 min-w-0">
           <LampDesk className="w-4 h-4 text-[#8f510d] shrink-0" aria-hidden="true" />
           <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
-            El Despacho
+            {ui.scene.heading}
           </h2>
         </div>
         <span className={`stamp-badge text-[10px] px-2 py-0.5 rounded shrink-0 ${deskStatusTone}`}>
@@ -121,7 +129,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             data-testid="scene-bg"
             data-asset-id={bgAsset.id}
             src={bgAsset.url}
-            alt="Despacho de autónomo"
+            alt={ui.scene.deskAlt}
             width={bgAsset.width}
             height={bgAsset.height}
             decoding="async"
@@ -134,7 +142,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           <img
             data-testid="scene-prop-numeros-rojos"
             src={numerosRojosAsset.url}
-            alt="Aviso bancario de números rojos"
+            alt={ui.scene.propOverdraftAlt}
             width={numerosRojosAsset.width}
             height={numerosRojosAsset.height}
             decoding="async"
@@ -147,7 +155,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           <img
             data-testid="scene-prop-facturas"
             src={facturasAsset.url}
-            alt="Facturas pendientes del trimestre"
+            alt={ui.scene.propInvoicesAlt}
             width={facturasAsset.width}
             height={facturasAsset.height}
             decoding="async"
@@ -160,7 +168,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           <img
             data-testid="scene-prop-familia"
             src={familiaAsset.url}
-            alt="Fotografía familiar sobre el escritorio"
+            alt={ui.scene.propFamilyAlt}
             width={familiaAsset.width}
             height={familiaAsset.height}
             decoding="async"
@@ -173,7 +181,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
           <img
             data-testid="scene-prop-cafe"
             src={cafeAsset.url}
-            alt="Taza de café por estrés elevado"
+            alt={ui.scene.propCoffeeAlt}
             width={cafeAsset.width}
             height={cafeAsset.height}
             decoding="async"
@@ -222,7 +230,7 @@ export function SceneRenderer({ state, activeEvent }: SceneRendererProps) {
             </span>
             {showCafe && (
               <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#8f510d]">
-                Cafeína activa
+                {ui.scene.caffeineActive}
               </span>
             )}
           </div>

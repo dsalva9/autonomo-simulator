@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_cliente_husos_horarios_eeuu
+category: clientes
+title: "Cliente en San Francisco: dólares y ojeras"
+body: Una empresa californiana aprueba tus tarifas sin regatear un céntimo y paga al contado en dólares. El único peaje es que su «primera hora de la mañana» coincide con tu cena a las diez y media de la noche.
+tags:
+  - internacional
+  - eeuu
+  - conciliacion
+  - divisas
+requirements:
+  min_month: 7
+weight: 10
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: aceptar_horario_costa_oeste
+    label: Aceptar el proyecto trasnochando y abriendo cuenta multidivisa
+    result_text: Al cambio en euros la factura es una maravilla, aunque cenas con auriculares puestos tres noches por semana.
+    effects:
+      billed_income: 1750
+      deductible_expense: 60
+      stress: 18
+      moral: 1
+      personal_life: -6
+      reputation: 3
+  - id: acordar_franja_solapada_tarde
+    label: Fijar reuniones solo a las seis de la tarde hora española
+    requirements:
+      stats:
+        reputation:
+          min: 48
+    result_text: Ellos madrugan con su café en California y tú cierras el portátil a las siete en punto con tarifas americanas en el bolsillo.
+    effects:
+      billed_income: 1600
+      deductible_expense: 60
+      stress: 4
+      moral: 8
+      personal_life: 1
+      reputation: 4
+  - id: declinar_desfase_horario
+    label: Rechazar el desfase horario y respetar tus horas de sueño
+    result_text: Dejas pasar los billetes verdes sabiendo que tu reloj biológico lleva fatal vivir en dos continentes a la vez.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 4
+      reputation: -4

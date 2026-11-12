@@ -1,0 +1,60 @@
+schema_version: 1
+id: empleados_candidatura_espontanea_dani
+category: empleados
+title: "Dani vuelve a llamar a tu puerta"
+body: "Tras curtirse unos meses con encargos sueltos, Dani te escribe con un portafolio bastante más sólido y menos miedo escénico. Pregunta si tu estudio ya tiene pulmón para sumarlo a jornada completa o si prefieres apoyo mensual."
+tags:
+  - contratacion
+  - junior
+  - crecimiento
+  - plantilla
+character_id: empleado_junior_dani
+character_expression: neutral
+requirements:
+  min_month: 14
+  has_employee: false
+weight: 8
+cooldown_months: 15
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: incorporar_dani_con_colchon
+    label: "Dar el paso y sumarlo en plantilla ahora (1.400 €/mes, ×1,35)"
+    requirements:
+      has_employee: false
+      stats:
+        money:
+          min: 1800
+    result_text: "Llega mucho más centrado que en sus inicios, ordena la cola de entregas desde el primer martes y te libera horas clave para vender mejor."
+    effects:
+      hire_employee:
+        character_id: empleado_junior_dani
+      deductible_expense: 180
+      moral: 6
+      stress: -6
+      reputation: 4
+      set_flags:
+        - empleado_dani_activo
+      clear_flags:
+        - empleada_laura_activa
+        - desgaste_plantilla
+  - id: pactar_bolsa_horas_mensual
+    label: "Acordar una bolsa externa de horas durante cuatro meses (520 €)"
+    result_text: "Descargas tareas mecánicas sin asumir cotizaciones fijas indefinidas y ambos ganáis aire para medir qué tal encajáis en el día a día."
+    effects:
+      billed_income: 1250
+      deductible_expense: 520
+      moral: 3
+      stress: -3
+      add_modifier:
+        id: mod_bolsa_externa_dani
+        label: "Bolsa mensual de apoyo externo"
+        remaining_months: 4
+        monthly_billed_delta: 260
+        monthly_expense_delta: 140
+  - id: posponer_fichaje_otro_trimestre
+    label: "Agradecerle el aviso y seguir solo hasta consolidar tesorería"
+    result_text: "Dani lo entiende perfectamente y promete volver a escribirte más adelante. Cierras el correo con la tranquilidad de no estirar los pies más que la manta."
+    effects:
+      moral: 1
+      stress: 1

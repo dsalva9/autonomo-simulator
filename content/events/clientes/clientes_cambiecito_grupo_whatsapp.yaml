@@ -1,0 +1,54 @@
+schema_version: 1
+id: clientes_cambiecito_grupo_whatsapp
+category: clientes
+title: Te han añadido al grupo «Proyecto Ilusión 🚀»
+body: Sin avisar, Borja mete tu móvil personal en un grupo con su cuñado, dos socios y el comercial. Cada diez minutos alguien pide «un cambiecito de nada» contradictorio con el mensaje anterior.
+tags:
+  - alcance
+  - whatsapp
+  - limites
+character_id: cliente_regateador
+character_expression: pleased
+requirements:
+  min_month: 2
+weight: 12
+cooldown_months: 8
+max_occurrences: 5
+exclusive_with: []
+choices:
+  - id: salir_del_grupo_y_exigir_interlocutor_unico
+    label: Salir del grupo y exigir un único interlocutor por correo
+    result_text: "Impones orden quirúrgico: un solo portavoz y cambios agrupados por escrito. El ruido baja un ochenta por ciento y cobras limpio."
+    effects:
+      billed_income: 750
+      stress: 10
+      moral: 4
+      reputation: 1
+  - id: tarificar_cada_ronda_extra
+    label: Quedarte pero responder a cada ocurrencia con su suplemento en euros
+    outcomes:
+      - id: pagan_la_fiesta_de_cambios
+        weight: 55
+        result_text: Sus contradicciones internas acaban engordando tu factura final en tres anexos deliciosos.
+        effects:
+          billed_income: 1175
+          stress: 17
+          moral: 1
+          personal_life: -4
+          reputation: 2
+      - id: silencio_instantaneo_del_cunado
+        weight: 45
+        result_text: En cuanto pones precio al tercer antojo del cuñado, Borja silencia a todo el grupo y aprueba tu primera versión.
+        effects:
+          billed_income: 675
+          stress: 11
+          moral: 3
+          reputation: 2
+  - id: archivar_chat_y_cerrar_fase_minima
+    label: Silenciar el grupo un año y limitarte al alcance mínimo firmado
+    result_text: Ignoras ciento cuarenta audios nocturnos, entregas lo contratado al milímetro y proteges tu cordura.
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 3
+      reputation: -4

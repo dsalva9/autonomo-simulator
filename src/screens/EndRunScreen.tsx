@@ -1,11 +1,20 @@
 import { Award, Copy, Download, Home, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GameState } from "../engine/index.ts";
+import { playUiSound } from "../services/audio/soundEffects.ts";
 import { compiledCatalog, resolveEndingIllustrationAsset } from "../services/content/catalog.ts";
-import { formatDurationMonthsEs, formatEuros } from "../services/i18n/resolveEventText.ts";
 import {
-  ENDING_METADATA,
-  VICTORY_BADGE_LABELS,
+  getEndingMetadata,
+  getVictoryBadgeLabel,
+  resolveLocalizedEndingQuote,
+} from "../services/endings/endingMetadata.ts";
+import {
+  formatDurationMonthsEs,
+  formatEuros,
+  normalizeLocale,
+} from "../services/i18n/resolveEventText.ts";
+import { getUiStrings } from "../services/i18n/uiStrings.ts";
+import {
   copyShareText,
   createShareSummaryFromState,
   downloadShareCardPng,
@@ -13,6 +22,7 @@ import {
   shareRunResult,
 } from "../services/share/shareResult.ts";
 import { useGameStore } from "../store/gameStore.ts";
+import { useUIStore } from "../store/uiStore.ts";
 
 export interface EndRunScreenProps {
   state: GameState;
@@ -21,13 +31,25 @@ export interface EndRunScreenProps {
 export function EndRunScreen({ state }: EndRunScreenProps) {
   const startRun = useGameStore((s) => s.startRun);
   const returnToTitle = useGameStore((s) => s.returnToTitle);
+  const rawLocale = useGameStore((s) => s.profile.settings.locale);
+  const toggleLocalePreference = useGameStore((s) => s.toggleLocalePreference);
+  const sfxMuted = useUIStore((s) => s.sfxMuted);
+
+  const locale = normalizeLocale(rawLocale);
+  const isEn = locale === "en";
+  const ui = getUiStrings(locale);
 
   const screenRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const shareSummary = useMemo(() => createShareSummaryFromState(state), [state]);
-  const endingMeta = ENDING_METADATA[shareSummary.endingId];
+  const endingMeta = getEndingMetadata(shareSummary.endingId, locale);
+  const localizedQuote = resolveLocalizedEndingQuote(
+    shareSummary.endingId,
+    shareSummary.summaryQuote,
+    locale,
+  );
   const endingIllustration = useMemo(
     () => resolveEndingIllustrationAsset(compiledCatalog.manifest, shareSummary.endingId),
     [shareSummary.endingId],
@@ -35,35 +57,33 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
 
   useEffect(() => {
     if (canvasRef.current) {
-      void loadAndRenderShareCard(canvasRef.current, shareSummary, endingIllustration?.url);
+      void loadAndRenderShareCard(canvasRef.current, shareSummary, endingIllustration?.url, locale);
     }
-  }, [shareSummary, endingIllustration?.url]);
+  }, [shareSummary, endingIllustration?.url, locale]);
+
+  const handleToggleLocale = () => {
+    playUiSound("paper_choice", { muted: sfxMuted });
+    setFeedback(null);
+    void toggleLocalePreference();
+  };
 
   const handleCopyText = async () => {
-    const ok = await copyShareText(shareSummary);
-    setFeedback(
-      ok
-        ? "¡Resumen copiado al portapapeles! Listo para pegar en WhatsApp o Telegram."
-        : "No se pudo acceder al portapapeles en este navegador.",
-    );
+    const ok = await copyShareText(shareSummary, locale);
+    setFeedback(ok ? ui.endRun.feedbackCopied : ui.endRun.feedbackCopyFailed);
   };
 
   const handleDownloadPng = async () => {
     if (!canvasRef.current) return;
     const filename = `certificado-autonomo-${shareSummary.monthsSurvived}m.png`;
     const ok = await downloadShareCardPng(canvasRef.current, filename);
-    setFeedback(
-      ok ? `Certificado PNG descargado (${filename}).` : "No se pudo generar la descarga PNG.",
-    );
+    setFeedback(ok ? ui.endRun.feedbackDownloaded(filename) : ui.endRun.feedbackDownloadFailed);
   };
 
   const handleNativeShare = async () => {
-    const res = await shareRunResult(shareSummary, canvasRef.current);
+    const res = await shareRunResult(shareSummary, canvasRef.current, locale);
     if (res.ok) {
       setFeedback(
-        res.method === "clipboard"
-          ? "¡Resumen copiado al portapapeles! (Compartir nativo no disponible en este dispositivo)."
-          : "¡Certificado compartido con éxito!",
+        res.method === "clipboard" ? ui.endRun.feedbackClipboardFallback : ui.endRun.feedbackShared,
       );
     }
   };
@@ -74,6 +94,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
     copyText: () => void handleCopyText(),
     downloadPng: () => void handleDownloadPng(),
     nativeShare: () => void handleNativeShare(),
+    toggleLocale: handleToggleLocale,
   });
   actionsRef.current = {
     startNewRun: () => void startRun(),
@@ -81,6 +102,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
     copyText: () => void handleCopyText(),
     downloadPng: () => void handleDownloadPng(),
     nativeShare: () => void handleNativeShare(),
+    toggleLocale: handleToggleLocale,
   };
 
   useEffect(() => {
@@ -165,6 +187,9 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
       } else if (key === "s") {
         event.preventDefault();
         actionsRef.current.nativeShare();
+      } else if (key === "l") {
+        event.preventDefault();
+        actionsRef.current.toggleLocale();
       }
     };
 
@@ -192,9 +217,29 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
           <span className="stamp-badge text-[11px] sm:text-xs text-[#fce592]">
             {endingMeta.code}
           </span>
-          <span className="stamp-badge text-[11px] sm:text-xs px-2.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8]">
-            {endingMeta.stampText}
-          </span>
+          <div className="flex items-center gap-2 ml-auto">
+            <span className="stamp-badge text-[11px] sm:text-xs px-2.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8]">
+              {endingMeta.stampText}
+            </span>
+            <button
+              type="button"
+              data-testid="locale-toggle-btn"
+              aria-label={ui.localeToggle.ariaLabel}
+              title={ui.localeToggle.title}
+              onClick={handleToggleLocale}
+              className="h-7 px-2 rounded-md border border-[#fce592]/65 bg-[#1f2421] hover:bg-[#2d3430] text-[#fffdf8] font-bureau text-[11px] font-bold inline-flex items-center justify-center shrink-0 cursor-pointer transition-colors"
+            >
+              <span className={isEn ? "opacity-60" : "text-[#fce592] underline underline-offset-2"}>
+                ES
+              </span>
+              <span className="opacity-45 mx-1" aria-hidden="true">
+                |
+              </span>
+              <span className={isEn ? "text-[#fce592] underline underline-offset-2" : "opacity-60"}>
+                EN
+              </span>
+            </button>
+          </div>
         </div>
 
         <div className="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
@@ -233,25 +278,25 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
               data-testid="end-run-quote"
               className="rounded-xl border border-[#1f2421]/35 bg-[#f6efe0] px-3.5 py-2.5 font-editorial italic text-sm sm:text-base text-[#1f2421] leading-snug"
             >
-              «{shareSummary.summaryQuote}»
+              {isEn ? `"${localizedQuote}"` : `«${localizedQuote}»`}
             </blockquote>
 
             {/* Aligned Responsive Tabular Stats Grid (2x2 on mobile, 4-col strip on sm+) */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
               <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
-                  Tiempo sobrevivido
+                  {ui.endRun.timeSurvivedLabel}
                 </span>
                 <strong
                   data-testid="end-run-duration"
                   className="font-bureau text-xs sm:text-sm text-[#1f2421] tabular-nums block truncate"
                 >
-                  {formatDurationMonthsEs(shareSummary.monthsSurvived)}
+                  {formatDurationMonthsEs(shareSummary.monthsSurvived, locale)}
                 </strong>
               </div>
               <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
-                  Liquidez final
+                  {ui.endRun.finalCashLabel}
                 </span>
                 <strong
                   data-testid="end-run-money"
@@ -259,23 +304,23 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                     shareSummary.finalMoney < 0 ? "text-[#b42b24]" : "text-[#1f5c53]"
                   }`}
                 >
-                  {formatEuros(shareSummary.finalMoney)}
+                  {formatEuros(shareSummary.finalMoney, locale)}
                 </strong>
               </div>
               <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
-                  Facturación oficial
+                  {ui.endRun.officialBillingLabel}
                 </span>
                 <strong
                   data-testid="end-run-billed"
                   className="font-bureau text-xs sm:text-sm text-[#264e7a] tabular-nums whitespace-nowrap block truncate"
                 >
-                  {formatEuros(shareSummary.lifetimeBilled)}
+                  {formatEuros(shareSummary.lifetimeBilled, locale)}
                 </strong>
               </div>
               <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
-                  Semilla
+                  {ui.endRun.seedLabel}
                 </span>
                 <strong
                   title={shareSummary.seed}
@@ -294,7 +339,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
               >
                 <div className="flex items-center gap-1.5 stamp-badge text-[10px] text-[#1f5c53]">
                   <Award className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                  Sellos de victoria conquistados en esta carrera
+                  {ui.endRun.victoryBadgesHeading}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {shareSummary.earnedVictories.map((badge) => (
@@ -302,7 +347,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                       key={badge}
                       className="font-bureau text-xs font-bold px-2 py-0.5 rounded-md bg-[#1f5c53] text-[#fffdf8]"
                     >
-                      ★ {VICTORY_BADGE_LABELS[badge].title}
+                      ★ {getVictoryBadgeLabel(badge, locale).title}
                     </span>
                   ))}
                 </div>
@@ -316,36 +361,36 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   type="button"
                   data-testid="share-native-btn"
                   data-end-action="true"
-                  title="Compartir certificado (S)"
+                  title={ui.endRun.shareTitle}
                   onClick={() => void handleNativeShare()}
                   className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
                   <Share2 className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>Compartir</span>
+                  <span>{ui.endRun.shareBtn}</span>
                 </button>
 
                 <button
                   type="button"
                   data-testid="copy-summary-btn"
                   data-end-action="true"
-                  title="Copiar resumen al portapapeles (C)"
+                  title={ui.endRun.copyTitle}
                   onClick={() => void handleCopyText()}
                   className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
                   <Copy className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>Copiar resumen</span>
+                  <span>{ui.endRun.copyBtn}</span>
                 </button>
 
                 <button
                   type="button"
                   data-testid="download-card-btn"
                   data-end-action="true"
-                  title="Descargar certificado PNG (D)"
+                  title={ui.endRun.downloadTitle}
                   onClick={() => void handleDownloadPng()}
                   className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
                   <Download className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>Descargar PNG</span>
+                  <span>{ui.endRun.downloadBtn}</span>
                 </button>
               </div>
 
@@ -364,12 +409,12 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   type="button"
                   data-testid="end-new-run-btn"
                   data-end-action="true"
-                  title="Iniciar nueva partida en el RETA (N o Intro)"
+                  title={ui.endRun.newRunTitle}
                   onClick={() => void startRun()}
                   className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <RotateCcw className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>Nueva alta en el RETA</span>
+                  <span>{ui.endRun.newRunBtn}</span>
                   <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
                     N
                   </kbd>
@@ -379,12 +424,12 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   type="button"
                   data-testid="end-return-title-btn"
                   data-end-action="true"
-                  title="Volver al inicio y Salón de Caídos (I o Esc)"
+                  title={ui.endRun.returnTitleAttr}
                   onClick={returnToTitle}
                   className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#efe4ce] hover:bg-[#e5d6ba] text-[#1f2421] font-bold text-sm px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>Inicio y Salón de Caídos</span>
+                  <span>{ui.endRun.returnTitleBtn}</span>
                   <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/12 text-[#1f2421]">
                     Esc
                   </kbd>
@@ -396,7 +441,9 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
           {/* Right: Live 1080x1350 Illustrated Canvas Certificate Preview */}
           <aside className="lg:col-span-5 paper-dossier-warm rounded-xl overflow-hidden">
             <div className="dossier-header">
-              <span className="stamp-badge text-[11px] text-[#1f2421]">CERTIFICADO OFICIAL</span>
+              <span className="stamp-badge text-[11px] text-[#1f2421]">
+                {ui.endRun.officialCertBadge}
+              </span>
               <span className="font-bureau text-[11px] font-bold text-[#4a524e]">
                 1080×1350 PNG
               </span>
@@ -407,7 +454,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 data-testid="share-canvas"
                 width={1080}
                 height={1350}
-                aria-label="Certificado de supervivencia autónoma Modelo 036-FIN"
+                aria-label={ui.endRun.canvasAria}
                 className="w-full max-w-xs xl:max-w-sm lg:max-h-[420px] xl:max-h-[470px] lg:w-auto aspect-[4/5] rounded-lg border-2 border-[#1f2421] shadow-sm bg-[#f6efe0]"
               />
             </div>

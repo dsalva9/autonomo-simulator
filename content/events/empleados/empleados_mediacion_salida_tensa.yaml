@@ -1,0 +1,77 @@
+schema_version: 1
+id: empleados_mediacion_salida_tensa
+category: empleados
+title: "Silencio glacial y amenaza de conciliación"
+body: "Un mes después del choque por la oferta rival, cada mensaje interno parece redactado por abogados y el rendimiento cae en picado. Un laboralista te recomienda desencallar ya la situación antes de acabar citados en conciliación."
+tags:
+  - plantilla
+  - conflicto_laboral
+  - smac
+  - mediacion
+requirements:
+  has_employee: true
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: firmar_salida_pactada_con_asesor
+    label: "Pactar salida limpia con asesor laboral e indemnización (1.250 €)"
+    result_text: "Firmáis un acuerdo transaccional sin reproches ni demandas futuras. Duele en la cuenta, pero recuperas la paz mental al instante."
+    effects:
+      dismiss_employee:
+        severance_cost: 1250
+      deductible_expense: 240
+      moral: -3
+      stress: -5
+      reputation: 1
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla
+  - id: rectificar_y_renovar_confianza
+    label: "Pedir disculpas por las formas y firmar mejoras reales (400 €)"
+    result_text: "Reconocer el calentón desactiva la trinchera. Pactáis condiciones claras por escrito y salváis la relación profesional a tiempo."
+    effects:
+      cash_delta: -400
+      moral: 4
+      stress: -3
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_pacto_reconciliacion_laboral
+        label: "Acuerdo renovado de convivencia en estudio"
+        remaining_months: 4
+        monthly_billed_delta: 220
+        monthly_expense_delta: 150
+  - id: mantener_pulso_hasta_el_smac
+    label: "Mantener el pulso legal hasta el acto formal de conciliación"
+    outcomes:
+      - id: baja_tensa_con_minimo_acuerdo
+        weight: 40
+        result_text: "En la antesala de conciliación cerráis la salida por 300 € más honorarios jurídicos, aunque el desgaste emocional te deja molido."
+        effects:
+          dismiss_employee:
+            severance_cost: 300
+          deductible_expense: 300
+          moral: -7
+          stress: 9
+          reputation: -4
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla
+      - id: acuerdo_costoso_en_conciliacion
+        weight: 60
+        result_text: "El pulso sale caro: terminas abonando 2.100 € de indemnización más minuta legal para evitar juicio y el rumor corre por el gremio."
+        effects:
+          dismiss_employee:
+            severance_cost: 2100
+          deductible_expense: 380
+          moral: -10
+          stress: 14
+          reputation: -6
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla

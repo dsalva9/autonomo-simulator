@@ -1,0 +1,64 @@
+schema_version: 1
+id: clientes_agencia_prueba_remunerada
+category: clientes
+title: «Una pruebecita pagada para ganar el concurso anual»
+body: Borja monta una agencia efímera y te pide desarrollar «una propuesta piloto cortita» a precio simbólico para seducir a una gran empresa. Jura que si ganan llevarás tú toda la cuenta anual.
+tags:
+  - agencia
+  - concurso
+  - subcontrata
+  - cadena_puenteo
+character_id: cliente_regateador
+character_expression: pleased
+requirements:
+  min_month: 3
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: entregar_boceto_con_marca_agua
+    label: Cobrar el piloto acotado dejando tu sello y autoría visibles
+    result_text: Entregas justo lo pactado con tu autoría bien clara en el pie técnico. Cobras poco hoy, pero nadie podrá borrar tu firma.
+    effects:
+      billed_income: 600
+      stress: 12
+      moral: 1
+      reputation: 2
+      schedule_events:
+        - event_id: clientes_cliente_final_puentea_agencia
+          delay_months: 2
+  - id: volcarse_fines_de_semana_en_concurso
+    label: Echar el resto el fin de semana confiando en el contrato anual
+    outcomes:
+      - id: ganan_y_pagan_fase_inicial
+        weight: 45
+        result_text: Tu propuesta deslumbra al cliente final y Borja te liquida un buen primer tramo mientras presume de «su equipo interno».
+        effects:
+          billed_income: 1175
+          stress: 18
+          moral: 0
+          personal_life: -5
+          reputation: 1
+          schedule_events:
+            - event_id: clientes_cliente_final_puentea_agencia
+              delay_months: 2
+      - id: presentan_tu_trabajo_y_desaparecen
+        weight: 55
+        result_text: Ganan la cuenta con tus diapositivas y luego encargan la ejecución a tres becarios para quedarse todo el margen.
+        effects:
+          billed_income: 375
+          stress: 20
+          moral: -11
+          personal_life: -5
+          schedule_events:
+            - event_id: clientes_cliente_final_puentea_agencia
+              delay_months: 2
+  - id: rechazar_pilotos_especulativos
+    label: Negarse a financiar concursos ajenos con tu tiempo
+    result_text: Borja murmura algo sobre tu «poca visión estratégica» y tú ganas una semana limpia para clientes reales.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      reputation: -4

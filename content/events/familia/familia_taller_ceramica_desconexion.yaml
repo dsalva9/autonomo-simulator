@@ -1,0 +1,48 @@
+schema_version: 1
+id: familia_taller_ceramica_desconexion
+category: familia
+title: "Manos llenas de barro y móvil fuera de cobertura"
+body: "Descubres que llevas meses sin una sola afición que no podáis monetizar ni tú ni el algoritmo. En el centro cultural del barrio abren plaza en un taller vespertino donde es físicamente imposible mirar pantallas."
+tags:
+  - aficiones
+  - desconexion
+  - salud_mental
+  - barrio
+requirements:
+  min_month: 7
+weight: 10
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: apuntarse_al_trimestre_completo
+    label: "Pagar el trimestre del taller y blindar los martes tarde (95 €)"
+    result_text: "Tus primeros tazones parecen ceniceros prehistóricos, pero esas dos horas semanales sin notificaciones te resetean el cerebro."
+    effects:
+      cash_delta: -95
+      stress: -12
+      moral: 9
+      personal_life: 12
+      add_modifier:
+        id: mod_taller_analogico
+        label: "Martes de taller sin pantallas"
+        remaining_months: 3
+        monthly_stress_delta: -2
+        monthly_moral_delta: 1
+  - id: ir_a_clase_de_prueba_suelta
+    label: "Probar una sesión suelta de sábado sin atarte el calendario (30 €)"
+    result_text: "Pasas una mañana estupenda manchándote hasta los codos y vuelves a casa con una taza torcida y buen humor."
+    effects:
+      cash_delta: -30
+      stress: -6
+      moral: 5
+      personal_life: 6
+  - id: intentar_vender_lo_que_hagas
+    label: "Descartarlo y dedicar ese hueco a prospectar clientes nuevos"
+    result_text: "Tu cerebro autónomo gana la partida otra vez: consigues un encargo menor y cero conversación fuera del sector."
+    effects:
+      billed_income: 360
+      stress: 4
+      moral: -2
+      personal_life: -5
+      reputation: 1

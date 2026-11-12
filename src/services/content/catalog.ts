@@ -9,9 +9,16 @@ import type {
   EventDef,
   GameState,
 } from "../../engine/index.ts";
+import compiledLocales from "../../content/compiled-locales.json";
 import rawBundle from "../../generated/content-bundle.json";
+import { registerLocaleOverlay } from "../i18n/resolveEventText.ts";
 
 export const compiledCatalog = rawBundle as unknown as CompiledContentBundle;
+
+const enOverlay = (compiledLocales as Record<string, Record<string, string>>).en;
+if (enOverlay) {
+  registerLocaleOverlay("en", enOverlay, { persistent: true });
+}
 
 export type ResolvedAsset = AssetEntry & {
   id: string;
@@ -136,9 +143,47 @@ export function resolveCharacterPortraitAsset(
   return null;
 }
 
+const FAMILIA_TENSION_TAGS = new Set([
+  "urgencias",
+  "averia",
+  "agotamiento",
+  "crisis_familiar",
+  "gastos_imprevistos",
+  "mudanza",
+]);
+
+const EMPLEADOS_TENSION_TAGS = new Set([
+  "conflicto_laboral",
+  "conflicto",
+  "despido",
+  "baja_medica",
+  "incendio",
+  "pico_trabajo",
+  "inspeccion",
+]);
+
+const GESTOR_URGENCIA_TAGS = new Set([
+  "chapuza",
+  "chapuza_digital",
+  "excel",
+  "clave_pin",
+  "certificado_digital",
+  "requerimiento",
+  "contraste_censal",
+]);
+
+function hasMatchingTag(tags: readonly string[] | undefined, targetSet: ReadonlySet<string>): boolean {
+  if (!tags) {
+    return false;
+  }
+  return tags.some((tag) => targetSet.has(tag));
+}
+
 export function resolveEventBannerAsset(
   manifest: AssetManifest,
-  event: Pick<EventDef, "category" | "illustration_id" | "character_expression">,
+  event: Pick<EventDef, "category" | "illustration_id" | "character_expression"> & {
+    tags?: readonly string[];
+  },
   state: Pick<GameState, "indicators" | "fiscal_risk" | "flags">,
 ): EventBannerResolution {
   if (event.illustration_id) {
@@ -148,6 +193,7 @@ export function resolveEventBannerAsset(
     }
   }
 
+  const baseBannerId = `banner_${event.category}_base`;
   let bannerId: string;
   switch (event.category) {
     case "clientes": {
@@ -155,7 +201,7 @@ export function resolveEventBannerAsset(
         event.character_expression === "angry" ||
         event.character_expression === "stressed" ||
         state.indicators.money < 0;
-      bannerId = isTense ? "banner_clientes_tension" : "banner_clientes_base";
+      bannerId = isTense ? "banner_clientes_tension" : baseBannerId;
       break;
     }
     case "hacienda": {
@@ -163,22 +209,45 @@ export function resolveEventBannerAsset(
         state.fiscal_risk >= 40 ||
         Boolean(state.flags.inspeccion_en_curso) ||
         event.character_expression === "angry";
-      bannerId = isInspection ? "banner_hacienda_inspeccion" : "banner_hacienda_base";
+      bannerId = isInspection ? "banner_hacienda_inspeccion" : baseBannerId;
       break;
     }
-    case "familia":
-      bannerId = "banner_familia_base";
+    case "familia": {
+      const isTense =
+        event.character_expression === "angry" ||
+        event.character_expression === "stressed" ||
+        state.indicators.stress >= 70 ||
+        state.indicators.personal_life <= 30 ||
+        hasMatchingTag(event.tags, FAMILIA_TENSION_TAGS);
+      bannerId = isTense ? "banner_familia_tension" : baseBannerId;
       break;
-    case "empleados":
-      bannerId = "banner_empleados_base";
+    }
+    case "empleados": {
+      const isTense =
+        event.character_expression === "angry" ||
+        event.character_expression === "stressed" ||
+        Boolean(state.flags.desgaste_plantilla) ||
+        state.indicators.stress >= 70 ||
+        hasMatchingTag(event.tags, EMPLEADOS_TENSION_TAGS);
+      bannerId = isTense ? "banner_empleados_tension" : baseBannerId;
       break;
-    case "gestor":
-      bannerId = "banner_gestor_base";
+    }
+    case "gestor": {
+      const isUrgent =
+        event.character_expression === "angry" ||
+        event.character_expression === "stressed" ||
+        state.fiscal_risk >= 40 ||
+        Boolean(state.flags.inspeccion_en_curso) ||
+        Boolean(state.flags.certificado_digital_caducado) ||
+        hasMatchingTag(event.tags, GESTOR_URGENCIA_TAGS);
+      bannerId = isUrgent ? "banner_gestor_urgencia" : baseBannerId;
       break;
+    }
   }
 
   const bannerAsset =
     resolveManifestAsset(manifest, bannerId) ??
+    resolveManifestAsset(manifest, baseBannerId) ??
     resolveCategoryFallbackAsset(manifest, event.category);
 
   return { asset: bannerAsset, kind: "banner" };

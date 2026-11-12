@@ -1,0 +1,54 @@
+schema_version: 1
+id: gestor_paco_suplemento_sorpresa
+category: gestor
+title: "El suplemento sorpresa por «carpetas y modelos anuales»"
+body: "Revisas el banco y descubres un recibo extra de 95 € girado por la gestoría de Paco bajo el concepto «Campaña resúmenes anuales, fotocopias color y subcarpetas». En su cartel de sesenta euros al mes no decía ni pío."
+tags:
+  - gestoria
+  - paco
+  - comisiones
+character_id: gestor_barato_paco
+character_expression: neutral
+requirements:
+  min_month: 6
+  gestor_tiers:
+    - cheap
+weight: 11
+cooldown_months: 11
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: asumir_suplemento_con_factura
+    label: "Exigir factura desglosada deducible y pagar sin hacer sangre (95 €)"
+    result_text: "Paco te extiende factura formal al momento, deduces el gasto íntegro y te aseguras de que mime tus resúmenes anuales."
+    effects:
+      deductible_expense: 95
+      stress: -3
+      moral: -1
+      fiscal_risk: -4
+  - id: regatear_en_barra_con_paco
+    label: "Bajar a la churrería a negociar que te deje el cargo a la mitad"
+    outcomes:
+      - id: paco_rebaja_entre_porras
+        weight: 65
+        result_text: "Entre dos cafés te perdona más de la mitad del recargo y promete avisar antes la próxima vez que compre carpetas nuevas."
+        effects:
+          deductible_expense: 40
+          stress: 1
+          moral: 4
+          fiscal_risk: -2
+      - id: paco_se_planta_con_tarifario
+        weight: 35
+        result_text: "Saca un cartel plastificado de 2011 escondido tras el archivador y solo consigues rascar veinte euros tras discutir media mañana."
+        effects:
+          deductible_expense: 75
+          stress: 6
+          moral: -3
+  - id: devolver_recibo_y_marcharse
+    label: "Devolver el recibo en la app del banco y volver a la autogestión"
+    result_text: "Recuperas tus noventa y cinco euros al instante, recoges tu archivador y vuelves a ser tu propio departamento contable."
+    effects:
+      set_gestor:
+        tier: self
+      stress: 6
+      moral: 2

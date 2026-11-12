@@ -1,87 +1,20 @@
 import type { EndingId, GameState, VictoryBadge } from "../../engine/index.ts";
-import { formatDurationMonthsEs, formatEuros } from "../i18n/resolveEventText.ts";
+import {
+  ENDING_METADATA,
+  type EndingMetadata,
+  VICTORY_BADGE_LABELS,
+  getEndingMetadata,
+  getVictoryBadgeLabel,
+  resolveLocalizedEndingQuote,
+} from "../endings/endingMetadata.ts";
+import {
+  type SupportedLocale,
+  formatDurationMonthsEs,
+  formatEuros,
+  normalizeLocale,
+} from "../i18n/resolveEventText.ts";
 
-export interface EndingMetadata {
-  code: string;
-  title: string;
-  subtitle: string;
-  stampText: string;
-  tone: "defeat" | "abandon" | "victory";
-}
-
-export const ENDING_METADATA: Record<EndingId, EndingMetadata> = {
-  defeat_bankruptcy: {
-    code: "MOD. 036-BAJA · INSOLVENCIA",
-    title: "Bancarrota en Números Rojos",
-    subtitle: "Embargo de cuentas tras encadenar descubiertos sin liquidez para las cuotas.",
-    stampText: "INSOLVENTE",
-    tone: "defeat",
-  },
-  defeat_burnout_stress: {
-    code: "MOD. IT-100 · BAJA POR ANSIEDAD",
-    title: "Baja por Ansiedad Aguda",
-    subtitle:
-      "El médico de cabecera te ha confiscado el portátil, el móvil y el certificado digital.",
-    stampText: "COLAPSO",
-    tone: "defeat",
-  },
-  defeat_resignation_moral: {
-    code: "MOD. 037 · AGOTAMIENTO MORAL",
-    title: "Moral a Cero: Cierre de Persiana",
-    subtitle:
-      "Has cerrado la hoja de cálculo, borrado el correo y comprado subrayadores para opositar.",
-    stampText: "DIMISIÓN",
-    tone: "defeat",
-  },
-  abandon_oposiciones: {
-    code: "MOD. BOE-A1 · TRANSICIÓN PÚBLICA",
-    title: "Exilio Voluntario al Temario",
-    subtitle: "Cambias los encargos urgentes de viernes noche por el Boletín Oficial del Estado.",
-    stampText: "OPOSITOR",
-    tone: "abandon",
-  },
-  abandon_salaried: {
-    code: "MOD. CTA-AJENA · VUELTA A OFICINA",
-    title: "Regreso a la Nómina Fija",
-    subtitle:
-      "Vuelves a aguantar reuniones ajenas, pero los domingos vuelves a dormir de un tirón.",
-    stampText: "ASALARIADO",
-    tone: "abandon",
-  },
-  abandon_subsidies: {
-    code: "MOD. CESE-ACT · FIN DE ETAPA",
-    title: "Cese de Actividad Tramitado",
-    subtitle:
-      "Cierras el expediente tras descubrir en propia piel la letra pequeña de emprender sin red.",
-    stampText: "BAJA RETA",
-    tone: "abandon",
-  },
-  retired_hero: {
-    code: "MOD. HONOR-120 · SUPERVIVIENTE DECENAL",
-    title: "¡Eres un Héroe del RETA!",
-    subtitle: "Diez años completos sobreviviendo a clientes, cuotas, trimestres e imprevistos.",
-    stampText: "HÉROE 10 AÑOS",
-    tone: "victory",
-  },
-  retired_rich: {
-    code: "MOD. PATRIMONIO-150K · RETIRO DORADO",
-    title: "¡Ricachón! Retiro con 150.000 €",
-    subtitle: "Liquidez suficiente en el banco para delegar hasta la lectura de notificaciones.",
-    stampText: "RICACHÓN",
-    tone: "victory",
-  },
-};
-
-export const VICTORY_BADGE_LABELS: Record<VictoryBadge, { title: string; shortSeal: string }> = {
-  hero_120m: {
-    title: "¡Eres un héroe! (120 meses)",
-    shortSeal: "SELLO HÉROE · 120M",
-  },
-  rich_150k: {
-    title: "Ricachón (150.000 €)",
-    shortSeal: "SELLO RICACHÓN · 150K€",
-  },
-};
+export { ENDING_METADATA, VICTORY_BADGE_LABELS, type EndingMetadata };
 
 export interface EndRunShareSummary {
   monthsSurvived: number;
@@ -97,6 +30,7 @@ export interface EndRunShareSummary {
 
 export interface RenderShareCardOptions {
   illustrationImage?: CanvasImageSource | null;
+  locale?: SupportedLocale;
 }
 
 export const CANONICAL_GAME_URL = "https://autonomo-simulator.vercel.app/";
@@ -142,9 +76,36 @@ export function createShareSummaryFromState(
   };
 }
 
-export function buildShareText(summary: EndRunShareSummary): string {
-  const meta = ENDING_METADATA[summary.endingId];
-  const duration = formatDurationMonthsEs(summary.monthsSurvived);
+export function buildShareText(
+  summary: EndRunShareSummary,
+  locale: SupportedLocale = "es-ES",
+): string {
+  const isEn = normalizeLocale(locale) === "en";
+  const meta = getEndingMetadata(summary.endingId, locale);
+  const duration = formatDurationMonthsEs(summary.monthsSurvived, locale);
+  const quote = resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale);
+
+  if (isEn) {
+    const lines: string[] = [
+      "📋 FORM 036-END · SELF-EMPLOYED SURVIVAL CERTIFICATE",
+      `📌 Outcome: ${meta.title}`,
+      `⏱️ Time contributed: ${duration}`,
+      `💶 Final cash: ${formatEuros(summary.finalMoney, locale)} | 🧾 Official billing: ${formatEuros(summary.lifetimeBilled, locale)}`,
+    ];
+
+    if (summary.earnedVictories.length > 0) {
+      const badges = summary.earnedVictories
+        .map((b) => getVictoryBadgeLabel(b, locale).title)
+        .join(" · ");
+      lines.push(`🏅 Seals earned: ${badges}`);
+    }
+
+    lines.push(`"${quote}"`);
+    lines.push(`🎲 Seed: ${summary.seed} · ${summary.gameUrl}`);
+
+    return lines.join("\n");
+  }
+
   const lines: string[] = [
     "📋 MODELO 036-FIN · CERTIFICADO DE SUPERVIVENCIA AUTÓNOMA",
     `📌 Desenlace: ${meta.title}`,
@@ -274,10 +235,17 @@ export function renderShareCardToCanvas(
     return false;
   }
 
+  const locale = options?.locale ?? "es-ES";
+  const isEn = normalizeLocale(locale) === "en";
   const illustration = options?.illustrationImage ?? null;
   const hasIllustration = illustration !== null;
 
-  const meta = ENDING_METADATA[summary.endingId];
+  const meta = getEndingMetadata(summary.endingId, locale);
+  const localizedQuote = resolveLocalizedEndingQuote(
+    summary.endingId,
+    summary.summaryQuote,
+    locale,
+  );
   const stampPrimary =
     meta.tone === "victory" ? "#1F5C53" : meta.tone === "abandon" ? "#264E7A" : "#B42B24";
   const stampFill =
@@ -320,7 +288,9 @@ export function renderShareCardToCanvas(
     ? "700 21px 'Courier New', monospace"
     : "700 22px 'Courier New', monospace";
   ctx.fillText(
-    "MODELO 036-FIN · CERTIFICADO DE SUPERVIVENCIA AUTÓNOMA",
+    isEn
+      ? "FORM 036-END · SELF-EMPLOYED SURVIVAL CERTIFICATE"
+      : "MODELO 036-FIN · CERTIFICADO DE SUPERVIVENCIA AUTÓNOMA",
     84,
     hasIllustration ? 92 : 98,
     innerTextMaxWidth,
@@ -329,7 +299,7 @@ export function renderShareCardToCanvas(
   ctx.fillStyle = "#FFFDF8";
   ctx.font = hasIllustration ? "700 28px Georgia, serif" : "700 30px Georgia, serif";
   ctx.fillText(
-    "AUTÓNOMO SIMULATOR · REGISTRO DE EXPEDIENTES",
+    isEn ? "AUTÓNOMO SIMULATOR · DOSSIER REGISTRY" : "AUTÓNOMO SIMULATOR · REGISTRO DE EXPEDIENTES",
     84,
     hasIllustration ? 138 : 146,
     innerTextMaxWidth,
@@ -352,7 +322,12 @@ export function renderShareCardToCanvas(
   const seedDisplay = summary.seed.length > 26 ? `${summary.seed.slice(0, 25)}…` : summary.seed;
   ctx.textAlign = "right";
   ctx.fillStyle = "#4A524E";
-  ctx.fillText(`SEMILLA: ${seedDisplay}`, width - 84, subheaderTextY, 388);
+  ctx.fillText(
+    isEn ? `SEED: ${seedDisplay}` : `SEMILLA: ${seedDisplay}`,
+    width - 84,
+    subheaderTextY,
+    388,
+  );
   ctx.textAlign = "left";
 
   // 5. Outcome Title Block (constrained to left column clear of tilted rubber stamp)
@@ -361,7 +336,13 @@ export function renderShareCardToCanvas(
     ? "700 20px 'Courier New', monospace"
     : "700 21px 'Courier New', monospace";
   ctx.fillText(
-    summary.endlessMode ? "RESOLUCIÓN FINAL (MODO INFINITO)" : "RESOLUCIÓN DEL EXPEDIENTE",
+    isEn
+      ? summary.endlessMode
+        ? "FINAL RULING (ENDLESS MODE)"
+        : "DOSSIER RULING"
+      : summary.endlessMode
+        ? "RESOLUCIÓN FINAL (MODO INFINITO)"
+        : "RESOLUCIÓN DEL EXPEDIENTE",
     84,
     hasIllustration ? 256 : 288,
     outcomeColumnMaxWidth,
@@ -407,7 +388,9 @@ export function renderShareCardToCanvas(
     ctx.fillStyle = "#4A524E";
     ctx.font = "700 17px 'Courier New', monospace";
     ctx.fillText(
-      "ANEXO GRÁFICO [00] · EVIDENCIA VISUAL DEL EXPEDIENTE",
+      isEn
+        ? "VISUAL EXHIBIT [00] · ARCHIVAL DOSSIER EVIDENCE"
+        : "ANEXO GRÁFICO [00] · EVIDENCIA VISUAL DEL EXPEDIENTE",
       vignetteBoxX + 20,
       vignetteBoxY + 24,
       vignetteBoxW - 40,
@@ -452,23 +435,29 @@ export function renderShareCardToCanvas(
   const boxRowGap = hasIllustration ? 14 : 22;
   const boxes = [
     {
-      code: "CASILLA [01] · TIEMPO COTIZADO",
-      value: formatDurationMonthsEs(summary.monthsSurvived),
+      code: isEn ? "BOX [01] · TIME CONTRIBUTED" : "CASILLA [01] · TIEMPO COTIZADO",
+      value: formatDurationMonthsEs(summary.monthsSurvived, locale),
       accent: "#1F2421",
     },
     {
-      code: "CASILLA [02] · LIQUIDEZ DISPONIBLE",
-      value: formatEuros(summary.finalMoney),
+      code: isEn ? "BOX [02] · AVAILABLE CASH" : "CASILLA [02] · LIQUIDEZ DISPONIBLE",
+      value: formatEuros(summary.finalMoney, locale),
       accent: summary.finalMoney < 0 ? "#B42B24" : "#1F5C53",
     },
     {
-      code: "CASILLA [03] · FACTURACIÓN OFICIAL",
-      value: formatEuros(summary.lifetimeBilled),
+      code: isEn ? "BOX [03] · OFFICIAL BILLING" : "CASILLA [03] · FACTURACIÓN OFICIAL",
+      value: formatEuros(summary.lifetimeBilled, locale),
       accent: "#264E7A",
     },
     {
-      code: "CASILLA [04] · MODALIDAD",
-      value: summary.endlessMode ? "Modo Infinito (+120m)" : "Campaña RETA (10 años)",
+      code: isEn ? "BOX [04] · REGIME MODE" : "CASILLA [04] · MODALIDAD",
+      value: isEn
+        ? summary.endlessMode
+          ? "Endless Mode (+120m)"
+          : "RETA Campaign (10 yrs)"
+        : summary.endlessMode
+          ? "Modo Infinito (+120m)"
+          : "Campaña RETA (10 años)",
       accent: "#1F2421",
     },
   ];
@@ -522,7 +511,7 @@ export function renderShareCardToCanvas(
     ? "700 18px 'Courier New', monospace"
     : "700 19px 'Courier New', monospace";
   ctx.fillText(
-    "OBSERVACIONES E INFORME DE CIERRE:",
+    isEn ? "CLOSING REMARKS & AUDIT NOTES:" : "OBSERVACIONES E INFORME DE CIERRE:",
     112,
     quoteBoxY + (hasIllustration ? 30 : 38),
     width - 224,
@@ -530,7 +519,8 @@ export function renderShareCardToCanvas(
 
   ctx.fillStyle = "#1F2421";
   ctx.font = hasIllustration ? "italic 25px Georgia, serif" : "italic 30px Georgia, serif";
-  const quoteLines = wrapCanvasParagraph(ctx, `«${summary.summaryQuote}»`, width - 224);
+  const framedQuote = isEn ? `"${localizedQuote}"` : `«${localizedQuote}»`;
+  const quoteLines = wrapCanvasParagraph(ctx, framedQuote, width - 224);
   let quoteY = quoteBoxY + (hasIllustration ? 66 : 88);
   const quoteStep = hasIllustration ? 31 : 40;
   for (const line of quoteLines.slice(0, 3)) {
@@ -544,7 +534,7 @@ export function renderShareCardToCanvas(
   if (summary.earnedVictories.length > 0) {
     let badgeX = 84;
     for (const badge of summary.earnedVictories) {
-      const label = VICTORY_BADGE_LABELS[badge].shortSeal;
+      const label = getVictoryBadgeLabel(badge, locale).shortSeal;
       const badgeW = 360;
       ctx.fillStyle = "#E8F5F1";
       ctx.fillRect(badgeX, badgeRowY, badgeW, badgeH);
@@ -565,7 +555,9 @@ export function renderShareCardToCanvas(
       ? "700 19px 'Courier New', monospace"
       : "700 20px 'Courier New', monospace";
     ctx.fillText(
-      "SIN SELLOS DE VICTORIA REGISTRADOS EN ESTE EXPEDIENTE",
+      isEn
+        ? "NO VICTORY SEALS RECORDED IN THIS DOSSIER"
+        : "SIN SELLOS DE VICTORIA REGISTRADOS EN ESTE EXPEDIENTE",
       84,
       badgeRowY + (hasIllustration ? 31 : 38),
       innerTextMaxWidth,
@@ -589,7 +581,7 @@ export function renderShareCardToCanvas(
   ctx.fillStyle = stampPrimary;
   ctx.textAlign = "center";
   ctx.font = "700 17px 'Courier New', monospace";
-  ctx.fillText("SELLO OFICIAL RETA", 0, -11, 268);
+  ctx.fillText(isEn ? "OFFICIAL RETA SEAL" : "SELLO OFICIAL RETA", 0, -11, 268);
   ctx.font = hasIllustration
     ? "900 31px 'Courier New', monospace"
     : "900 32px 'Courier New', monospace";
@@ -600,7 +592,14 @@ export function renderShareCardToCanvas(
   const footerY = hasIllustration ? 1282 : 1258;
   ctx.fillStyle = "#1F2421";
   ctx.font = hasIllustration ? "700 20px Georgia, serif" : "700 21px Georgia, serif";
-  ctx.fillText("«Sé tu propio jefe. Descubre por qué era mala idea.»", 84, footerY, 530);
+  ctx.fillText(
+    isEn
+      ? '"Be your own boss. Find out why it was a terrible idea."'
+      : "«Sé tu propio jefe. Descubre por qué era mala idea.»",
+    84,
+    footerY,
+    530,
+  );
 
   ctx.textAlign = "right";
   ctx.fillStyle = "#4A524E";
@@ -654,8 +653,9 @@ export async function loadAndRenderShareCard(
   canvas: HTMLCanvasElement,
   summary: EndRunShareSummary,
   illustrationUrl?: string | null,
+  locale: SupportedLocale = "es-ES",
 ): Promise<boolean> {
-  const baseRendered = renderShareCardToCanvas(canvas, summary);
+  const baseRendered = renderShareCardToCanvas(canvas, summary, { locale });
   if (!illustrationUrl || !illustrationUrl.trim()) {
     return baseRendered;
   }
@@ -665,7 +665,7 @@ export async function loadAndRenderShareCard(
     return baseRendered;
   }
 
-  return renderShareCardToCanvas(canvas, summary, { illustrationImage: loadedImage });
+  return renderShareCardToCanvas(canvas, summary, { illustrationImage: loadedImage, locale });
 }
 
 export function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
@@ -682,8 +682,11 @@ export function canvasToPngBlob(canvas: HTMLCanvasElement): Promise<Blob | null>
   });
 }
 
-export async function copyShareText(summary: EndRunShareSummary): Promise<boolean> {
-  const text = buildShareText(summary);
+export async function copyShareText(
+  summary: EndRunShareSummary,
+  locale: SupportedLocale = "es-ES",
+): Promise<boolean> {
+  const text = buildShareText(summary, locale);
   if (
     typeof navigator !== "undefined" &&
     navigator.clipboard &&
@@ -755,9 +758,13 @@ export async function downloadShareCardPng(
 export async function shareRunResult(
   summary: EndRunShareSummary,
   canvas?: HTMLCanvasElement | null,
+  locale: SupportedLocale = "es-ES",
 ): Promise<{ method: "web-share-files" | "web-share-text" | "clipboard" | "failed"; ok: boolean }> {
-  const text = buildShareText(summary);
-  const title = "Autónomo Simulator · Certificado Modelo 036-FIN";
+  const isEn = normalizeLocale(locale) === "en";
+  const text = buildShareText(summary, locale);
+  const title = isEn
+    ? "Autónomo Simulator · Form 036-END Certificate"
+    : "Autónomo Simulator · Certificado Modelo 036-FIN";
 
   if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
     if (canvas && typeof navigator.canShare === "function" && typeof File === "function") {
@@ -789,6 +796,6 @@ export async function shareRunResult(
     }
   }
 
-  const copied = await copyShareText(summary);
+  const copied = await copyShareText(summary, locale);
   return copied ? { method: "clipboard", ok: true } : { method: "failed", ok: false };
 }

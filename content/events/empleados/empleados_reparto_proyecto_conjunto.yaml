@@ -1,0 +1,65 @@
+schema_version: 1
+id: empleados_reparto_proyecto_conjunto
+category: empleados
+title: "La hora de repartir la factura conjunta"
+body: "El cliente aprueba el hito final del proyecto en alianza y llega el momento delicado: uno de tus colaboradores reclama un pellizco extra de tu parte alegando que sus cambios de última hora salvaron la presentación."
+tags:
+  - colaboradores
+  - reparto
+  - conflicto
+  - facturacion
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: aplicar_anexo_firmado
+    label: "Sacar el acuerdo firmado y liquidar exactamente lo pactado"
+    requirements:
+      required_flags:
+        - acuerdo_colaboradores_firmado
+    result_text: "El papel firmado corta el debate en cinco minutos sin malas caras. Cada cual emite su factura limpia y quedáis listos para repetir en el futuro."
+    effects:
+      billed_income: 1850
+      deductible_expense: 750
+      moral: 5
+      stress: -4
+      reputation: 4
+      clear_flags:
+        - acuerdo_colaboradores_firmado
+  - id: ceder_parte_margen_por_paz
+    label: "Ceder parte de tu margen para cerrar en paz y conservar la red"
+    result_text: "Tragas saliva, aceptas descontar sus horas adicionales y salvas la relación profesional, aunque tu beneficio neto queda bastante más flaco."
+    effects:
+      billed_income: 1650
+      deductible_expense: 980
+      moral: -2
+      stress: 3
+      reputation: 2
+      clear_flags:
+        - acuerdo_colaboradores_firmado
+  - id: plantarse_y_romper_alianza
+    label: "Negarte a pagar sobrecostes no pactados aunque salte la chispa"
+    outcomes:
+      - id: cobro_integro_y_frialdad
+        weight: 60
+        result_text: "Defiendes tu porcentaje íntegro con firmeza. Cobras lo tuyo hasta el último euro, pero ese grupo de trabajo pasa a mejor vida."
+        effects:
+          billed_income: 1850
+          deductible_expense: 650
+          moral: -3
+          stress: 8
+          reputation: -2
+          clear_flags:
+            - acuerdo_colaboradores_firmado
+      - id: discusion_salpica_al_cliente
+        weight: 40
+        result_text: "El roce trasciende en copia de un correo desafortunado y el cliente recorta el alcance final harto del espectáculo entre proveedores."
+        effects:
+          billed_income: 1200
+          deductible_expense: 650
+          moral: -6
+          stress: 11
+          reputation: -6
+          clear_flags:
+            - acuerdo_colaboradores_firmado

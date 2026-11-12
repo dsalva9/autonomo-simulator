@@ -1,0 +1,43 @@
+schema_version: 1
+id: clientes_comision_derivacion_colega
+category: clientes
+title: Un colega desbordado te pasa un cliente hecho
+body: "Un compañero del gremio está hasta arriba y te ofrece derivarte un proyecto cerrado de buen tamaño. A cambio pide un diez por ciento de comisión de captación: con factura deducible o «en un sobre cuando cobres»."
+tags:
+  - derivacion
+  - gremio
+  - comision
+requirements:
+  min_month: 6
+weight: 10
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: pagar_comision_con_factura_legal
+    label: Aceptar el proyecto liquidando su 10 % con factura deducible
+    result_text: El cliente viene educado de casa, cobras estupendamente y desgravas la comisión del compañero con total limpieza.
+    effects:
+      billed_income: 1300
+      deductible_expense: 130
+      stress: 13
+      moral: 3
+      reputation: 2
+  - id: repartir_en_efectivo_sin_papeles
+    label: Cobrar una parte fuera de factura y darle el sobre en mano
+    result_text: Os ahorráis impuestos hoy en la cafetería de la esquina, sumando otro movimiento opaco que más vale que nadie cruce.
+    effects:
+      cash_delta: 950
+      stress: 19
+      moral: -7
+      fiscal_risk: 25
+      set_flags:
+        - cobro_en_b_reciente
+  - id: declinar_por_falta_de_hueco
+    label: Agradecer el detalle y pasar el turno a otro compañero
+    result_text: Quedas bien en la red profesional sin exprimir tus noches esta semana.
+    effects:
+      stress: -1
+      moral: 1
+      personal_life: 3
+      reputation: -4

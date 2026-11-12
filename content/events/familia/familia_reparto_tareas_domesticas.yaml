@@ -1,0 +1,44 @@
+schema_version: 1
+id: familia_reparto_tareas_domesticas
+category: familia
+title: "«Como tú estás en casa todo el día...»"
+body: "Trabajar desde el piso inaugura el clásico malentendido doméstico: recoger tres paquetes del repartidor, tender una lavadora entre reuniones y descongelar la cena. Álex propone sentaros a renegociar el reparto real."
+tags:
+  - pareja
+  - convivencia
+  - teletrabajo
+  - hogar
+character_id: pareja_alex
+character_expression: neutral
+requirements:
+  min_month: 9
+  family_statuses:
+    - cohabiting
+weight: 11
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: pactar_horarios_de_puerta_cerrada
+    label: "Marcar horario sagrado de despacho y repartir tareas al cincuenta"
+    result_text: "Ponéis normas claras sin dramas: de nueve a seis «no estás en casa» salvo incendio, y por la tarde cumplís a medias."
+    effects:
+      billed_income: 280
+      stress: -7
+      moral: 6
+      personal_life: 8
+  - id: contratar_limpieza_por_horas
+    label: "Pagar ayuda doméstica quincenal para ahorraros discusiones (140 €)"
+    result_text: "Invertir en paz doméstica resulta ser la mejor decisión del trimestre: recuperáis los sábados por la mañana."
+    effects:
+      cash_delta: -140
+      stress: -10
+      moral: 7
+      personal_life: 10
+  - id: asumir_repartos_y_quejarse_bajito
+    label: "Seguir abriendo al mensajero cada media hora para evitar el debate"
+    result_text: "Pierdes el hilo cuatro veces al día firmando paquetes ajenos y llegas al viernes con la paciencia deshilachada."
+    effects:
+      stress: 8
+      moral: -4
+      personal_life: -5

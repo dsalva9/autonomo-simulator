@@ -1,0 +1,53 @@
+schema_version: 1
+id: gestor_elena_precierre_noviembre
+category: gestor
+title: "Simulación de noviembre: el salto de tramo asoma"
+body: "Elena te convoca con un gráfico implacable: estás a mil euros de saltar al siguiente escalón progresivo del año. Si planificas ahora pagos deducibles y calendario de cobros, evitarás regalar margen neto en enero."
+tags:
+  - gestoria
+  - elena
+  - cierre_anual
+  - irpf
+character_id: gestor_premium_elena
+character_expression: neutral
+requirements:
+  min_month: 9
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: adelantar_gastos_fijos_deducibles
+    label: "Adelantar seguros y licencias anuales antes del cierre (390 €)"
+    requirements:
+      stats:
+        money:
+          min: 650
+    result_text: "Frenas en seco el salto de tramo y disfrutas de los próximos meses con tus costes fijos operativos ya cubiertos de antemano."
+    effects:
+      deductible_expense: 390
+      stress: -7
+      moral: 5
+      fiscal_risk: -9
+      add_modifier:
+        id: mod_precierre_noviembre_elena
+        label: "Tramo anual amortiguado"
+        remaining_months: 4
+        monthly_expense_delta: -95
+  - id: escalonar_vencimientos_enero
+    label: "Ajustar retenciones y ordenar entregas sin gastar tesorería hoy"
+    result_text: "Reordenáis el calendario de cierres con elegancia legal y llegas a fin de año sin sustos ni desembolsos extraordinarios."
+    effects:
+      stress: -4
+      moral: 3
+      fiscal_risk: -5
+  - id: facturar_a_tope_ignorando_tramo
+    label: "Ignorar el aviso y exprimir entregas extra antes de Nochevieja"
+    result_text: "Haces caja bruta rápida este mes a cambio de un atracón de horas y una mordida fiscal bastante más áspera al liquidar."
+    effects:
+      billed_income: 920
+      stress: 8
+      personal_life: -4
+      fiscal_risk: 3

@@ -1,0 +1,53 @@
+schema_version: 1
+id: familia_reencuentro_casual_alex
+category: familia
+title: "Café inesperado con Álex a media mañana"
+body: "Bajas a por pan con ojeras de cierre mensual y te cruzas de frente con Álex en la cafetería de la esquina. Lo que iba a ser un saludo rápido de cortesía se convierte en cuarenta minutos de charla honesta y sin armaduras."
+tags:
+  - pareja
+  - segunda_oportunidad
+  - vida_personal
+  - vinculos
+character_id: pareja_alex
+character_expression: neutral
+requirements:
+  min_month: 13
+  family_statuses:
+    - single
+    - separated
+weight: 12
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: darse_una_oportunidad_con_limites
+    label: "Proponer empezar de cero cuidando de verdad los tiempos fuera del curro"
+    result_text: "Esta vez dejáis las reglas claras desde el primer café: menos prometer y más apagar pantallas a tiempo. Volvéis a ilusionaros."
+    effects:
+      set_family_status:
+        status: dating
+        partner_character_id: pareja_alex
+      cash_delta: -45
+      stress: -10
+      moral: 10
+      personal_life: 14
+      set_flags:
+        - relacion_con_alex
+      clear_flags:
+        - crisis_pareja_latente
+  - id: quedar_como_buena_amistad
+    label: "Agradecer la charla, pagar los cafés y cuidar una amistad sin presiones"
+    result_text: "Cerráis heridas pendientes con cariño genuino y subes de vuelta al estudio con el pecho mucho más ligero."
+    effects:
+      cash_delta: -12
+      stress: -6
+      moral: 6
+      personal_life: 7
+  - id: mirar_el_reloj_y_salir_corriendo
+    label: "Disculparte a los cinco minutos porque te espera una llamada de cliente"
+    result_text: "Llegas puntual a la reunión, aunque te pasas media tarde pensando en la conversación que dejaste a medias en la barra."
+    effects:
+      billed_income: 330
+      stress: 4
+      moral: -3
+      personal_life: -4

@@ -1,0 +1,47 @@
+schema_version: 1
+id: gestor_compensacion_app_fiscal
+category: gestor
+title: "Disculpas corporativas de la app contable"
+body: "Un mes después del caos con el escáner óptico, la plataforma fiscal reconoce una caída masiva en su motor de lectura. Para evitar bajas en bloque, te ofrece compensarte o exportar tu histórico limpio sin penalización."
+tags:
+  - autogestion
+  - software_fiscal
+  - compensacion
+weight: 0
+cooldown_months: 0
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: exigir_reembolso_por_incidencia
+    label: "Reclamar en firme la devolución íntegra de cuotas y daños"
+    requirements:
+      stats:
+        reputation:
+          min: 20
+    result_text: "Citas la cláusula de nivel de servicio con tono implacable y te abonan una compensación directa en cuenta para cerrar la incidencia."
+    effects:
+      cash_delta: 140
+      stress: -4
+      moral: 5
+      fiscal_risk: -3
+  - id: migrar_historico_a_paco
+    label: "Exportar tus libros y pasarte a la carpeta física de Paco (60 €/mes)"
+    requirements:
+      gestor_tiers:
+        - self
+    result_text: "Cambias la inteligencia artificial rota por el bolígrafo bic de Paco: al menos si se equivoca puedes bajar a protestarle en persona."
+    effects:
+      set_gestor:
+        tier: cheap
+        character_id: gestor_barato_paco
+      deductible_expense: 35
+      stress: -6
+      moral: 3
+      fiscal_risk: -4
+  - id: exportar_libros_y_cerrar_cuenta
+    label: "Descargar el histórico limpio, borrar la cuenta y seguir por libre"
+    result_text: "Guardas tus facturas en carpetas locales bien ordenadas y te quitas de encima notificaciones absurdas a medianoche."
+    effects:
+      stress: -3
+      moral: 2
+      fiscal_risk: -2

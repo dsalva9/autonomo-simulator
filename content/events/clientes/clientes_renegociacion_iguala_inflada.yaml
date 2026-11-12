@@ -1,0 +1,58 @@
+schema_version: 1
+id: clientes_renegociacion_iguala_inflada
+category: clientes
+title: La iguala de diez horas que ya va por veintiocho
+body: "Revisas tu registro de tiempos y confirmas la sospecha: una cuenta mensual pactada para diez horas te está absorbiendo casi treinta cada mes a base de «consultitas rápidas» de Marta y su equipo."
+tags:
+  - iguala
+  - rentabilidad
+  - renegociacion
+character_id: cliente_corporativo_marta
+character_expression: neutral
+requirements:
+  min_month: 9
+weight: 11
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: presentar_informe_horas_y_actualizar_cuota
+    label: Mostrar el desglose real de horas y subir la iguala a su volumen
+    outcomes:
+      - id: aceptan_nuevo_tramo
+        weight: 65
+        result_text: "Con los datos delante no tienen réplica posible: aprueban el tramo superior y por fin cobras cada hora que trabajas."
+        effects:
+          add_modifier:
+            id: mod_iguala_recalculada
+            label: Iguala reajustada a horas reales
+            remaining_months: 4
+            monthly_billed_delta: 360
+            monthly_stress_delta: 2
+          moral: 4
+          reputation: 1
+          stress: 8
+      - id: prefieren_cenirse_a_diez_horas
+        weight: 35
+        result_text: No suben presupuesto, pero frenan en seco las peticiones extra para no pasarse del cupo. Recuperas veinte horas libres al mes.
+        effects:
+          billed_income: 400
+          stress: 2
+          moral: 2
+          personal_life: 4
+  - id: cortar_excesos_con_contador_mensual
+    label: Instalar contador compartido y parar al llegar a la hora diez
+    result_text: Cada viernes reciben el saldo exacto de horas consumidas. Santo remedio contra las reuniones innecesarias.
+    effects:
+      billed_income: 600
+      stress: 4
+      moral: 3
+      reputation: 2
+  - id: callar_y_seguir_regalando_horas
+    label: No abrir el melón por miedo a que cancelen el contrato
+    result_text: Conservas la relación sin roces, pero regalas dieciocho horas extra sin facturar un solo euro adicional.
+    effects:
+      stress: 7
+      moral: -6
+      personal_life: -3
+      reputation: -4

@@ -1,0 +1,46 @@
+schema_version: 1
+id: clientes_recomendacion_excliente_directivo
+category: clientes
+title: Antiguo contacto estrena cargo directivo y se acuerda de ti
+body: "Una responsable con la que trabajaste de maravilla hace tiempo acaba de fichar como directora en una empresa solvente. Te escribe directo: «Quiero traerte como proveedor de confianza sin pasar por concurso»."
+tags:
+  - recomendacion
+  - reputacion
+  - captacion
+requirements:
+  min_month: 10
+weight: 10
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: cerrar_proyecto_llave_en_mano
+    label: Presentar propuesta impecable y ejecutar el proyecto de entrada
+    result_text: "Entrar con confianza previa es otro deporte: cero regateos, criterios claros y transferencia puntual a fin de mes."
+    effects:
+      billed_income: 1375
+      stress: 6
+      moral: 8
+      reputation: 4
+  - id: proponer_acuerdo_trimestral_estable
+    label: Plantear un acompañamiento suave de cuatro meses para su arranque
+    result_text: Acompañas sus primeros cien días en el cargo con ingresos recurrentes limpios y trato exquisito.
+    effects:
+      add_modifier:
+        id: mod_cliente_directivo_fiel
+        label: Acuerdo con nueva dirección
+        remaining_months: 4
+        monthly_billed_delta: 380
+        monthly_stress_delta: 2
+      moral: 7
+      reputation: 3
+      stress: 1
+  - id: posponer_arranque_por_saturacion
+    label: Agradecer el gesto y agendar solo una toma de contacto sin prisas
+    result_text: Cuidas la relación con un café tranquilo sin sobrecargar este mes de entregas.
+    effects:
+      deductible_expense: 25
+      stress: -1
+      moral: 1
+      personal_life: 2
+      reputation: -3

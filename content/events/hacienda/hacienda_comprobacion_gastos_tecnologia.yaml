@@ -1,0 +1,47 @@
+schema_version: 1
+id: hacienda_comprobacion_gastos_tecnologia
+category: hacienda
+title: "¿Gasto del año o amortización? El portátil de la discordia"
+body: "Metiste la compra de tu equipo informático nuevo de golpe en un solo trimestre y el Inspector Gómez te envía una tabla recordándote que los bienes duraderos se amortizan poquito a poco durante varios años."
+tags:
+  - amortizacion
+  - inversiones
+  - deducciones
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+requirements:
+  min_month: 15
+weight: 10
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: aceptar_cuadro_amortizacion_anual
+    label: "Aceptar la tabla plurianual y abonar la diferencia de este año (290 €)"
+    result_text: "Pagas hoy el exceso deducido por adelantado, aunque al menos podrás rascar el resto en los ejercicios siguientes."
+    effects:
+      cash_delta: -290
+      stress: 5
+      moral: -2
+      fiscal_risk: -8
+  - id: aplicar_amortizacion_acelerada_gestor
+    label: "Pedir a tu gestoría aplicar incentivos de reducida dimensión al cálculo"
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: "Tu gestoría encaja el equipo en el régimen especial de amortización acelerada y reduce el ajuste a calderilla."
+    effects:
+      deductible_expense: 120
+      cash_delta: -70
+      stress: 2
+      moral: 4
+      fiscal_risk: -10
+  - id: desglosar_como_perifericos_sueltos
+    label: "Defender que eran piezas sueltas de escaso valor para deducirlo todo ya"
+    result_text: "Salvas la liquidez inmediata forzando la interpretación contable, pero Gómez toma nota mental para futuras revisiones."
+    effects:
+      cash_delta: 160
+      stress: 7
+      moral: -3
+      fiscal_risk: 20

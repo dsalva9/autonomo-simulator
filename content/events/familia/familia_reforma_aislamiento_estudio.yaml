@@ -1,0 +1,52 @@
+schema_version: 1
+id: familia_reforma_aislamiento_estudio
+category: familia
+title: "Climatizar e insonorizar tu rincón de batalla"
+body: "Después de cinco inviernos fríos y cinco veranos tropicales trabajando entre ruidos de patio interior, te planteas invertir de una vez en ventanas dobles y climatización silenciosa para vivir y producir en paz."
+tags:
+  - hogar
+  - confort
+  - reforma
+  - veterania
+requirements:
+  min_month: 62
+weight: 11
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: hacer_reforma_completa_confort
+    label: "Invertir en aislamiento y clima eficiente para hogar y estudio (890 €)"
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: "Cerrar la ventana y escuchar silencio absoluto parece brujería. Trabajas mejor, descansas mejor y baja el gasto energético."
+    effects:
+      cash_delta: -590
+      deductible_expense: 300
+      stress: -13
+      moral: 10
+      personal_life: 11
+      add_modifier:
+        id: mod_hogar_climatizado
+        label: "Hogar insonorizado y eficiente"
+        remaining_months: 6
+        monthly_expense_delta: -45
+        monthly_billed_delta: 140
+        monthly_stress_delta: -2
+  - id: mejora_modesta_ventilador_cortinas
+    label: "Poner burletes térmicos, cortinas gruesas y salir del paso (130 €)"
+    result_text: "No obra milagros arquitectónicos, pero amortigua bastante el calor y los gritos del patio sin descapitalizarte."
+    effects:
+      cash_delta: -130
+      stress: -6
+      moral: 4
+      personal_life: 5
+  - id: dejarlo_para_el_ano_que_viene
+    label: "Ahorrarte la obra otro año más y seguir tirando de cascos grandes"
+    result_text: "Tu tesorería ni se inmuta hoy, aunque sigues enterándote de cada discusión y cada serie del vecino de enfrente."
+    effects:
+      stress: 5
+      moral: -2
+      personal_life: -4

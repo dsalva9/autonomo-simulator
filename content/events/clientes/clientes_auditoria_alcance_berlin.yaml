@@ -1,0 +1,50 @@
+schema_version: 1
+id: clientes_auditoria_alcance_berlin
+category: clientes
+title: Ampliación europea con reuniones a las ocho y media
+body: El equipo de Berlín está encantado con tu primera entrega y propone ampliar el alcance a tres mercados europeos. Pagan tarifas centroeuropeas, pero quieren sincronización temprana tres mañanas por semana.
+tags:
+  - internacional
+  - ampliacion
+  - cadena_berlin
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: asumir_despliegue_tres_paises
+    label: Aceptar el despliegue completo madrugando con el termo lleno
+    result_text: Tus mañanas arrancan en inglés antes de que abra la panadería, pero la factura intracomunitaria compensa cada ojera.
+    effects:
+      billed_income: 1925
+      stress: 10
+      moral: 4
+      personal_life: -4
+      reputation: 4
+      schedule_events:
+        - event_id: clientes_retainer_europeo_consolidado
+          delay_months: 2
+  - id: pactar_entregas_asincronas
+    label: Negociar trabajo asíncrono por informes escritos sin madrugones
+    requirements:
+      stats:
+        reputation:
+          min: 45
+    result_text: Les convences de que rindes el doble sin videollamadas diarias. Aceptan informes semanales claros y mantienes tu ritmo.
+    effects:
+      billed_income: 1675
+      stress: 4
+      moral: 7
+      personal_life: 1
+      reputation: 4
+      schedule_events:
+        - event_id: clientes_retainer_europeo_consolidado
+          delay_months: 2
+  - id: cerrar_proyecto_en_fase_uno
+    label: Cobrar un traspaso limpio y no embarcarse en la ampliación
+    result_text: Documentas todo con elegancia, cobras una sesión de cierre y conservas tus mañanas tranquilas.
+    effects:
+      billed_income: 475
+      stress: -4
+      moral: 3
+      personal_life: 4

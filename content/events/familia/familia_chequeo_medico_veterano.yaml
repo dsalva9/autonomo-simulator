@@ -1,0 +1,47 @@
+schema_version: 1
+id: familia_chequeo_medico_veterano
+category: familia
+title: "Analítica anual: colesterol, vista cansada y café"
+body: "Llevas más de cuatro años sosteniendo el chiringuito y la analítica pasa revista sin piedad: vitamina D de vampiro, tensión vigilada y graduación pidiendo gafas nuevas de filtro y descanso real."
+tags:
+  - salud
+  - veterania
+  - habitos
+  - autocuidado
+requirements:
+  min_month: 52
+weight: 12
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: renovar_gafas_y_plan_salud
+    label: "Hacerte gafas nuevas, revisar hábitos y caminar a diario (280 €)"
+    result_text: "Dejas de entrecerrar los ojos frente al monitor, bajas el tercer café del día y recuperas energía limpia."
+    effects:
+      cash_delta: -280
+      stress: -12
+      moral: 8
+      personal_life: 9
+      add_modifier:
+        id: mod_habitos_salud_veterano
+        label: "Revisión médica y buenos hábitos"
+        remaining_months: 4
+        monthly_stress_delta: -2
+        monthly_moral_delta: 1
+  - id: cumplir_lo_minimo_de_farmacia
+    label: "Comprar suplementos en la farmacia y prometer cenar más ligero (45 €)"
+    result_text: "Sales del paso sin grandes gastos ni grandes milagros: al menos ahora desayunas al sol diez minutos."
+    effects:
+      cash_delta: -45
+      stress: -4
+      moral: 3
+      personal_life: 3
+  - id: guardar_informe_en_un_cajon
+    label: "Archivar el papel junto a las facturas viejas y seguir al mismo ritmo"
+    result_text: "Rascas otra semana intensa de facturación ignorando el aviso, con un leve tic en el párpado izquierdo."
+    effects:
+      billed_income: 510
+      stress: 8
+      moral: -4
+      personal_life: -5

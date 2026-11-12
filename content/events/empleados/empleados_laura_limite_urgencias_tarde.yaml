@@ -1,0 +1,53 @@
+schema_version: 1
+id: empleados_laura_limite_urgencias_tarde
+category: empleados
+title: "Las seis en punto y una falsa urgencia"
+body: "A las seis menos cinco entra un correo de cliente exigiendo rehacer una entrega para mañana sin motivo real. Laura cierra el portátil con gesto serio y te recuerda que tragar con falsas urgencias destruye cualquier método de trabajo."
+tags:
+  - plantilla
+  - senior
+  - limites
+  - conciliacion_laboral
+character_id: empleada_senior_laura
+character_expression: stressed
+requirements:
+  min_month: 24
+  has_employee: true
+  required_flags:
+    - empleada_laura_activa
+weight: 8
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: respaldar_criterio_y_tarifar_extra
+    label: "Respaldar a Laura y presupuestar recargo exprés si lo quieren mañana"
+    result_text: "De pronto la urgencia vital podía esperar o bien aprueban el suplemento sin discutir. Laura sonríe orgullosa de estar en tu barco."
+    effects:
+      billed_income: 1400
+      moral: 7
+      stress: -4
+      reputation: 4
+      clear_flags:
+        - desgaste_plantilla
+  - id: asumirlo_tu_solo_de_noche
+    label: "Despedir a Laura a su hora y quedarte tú solo sacando el marrón"
+    result_text: "Respetas su horario sagrado a costa de cenar frente a la pantalla a las once de la noche preguntándote quién manda aquí."
+    effects:
+      billed_income: 800
+      moral: -3
+      stress: 12
+      personal_life: -7
+  - id: presionar_para_quedarse_ambos
+    label: "Pedirle como excepción crítica que se quede hoy contigo hasta tarde"
+    result_text: "Sacáis el encargo adelante en dos horas tensas, pero Laura toma nota mental del límite cruzado en su libreta."
+    effects:
+      billed_income: 950
+      moral: -7
+      stress: 9
+      set_flags:
+        - desgaste_plantilla
+      schedule_events:
+        - event_id: empleados_negociacion_condiciones
+          delay_months: 2
+          probability: 0.7

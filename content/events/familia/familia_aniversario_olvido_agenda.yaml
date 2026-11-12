@@ -1,0 +1,61 @@
+schema_version: 1
+id: familia_aniversario_olvido_agenda
+category: familia
+title: "Te acuerdas del Modelo 303 pero no de vuestro día"
+body: "Tienes tres alarmas para los vencimientos fiscales y ninguna para vuestro aniversario. A mediodía entra un mensaje de Álex sospechosamente breve preguntando a qué hora terminas «hoy precisamente»."
+tags:
+  - pareja
+  - aniversario
+  - conciliacion
+  - despiste
+character_id: pareja_alex
+character_expression: stressed
+requirements:
+  min_month: 10
+  family_statuses:
+    - dating
+    - cohabiting
+weight: 10
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: improvisar_cena_y_confesar_con_humor
+    label: "Cerrar a las seis, comprar detalle y reservar cena especial (135 €)"
+    result_text: "Confiesas el despiste antes del aperitivo sin poner excusas baratas. Álex se ríe de tu cabeza fiscal y salváis una gran noche."
+    effects:
+      cash_delta: -135
+      stress: -8
+      moral: 8
+      personal_life: 12
+      clear_flags:
+        - crisis_pareja_latente
+  - id: cocinar_en_casa_con_velas
+    label: "Bajar al mercado a la carrera y montar una cena casera cuidada (55 €)"
+    outcomes:
+      - id: risotto_triunfal
+        weight: 65
+        result_text: "El arroz sale en su punto, suena vuestra música favorita y nadie menciona ni una sola factura en toda la velada."
+        effects:
+          cash_delta: -55
+          stress: -6
+          moral: 6
+          personal_life: 9
+      - id: llamada_de_cliente_en_el_postre
+        weight: 35
+        result_text: "El móvil vibra sobre la encimera en el peor momento y, aunque no contestas, se nota que tenías la fecha pillada con alfileres."
+        effects:
+          cash_delta: -55
+          stress: 5
+          moral: -3
+          personal_life: -4
+  - id: pedir_celebrarlo_el_fin_de_semana
+    label: "Admitir que hoy no llegas y prometer compensarlo el sábado sin falta"
+    result_text: "Terminas tus entregas puntualmente, pero cenas frente al brillo frío de la pantalla con un silencio denso al otro lado."
+    effects:
+      billed_income: 470
+      stress: 8
+      moral: -6
+      personal_life: -10
+      set_flags:
+        - crisis_pareja_latente
