@@ -1,0 +1,72 @@
+schema_version: 1
+id: clientes_concurso_acreedores_cuenta_clave
+category: clientes
+title: "Boletín Oficial: tu cliente estrella entra en concurso de acreedores"
+body: "Salta la noticia a primera hora: una empresa que representa buena parte de tu facturación solicita concurso voluntario de acreedores con 4.200 € tuyos pendientes y una entrega crítica a medias."
+tags:
+  - impago
+  - concurso
+  - cadena
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 62
+weight: 8
+cooldown_months: 16
+max_occurrences: 2
+choices:
+  - id: paralizar_servicio_y_reclamar_por_tu_cuenta
+    label: Cortar trabajos en curso hoy mismo y presentar tus facturas al juzgado
+    result_text: Frenas la hemorragia a tiempo para no regalar un mes más de trabajo y quedas en la lista oficial de acreedores.
+    effects:
+      moral: -3
+      stress: 9
+      reputation: 2
+      set_flags:
+        - impago_pendiente
+      schedule_events:
+        - event_id: clientes_liquidacion_administrador_concursal
+          delay_months: 3
+  - id: negociar_pago_prioritario_por_servicio_esencial
+    label: Condicionar el soporte mínimo vital a cobro al contado contra la masa
+    outcomes:
+      - id: autorizan_pago_esencial_inmediato
+        weight: 60
+        result_text: "Sin tu sistema no pueden ni facturar: autorizan 2.100 € prioritarios al contado por mantener la operativa viva."
+        effects:
+          billed_income: 2100
+          moral: 4
+          stress: 7
+          reputation: 5
+          schedule_events:
+            - event_id: clientes_liquidacion_administrador_concursal
+              delay_months: 3
+      - id: juzgado_congela_caja_dos_meses
+        weight: 40
+        result_text: El juzgado interviene las cuentas esa misma mañana y ni siquiera la partida urgente sale hoy.
+        effects:
+          moral: -6
+          stress: 12
+          set_flags:
+            - impago_pendiente
+          schedule_events:
+            - event_id: clientes_liquidacion_administrador_concursal
+              delay_months: 3
+  - id: personarse_con_asesoria_y_congelar_entrega
+    label: Suspender entregas nuevas y comunicar el crédito concursal con Elena (180 €)
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: Elena registra tu crédito en plazo, recupera el IVA de la factura impagada y blinda tu posición ante el administrador concursal.
+    effects:
+      billed_income: 950
+      deductible_expense: 180
+      moral: 3
+      stress: 5
+      reputation: 4
+      set_flags:
+        - impago_pendiente
+      schedule_events:
+        - event_id: clientes_liquidacion_administrador_concursal
+          delay_months: 3

@@ -15,15 +15,6 @@ cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: plantarse_en_intervencion_presencial
-    label: Pedir cita presencial a primera hora hasta cazar el código bueno
-    result_text: Pierdes media mañana entre ventanillas, pero un funcionario compasivo te apunta el código en un pósit y desbloqueas el pago.
-    effects:
-      billed_income: 1100
-      stress: 14
-      moral: 0
-      personal_life: -2
-      reputation: 2
   - id: encargar_tramite_a_gestoria
     label: Pagar un trámite urgente a tu gestoría para que lidie con FACe
     requirements:
@@ -37,6 +28,15 @@ choices:
       stress: -1
       moral: 5
       fiscal_risk: -2
+  - id: plantarse_en_intervencion_presencial
+    label: Pedir cita presencial a primera hora hasta cazar el código bueno
+    result_text: Pierdes media mañana entre ventanillas, pero un funcionario compasivo te apunta el código en un pósit y desbloqueas el pago.
+    effects:
+      billed_income: 1100
+      stress: 9
+      moral: 0
+      personal_life: -2
+      reputation: 2
   - id: aparcar_tramite_este_mes
     label: Cerrar el portal hoy antes de lanzar el ratón por la ventana
     result_text: Apagas el ordenador para salvar la tensión arterial, asumiendo que sin el código corregido ese expediente seguirá bloqueado.

@@ -13,8 +13,9 @@ character_expression: neutral
 requirements:
   min_month: 13
   family_statuses:
-    - single
     - separated
+  required_flags:
+    - ex_pareja_alex
 weight: 12
 cooldown_months: 14
 max_occurrences: 2
@@ -35,6 +36,7 @@ choices:
         - relacion_con_alex
       clear_flags:
         - crisis_pareja_latente
+        - ex_pareja_alex
   - id: quedar_como_buena_amistad
     label: "Agradecer la charla, pagar los cafés y cuidar una amistad sin presiones"
     result_text: "Cerráis heridas pendientes con cariño genuino y subes de vuelta al estudio con el pecho mucho más ligero."

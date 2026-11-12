@@ -1,0 +1,52 @@
+schema_version: 1
+id: clientes_subcontrata_equipo_estudio
+category: clientes
+title: "Cuenta en paralelo: Marta quiere trato directo con quien ejecuta"
+body: Marta aprueba un despliegue de 3.600 € en tres frentes simultáneos y pide que tu persona en plantilla lidere las reuniones técnicas semanales mientras tú supervisas la arquitectura global.
+tags:
+  - equipo
+  - delegacion
+  - corporativo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 28
+  has_employee: true
+weight: 10
+cooldown_months: 11
+max_occurrences: 4
+choices:
+  - id: absorber_tu_las_reuniones_y_exprimir_plazos
+    label: Acaparar tú todas las llamadas y apretar al estudio con los plazos
+    result_text: Sacas los 3.600 € completos haciendo de cuello de botella humano. La cuenta sale, pero en el estudio se corta la tensión con cuchillo.
+    effects:
+      billed_income: 3600
+      moral: -3
+      stress: 11
+      reputation: 3
+      employee_satisfaction: -12
+  - id: dar_visibilidad_y_prima_a_tu_empleado
+    label: Cederle la interlocución técnica con prima de 300 € por proyecto
+    requirements:
+      has_employee: true
+      employee_satisfaction:
+        min: 65
+    result_text: Tu fichaje brilla ante Marta, tú revisas solo hitos clave y por primera vez sientes que diriges un estudio de verdad.
+    effects:
+      billed_income: 3600
+      deductible_expense: 300
+      moral: 7
+      stress: -2
+      personal_life: 4
+      reputation: 6
+      employee_satisfaction: 8
+  - id: recortar_alcance_a_dos_frentes_asumibles
+    label: Pactar un alcance prudente de 2.400 € sin exponer ni quemar al equipo
+    result_text: Marta acepta escalonar el tercer bloque para más adelante. Facturación sólida, horario respetado y buen ambiente interno.
+    effects:
+      billed_income: 2400
+      moral: 3
+      stress: 2
+      reputation: 3
+      employee_satisfaction: 4

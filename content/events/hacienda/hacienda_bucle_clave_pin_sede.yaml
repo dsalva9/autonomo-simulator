@@ -13,26 +13,11 @@ requirements:
 weight: 11
 cooldown_months: 12
 max_occurrences: 3
-exclusive_with: []
+exclusive_with:
+  - gestor_bucle_sms_clave_pin
 choices:
-  - id: pelear_con_tres_navegadores
-    label: "Borrar caché, probar tres navegadores y jurar en arameo dos horas"
-    result_text: "En el quinto intento desde una ventana de incógnito se obra el milagro y descargas el PDF con un tic en el párpado."
-    effects:
-      stress: 7
-      moral: -3
-      personal_life: -3
-      fiscal_risk: -2
-  - id: madrugar_por_cita_presencial
-    label: "Refrescar cita previa a las ocho en punto e ir a una oficina comarcal"
-    result_text: "Gastas media mañana y dos billetes de transporte, pero un funcionario amable te imprime el papel en dos minutos."
-    effects:
-      cash_delta: -55
-      stress: 4
-      moral: 1
-      fiscal_risk: -4
   - id: comprar_lector_dnie_profesional
-    label: "Comprar un lector de DNI electrónico y dejar copia cifrada lista (75 €)"
+    label: Comprar un lector de DNI electrónico y dejar copia cifrada lista (75 €)
     requirements:
       stats:
         money:
@@ -43,3 +28,19 @@ choices:
       stress: -4
       moral: 5
       fiscal_risk: -5
+  - id: pelear_con_tres_navegadores
+    label: Borrar caché, probar tres navegadores y jurar en arameo dos horas
+    result_text: En el quinto intento desde una ventana de incógnito se obra el milagro y descargas el PDF con un tic en el párpado.
+    effects:
+      stress: 7
+      moral: -3
+      personal_life: -3
+      fiscal_risk: -2
+  - id: madrugar_por_cita_presencial
+    label: Refrescar cita previa a las ocho en punto e ir a una oficina comarcal
+    result_text: Gastas media mañana y dos billetes de transporte, pero un funcionario amable te imprime el papel en dos minutos.
+    effects:
+      cash_delta: -55
+      stress: 4
+      moral: 1
+      fiscal_risk: -4

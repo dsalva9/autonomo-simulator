@@ -56,24 +56,29 @@ export function AnnualSummaryModal({
       aria-modal="true"
       aria-labelledby="annual-summary-title"
       data-testid="annual-summary-modal"
-      className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
     >
-      <div className="paper-dossier animate-dossier w-full max-w-lg max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2.5rem)] flex flex-col rounded-xl overflow-hidden">
-        <div className="bg-[#264e7a] text-[#fffdf8] px-4 sm:px-5 py-3.5 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
-          <FileSpreadsheet className="w-6 h-6 text-[#fce592] shrink-0" aria-hidden="true" />
+      <div className="paper-dossier animate-dossier w-full max-w-lg max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl overflow-hidden">
+        <div className="bg-[#264e7a] text-[#fffdf8] px-4 sm:px-5 py-2.5 sm:py-3 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
+          <FileSpreadsheet
+            className="w-5 h-5 sm:w-6 sm:h-6 text-[#fce592] shrink-0"
+            aria-hidden="true"
+          />
           <div className="min-w-0">
-            <p className="stamp-badge text-[11px] text-[#fce592]">{a.formBadge}</p>
-            <h2 id="annual-summary-title" className="font-editorial text-lg sm:text-xl font-bold">
+            <p className="stamp-badge text-[10px] sm:text-[11px] text-[#fce592] truncate">
+              {a.formBadge}
+            </p>
+            <h2 id="annual-summary-title" className="font-editorial text-base sm:text-xl font-bold">
               {a.heading(summary.year, summary.month)}
             </h2>
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 space-y-3.5 text-sm overflow-y-auto dossier-scroll">
+        <div className="flex-1 min-h-0 p-3 sm:p-4 space-y-2.5 text-sm overflow-y-auto dossier-scroll">
           <p className="text-xs sm:text-sm text-[#373f3a]">{a.intro}</p>
 
           {/* Annual Accounting Ledger */}
-          <div className="rounded-lg border border-[#1f2421]/35 bg-[#f6efe0] p-3.5 space-y-1.5 text-xs sm:text-sm">
+          <div className="rounded-lg border border-[#1f2421]/35 bg-[#f6efe0] p-3 space-y-1.5 text-xs sm:text-sm">
             <div className="flex items-center justify-between gap-2">
               <span className="text-[#373f3a]">{a.grossBilled}</span>
               <span className="font-bureau font-bold text-[#1f5c53] tabular-nums whitespace-nowrap shrink-0">
@@ -114,7 +119,7 @@ export function AnnualSummaryModal({
           <div data-testid="annual-structure-summary" className="space-y-1.5">
             <p className="stamp-badge text-[10px] text-[#4a524e]">{a.structureHeading}</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-              <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2.5 space-y-0.5 min-w-0">
+              <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#8f510d]">
                   <ShieldCheck className="w-3 h-3 shrink-0" aria-hidden="true" />
                   {a.gestorCardLabel}
@@ -130,7 +135,7 @@ export function AnnualSummaryModal({
                 </p>
               </div>
 
-              <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2.5 space-y-0.5 min-w-0">
+              <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#b42b24]">
                   <Heart className="w-3 h-3 shrink-0" aria-hidden="true" />
                   {a.familyCardLabel}
@@ -149,7 +154,7 @@ export function AnnualSummaryModal({
                 </p>
               </div>
 
-              <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2.5 space-y-0.5 min-w-0">
+              <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#1f5c53]">
                   <Briefcase className="w-3 h-3 shrink-0" aria-hidden="true" />
                   {a.staffCardLabel}
@@ -181,14 +186,16 @@ export function AnnualSummaryModal({
               </ul>
             </div>
           )}
+        </div>
 
+        <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3 sm:px-4 py-2 sm:py-2.5">
           <button
             type="button"
             data-testid="annual-summary-close-btn"
             data-autofocus="true"
             data-modal-option="true"
             onClick={onClose}
-            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#264e7a] hover:bg-[#1c3b5e] text-[#fffdf8] font-bold px-4 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#264e7a] hover:bg-[#1c3b5e] text-[#fffdf8] font-bold px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors"
           >
             <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
             <span>{a.closeBtn(summary.year, summary.year + 1)}</span>

@@ -1,0 +1,51 @@
+schema_version: 1
+id: familia_primer_dia_colegio_primaria
+category: familia
+title: "Mochila gigante y vuelta al cole de mayores"
+body: "Septiembre inaugura etapa escolar con lista interminable de libros, etiquetas con nombre hasta en los calcetines y entrada solemne a las nueve en punto, justo a la hora de una presentación comercial."
+tags:
+  - hijos
+  - colegio
+  - septiembre
+  - conciliacion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 48
+  months_of_year:
+    - 9
+  required_flags:
+    - criatura_en_casa
+weight: 13
+cooldown_months: 11
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: comprar_lote_usado_y_madrugar
+    label: "Ahorrar tirando de banco de libros usados y cuadrar la mañana al minuto (115 €)"
+    result_text: "Forras libros a medianoche como un artesano medieval, llegas a la foto de la fila y te conectas desde el coche cinco minutos después."
+    effects:
+      cash_delta: -115
+      billed_income: 460
+      stress: 5
+      moral: 6
+      personal_life: 7
+  - id: mover_reunion_y_llevar_al_cole
+    label: "Cambiar la reunión sin complejos y acompañar esa primera mañana (260 €)"
+    result_text: "Ver esa mochila con patas cruzar la verja sin mirar atrás te recompone el alma. El cliente acepta el cambio de hora con total naturalidad."
+    effects:
+      cash_delta: -260
+      billed_income: 340
+      stress: -8
+      moral: 12
+      personal_life: 14
+  - id: delegar_entrada_por_presentacion
+    label: "Pagar todo el lote nuevo, delegar la fila y priorizar la reunión clave (310 €)"
+    result_text: "Clavas la presentación comercial y cierras buen presupuesto, aunque ver la foto de la puerta por el móvil te deja un nudo serio."
+    effects:
+      cash_delta: -310
+      billed_income: 890
+      stress: 7
+      moral: -7
+      personal_life: -10
+      reputation: 3

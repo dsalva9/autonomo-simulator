@@ -16,6 +16,15 @@ cooldown_months: 13
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: absorber_tu_al_cliente_dificil
+    label: "Asumir tú el trato directo con esa cuenta y darle la tarde libre"
+    result_text: "Proteges a tu equipo del mal trago y salvas la factura, a cambio de tragarte tú solo todas las llamadas tensas del mes."
+    effects:
+      billed_income: 1350
+      moral: 3
+      stress: 7
+      personal_life: -3
+      employee_satisfaction: 8
   - id: parar_los_pies_por_escrito
     label: "Enviar un mensaje firme exigiendo respeto y centralizando el trato"
     outcomes:
@@ -27,6 +36,7 @@ choices:
           moral: 8
           stress: -3
           reputation: 4
+          employee_satisfaction: 16
           clear_flags:
             - desgaste_plantilla
       - id: ruptura_digna_de_cuenta
@@ -37,16 +47,9 @@ choices:
           moral: 7
           stress: 4
           reputation: 1
+          employee_satisfaction: 15
           clear_flags:
             - desgaste_plantilla
-  - id: absorber_tu_al_cliente_dificil
-    label: "Asumir tú el trato directo con esa cuenta y darle la tarde libre"
-    result_text: "Proteges a tu equipo del mal trago y salvas la factura, a cambio de tragarte tú solo todas las llamadas tensas del mes."
-    effects:
-      billed_income: 1350
-      moral: 3
-      stress: 7
-      personal_life: -3
   - id: pedir_tragar_porque_paga_bien
     label: "Decir en frío que quien paga manda y que no conviene hacer olas"
     result_text: "La transferencia entra puntual en el banco, pero algo importante se rompe para siempre en la confianza del despacho."
@@ -54,5 +57,6 @@ choices:
       billed_income: 1550
       moral: -9
       stress: 8
+      employee_satisfaction: -18
       set_flags:
         - desgaste_plantilla

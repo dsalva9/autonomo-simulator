@@ -1,0 +1,58 @@
+schema_version: 1
+id: empleados_auditoria_prevencion_riesgos_prl
+category: empleados
+title: "Prevención de riesgos laborales y altura de pantalla"
+body: "Contratar personal implica más obligaciones que pagar la nómina: toca renovar el servicio externo de prevención de riesgos laborales, ofrecer reconocimiento médico y documentar la ergonomía del puesto."
+tags:
+  - plantilla
+  - prl
+  - normativa
+  - prevencion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 12
+  has_employee: true
+weight: 11
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: cubrir_minimo_legal_documental
+    label: "Suscribir la póliza preventiva básica obligatoria sin extras (165 €)"
+    result_text: "Cumples estrictamente la ley con factura deducible y archivas el certificado sin mayor ceremonia."
+    effects:
+      deductible_expense: 165
+      stress: -1
+      moral: 2
+      employee_satisfaction: 2
+  - id: contratar_servicio_prl_completo_y_mejoras
+    label: "Contratar prevención completa, revisión médica y mejoras de puesto (340 €)"
+    result_text: "Dejas la carpeta laboral blindada ante cualquier visita y tu equipo agradece que cuides su salud de verdad."
+    effects:
+      deductible_expense: 340
+      stress: -5
+      moral: 6
+      fiscal_risk: -4
+      employee_satisfaction: 9
+  - id: dejar_renovacion_en_bandeja_pendientes
+    label: "Posponer la renovación confiando en que nadie revise un estudio pequeño"
+    outcomes:
+      - id: pasa_el_ano_sin_visita
+        weight: 55
+        result_text: "Nadie llama a tu puerta este semestre, aunque trabajas con la mosca detrás de la oreja cada vez que llega correo oficial."
+        effects:
+          billed_income: 280
+          stress: 5
+          moral: -4
+          fiscal_risk: 8
+          employee_satisfaction: -5
+      - id: requerimiento_laboral_menor
+        weight: 45
+        result_text: "Un cruce administrativo detecta la póliza caducada: pagas recargo no deducible y contratas deprisa y corriendo."
+        effects:
+          cash_delta: -640
+          stress: 13
+          moral: -7
+          reputation: -3
+          employee_satisfaction: -8

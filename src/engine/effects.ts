@@ -56,7 +56,8 @@ export function resolveChoiceEffects(
 
   let lifetimeBilled = state.finances.lifetime_billed;
   let currentQuarterBilled = state.finances.current_quarter_billed;
-  let accruedTaxLiability = state.finances.accrued_tax_liability;
+  const startAccruedTax = state.finances.accrued_tax_liability;
+  let accruedTaxLiability = startAccruedTax;
   const pendingInvoices: PendingInvoice[] = [...state.finances.pending_invoices];
 
   let annualBilled = state.annual_snapshot.billed;
@@ -188,9 +189,9 @@ export function resolveChoiceEffects(
       };
     } else {
       const charDef = character_id ? catalog.characters[character_id] : undefined;
-      const fee = charDef?.gestor_params?.monthly_fee ?? balance.gestor_tiers[tier].monthly_fee;
+      const fee = balance.gestor_tiers[tier].monthly_fee ?? charDef?.gestor_params?.monthly_fee;
       const shield =
-        charDef?.gestor_params?.inspection_shield ?? balance.gestor_tiers[tier].inspection_shield;
+        balance.gestor_tiers[tier].inspection_shield ?? charDef?.gestor_params?.inspection_shield;
       gestor = {
         tier,
         character_id: character_id ?? null,
@@ -205,23 +206,30 @@ export function resolveChoiceEffects(
   let family: FamilyState = state.family;
   if (effects.set_family_status) {
     const { status, partner_character_id } = effects.set_family_status;
-    const resolvedPartnerId =
-      status === "single" ? null : (partner_character_id ?? family.partner_character_id ?? null);
-    const partnerDef = resolvedPartnerId ? catalog.characters[resolvedPartnerId] : undefined;
-
     if (status === "single" || status === "separated") {
+      if (status === "separated") {
+        flags.ex_pareja_alex = true;
+      }
       family = {
         status,
-        partner_character_id: resolvedPartnerId,
+        partner_character_id: null,
         children_count: family.children_count,
         monthly_cost: family.children_count * balance.child_monthly_cost,
         support_modifier: 0,
       };
     } else {
+      flags.historia_con_alex = true;
+      const resolvedPartnerId =
+        partner_character_id === null
+          ? null
+          : (partner_character_id ??
+            family.partner_character_id ??
+            (catalog.characters.pareja_alex ? "pareja_alex" : null));
+      const partnerDef = resolvedPartnerId ? catalog.characters[resolvedPartnerId] : undefined;
       const partnerCost =
-        partnerDef?.family_params?.monthly_cost ?? balance.default_partner_monthly_cost;
+        balance.default_partner_monthly_cost ?? partnerDef?.family_params?.monthly_cost;
       const supportMod =
-        partnerDef?.family_params?.support_modifier ?? balance.default_partner_support_modifier;
+        balance.default_partner_support_modifier ?? partnerDef?.family_params?.support_modifier;
       family = {
         status,
         partner_character_id: resolvedPartnerId,
@@ -267,6 +275,17 @@ export function resolveChoiceEffects(
     annualExpenses += severance;
     employee = null;
     milestones.push("dismiss_employee");
+  }
+
+  let employeeSatisfactionDelta = 0;
+  if (effects.employee_satisfaction != null && employee !== null) {
+    const beforeSat = employee.satisfaction;
+    const nextSat = clampStat(beforeSat + Math.round(effects.employee_satisfaction));
+    employeeSatisfactionDelta = nextSat - beforeSat;
+    employee = {
+      ...employee,
+      satisfaction: nextSat,
+    };
   }
 
   const occurrences = {
@@ -374,6 +393,8 @@ export function resolveChoiceEffects(
       personal_life_delta: personalLife - startPersonalLife,
       reputation_delta: reputation - startReputation,
       fiscal_risk_delta: fiscalRisk - startFiscalRisk,
+      tax_accrued_delta: accruedTaxLiability - startAccruedTax,
+      employee_satisfaction_delta: employeeSatisfactionDelta,
       scheduled_event_ids: scheduledEventIds,
     },
   };

@@ -10,19 +10,14 @@ tags:
   - gastos_imprevistos
 requirements:
   min_month: 3
+  months_of_year:
+    - 1
+    - 2
 weight: 12
-cooldown_months: 14
+cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: pagar_tecnico_urgente_placa
-    label: "Pagar reparación urgente hoy mismo y recuperar la calefacción (410 €)"
-    result_text: "La factura duele como un sabañón, pero a mediodía vuelven a calentar los radiadores y trabajas sin parecer un pingüino."
-    effects:
-      cash_delta: -410
-      stress: -7
-      moral: 5
-      personal_life: 6
   - id: comprar_estufa_y_esperar_pieza
     label: "Tirar de calefactor eléctrico y esperar al técnico sin urgencia (165 €)"
     result_text: "Sobrevives cinco días calentando solo tu metro cuadrado de mesa y recibes un pequeño susto después en la factura de la luz."
@@ -45,3 +40,11 @@ choices:
       stress: 3
       moral: 2
       personal_life: 4
+  - id: pagar_tecnico_urgente_placa
+    label: "Pagar reparación urgente hoy mismo y recuperar la calefacción (410 €)"
+    result_text: "La factura duele como un sabañón, pero a mediodía vuelven a calentar los radiadores y trabajas sin parecer un pingüino."
+    effects:
+      cash_delta: -410
+      stress: -7
+      moral: 5
+      personal_life: 6

@@ -1,0 +1,51 @@
+schema_version: 1
+id: hacienda_campana_renta_primavera
+category: hacienda
+title: Arranca la campaña de la Renta y el borrador miente
+body: "Primavera fiscal: abres tus datos en Renta Web y aparece un aviso en rojo recordando que tus actividades económicas, pagos a cuenta y deducciones autonómicas no vienen calculados de serie."
+tags:
+  - renta
+  - irpf
+  - campana_anual
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 4
+  months_of_year:
+    - 4
+    - 5
+    - 6
+weight: 12
+cooldown_months: 9
+max_occurrences: 4
+choices:
+  - id: aceptar_datos_en_bruto_para_cobrar_pronto
+    label: Volcar cifras a ojo y confirmar hoy para cobrar cuanto antes
+    result_text: Rascas liquidez rápida esta primavera, dejando un descuadre latente con tus modelos trimestrales previos.
+    effects:
+      cash_delta: 210
+      stress: -2
+      moral: -2
+      fiscal_risk: 16
+  - id: cuadrar_libros_y_autonomicas_a_mano
+    label: Dedicar el fin de semana a cruzar libros y tramos autonómicos
+    result_text: Terminas conociendo de memoria treinta casillas nuevas, pero presentas una declaración anual sólida.
+    effects:
+      stress: 7
+      moral: 4
+      personal_life: -3
+      fiscal_risk: -5
+  - id: despachar_renta_anual_con_gestoria
+    label: Encargar el cierre completo de Renta a tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría cuadra amortizaciones, cuotas de autónomo y deducciones regionales rascando un saldo limpio a tu favor.
+    effects:
+      deductible_expense: 130
+      cash_delta: 185
+      stress: -6
+      moral: 5
+      fiscal_risk: -8

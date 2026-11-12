@@ -1,7 +1,7 @@
 schema_version: 1
 id: hacienda_subvencion_kit_tributa_irpf
 category: hacienda
-title: "La letra pequeña del bono digital «totalmente gratis»"
+title: La letra pequeña del bono digital «totalmente gratis»
 body: "Aquel bono público para digitalizar tu negocio que nunca pasó por tu cuenta aparece reluciente en tus datos fiscales: el Inspector Gómez te recuerda sonriente que las ayudas tributan como ingreso."
 tags:
   - subvenciones
@@ -11,37 +11,41 @@ character_id: hacienda_inspector_gomez
 character_expression: pleased
 requirements:
   min_month: 8
+  months_of_year:
+    - 4
+    - 5
+    - 6
 weight: 10
 cooldown_months: 16
 max_occurrences: 2
 exclusive_with: []
 choices:
-  - id: declarar_ayuda_y_asumir_cuota
-    label: "Incluir la subvención en renta y abonar el pellizco de IRPF (230 €)"
-    result_text: "Pagas impuestos sobre un dinero que cobró directamente el proveedor, pero dejas la declaración sin fisuras."
+  - id: omitirla_por_no_haberla_cobrado
+    label: Omitir el importe pensando que si no tocó tu banco no existe
+    result_text: Te ahorras el pago inmediato cerrando los ojos, aunque ese descuadre brilla con luz propia en el servidor público.
     effects:
-      cash_delta: -230
-      stress: 5
-      moral: -3
-      fiscal_risk: -6
+      cash_delta: 120
+      stress: 6
+      moral: -4
+      fiscal_risk: 22
   - id: periodificar_ayuda_con_gestoria
-    label: "Pedir a tu gestoría imputar la ayuda al ritmo de la amortización"
+    label: Pedir a tu gestoría imputar la ayuda al ritmo de la amortización
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu asesoría acompasa contablemente ingreso y desgaste plurianual, dejando el impacto de este año en migajas."
+    result_text: Tu asesoría acompasa contablemente ingreso y desgaste plurianual, dejando el impacto de este año en migajas.
     effects:
       deductible_expense: 110
       cash_delta: -60
       stress: 1
       moral: 4
       fiscal_risk: -8
-  - id: omitirla_por_no_haberla_cobrado
-    label: "Omitir el importe pensando que si no tocó tu banco no existe"
-    result_text: "Te ahorras el pago inmediato cerrando los ojos, aunque ese descuadre brilla con luz propia en el servidor público."
+  - id: declarar_ayuda_y_asumir_cuota
+    label: Incluir la subvención en renta y abonar el pellizco de IRPF (230 €)
+    result_text: Pagas impuestos sobre un dinero que cobró directamente el proveedor, pero dejas la declaración sin fisuras.
     effects:
-      cash_delta: 120
-      stress: 6
-      moral: -4
-      fiscal_risk: 22
+      cash_delta: -230
+      stress: 5
+      moral: -3
+      fiscal_risk: -6

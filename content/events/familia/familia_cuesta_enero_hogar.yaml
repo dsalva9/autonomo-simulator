@@ -1,0 +1,56 @@
+schema_version: 1
+id: familia_cuesta_enero_hogar
+category: familia
+title: "La cuesta de enero entra sin llamar"
+body: "Enero amanece con escarcha en el cristal, el recibo gordo del gas, dos seguros anuales renovándose a traición y la nevera pidiendo auxilio justo en pleno mes de liquidación trimestral."
+tags:
+  - enero
+  - hogar
+  - coste_vida
+  - ahorro
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 13
+  months_of_year:
+    - 1
+weight: 11
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: pagar_todo_y_apretar_cinturon
+    label: "Afrontar el aluvión de recibos de golpe y tirar de legumbres este mes (360 €)"
+    result_text: "La cuenta corriente tiembla dos semanas, pero te ahorras pelear por teléfono y dejas todo el año limpio de un plumazo."
+    effects:
+      cash_delta: -360
+      stress: -5
+      moral: 4
+      personal_life: 1
+  - id: auditar_recibos_y_cambiar_tarifas
+    label: "Sentarte una tarde a renegociar seguros, luz y suscripciones muertas"
+    requirements:
+      stats:
+        stress:
+          max: 62
+    result_text: "Tras dos horas de música de espera telefónica podas gastos fantasma y aseguras varios meses de recibos domésticos más livianos."
+    effects:
+      cash_delta: -180
+      stress: -3
+      moral: 6
+      personal_life: 3
+      add_modifier:
+        id: mod_suministros_optimizados
+        label: "Recibos domésticos renegociados"
+        remaining_months: 5
+        monthly_expense_delta: -65
+        monthly_stress_delta: -1
+  - id: fraccionar_seguros_y_buscar_extra
+    label: "Fraccionar los cargos anuales y aceptar un encargo rápido de fin de semana"
+    result_text: "Compensas la cuesta de enero a base de teclado sabatino: salvas la tesorería inmediata a costa de empezar el año ya cansado."
+    effects:
+      cash_delta: -150
+      billed_income: 520
+      stress: 8
+      moral: -2
+      personal_life: -5

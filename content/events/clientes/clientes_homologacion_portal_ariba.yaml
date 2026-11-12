@@ -1,0 +1,59 @@
+schema_version: 1
+id: clientes_homologacion_portal_ariba
+category: clientes
+title: "Infierno en el portal de compras: 48 pestañas para cobrar"
+body: "Para pagarte una cuenta anual de 3.200 €, una multinacional te obliga a homologarte en su portal global: certificados bancarios sellados, póliza de responsabilidad civil y formularios en inglés técnico."
+tags:
+  - corporativo
+  - burocracia
+  - homologacion
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 24
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: facturar_a_traves_de_partner_homologado
+    label: Ceder un 18 % a un colega ya homologado para no tocar el portal
+    result_text: Tu colega emite la factura desde su código activo, se queda su peaje y tú cobras limpio sin rellenar ni un cuestionario.
+    effects:
+      billed_income: 1750
+      stress: 1
+      reputation: 2
+  - id: pelearse_tres_dias_con_el_portal
+    label: Pagar 240 € de póliza y rellenar tú mismo las 48 pantallas
+    result_text: Tras tres rechazos automáticos por el tamaño del PDF, superas el filtro, cobras el hito inicial y ganas código de proveedor.
+    effects:
+      billed_income: 2200
+      deductible_expense: 240
+      moral: 2
+      stress: 10
+      personal_life: -4
+      reputation: 5
+      set_flags:
+        - proveedor_corporativo_activo
+        - homologacion_proveedor_activa
+  - id: delegar_expediente_en_gestoria_premium
+    label: Encargar el expediente y el seguro de 240 € a tu asesoría sénior
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: Elena sube cada certificado a la primera. Quedas homologado como proveedor preferente y entra el primer bloque de horas.
+    effects:
+      billed_income: 2200
+      deductible_expense: 240
+      moral: 6
+      stress: -2
+      reputation: 6
+      set_flags:
+        - proveedor_corporativo_activo
+        - homologacion_proveedor_activa
+      add_modifier:
+        id: mod_bolsa_horas_marta
+        label: Bolsa de horas corporativa
+        remaining_months: 4
+        monthly_billed_delta: 450
+        monthly_stress_delta: 2

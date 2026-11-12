@@ -1,0 +1,54 @@
+schema_version: 1
+id: gestor_elena_bonificacion_contratacion
+category: gestor
+title: Elena activa créditos formativos y bonificación laboral
+body: Revisando los seguros sociales de tu estudio, Elena Montes detecta créditos de formación bonificada sin consumir y una reducción limpia en cotizaciones si formalizas un plan de carrera.
+tags:
+  - gestoria
+  - elena
+  - laboral
+  - optimizacion_fiscal
+character_id: gestor_premium_elena
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 14
+  gestor_tiers:
+    - premium
+  has_employee: true
+weight: 12
+cooldown_months: 12
+max_occurrences: 3
+choices:
+  - id: implantar_plan_carrera_y_credito_formativo
+    label: Formalizar el plan formativo completo con anexo laboral
+    requirements:
+      stats:
+        money:
+          min: 300
+    result_text: Bonificas seguros sociales con trazabilidad impecable y tu plantilla celebra que inviertas de verdad en su crecimiento.
+    effects:
+      deductible_expense: 180
+      cash_delta: 460
+      stress: -6
+      moral: 6
+      reputation: 4
+      fiscal_risk: -7
+      employee_satisfaction: 10
+  - id: aplicar_solo_bonificacion_automatica_tgss
+    label: Aplicar solo el crédito básico sin restar horas de entrega
+    result_text: Aprovechas el descuento directo en el boletín mensual sin alterar el ritmo de producción del estudio.
+    effects:
+      cash_delta: 220
+      stress: -4
+      moral: 4
+      fiscal_risk: -5
+      employee_satisfaction: 4
+  - id: priorizar_facturacion_y_dejar_pasar_credito
+    label: Descartar cursos este trimestre para exprimir entregas urgentes
+    result_text: Sacas adelante más horas facturables inmediatas, aunque el equipo nota que nunca hay hueco para formarse.
+    effects:
+      billed_income: 540
+      stress: 5
+      moral: -2
+      employee_satisfaction: -7

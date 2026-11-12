@@ -36,6 +36,7 @@ choices:
       cash_delta: -400
       moral: 4
       stress: -3
+      employee_satisfaction: 16
       clear_flags:
         - desgaste_plantilla
       add_modifier:

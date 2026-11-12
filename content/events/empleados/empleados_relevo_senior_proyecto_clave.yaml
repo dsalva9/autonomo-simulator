@@ -15,11 +15,11 @@ requirements:
   has_employee: false
 weight: 9
 cooldown_months: 14
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: fichar_laura_etapa_consolidada
-    label: "Incorporar a Laura en plantilla para escalar (2.150 €/mes, ×1,65)"
+    label: "Incorporar a Laura en plantilla para escalar (2.100 €/mes, ×2,05)"
     requirements:
       has_employee: false
       stats:

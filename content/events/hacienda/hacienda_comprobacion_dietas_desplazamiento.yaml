@@ -1,0 +1,53 @@
+schema_version: 1
+id: hacienda_comprobacion_dietas_desplazamiento
+category: hacienda
+title: Comprobación de dietas y menús fuera de plaza
+body: "El Inspector Gómez revisa tus gastos de manutención entre semana: exige factura completa, pago electrónico y probar qué hacías exactamente a cuarenta kilómetros de tu domicilio."
+tags:
+  - comprobacion
+  - deducciones
+  - hosteleria
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 9
+  stats:
+    fiscal_risk:
+      min: 17
+weight: 14
+cooldown_months: 13
+max_occurrences: 3
+choices:
+  - id: aportar_trazabilidad_cuenta_separada
+    label: Aportar extracto de tu cuenta profesional separada y agendas
+    requirements:
+      required_flags:
+        - disciplina_fiscal_aprendida
+    result_text: "Haber separado cuentas desde el primer trimestre obra maravillas: cada cargo cuadra con su entrega y Gómez archiva."
+    effects:
+      stress: -4
+      moral: 7
+      reputation: 2
+      fiscal_risk: -18
+  - id: asumir_recorte_de_tickets_simplificados
+    label: Retirar los menús con factura simplificada y abonar cuota
+    result_text: Pierdes la deducción de los bares que solo dieron ticket térmico, pero cierras el expediente sin sanción añadida.
+    effects:
+      cash_delta: -280
+      stress: 5
+      moral: -3
+      fiscal_risk: -14
+  - id: cruzar_visitas_comerciales_con_gestor
+    label: Armar anexo de desplazamientos y correos con tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría vincula casi todos los desplazamientos con presupuestos reales y reduce el ajuste al mínimo.
+    effects:
+      deductible_expense: 120
+      cash_delta: -90
+      stress: 2
+      moral: 4
+      fiscal_risk: -15

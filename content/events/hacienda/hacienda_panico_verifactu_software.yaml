@@ -2,7 +2,7 @@ schema_version: 1
 id: hacienda_panico_verifactu_software
 category: hacienda
 title: "Fiebre de VeriFactu: pánico colectivo por las facturas con QR"
-body: "Media docena de anuncios apocalípticos aseguran que tus humildes facturas en PDF serán delito intergaláctico mañana mismo si no contratas ya un programa homologado con huella digital y código QR."
+body: Media docena de anuncios apocalípticos aseguran que tus humildes facturas en PDF serán delito intergaláctico mañana mismo si no contratas ya un programa homologado con huella digital y código QR.
 tags:
   - verifactu
   - facturacion
@@ -13,11 +13,20 @@ requirements:
 weight: 12
 cooldown_months: 16
 max_occurrences: 2
-exclusive_with: []
+exclusive_with:
+  - gestor_migracion_verifactu_caos
 choices:
+  - id: seguir_con_plantilla_casera
+    label: Seguir renombrando «Factura_Final_v3.pdf» hasta que obligue el BOE
+    result_text: Te ahorras la cuota mensual de momento, rezando para no repetir número de serie cuando facturas con sueño.
+    effects:
+      cash_delta: 80
+      stress: 4
+      moral: -1
+      fiscal_risk: 12
   - id: contratar_software_homologado
-    label: "Suscribirte a un programa de facturación serio y automatizar libros"
-    result_text: "Gastas un poco en licencia deducible, pero tus facturas numeradas con QR salen impecables en treinta segundos."
+    label: Suscribirte a un programa de facturación serio y automatizar libros
+    result_text: Gastas un poco en licencia deducible, pero tus facturas numeradas con QR salen impecables en treinta segundos.
     effects:
       deductible_expense: 140
       stress: -4
@@ -25,22 +34,14 @@ choices:
       reputation: 2
       fiscal_risk: -8
   - id: usar_portal_incluido_gestoria
-    label: "Activar el facturador homologado que incluye tu propia gestoría"
+    label: Activar el facturador homologado que incluye tu propia gestoría
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Conectas tus emisiones directamente con la contabilidad de tu asesoría y te olvidas para siempre de picar datos."
+    result_text: Conectas tus emisiones directamente con la contabilidad de tu asesoría y te olvidas para siempre de picar datos.
     effects:
       deductible_expense: 50
       stress: -5
       moral: 5
       fiscal_risk: -8
-  - id: seguir_con_plantilla_casera
-    label: "Seguir renombrando «Factura_Final_v3.pdf» hasta que obligue el BOE"
-    result_text: "Te ahorras la cuota mensual de momento, rezando para no repetir número de serie cuando facturas con sueño."
-    effects:
-      cash_delta: 80
-      stress: 4
-      moral: -1
-      fiscal_risk: 12

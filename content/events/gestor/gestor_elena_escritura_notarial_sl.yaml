@@ -2,16 +2,33 @@ schema_version: 1
 id: gestor_elena_escritura_notarial_sl
 category: gestor
 title: "Veredicto mercantil: costes fijos frente a músculo comercial"
-body: "Llega la conclusión del estudio societario: operar con envoltorio mercantil te abre puertas en licitaciones y cuentas grandes, aunque exige tasas registrales y contabilidad estricta al céntimo cada mes."
+body: "Llega la conclusión del estudio societario de Elena: operar con envoltorio mercantil te abre puertas en licitaciones y grandes cuentas, aunque exige tasas registrales y contabilidad estricta cada mes."
 tags:
   - gestoria
   - sociedad_limitada
   - mercantil
+character_id: gestor_premium_elena
+character_expression: neutral
+requirements:
+  gestor_tiers:
+    - premium
+  required_flags:
+    - dossier_sl_elena
 weight: 0
 cooldown_months: 0
 max_occurrences: 2
 exclusive_with: []
 choices:
+  - id: adoptar_blindaje_sin_constituir
+    label: "Quedarte como autónomo aplicando solo las mejoras contables (140 €)"
+    result_text: "Aprovechas las cláusulas y criterios de amortización del informe sin cargar con el Impuesto de Sociedades ni libros registrales."
+    effects:
+      deductible_expense: 140
+      stress: -5
+      moral: 3
+      fiscal_risk: -7
+      clear_flags:
+        - dossier_sl_elena
   - id: activar_estructura_comercial_b2b
     label: "Firmar el despliegue mercantil para captar cuentas mayores (480 €)"
     requirements:
@@ -32,16 +49,6 @@ choices:
         remaining_months: 6
         monthly_billed_delta: 330
         monthly_expense_delta: 80
-  - id: adoptar_blindaje_sin_constituir
-    label: "Quedarte como autónomo aplicando solo las mejoras contables (140 €)"
-    result_text: "Aprovechas las cláusulas y criterios de amortización del informe sin cargar con el Impuesto de Sociedades ni libros registrales."
-    effects:
-      deductible_expense: 140
-      stress: -5
-      moral: 3
-      fiscal_risk: -7
-      clear_flags:
-        - dossier_sl_elena
   - id: guardar_proyecto_en_el_cajon
     label: "Archivar la carpeta mercantil hasta tiempos de mayor holgura"
     result_text: "Cierras el expediente sin asumir ni un euro más de estructura fija y sigues facturando con tu agilidad habitual."

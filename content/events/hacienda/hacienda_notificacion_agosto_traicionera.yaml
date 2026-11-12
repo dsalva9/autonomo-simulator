@@ -1,0 +1,49 @@
+schema_version: 1
+id: hacienda_notificacion_agosto_traicionera
+category: hacienda
+title: Notificación electrónica en mitad de agosto
+body: "Quince de agosto a treinta y ocho grados: olvidaste blindar tus días de cortesía y entra un aviso en DEHú. En diez días naturales se entenderá notificado aunque estés en chanclas."
+tags:
+  - notificacion_agosto
+  - dehu
+  - verano
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 8
+  months_of_year:
+    - 8
+weight: 11
+cooldown_months: 11
+max_occurrences: 3
+choices:
+  - id: improvisar_oficina_en_terraza_de_verano
+    label: Compartir datos del móvil y contestar el escrito entre helados
+    result_text: Salvas el plazo legal sudando frente al portátil mientras todo el mundo brinda a dos metros de tu mesa.
+    effects:
+      deductible_expense: 45
+      stress: 8
+      moral: 2
+      personal_life: -5
+      fiscal_risk: -5
+  - id: derivar_urgencia_a_guardia_de_gestoria
+    label: Enviar el código CSV al retén de agosto de tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: El turno de guardia descarga la notificación, presenta prórroga de plazo y te salva la semana de descanso.
+    effects:
+      deductible_expense: 110
+      stress: -3
+      moral: 4
+      personal_life: 2
+      fiscal_risk: -7
+  - id: ignorar_correo_hasta_septiembre
+    label: Silenciar las alertas hasta septiembre y asumir el recargo
+    result_text: Descansas de verdad en agosto, aunque el regreso en septiembre te recibe con recargo por plazo vencido.
+    effects:
+      cash_delta: -220
+      stress: -4
+      personal_life: 6
+      fiscal_risk: 7

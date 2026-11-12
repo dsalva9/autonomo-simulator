@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_apoyo_racha_dura
 category: familia
 title: "Trinchera doméstica en plena mala racha"
-body: "Llevas días haciendo números en voz baja con la mandíbula apretada. Álex nota el cansancio antes de que digas palabra, deja un plato caliente sobre la mesa y se ofrece a echarte un cable real: desde asumir gastos comunes este mes hasta obligarte a parar antes de que petes."
+body: "Llevas días echando cuentas en voz baja con la mandíbula apretada. Álex nota el cansancio al vuelo, deja un plato caliente en la mesa y se ofrece a cubrir gastos comunes este mes o a obligarte a parar antes de que petes."
 tags:
   - pareja
   - apoyo
@@ -15,7 +15,7 @@ requirements:
   min_month: 4
   stats:
     stress:
-      min: 35
+      min: 24
   family_statuses:
     - dating
     - cohabiting
@@ -24,13 +24,6 @@ cooldown_months: 10
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: aceptar_respiro_emocional
-    label: "Dejarte cuidar este fin de semana, hablar sin filtros y soltar lastre"
-    result_text: "Duermes ocho horas seguidas por primera vez en semanas sin soñar con vencimientos. El lunes los problemas siguen ahí, pero ya no pesan el doble."
-    effects:
-      moral: 11
-      stress: -14
-      personal_life: 9
   - id: aceptar_arrimar_el_hombro_gastos
     label: "Aceptar que Álex cubra compra y recibos este mes para aliviar la caja"
     result_text: "Te tragas el orgullo de autónomo autosuficiente y agradeces el gesto de corazón. Ese balón de oxígeno evita que el mes se convierta en una cuesta imposible."
@@ -39,6 +32,13 @@ choices:
       moral: 7
       stress: -10
       personal_life: 5
+  - id: aceptar_respiro_emocional
+    label: "Dejarte cuidar este fin de semana, hablar sin filtros y soltar lastre"
+    result_text: "Duermes ocho horas seguidas por primera vez en semanas sin soñar con vencimientos. El lunes los problemas siguen ahí, pero ya no pesan el doble."
+    effects:
+      moral: 11
+      stress: -14
+      personal_life: 9
   - id: disimular_y_seguir_remando
     label: "Sonreír diciendo «está todo bajo control» y volver al teclado"
     result_text: "Prefieres no mezclar cuentas ni preocupaciones y sacas un encargo menor adelante, aunque Álex nota perfectamente que sigues llevando la procesión por dentro."

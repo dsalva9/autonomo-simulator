@@ -15,10 +15,13 @@ requirements:
   min_month: 14
   family_statuses:
     - cohabiting
+  forbidden_flags:
+    - criatura_en_casa
 weight: 11
 cooldown_months: 24
 max_occurrences: 1
-exclusive_with: []
+exclusive_with:
+  - familia_llegada_criatura
 choices:
   - id: bajar_marcha_primeros_meses
     label: "Celebrarlo, frenar encargos unos meses y vivir la crianza (+280 €/mes)"

@@ -1,0 +1,50 @@
+schema_version: 1
+id: hacienda_control_subcontratas_estudio
+category: hacienda
+title: Revisión del Modelo 111 entre nómina y colaboradores
+body: "Con plantilla y apoyos externos, salta una comprobación del Modelo 111: una subida salarial a mitad de año pedía recalcular el porcentaje de IRPF en nómina y quedó corto."
+tags:
+  - comprobacion
+  - modelo_111
+  - laboral
+  - retenciones
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 36
+  has_employee: true
+weight: 12
+cooldown_months: 15
+max_occurrences: 3
+choices:
+  - id: asumir_ajuste_estudio_con_transparencia
+    label: Regularizar el tramo desde el estudio explicándolo con calma
+    result_text: Cubres el desfase trimestral sin golpear de golpe el neto mensual del equipo y sales reforzado.
+    effects:
+      cash_delta: -220
+      stress: 4
+      moral: 3
+      fiscal_risk: -12
+      employee_satisfaction: 4
+  - id: auditar_retenciones_anuales_con_gestoria
+    label: Recalcular tablas anuales y presentar escrito con gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría aplica deducciones familiares comunicadas en el modelo 145 y deja la regularización al mínimo.
+    effects:
+      deductible_expense: 165
+      stress: -4
+      moral: 5
+      fiscal_risk: -15
+      employee_satisfaction: 5
+  - id: descontar_toda_la_diferencia_este_mes
+    label: Descontar todo el ajuste acumulado en la nómina de este mes
+    result_text: Cuadras con Hacienda sin poner un euro extra, pero el recorte repentino deja un ambiente gélido en el estudio.
+    effects:
+      stress: 3
+      moral: -4
+      fiscal_risk: -10
+      employee_satisfaction: -10

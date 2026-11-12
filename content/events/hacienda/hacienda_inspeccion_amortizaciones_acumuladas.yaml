@@ -1,9 +1,10 @@
 schema_version: 1
 id: hacienda_inspeccion_amortizaciones_acumuladas
 category: hacienda
-title: "Revisión veterana del libro de bienes de inversión"
-body: "Media década renovando pantallas, sillas y equipos deja un cuadro de amortización kilométrico. El Inspector Gómez pide acreditar que el material amortizado sigue afecto y no en el cuarto de un sobrino."
+title: Revisión veterana del libro de bienes de inversión
+body: Media década renovando pantallas, sillas y equipos deja un cuadro de amortización kilométrico. El Inspector Gómez pide acreditar que el material amortizado sigue afecto y no en el cuarto de un sobrino.
 tags:
+  - inspeccion
   - bienes_inversion
   - amortizacion
   - veterania
@@ -14,34 +15,34 @@ requirements:
   min_month: 60
 weight: 11
 cooldown_months: 15
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: aportar_numeros_serie_y_punto_limpio
-    label: "Enviar fotos de números de serie y albaranes de reciclaje oficial"
-    result_text: "Tu síndrome de Diógenes documental triunfa: cada equipo viejo tiene su resguardo y Gómez archiva sin reparos."
+  - id: regularizar_equipos_extraviados
+    label: Dar de baja los equipos sin rastro y abonar la cuota pendiente (340 €)
+    result_text: Limpias de un plumazo las líneas viejas del libro registro pagando el ajuste y ganas tranquilidad futura.
     effects:
-      deductible_expense: 85
-      stress: 5
-      moral: 6
-      fiscal_risk: -10
+      cash_delta: -340
+      stress: 3
+      moral: -3
+      fiscal_risk: -9
   - id: auditoria_activos_asesoria_premium
-    label: "Presentar cuadro contable auditado por Elena Montes al céntimo"
+    label: Presentar cuadro contable auditado por Elena Montes al céntimo
     requirements:
       gestor_tiers:
         - premium
-    result_text: "Elena entrega un inventario de inmovilizado tan pulcro que el inspector cierra la comprobación en media mañana."
+    result_text: Elena entrega un inventario de inmovilizado tan pulcro que el inspector cierra la comprobación en media mañana.
     effects:
       deductible_expense: 175
       stress: -6
       moral: 8
       reputation: 3
       fiscal_risk: -15
-  - id: regularizar_equipos_extraviados
-    label: "Dar de baja los equipos sin rastro y abonar la cuota pendiente (340 €)"
-    result_text: "Limpias de un plumazo las líneas viejas del libro registro pagando el ajuste y ganas tranquilidad futura."
+  - id: aportar_numeros_serie_y_punto_limpio
+    label: Enviar fotos de números de serie y albaranes de reciclaje oficial
+    result_text: "Tu síndrome de Diógenes documental triunfa: cada equipo viejo tiene su resguardo y Gómez archiva sin reparos."
     effects:
-      cash_delta: -340
-      stress: 3
-      moral: -3
-      fiscal_risk: -9
+      deductible_expense: 85
+      stress: 5
+      moral: 6
+      fiscal_risk: -10

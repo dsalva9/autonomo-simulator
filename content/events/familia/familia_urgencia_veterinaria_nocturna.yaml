@@ -10,6 +10,8 @@ tags:
   - hogar
 requirements:
   min_month: 5
+  forbidden_flags:
+    - sin_mascota_decidido
 weight: 10
 cooldown_months: 15
 max_occurrences: 3
@@ -23,6 +25,8 @@ choices:
       stress: -6
       moral: 9
       personal_life: 10
+      set_flags:
+        - mascota_en_casa
   - id: consulta_basica_y_vigilar_en_vela
     label: "Cubrir la pauta básica en clínica y pasar tú la noche vigilando (160 €)"
     outcomes:
@@ -34,6 +38,8 @@ choices:
           stress: 4
           moral: 5
           personal_life: 5
+          set_flags:
+            - mascota_en_casa
       - id: segunda_visita_por_la_manana
         weight: 30
         result_text: "A las ocho toca volver corriendo a la clínica, perder toda la mañana de trabajo y abonar el resto de pruebas."
@@ -43,6 +49,8 @@ choices:
           moral: -2
           personal_life: 2
           reputation: -2
+          set_flags:
+            - mascota_en_casa
   - id: empalmar_consulta_y_entregas
     label: "Pagar la urgencia y empalmar sin dormir para no retrasar al cliente"
     result_text: "El peludo duerme plácidamente con collar isabelino junto a tus pies mientras tú facturas con cuatro cafés en vena."
@@ -53,3 +61,5 @@ choices:
       moral: 2
       personal_life: -2
       reputation: 2
+      set_flags:
+        - mascota_en_casa

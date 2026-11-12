@@ -1,0 +1,56 @@
+schema_version: 1
+id: hacienda_retencion_alquiler_modelo_115
+category: hacienda
+title: El olvido traicionero del Modelo 115 de alquiler
+body: Pagaste puntualmente el alquiler de un puesto de trabajo externo sin caer en que el recibo llevaba retención de arrendamiento urbano. Gómez reclama el Modelo 115 no ingresado.
+tags:
+  - comprobacion
+  - modelo_115
+  - retenciones
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 18
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: pedir_recibo_de_servicios_coworking
+    label: Pedir al centro que reemita factura como servicios flexibles
+    outcomes:
+      - id: centro_corrige_concepto_sin_retencion
+        weight: 60
+        result_text: Al incluir limpieza, internet y recepción, acreditas que es prestación de servicios exenta de Modelo 115.
+        effects:
+          stress: 5
+          moral: 5
+          fiscal_risk: -9
+      - id: arrendador_mantiene_contrato_urbano
+        weight: 40
+        result_text: El propietario se niega a tocar sus libros y acabas ingresando tú las retenciones atrasadas con recargo.
+        effects:
+          cash_delta: -310
+          stress: 9
+          moral: -5
+          fiscal_risk: -8
+  - id: acreditar_exencion_registral_con_gestor
+    label: Aportar certificado de exención o subsanar con tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría encuadra el contrato correctamente en el censo y liquida el trámite con coste mínimo.
+    effects:
+      deductible_expense: 115
+      stress: -2
+      moral: 5
+      fiscal_risk: -12
+  - id: presentar_115_extemporaneo_y_cerrar
+    label: Ingresar la retención pendiente ahora para cortar intereses
+    result_text: Asumes el golpe en caja de inmediato y actualizas tus altas censales para que no vuelva a colarse.
+    effects:
+      cash_delta: -250
+      stress: 4
+      moral: -2
+      fiscal_risk: -10

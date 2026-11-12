@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { stringify as stringifyYaml } from "yaml";
-import { renderJsonSchemaDocument } from "../../scripts/emit-schemas.ts";
+import { emitSchemas, renderJsonSchemaDocument } from "../../scripts/emit-schemas.ts";
 import {
   ASSET_CATEGORY_MAX_BYTES,
   parseWebpDimensions,
@@ -17,6 +17,7 @@ import {
   CharacterExpressionsMapSchema,
   CharacterSchema,
   EventSchema,
+  hasActiveRequirements,
 } from "../../src/engine/index.ts";
 import {
   createFixtureBalance,
@@ -215,7 +216,7 @@ describe("Zod contracts, JSON schema emission & semantic validators", () => {
     ).toBe(false);
   });
 
-  it("emits valid JSON Schema Draft 2020-12 documents for all 4 contracts", () => {
+  it("emits valid JSON Schema Draft 2020-12 documents for all 4 contracts and matches schemas/*.schema.json", () => {
     const rendered = renderJsonSchemaDocument({
       filename: "event.schema.json",
       title: "EventDef",
@@ -225,6 +226,117 @@ describe("Zod contracts, JSON schema emission & semantic validators", () => {
     expect(parsed.$id).toBe("event.schema.json");
     expect(parsed.title).toBe("EventDef");
     expect(parsed.type).toBe("object");
+
+    const checkResult = emitSchemas(process.cwd(), true);
+    expect(checkResult.diffs).toEqual([]);
+    expect(checkResult.ok).toBe(true);
+  });
+
+  it("validates Phase 3.5 seasonal months_of_year, employee_satisfaction requirements/effects, anti-softlock guards, and balance decay fields", () => {
+    const sampleEvent = createFixtureEvents()[0];
+
+    expect(hasActiveRequirements({ months_of_year: [1, 4, 7, 10] })).toBe(true);
+    expect(hasActiveRequirements({ months_of_year: null })).toBe(false);
+    expect(hasActiveRequirements({ employee_satisfaction: { min: 50 } })).toBe(true);
+    expect(hasActiveRequirements({ employee_satisfaction: { max: 40 } })).toBe(true);
+    expect(hasActiveRequirements({ employee_satisfaction: {} })).toBe(false);
+    expect(hasActiveRequirements({ employee_satisfaction: null })).toBe(false);
+
+    // Valid seasonal + employee_satisfaction event & choice effects
+    expect(
+      EventSchema.safeParse({
+        ...sampleEvent,
+        requirements: {
+          months_of_year: [4, 7, 10],
+          employee_satisfaction: { min: 30, max: 90 },
+        },
+        choices: [
+          {
+            id: "subir_animo_equipo",
+            label: "Dar tarde libre al equipo",
+            requirements: {
+              months_of_year: [7],
+              employee_satisfaction: { max: 65 },
+            },
+            effects: {
+              employee_satisfaction: 15,
+              stress: -4,
+            },
+          },
+          sampleEvent.choices[2],
+        ],
+      }).success,
+    ).toBe(true);
+
+    // Invalid months_of_year bounds or empty array
+    expect(
+      EventSchema.safeParse({
+        ...sampleEvent,
+        requirements: { months_of_year: [] },
+      }).success,
+    ).toBe(false);
+    expect(
+      EventSchema.safeParse({
+        ...sampleEvent,
+        requirements: { months_of_year: [0] },
+      }).success,
+    ).toBe(false);
+    expect(
+      EventSchema.safeParse({
+        ...sampleEvent,
+        requirements: { months_of_year: [13] },
+      }).success,
+    ).toBe(false);
+
+    // Anti-softlock: choices gated solely by months_of_year or employee_satisfaction must be rejected if no unconditional fallback exists
+    expect(
+      EventSchema.safeParse({
+        ...sampleEvent,
+        choices: [
+          {
+            id: "solo_agosto",
+            label: "Cerrar en agosto",
+            requirements: { months_of_year: [8] },
+            effects: { stress: -5 },
+          },
+          {
+            id: "solo_equipo_feliz",
+            label: "Delegar entrega",
+            requirements: { employee_satisfaction: { min: 70 } },
+            effects: { billed_income: 900 },
+          },
+        ],
+      }).success,
+    ).toBe(false);
+
+    // BalanceConfigSchema Phase 3.5 optional fields
+    const baseBalance = createFixtureBalance();
+    expect(
+      BalanceConfigSchema.safeParse({
+        ...baseBalance,
+        annual_living_cost_growth: 30,
+        high_stat_decay_threshold: 68,
+        event_novelty_decay_k: 0.85,
+      }).success,
+    ).toBe(true);
+    expect(
+      BalanceConfigSchema.safeParse({
+        ...baseBalance,
+        annual_living_cost_growth: -10,
+      }).success,
+    ).toBe(false);
+    expect(
+      BalanceConfigSchema.safeParse({
+        ...baseBalance,
+        high_stat_decay_threshold: 101,
+      }).success,
+    ).toBe(false);
+    expect(
+      BalanceConfigSchema.safeParse({
+        ...baseBalance,
+        event_novelty_decay_k: -0.5,
+      }).success,
+    ).toBe(false);
   });
 
   it("validates a complete workspace and catches orphan weight:0 and delay:0 cycles", () => {

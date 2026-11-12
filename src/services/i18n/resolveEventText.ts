@@ -413,6 +413,11 @@ export const MODIFIER_LABELS_BY_ID_EN: Readonly<Record<string, string>> = {
   mod_estudio_pie_calle: "Shared street-level studio",
   mod_red_senior_preferente: "Priority senior freelancer network",
   mod_remoto_estable_provincia: "Focused provincial remote setup",
+  mod_pase_coworking_plantilla: "Staff coworking desk pass",
+  mod_dani_semi_senior: "Dani stepped up to mid-level",
+  mod_procesos_estudio_fluidos: "Streamlined team SOPs & templates",
+  mod_incentivo_beneficios_anual: "Annual profit-sharing plan",
+  mod_alza_seguridad_social_empresa: "Employer Social Security hike",
   // Familia
   pacto_desconexion_familiar: "Strengthened family bond",
   mod_impulso_carrera_alex: "Álex's new career chapter",
@@ -432,6 +437,12 @@ export const MODIFIER_LABELS_BY_ID_EN: Readonly<Record<string, string>> = {
   mod_taller_analogico: "Screen-free Tuesday pottery class",
   mod_permiso_bebe_casa: "Hands-on newborn care at home",
   mod_alquiler_inflado_casero: "Inflated lease-renewal rent",
+  mod_suministros_optimizados: "Renegotiated home utility bills",
+  mod_presidencia_escalera: "HOA presidency draining hours",
+  mod_hipoteca_tipo_fijo: "Fixed-rate mortgage shield",
+  mod_paseos_mascota_diarios: "Daily off-screen dog walks",
+  mod_complicidad_hogar_veterano: "Quarter-proof supportive home",
+  mod_semana_cuatro_dias_senior: "Veteran four-day workweek",
   // Gestor
   mod_estudio_renovado_veterano: "Upgraded studio hardware",
   mod_desgaste_equipos_veteranos: "Aging hardware on its last legs",
@@ -490,6 +501,11 @@ export const MODIFIER_LABELS_EN: Readonly<Record<string, string>> = {
   "Estudio compartido a pie de calle": "Shared street-level studio",
   "Red externa preferente garantizada": "Priority senior freelancer network",
   "Trabajo remoto estable y enfocado": "Focused provincial remote setup",
+  "Pase de coworking para plantilla": "Staff coworking desk pass",
+  "Dani consolidado como perfil intermedio": "Dani stepped up to mid-level",
+  "Procesos internos afinados en equipo": "Streamlined team SOPs & templates",
+  "Participación anual en beneficios": "Annual profit-sharing plan",
+  "Subida de cotización empresarial": "Employer Social Security hike",
   "Vínculo familiar reforzado": "Strengthened family bond",
   "Nueva etapa profesional de Álex": "Álex's new career chapter",
   "Noches en vela y horario reducido de crianza": "Sleepless nights & parenting schedule",
@@ -508,6 +524,12 @@ export const MODIFIER_LABELS_EN: Readonly<Record<string, string>> = {
   "Martes de taller sin pantallas": "Screen-free Tuesday pottery class",
   "Crianza intensiva en casa": "Hands-on newborn care at home",
   "Alquiler inflado tras renovación": "Inflated lease-renewal rent",
+  "Recibos domésticos renegociados": "Renegotiated home utility bills",
+  "Presidencia vecinal absorbiendo horas": "HOA presidency draining hours",
+  "Cuota blindada a tipo fijo": "Fixed-rate mortgage shield",
+  "Paseos diarios con tu mascota": "Daily off-screen dog walks",
+  "Hogar cómplice a prueba de trimestres": "Quarter-proof supportive home",
+  "Semana veterana de cuatro días": "Veteran four-day workweek",
   "Equipamiento de estudio renovado": "Upgraded studio hardware",
   "Equipos veteranos al límite": "Aging hardware on its last legs",
   "Suscripción software facturación verificable": "Certified e-invoicing subscription",
@@ -606,30 +628,112 @@ const STAT_LABELS_EN: Record<keyof NonNullable<RequirementsSpec["stats"]>, strin
   fiscal_risk: "Fiscal risk",
 };
 
-const EXACT_FLAG_LABELS_EN: Readonly<Record<string, string>> = {
+export const EXACT_FLAG_LABELS_ES: Readonly<Record<string, string>> = {
+  cobro_en_b_reciente: "cobro en B reciente",
+  inspeccion_en_curso: "inspección en curso",
+  pareja_estable: "pareja estable",
+  cliente_corporativo_activo: "cliente corporativo activo",
+  cliente_fijo_activo: "cliente de iguala activo",
+  cliente_internacional_activo: "cliente internacional activo",
+  certificado_digital_caducado: "certificado digital caducado",
+  reclamacion_judicial_activa: "reclamación judicial activa",
+  sancion_hacienda_previa: "sanción previa de Hacienda",
+  burnout_aviso_medico: "aviso médico por agotamiento",
+  acuerdo_colaboradores_firmado: "acuerdo de colaboradores firmado",
+  estudio_calle_alquilado: "estudio a pie de calle alquilado",
+  estudio_propio_activo: "estudio propio activo",
+  desgaste_plantilla: "desgaste en la plantilla",
+  criatura_en_casa: "criatura en casa",
+  impago_pendiente: "impago de cliente pendiente",
+  clausula_pausa_firmada: "cláusula de pausa firmada",
+  ex_pareja_alex: "ex pareja (Álex)",
+  historia_con_alex: "historia previa con Álex",
+  relacion_con_alex: "relación con Álex",
+  web_corporativa_activa: "web corporativa activa",
+  portfolio_actualizado: "portfolio actualizado",
+  convivencia_estable: "convivencia estable",
+  crisis_pareja_latente: "crisis de pareja latente",
+  disciplina_fiscal_aprendida: "disciplina fiscal aprendida",
+  dossier_sl_elena: "dossier de S.L. de Elena",
+  empleada_laura_activa: "Laura (sénior) en plantilla",
+  empleado_dani_activo: "Dani (junior) en plantilla",
+  expediente_inspeccion_abierto: "expediente de inspección abierto",
+  mudanza_reciente: "mudanza reciente",
+  proveedor_corporativo_activo: "homologación de proveedor corporativo",
+  registro_horario_al_dia: "registro horario al día",
+  sofa_oficina_paco: "sofá deducido con Paco",
+  susto_con_paco: "susto fiscal previo con Paco",
+  tickets_dudosos_deducidos: "tickets dudosos deducidos",
+  sociedad_limitada_activa: "sociedad limitada activa",
+  homologacion_proveedor_activa: "homologación de proveedor activa",
+  baja_medica_reciente: "baja médica reciente",
+  auditoria_vies_superada: "auditoría VIES superada",
+  regularizacion_reta_pendiente: "regularización de tramo RETA pendiente",
+  mascota_en_casa: "mascota en casa",
+  sin_mascota_decidido: "decisión de seguir sin mascota",
+};
+
+export const EXACT_FLAG_LABELS_EN: Readonly<Record<string, string>> = {
   cobro_en_b_reciente: "recent off-the-books payment",
   inspeccion_en_curso: "ongoing tax audit",
   pareja_estable: "steady partner",
   cliente_corporativo_activo: "active corporate client",
   cliente_fijo_activo: "active retainer client",
+  cliente_internacional_activo: "active international client",
   certificado_digital_caducado: "expired digital certificate",
   reclamacion_judicial_activa: "active legal claim",
   sancion_hacienda_previa: "prior tax penalty",
   burnout_aviso_medico: "medical burnout warning",
   acuerdo_colaboradores_firmado: "signed partner network agreement",
   estudio_calle_alquilado: "rented street-level studio",
+  estudio_propio_activo: "active private studio",
   desgaste_plantilla: "staff burnout tension",
   criatura_en_casa: "baby at home",
+  impago_pendiente: "unpaid client invoice",
+  clausula_pausa_firmada: "signed project-pause clause",
+  ex_pareja_alex: "history as Álex's ex-partner",
+  historia_con_alex: "prior relationship with Álex",
+  relacion_con_alex: "relationship with Álex",
+  web_corporativa_activa: "live business website",
+  portfolio_actualizado: "updated portfolio",
+  convivencia_estable: "stable cohabitation",
+  crisis_pareja_latente: "simmering relationship strain",
+  disciplina_fiscal_aprendida: "learned tax discipline",
+  dossier_sl_elena: "Elena's incorporation dossier",
+  empleada_laura_activa: "senior specialist Laura on payroll",
+  empleado_dani_activo: "junior assistant Dani on payroll",
+  expediente_inspeccion_abierto: "open tax audit file",
+  mudanza_reciente: "recent home move",
+  proveedor_corporativo_activo: "approved corporate vendor status",
+  registro_horario_al_dia: "up-to-date staff time-tracking log",
+  sofa_oficina_paco: "Paco's office-sofa deduction",
+  susto_con_paco: "prior filing scare with Paco",
+  tickets_dudosos_deducidos: "questionable receipts deducted",
+  sociedad_limitada_activa: "incorporated LLC structure",
+  homologacion_proveedor_activa: "approved corporate vendor onboarding",
+  baja_medica_reciente: "recent medical leave",
+  auditoria_vies_superada: "passed EU VAT (VIES) audit",
+  regularizacion_reta_pendiente: "pending RETA bracket true-up",
+  mascota_en_casa: "pet at home",
+  sin_mascota_decidido: "decided against getting a pet",
 };
 
 const FLAG_WORD_GLOSSARY_EN: Readonly<Record<string, string>> = {
+  abierto: "open",
+  abierta: "open",
   activo: "active",
   activa: "active",
+  actualizado: "updated",
+  actualizada: "updated",
   acuerdo: "agreement",
+  al: "up-to",
+  alex: "Álex",
   alquilado: "rented",
   alquiler: "rent",
   ampliacion: "expansion",
+  anual: "annual",
   aplazamiento: "deferral",
+  aprendida: "learned",
   asesoria: "advisory",
   auditoria: "audit",
   aviso: "warning",
@@ -644,14 +748,55 @@ const FLAG_WORD_GLOSSARY_EN: Readonly<Record<string, string>> = {
   casa: "home",
   certificado: "certificate",
   cierre: "closing",
+  clausula: "clause",
   cliente: "client",
   cobro: "payment",
   colaboradores: "collaborators",
+  con: "with",
+  convivencia: "cohabitation",
+  corporativa: "corporate",
   criatura: "baby",
+  dani: "Dani",
+  de: "of",
+  deducidos: "deducted",
+  del: "of",
   desgaste: "wear",
+  dia: "date",
+  disciplina: "discipline",
+  dossier: "dossier",
+  dudosos: "questionable",
+  elena: "Elena",
   estudio: "studio",
+  ex: "ex",
+  expediente: "file",
+  firmada: "signed",
   firmado: "signed",
+  historia: "history",
+  homologacion: "onboarding",
+  horario: "time-tracking",
+  internacional: "international",
+  latente: "latent",
+  laura: "Laura",
+  limitada: "LLC",
+  medica: "medical",
+  paco: "Paco",
+  pausa: "pause",
   plantilla: "staff",
+  portfolio: "portfolio",
+  propio: "private",
+  proveedor: "vendor",
+  registro: "log",
+  regularizacion: "true-up",
+  relacion: "relationship",
+  reta: "RETA",
+  sl: "LLC",
+  sociedad: "company",
+  sofa: "sofa",
+  superada: "passed",
+  susto: "scare",
+  tickets: "receipts",
+  vies: "VIES",
+  web: "website",
   conflicto: "conflict",
   contrato: "contract",
   corporativo: "corporate",
@@ -722,6 +867,36 @@ const FLAG_WORD_GLOSSARY_EN: Readonly<Record<string, string>> = {
   vacaciones: "vacation",
 };
 
+const CALENDAR_MONTH_NAMES_ES = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+] as const;
+
+const CALENDAR_MONTH_NAMES_EN = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
+
 export function humanizeFlag(flag: string, locale: SupportedLocale = "es-ES"): string {
   if (normalizeLocale(locale) === "en") {
     const exact = EXACT_FLAG_LABELS_EN[flag];
@@ -734,7 +909,7 @@ export function humanizeFlag(flag: string, locale: SupportedLocale = "es-ES"): s
       .map((token) => FLAG_WORD_GLOSSARY_EN[token] ?? token)
       .join(" ");
   }
-  return flag.replace(/_/g, " ");
+  return EXACT_FLAG_LABELS_ES[flag] ?? flag.replace(/_/g, " ");
 }
 
 /**
@@ -836,9 +1011,27 @@ export function explainChoiceLockReasons(
     }
   }
 
+  if (requirements.months_of_year && requirements.months_of_year.length > 0) {
+    const currentMonthOfYear = ((Math.max(1, state.month) - 1) % 12) + 1;
+    if (!requirements.months_of_year.includes(currentMonthOfYear)) {
+      const monthTable = isEn ? CALENDAR_MONTH_NAMES_EN : CALENDAR_MONTH_NAMES_ES;
+      const names = requirements.months_of_year
+        .filter((m) => m >= 1 && m <= 12)
+        .map((m) => monthTable[m - 1] ?? String(m));
+      if (names.length > 0) {
+        const joined = names.length === 2 ? names.join(isEn ? " or " : " o ") : names.join(", ");
+        reasons.push(isEn ? `Only available in ${joined}` : `Solo disponible en ${joined}`);
+      }
+    }
+  }
+
+  let pushedMissingEmployee = false;
   if (requirements.has_employee != null) {
     const currentlyHasEmployee = state.employee !== null;
     if (currentlyHasEmployee !== requirements.has_employee) {
+      if (requirements.has_employee) {
+        pushedMissingEmployee = true;
+      }
       if (isEn) {
         reasons.push(
           requirements.has_employee
@@ -851,6 +1044,35 @@ export function explainChoiceLockReasons(
             ? "Requiere tener un empleado en plantilla"
             : "Máximo 1 empleado en plantilla",
         );
+      }
+    }
+  }
+
+  if (requirements.employee_satisfaction) {
+    const { min, max } = requirements.employee_satisfaction;
+    if (min != null || max != null) {
+      if (!state.employee) {
+        if (!pushedMissingEmployee) {
+          reasons.push(
+            isEn ? "Requires an employee on payroll" : "Requiere tener un empleado en plantilla",
+          );
+        }
+      } else {
+        const currentSat = state.employee.satisfaction;
+        if (min != null && currentSat < min) {
+          reasons.push(
+            isEn
+              ? `Requires min. Staff satisfaction ${min}`
+              : `Requiere Satisfacción laboral mín. ${min}`,
+          );
+        }
+        if (max != null && currentSat > max) {
+          reasons.push(
+            isEn
+              ? `Requires max. Staff satisfaction ${max}`
+              : `Requiere Satisfacción laboral máx. ${max}`,
+          );
+        }
       }
     }
   }

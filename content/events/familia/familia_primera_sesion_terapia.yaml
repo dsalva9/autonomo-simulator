@@ -14,25 +14,10 @@ requirements:
     stress:
       min: 28
 weight: 13
-cooldown_months: 9
-max_occurrences: null
+cooldown_months: 12
+max_occurrences: 1
 exclusive_with: []
 choices:
-  - id: iniciar_sesiones_quincenales
-    label: "Empezar sesiones quincenales y trabajar límites saludables (140 €)"
-    result_text: "Salir de consulta nombrando la culpa productiva te quita una mochila de piedras de los hombros desde la primera semana."
-    effects:
-      cash_delta: -140
-      stress: -15
-      moral: 10
-      personal_life: 10
-      add_modifier:
-        id: mod_terapia_limites_sanos
-        label: "Terapia y límites saludables"
-        remaining_months: 4
-        monthly_expense_delta: 110
-        monthly_stress_delta: -3
-        monthly_moral_delta: 2
   - id: hacer_sesion_puntual_descarga
     label: "Ir a una sesión suelta para ordenar la cabeza sin gasto fijo (70 €)"
     result_text: "Una hora hablando claro sin tener que fingir que todo va genial te devuelve aire y perspectiva para el resto del mes."
@@ -49,3 +34,18 @@ choices:
       stress: 6
       moral: -3
       personal_life: -5
+  - id: iniciar_sesiones_quincenales
+    label: "Empezar sesiones quincenales y trabajar límites saludables (140 €)"
+    result_text: "Salir de consulta nombrando la culpa productiva te quita una mochila de piedras de los hombros desde la primera semana."
+    effects:
+      cash_delta: -140
+      stress: -15
+      moral: 10
+      personal_life: 10
+      add_modifier:
+        id: mod_terapia_limites_sanos
+        label: "Terapia y límites saludables"
+        remaining_months: 4
+        monthly_expense_delta: 110
+        monthly_stress_delta: -3
+        monthly_moral_delta: 2

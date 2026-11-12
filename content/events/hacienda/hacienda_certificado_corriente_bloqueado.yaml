@@ -1,8 +1,8 @@
 schema_version: 1
 id: hacienda_certificado_corriente_bloqueado
 category: hacienda
-title: "Certificado negativo por dieciocho euros con cuarenta"
-body: "Un cliente serio exige certificado actualizado de estar al corriente antes de liberar tu factura, pero el portal escupe «NEGATIVO» por un resto olvidado de dieciocho euros con cuarenta céntimos."
+title: Certificado negativo por dieciocho euros con cuarenta
+body: Un cliente serio exige certificado actualizado de estar al corriente antes de liberar tu factura, pero el portal escupe «NEGATIVO» por un resto olvidado de dieciocho euros con cuarenta céntimos.
 tags:
   - certificado
   - recaudacion
@@ -16,9 +16,17 @@ cooldown_months: 13
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: reclamar_el_error_por_orgullo
+    label: Negarte a pagar un céntimo dudoso aunque pierdas el encargo urgente
+    result_text: Defiendes tu honor aritmético con tres escritos, pero el cliente se cansa de esperar y encarga el trabajo a otro.
+    effects:
+      stress: 2
+      moral: 7
+      reputation: -2
+      fiscal_risk: -8
   - id: pagar_resto_con_tarjeta_y_cobrar
-    label: "Liquidar los dieciocho euros con tarjeta al vuelo y emitir factura"
-    result_text: "En veinte minutos limpias el rastro ridículo, descargas el certificado positivo y desbloqueas el cobro."
+    label: Liquidar los dieciocho euros con tarjeta al vuelo y emitir factura
+    result_text: En veinte minutos limpias el rastro ridículo, descargas el certificado positivo y desbloqueas el cobro.
     effects:
       billed_income: 650
       cash_delta: -45
@@ -27,12 +35,12 @@ choices:
       reputation: 3
       fiscal_risk: -6
   - id: limpiar_expediente_via_gestoria
-    label: "Pedir a tu gestoría barrer cualquier resto pendiente y homologarte"
+    label: Pedir a tu gestoría barrer cualquier resto pendiente y homologarte
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu asesoría depura el apunte fantasma, remite el dosier limpio al cliente y refuerza tu imagen de solvencia."
+    result_text: Tu asesoría depura el apunte fantasma, remite el dosier limpio al cliente y refuerza tu imagen de solvencia.
     effects:
       billed_income: 750
       deductible_expense: 90
@@ -40,10 +48,3 @@ choices:
       moral: 5
       reputation: 4
       fiscal_risk: -8
-  - id: reclamar_el_error_por_orgullo
-    label: "Negarte a pagar un céntimo dudoso aunque pierdas el encargo urgente"
-    result_text: "Defiendes tu honor aritmético con tres escritos, pero el cliente se cansa de esperar y encarga el trabajo a otro."
-    effects:
-      stress: 5
-      moral: 2
-      reputation: -3

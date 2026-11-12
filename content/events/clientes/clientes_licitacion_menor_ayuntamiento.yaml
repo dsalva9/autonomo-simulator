@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_licitacion_menor_ayuntamiento
+category: clientes
+title: "Contrato menor municipal: buen importe, pago cuando firme el interventor"
+body: Un técnico de cultura necesita adjudicar un contrato menor de 3.400 € antes del viernes pidiendo tres presupuestos. Pagan íntegro sin regatear, pero tras pasar por registro electrónico e intervención.
+tags:
+  - administracion
+  - licitacion
+  - tesoreria
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 32
+weight: 8
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: concursar_ajustando_horas_y_paciencia
+    label: Enviar oferta competitiva de 2.950 € asumiendo la espera burocrática
+    outcomes:
+      - id: adjudicado_y_pagado_a_sesenta_dias
+        weight: 65
+        result_text: Ganas por puntuación técnica y, tras tres sellos digitales en FACe, la factura queda conformada a sesenta días.
+        effects:
+          deferred_invoice:
+            amount: 2950
+            delay_months: 2
+            default_prob: 0.03
+          moral: 4
+          stress: 6
+          reputation: 5
+      - id: eras_el_presupuesto_de_acompanamiento
+        weight: 35
+        result_text: Descubres tarde que solo necesitaban dos ofertas de relleno para justificar al proveedor de siempre. Pierdes dos tardes en balde.
+        effects:
+          moral: -5
+          stress: 6
+  - id: declinar_expedientes_publicos
+    label: "Declinar cortésmente: prefieres clientes privados que paguen al día"
+    result_text: Te ahorras certificados electrónicos y pliegos de dieciocho páginas para centrarte en facturación de cobro inmediato.
+    effects:
+      billed_income: 850
+      stress: -3
+      personal_life: 2
+  - id: presentar_dossier_solvente_con_web
+    label: Presentar memoria impecable acreditando solvencia con tu web activa
+    requirements:
+      required_flags:
+        - web_corporativa_activa
+    result_text: "Tu propuesta destaca a leguas sobre dos presupuestos de relleno: te adjudican el encargo y entra en intervención sin reparos."
+    effects:
+      billed_income: 1200
+      deferred_invoice:
+        amount: 2200
+        delay_months: 2
+        default_prob: 0.02
+      moral: 6
+      stress: 4
+      reputation: 6

@@ -10,20 +10,20 @@ tags:
   - largo_plazo
 requirements:
   min_month: 84
-weight: 12
-cooldown_months: 16
+weight: 9
+cooldown_months: 18
 max_occurrences: null
 exclusive_with: []
 choices:
-  - id: exprimir_sprint_bien_pagado
-    label: Apretar los dientes una vez más y facturar el proyecto exprés
-    result_text: Sacas el oficio de memoria muscular y engordas la cuenta corriente, aunque tu cuerpo toma nota silenciosa del sobreesfuerzo.
+  - id: mes_a_medio_gas_regenerador
+    label: Cerrar el grifo de encargos nuevos treinta días para resetear
+    result_text: Atiendes solo lo mínimo indispensable, caminas al sol por las mañanas y recuerdas por qué querías trabajar por tu cuenta.
     effects:
-      billed_income: 2450
-      stress: 15
-      moral: -3
-      personal_life: -6
-      reputation: 3
+      cash_delta: -250
+      stress: -3
+      moral: 1
+      personal_life: 9
+      reputation: -3
   - id: derivar_a_red_cobrando_supervision
     label: Derivar la ejecución a tu red de confianza cobrando supervisión
     requirements:
@@ -37,12 +37,12 @@ choices:
       moral: 6
       personal_life: 4
       reputation: 2
-  - id: mes_a_medio_gas_regenerador
-    label: Cerrar el grifo de encargos nuevos treinta días para resetear
-    result_text: Atiendes solo lo mínimo indispensable, caminas al sol por las mañanas y recuerdas por qué querías trabajar por tu cuenta.
+  - id: exprimir_sprint_bien_pagado
+    label: Apretar los dientes una vez más y facturar el proyecto exprés
+    result_text: Sacas el oficio de memoria muscular y engordas la cuenta corriente, aunque tu cuerpo toma nota silenciosa del sobreesfuerzo.
     effects:
-      cash_delta: -250
-      stress: -3
-      moral: 1
-      personal_life: 9
-      reputation: -3
+      billed_income: 2450
+      stress: 15
+      moral: -3
+      personal_life: -6
+      reputation: 3

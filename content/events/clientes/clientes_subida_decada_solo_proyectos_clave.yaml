@@ -1,0 +1,53 @@
+schema_version: 1
+id: clientes_subida_decada_solo_proyectos_clave
+category: clientes
+title: "Regla de la década: la mitad de proyectos al doble de tarifa"
+body: "Superados los ocho años largos de autónomo, revisas tus números anuales: trabajas mejor que nunca pero sigues aceptando encargos medianos por inercia. Te planteas duplicar tu tarifa mínima de entrada."
+tags:
+  - endless
+  - tarifas
+  - veterano
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 100
+weight: 10
+cooldown_months: 18
+max_occurrences: null
+choices:
+  - id: mantener_mix_prudente_de_cartera
+    label: Subir solo un 12 % conservando el equilibrio actual de cuentas
+    result_text: "Prefieres evolución suave antes que vértigo: ningún cliente habitual parpadea y cierras un mes sólido de 2.950 €."
+    effects:
+      billed_income: 2950
+      moral: 4
+      stress: 1
+      reputation: 3
+  - id: aplicar_filtro_radical_alto_margen
+    label: Fijar mínimo estricto de 3.500 € por proyecto y derivar todo lo menor
+    outcomes:
+      - id: efecto_prestigio_inmediato
+        weight: 65
+        result_text: "La paradoja del precio alto vuelve a cumplirse: al cobrar como referente, dos directivos firman encantados y trabajas con calma olímpica."
+        effects:
+          billed_income: 3950
+          moral: 9
+          stress: -5
+          personal_life: 5
+          reputation: 7
+          add_modifier:
+            id: mod_ticket_minimo_senior
+            label: Posicionamiento sénior de alto margen
+            remaining_months: 6
+            monthly_billed_delta: 520
+            monthly_stress_delta: -1
+      - id: trimestre_selectivo_pero_muy_sano
+        weight: 35
+        result_text: Se caen tres presupuestos pequeños y entra uno grande limpio. Facturas algo menos hoy a cambio de recuperar diez horas de vida por semana.
+        effects:
+          billed_income: 2450
+          moral: 7
+          stress: -8
+          personal_life: 7
+          reputation: 4

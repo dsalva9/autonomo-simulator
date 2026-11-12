@@ -1,0 +1,64 @@
+schema_version: 1
+id: empleados_dani_ascenso_semi_senior
+category: empleados
+title: "Dani pide dejar atrás la etiqueta de junior"
+body: "Aquel chaval del termo gigante y cuarenta pestañas abiertas lleva meses sacando entregas limpias a la primera. Dani te pide media hora con libreta ordenada: quiere dar el salto formal de categoría y responsabilidad."
+tags:
+  - dani
+  - ascenso
+  - crecimiento
+  - retencion
+character_id: empleado_junior_dani
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 34
+  has_employee: true
+  required_flags:
+    - empleado_dani_activo
+weight: 13
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: dar_titulo_nuevo_y_prima_puntual
+    label: "Actualizar su cargo público, darle prima hoy (250 €) y revisar en seis meses"
+    result_text: "Reconoces su evolución sin disparar el coste fijo mensual de golpe y sacáis adelante un hito extra motivados."
+    effects:
+      billed_income: 380
+      deductible_expense: 250
+      stress: -3
+      moral: 6
+      employee_satisfaction: 8
+  - id: ascender_categoria_y_dar_cuentas_propias
+    label: "Subirle categoría salarial y confiarle cuentas propias del estudio"
+    requirements:
+      stats:
+        money:
+          min: 1800
+        reputation:
+          min: 52
+    result_text: "Haber apostado por formarle en casa da sus mejores frutos: Dani asume galones con una ilusión contagiosa."
+    effects:
+      stress: -7
+      moral: 11
+      reputation: 3
+      employee_satisfaction: 16
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_dani_semi_senior
+        label: "Dani consolidado como perfil intermedio"
+        remaining_months: 6
+        monthly_billed_delta: 440
+        monthly_expense_delta: 190
+        monthly_stress_delta: -2
+  - id: pedirle_otro_ano_de_rodaje_igual
+    label: "Decirle que aún necesita más tablas antes de tocar su nómina"
+    result_text: "Dani asiente en silencio guardando su libreta; acabas de regalarle motivos para escuchar ofertas fuera."
+    effects:
+      stress: 5
+      moral: -5
+      employee_satisfaction: -14
+      set_flags:
+        - desgaste_plantilla

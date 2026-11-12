@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_fichaje_senior_laura
 category: empleados
 title: "Un fichaje de peso pesado"
-body: "Laura, una especialista sénior harta de reuniones estériles en grandes consultoras, busca incorporarse a un estudio pequeño donde se trabaje con cabeza y sin humo. Su coste mensual impone respeto, pero su oficio permite asumir proyectos de otra liga desde el primer día."
+body: "Laura, una especialista sénior harta de reuniones huecas en consultoras grandes, busca entrar en un estudio pequeño donde se trabaje sin humo. Su nómina impone respeto, pero permite asumir cuentas de otra liga."
 tags:
   - contratacion
   - senior
@@ -10,7 +10,7 @@ tags:
   - costes_fijos
 character_id: empleada_senior_laura
 character_expression: neutral
-illustration_id: null
+illustration_id: illus_hito_primer_empleado
 requirements:
   min_month: 18
   has_employee: false
@@ -20,7 +20,7 @@ max_occurrences: 2
 exclusive_with: []
 choices:
   - id: fichar_laura_plantilla
-    label: "Incorporar a Laura en plantilla (2.150 €/mes, facturación ×1,65)"
+    label: "Incorporar a Laura en plantilla (2.100 €/mes, ×2,05)"
     requirements:
       has_employee: false
     result_text: "Firmáis el contrato y en cuarenta y ocho horas Laura ya ha ordenado carpetas, plantillas y procesos que llevaban meses cogidos con pinzas. Da vértigo la nómina, pero tu estudio juega en primera división."

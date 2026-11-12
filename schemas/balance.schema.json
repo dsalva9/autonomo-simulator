@@ -62,6 +62,11 @@
       "minimum": 0,
       "maximum": 9007199254740991
     },
+    "annual_living_cost_growth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
     "autonomo_quota": {
       "type": "integer",
       "minimum": 0,
@@ -97,6 +102,15 @@
       "type": "integer",
       "minimum": 0,
       "maximum": 9007199254740991
+    },
+    "high_stat_decay_threshold": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "event_novelty_decay_k": {
+      "type": "number",
+      "minimum": 0
     },
     "effective_quarterly_tax_rate": {
       "type": "number",

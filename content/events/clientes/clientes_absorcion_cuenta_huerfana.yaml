@@ -1,0 +1,43 @@
+schema_version: 1
+id: clientes_absorcion_cuenta_huerfana
+category: clientes
+title: La agencia echa el cierre y el cliente final te llama sin intermediarios
+body: Dos meses después del caos, la agencia intermediaria disuelve su departamento y libera cláusulas. Marta, desde el cliente final, te ofrece asumir directamente la cuenta completa de 3.100 €.
+tags:
+  - agencia
+  - directo
+  - cadena
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: 3
+choices:
+  - id: cobrar_solo_traspaso_ordenado
+    label: Facturar 1.500 € por auditar y dejarles el proyecto documentado
+    result_text: Cierras una transición impecable en diez días sin atarte a una iguala más, con caja limpia y puertas abiertas.
+    effects:
+      billed_income: 1500
+      moral: 5
+      stress: -2
+      personal_life: 3
+      reputation: 4
+  - id: asumir_cuenta_directa_con_iguala
+    label: Firmar contrato directo eliminando el margen que se llevaba la agencia
+    result_text: Mismo trabajo técnico, cero teléfonos escacharrados y margen íntegro para tu estudio durante todo el trimestre.
+    effects:
+      billed_income: 2300
+      moral: 8
+      stress: 3
+      reputation: 6
+      set_flags:
+        - proveedor_corporativo_activo
+        - cliente_fijo_activo
+      add_modifier:
+        id: mod_bolsa_horas_marta
+        label: Bolsa de horas corporativa
+        remaining_months: 4
+        monthly_billed_delta: 500
+        monthly_stress_delta: 2

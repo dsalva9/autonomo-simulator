@@ -1,0 +1,55 @@
+schema_version: 1
+id: empleados_iniciativa_cliente_referido
+category: empleados
+title: "Un cliente nuevo entra recomendado por tu equipo"
+body: "Cuidar a la gente tiene premio inesperado: un contacto directo de tu persona en plantilla pide presupuesto sin regatear porque «le han contado maravillas del rigor y el buen trato de vuestro estudio»."
+tags:
+  - plantilla
+  - captacion
+  - orgullo
+  - ingresos
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 16
+  has_employee: true
+  employee_satisfaction:
+    min: 80
+weight: 13
+cooldown_months: 12
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: convertirlo_en_iguala_compartida
+    label: "Pactar una iguala mensual serena coordinada directamente por tu equipo"
+    result_text: "Aseguras ingresos recurrentes limpios mientras tu fichaje gana autonomía real llevando la cuenta."
+    effects:
+      billed_income: 620
+      stress: -5
+      moral: 8
+      reputation: 4
+      employee_satisfaction: 8
+      add_modifier:
+        id: mod_iguala_recomendacion
+        label: "Iguala por boca-oreja"
+        remaining_months: 4
+        monthly_billed_delta: 280
+  - id: firmar_encargo_y_dar_comision_captacion
+    label: "Cerrar el proyecto y abonar comisión de captación en nómina (260 €)"
+    result_text: "El cliente entra encantado y tu persona en plantilla siente de verdad que remar juntos reparte frutos justos."
+    effects:
+      billed_income: 1650
+      deductible_expense: 260
+      stress: -4
+      moral: 10
+      reputation: 4
+      employee_satisfaction: 10
+  - id: aceptar_proyecto_y_reservar_margen
+    label: "Dar las gracias efusivamente, facturar el encargo y guardar toda la caja"
+    result_text: "El ingreso engorda el trimestre de maravilla, aunque un detalle económico habría redondeado la jugada."
+    effects:
+      billed_income: 1550
+      stress: 2
+      moral: 4
+      reputation: 3
+      employee_satisfaction: 2

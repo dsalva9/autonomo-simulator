@@ -15,22 +15,10 @@ requirements:
   gestor_tiers:
     - cheap
 weight: 12
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 16
+max_occurrences: 2
 exclusive_with: []
 choices:
-  - id: pagar_plus_atencion_directa_paco
-    label: "Pagar un suplemento senior para que tus libros los firme Paco (145 €)"
-    requirements:
-      stats:
-        money:
-          min: 250
-    result_text: "Paco guarda tu expediente en su cajón personal bajo llave y revisa cada trimestre de su puño y letra antes de irse al dominó."
-    effects:
-      deductible_expense: 145
-      stress: -6
-      moral: 3
-      fiscal_risk: -8
   - id: auditar_borradores_de_kevin
     label: "Exigir borrador previo cada trimestre y repasar tú las sumas"
     result_text: "Cazas un par de redondeos alegres de Kevin cada cierre, manteniendo la cuota barata a costa de hacer de policía contable."
@@ -46,3 +34,17 @@ choices:
       stress: 2
       moral: -3
       fiscal_risk: 15
+      set_flags:
+        - susto_con_paco
+  - id: pagar_plus_atencion_directa_paco
+    label: "Pagar un suplemento senior para que tus libros los firme Paco (145 €)"
+    requirements:
+      stats:
+        money:
+          min: 250
+    result_text: "Paco guarda tu expediente en su cajón personal bajo llave y revisa cada trimestre de su puño y letra antes de irse al dominó."
+    effects:
+      deductible_expense: 145
+      stress: -6
+      moral: 3
+      fiscal_risk: -8

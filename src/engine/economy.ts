@@ -5,6 +5,7 @@ import type {
   EndingId,
   GameState,
   InvoiceSettlementResult,
+  PrngState,
   QuarterlyReport,
   QuarterlySettlementMode,
   QuarterlySettlementSummary,
@@ -28,7 +29,11 @@ export function computeBaselineMonthlyBilling(state: GameState, catalog: Content
     balance.moral_multiplier_min +
     moralRatio * (balance.moral_multiplier_max - balance.moral_multiplier_min);
 
-  const employeeMultiplier = state.employee ? state.employee.billing_multiplier : 1;
+  let employeeMultiplier = 1;
+  if (state.employee) {
+    const satScale = 0.4 + 0.8 * (clampStat(state.employee.satisfaction) / 100);
+    employeeMultiplier = 1 + (state.employee.billing_multiplier - 1) * satScale;
+  }
 
   let modifierBilledDelta = 0;
   for (const mod of state.modifiers) {
@@ -44,7 +49,10 @@ export function computeBaselineMonthlyBilling(state: GameState, catalog: Content
   return Math.max(0, Math.round(gross));
 }
 
-export function computeMonthlyRecurringExpenses(state: GameState, catalog: ContentCatalog): number {
+export function computeMonthlyDeductibleExpenses(
+  state: GameState,
+  catalog: ContentCatalog,
+): number {
   const { balance } = catalog;
   let modifierExpenseDelta = 0;
   for (const mod of state.modifiers) {
@@ -54,8 +62,30 @@ export function computeMonthlyRecurringExpenses(state: GameState, catalog: Conte
   }
 
   const employeeCost = state.employee ? state.employee.monthly_cost : 0;
+  const deductible =
+    balance.autonomo_quota +
+    state.gestor.monthly_fee +
+    employeeCost +
+    Math.max(0, modifierExpenseDelta);
+
+  return Math.max(0, Math.round(deductible));
+}
+
+export function computeMonthlyRecurringExpenses(state: GameState, catalog: ContentCatalog): number {
+  const { balance } = catalog;
+  let modifierExpenseDelta = 0;
+  for (const mod of state.modifiers) {
+    if (mod.monthly_expense_delta != null) {
+      modifierExpenseDelta += mod.monthly_expense_delta;
+    }
+  }
+
+  const livingCostCreep =
+    Math.max(0, Math.floor((state.month - 1) / 12)) * (balance.annual_living_cost_growth ?? 0);
+  const employeeCost = state.employee ? state.employee.monthly_cost : 0;
   const total =
     balance.base_living_cost +
+    livingCostCreep +
     balance.autonomo_quota +
     state.gestor.monthly_fee +
     state.family.monthly_cost +
@@ -80,9 +110,14 @@ export interface RecurringMonthResult {
   state: GameState;
   grossBilling: number;
   taxAccruedOnBilling: number;
+  deductibleExpenses: number;
+  taxShieldOnExpenses: number;
+  netTaxAccrued: number;
   totalExpenses: number;
   invoicesSettled: InvoiceSettlementResult[];
   passiveStressDelta: number;
+  modifierMoralDelta: number;
+  modifierStressDelta: number;
 }
 
 export function applyRecurringMonthEconomy(
@@ -94,8 +129,8 @@ export function applyRecurringMonthEconomy(
   let money = state.indicators.money;
   let moral = state.indicators.moral;
   let stress = state.indicators.stress;
-  const personalLife = state.indicators.personal_life;
-  const reputation = state.indicators.reputation;
+  let personalLife = state.indicators.personal_life;
+  let reputation = state.indicators.reputation;
 
   let lifetimeBilled = state.finances.lifetime_billed;
   let currentQuarterBilled = state.finances.current_quarter_billed;
@@ -172,24 +207,36 @@ export function applyRecurringMonthEconomy(
   }
 
   const grossBilling = computeBaselineMonthlyBilling(state, catalog);
+  const deductibleExpenses = computeMonthlyDeductibleExpenses(state, catalog);
   const taxAccruedOnBilling = Math.round(grossBilling * balance.effective_quarterly_tax_rate);
+  const taxShieldOnExpenses = Math.round(deductibleExpenses * balance.deductible_tax_fraction);
+  const rawTax = taxAccruedOnBilling - taxShieldOnExpenses;
+  const accruedBeforeRecurring = accruedTaxLiability;
+
   money += grossBilling;
   lifetimeBilled += grossBilling;
   currentQuarterBilled += grossBilling;
-  accruedTaxLiability += taxAccruedOnBilling;
+  accruedTaxLiability = Math.max(0, accruedTaxLiability + rawTax);
+  const netTaxAccrued = accruedTaxLiability - accruedBeforeRecurring;
   annualBilled += grossBilling;
 
   const totalExpenses = computeMonthlyRecurringExpenses(state, catalog);
   money -= totalExpenses;
   annualExpenses += totalExpenses;
 
+  let modifierMoralDelta = 0;
+  let modifierStressDelta = 0;
   const nextModifiers: TemporalModifier[] = [];
   for (const mod of state.modifiers) {
     if (mod.monthly_moral_delta != null) {
+      const beforeMoral = moral;
       moral = clampStat(moral + mod.monthly_moral_delta);
+      modifierMoralDelta += moral - beforeMoral;
     }
     if (mod.monthly_stress_delta != null) {
+      const beforeStress = stress;
       stress = clampStat(stress + mod.monthly_stress_delta);
+      modifierStressDelta += stress - beforeStress;
     }
     const remaining = mod.remaining_months - 1;
     if (remaining > 0) {
@@ -202,7 +249,14 @@ export function applyRecurringMonthEconomy(
 
   let passiveStressDelta = 0;
   if (personalLife >= balance.personal_life_recovery_threshold) {
-    passiveStressDelta -= balance.personal_life_monthly_stress_relief;
+    const personalLifeRelief =
+      personalLife >= 82
+        ? Math.max(2, balance.personal_life_monthly_stress_relief)
+        : balance.personal_life_monthly_stress_relief;
+    passiveStressDelta -= personalLifeRelief;
+  }
+  if (state.employee && (personalLife < 52 || state.employee.satisfaction < 45)) {
+    passiveStressDelta += 1;
   }
   if (state.family.support_modifier !== 0) {
     passiveStressDelta -= Math.round(state.family.support_modifier);
@@ -211,6 +265,20 @@ export function applyRecurringMonthEconomy(
     const before = stress;
     stress = clampStat(stress + passiveStressDelta);
     passiveStressDelta = stress - before;
+  }
+
+  if (balance.high_stat_decay_threshold != null) {
+    const threshold = balance.high_stat_decay_threshold;
+    if (reputation >= threshold) {
+      reputation = clampStat(reputation - (reputation >= 90 ? 2 : 1));
+    }
+    if (personalLife >= threshold) {
+      const plDecay = personalLife >= 90 || (state.employee && personalLife >= 78) ? 2 : 1;
+      personalLife = clampStat(personalLife - plDecay);
+    }
+    if (moral >= 78 || stress >= 62) {
+      moral = clampStat(moral - (moral >= 90 ? 2 : 1));
+    }
   }
 
   const nextGestor = {
@@ -269,9 +337,14 @@ export function applyRecurringMonthEconomy(
     state: nextState,
     grossBilling,
     taxAccruedOnBilling,
+    deductibleExpenses,
+    taxShieldOnExpenses,
+    netTaxAccrued,
     totalExpenses,
     invoicesSettled,
     passiveStressDelta,
+    modifierMoralDelta,
+    modifierStressDelta,
   };
 }
 
@@ -279,10 +352,15 @@ export function canDeferQuarterlyTax(state: GameState): boolean {
   return state.finances.deferred_tax === null && state.finances.accrued_tax_liability > 0;
 }
 
+export type InspectableEventFinder = (
+  currentState: GameState,
+  catalog: ContentCatalog,
+) => string | null | { eventId: string | null; prng: PrngState };
+
 export function prepareQuarterlyTax(
   state: GameState,
   catalog: ContentCatalog,
-  findInspectableEventId: (currentState: GameState, catalog: ContentCatalog) => string | null,
+  findInspectableEventId: InspectableEventFinder,
 ): { state: GameState; report: QuarterlyReport } {
   const { balance } = catalog;
   let prng = state.prng;
@@ -324,11 +402,19 @@ export function prepareQuarterlyTax(
 
       const tempState: GameState = {
         ...state,
+        month: state.month + 1,
         prng,
         fiscal_risk: fiscalRisk,
         scheduled_queue: scheduledQueue,
       };
-      const candidateEventId = findInspectableEventId(tempState, catalog);
+      const inspectionLookup = findInspectableEventId(tempState, catalog);
+      let candidateEventId: string | null;
+      if (inspectionLookup !== null && typeof inspectionLookup === "object") {
+        candidateEventId = inspectionLookup.eventId;
+        prng = inspectionLookup.prng;
+      } else {
+        candidateEventId = inspectionLookup;
+      }
 
       if (candidateEventId) {
         inspectionScheduledEventId = candidateEventId;

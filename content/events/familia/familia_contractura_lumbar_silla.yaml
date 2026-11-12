@@ -15,6 +15,19 @@ cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: ibuprofeno_y_seguir_tecleando
+    label: "Tirar de manta eléctrica, antiinflamatorios y no frenar entregas"
+    result_text: "Sacas adelante la facturación sentado de medio lado como una gamba, aunque tu espalda toma nota silenciosa del agravio."
+    effects:
+      cash_delta: -18
+      billed_income: 580
+      stress: 9
+      moral: -3
+      personal_life: -5
+      schedule_events:
+        - event_id: familia_recaida_ciatica_urgencias
+          delay_months: 2
+          probability: 0.85
   - id: fisio_y_silla_ergonomica
     label: "Ir al fisioterapeuta y comprar por fin una silla ergonómica seria"
     result_text: "El fisio te deshace nudos del tamaño de nueces y la silla nueva amortizable te devuelve la dignidad postural cada mañana."
@@ -30,19 +43,6 @@ choices:
         remaining_months: 4
         monthly_stress_delta: -2
         monthly_billed_delta: 80
-  - id: ibuprofeno_y_seguir_tecleando
-    label: "Tirar de manta eléctrica, antiinflamatorios y no frenar entregas"
-    result_text: "Sacas adelante la facturación sentado de medio lado como una gamba, aunque tu espalda toma nota silenciosa del agravio."
-    effects:
-      cash_delta: -18
-      billed_income: 580
-      stress: 9
-      moral: -3
-      personal_life: -5
-      schedule_events:
-        - event_id: familia_recaida_ciatica_urgencias
-          delay_months: 2
-          probability: 0.85
   - id: reposo_y_estiramientos_dos_dias
     label: "Parar cuarenta y ocho horas, caminar suave y retrasar lo secundario"
     result_text: "Bajas el ritmo antes de romperte del todo. Pierdes algo de tracción comercial esta semana, pero vuelves a caminar erguido."

@@ -11,25 +11,15 @@ character_id: gestor_barato_paco
 character_expression: pleased
 requirements:
   min_month: 4
+  months_of_year:
+    - 4
   gestor_tiers:
     - cheap
-weight: 12
+weight: 14
 cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: contratar_presentacion_urgente_externa
-    label: "Pagar una presentación de urgencia en otra asesoría seria (155 €)"
-    requirements:
-      stats:
-        money:
-          min: 220
-    result_text: "Otro despacho rescata tus libros en dos horas, presenta todo clavado y le mandas el justificante a Paco para que se atragante con la aceituna."
-    effects:
-      deductible_expense: 155
-      stress: -4
-      moral: 3
-      fiscal_risk: -7
   - id: guiar_al_sobrino_por_videollamada
     label: "Hacer videollamada con el sobrino Kevin y dictarle casilla a casilla"
     outcomes:
@@ -48,6 +38,20 @@ choices:
           stress: 10
           moral: -5
           fiscal_risk: 8
+          set_flags:
+            - susto_con_paco
+  - id: contratar_presentacion_urgente_externa
+    label: "Pagar una presentación de urgencia en otra asesoría seria (155 €)"
+    requirements:
+      stats:
+        money:
+          min: 220
+    result_text: "Otro despacho rescata tus libros en dos horas, presenta todo clavado y le mandas el justificante a Paco para que se atragante con la aceituna."
+    effects:
+      deductible_expense: 155
+      stress: -4
+      moral: 3
+      fiscal_risk: -7
   - id: revocar_autorizacion_y_volver_solo
     label: "Cortar con Paco hoy mismo y presentar tú con tu propio certificado"
     result_text: "Cancelas la domiciliación de la gestoría en el acto: para financiar vacaciones en Levante, prefieres ahorrarte la cuota."

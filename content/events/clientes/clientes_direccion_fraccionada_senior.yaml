@@ -1,0 +1,61 @@
+schema_version: 1
+id: clientes_direccion_fraccionada_senior
+category: clientes
+title: "Dirección externa dos días por semana: despacho prestado sin jefe"
+body: Una empresa mediana en crecimiento no puede fichar a tiempo completo tu perfil sénior y te ofrece 3.800 € por ejercer dirección externa martes y jueves durante el próximo semestre.
+tags:
+  - veterano
+  - iguala
+  - estrategia
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 68
+weight: 9
+cooldown_months: 15
+max_occurrences: null
+choices:
+  - id: firmar_un_solo_dia_estrategico_semanal
+    label: Acotar el pacto a un día fijo semanal por 2.350 € sin exclusividad
+    result_text: Impides que te absorban como falso directivo y sumas una renta estable de alto margen conservando tu libertad.
+    effects:
+      billed_income: 2350
+      moral: 6
+      stress: 1
+      personal_life: 3
+      reputation: 5
+      add_modifier:
+        id: mod_consejero_externo
+        label: Consejero externo de comité
+        remaining_months: 4
+        monthly_billed_delta: 450
+  - id: asumir_dos_dias_en_solitario_apretando_agenda
+    label: Coger los dos días completos tú solo por 3.800 € comprimiendo el resto
+    result_text: La facturación luce espectacular, aunque los miércoles y viernes pareces un controlador aéreo sacando el resto de clientes.
+    effects:
+      billed_income: 3800
+      moral: 2
+      stress: 10
+      personal_life: -5
+      reputation: 5
+  - id: aceptar_con_respaldo_de_tu_plantilla
+    label: Asumir la dirección apoyándote en tu empleado motivado para el estudio
+    requirements:
+      has_employee: true
+      employee_satisfaction:
+        min: 60
+    result_text: Dos mañanas dirigiendo estrategia fuera y el resto del estudio funcionando como un reloj suizo gracias a tu equipo.
+    effects:
+      billed_income: 3200
+      moral: 8
+      stress: 2
+      personal_life: 3
+      reputation: 7
+      employee_satisfaction: 7
+      add_modifier:
+        id: mod_consejero_externo
+        label: Consejero externo de comité
+        remaining_months: 5
+        monthly_billed_delta: 600
+        monthly_stress_delta: 1

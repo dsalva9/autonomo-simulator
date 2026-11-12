@@ -1,0 +1,60 @@
+schema_version: 1
+id: hacienda_requerimiento_facturas_correlativas
+category: hacienda
+title: Salto sospechoso en la numeración de tus facturas
+body: Tu libro de facturas expedidas salta de la F-018 a la F-022 porque borraste tres presupuestos cancelados en vez de emitir rectificativas. Gómez pregunta dónde están esas cuatro facturas.
+tags:
+  - requerimiento
+  - facturacion
+  - inspeccion
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 10
+  stats:
+    fiscal_risk:
+      min: 20
+weight: 14
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: aportar_correos_de_encargos_cancelados
+    label: Demostrar con correos y extractos que nunca se cobraron
+    outcomes:
+      - id: error_formal_sin_cuota_oculta
+        weight: 55
+        result_text: Gómez acepta que no hubo ingresos ocultos y deja el tirón de orejas en una advertencia sobre series correlativas.
+        effects:
+          stress: 7
+          moral: 4
+          fiscal_risk: -14
+      - id: sancion_por_incumplimiento_facturacion
+        weight: 45
+        result_text: Aunque no falte IVA, te imponen sanción tributaria formal por alterar la correlatividad obligatoria de la serie.
+        effects:
+          cash_delta: -330
+          stress: 11
+          moral: -5
+          fiscal_risk: -12
+  - id: reconstruir_serie_rectificativa_con_gestor
+    label: Reconstruir libro registro y asientos nulos con tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría documenta las anulaciones conforme al reglamento de facturación y desactiva la presunción de ventas.
+    effects:
+      deductible_expense: 135
+      cash_delta: -80
+      stress: 2
+      moral: 4
+      fiscal_risk: -17
+  - id: abonar_sancion_formal_con_reduccion
+    label: Aceptar la sanción formal con reducción por pronto pago
+    result_text: Pagas el peaje por llevar numeración artesanal y aprendes a no borrar jamás un número de factura emitido.
+    effects:
+      cash_delta: -260
+      stress: 5
+      moral: -3
+      fiscal_risk: -16

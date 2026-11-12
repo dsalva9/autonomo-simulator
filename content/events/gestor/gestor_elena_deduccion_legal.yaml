@@ -2,7 +2,7 @@ schema_version: 1
 id: gestor_elena_deduccion_legal
 category: gestor
 title: "Informe preventivo: deducciones legales que estabas regalando"
-body: "Elena Montes te envía un informe con pestañas de colores un martes a las nueve de la mañana: tras auditar tus suministros afectos, seguros profesionales y amortizaciones de equipos, ha detectado un ahorro fiscal cien por cien legal que llevabas meses dejando escapar."
+body: "Elena Montes envía un informe con pestañas de colores el martes a las nueve: tras auditar suministros, seguros y amortizaciones, ha detectado un ahorro fiscal cien por cien legal que dejabas escapar."
 tags:
   - gestoria
   - optimizacion_fiscal
@@ -16,35 +16,35 @@ requirements:
     - premium
 weight: 13
 cooldown_months: 8
-max_occurrences: 5
+max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: pedir_meter_gastos_personales
+    label: Intentar colar también plataformas de series y compras del súper
+    result_text: Elena se ajusta las gafas en silencio glacial, cuela solo la parte gris bajo tu responsabilidad y rascas más caja asumiendo riesgo.
+    effects:
+      cash_delta: 820
+      stress: 4
+      moral: -3
+      fiscal_risk: 15
   - id: aplicar_rectificacion_prudente
-    label: "Aplicar únicamente las partidas blindadas con factura impecable"
-    result_text: "Recuperas liquidez neta gracias al ajuste de retenciones y deducciones sin sumar ni un milímetro de tensión fiscal. Por esto pagas lo que pagas."
+    label: Aplicar únicamente las partidas blindadas con factura impecable
+    result_text: Recuperas liquidez neta gracias al ajuste de retenciones y deducciones sin sumar ni un milímetro de tensión fiscal. Por esto pagas lo que pagas.
     effects:
       cash_delta: 540
       stress: -8
       moral: 6
       fiscal_risk: -10
   - id: adelantar_renovacion_herramientas
-    label: "Seguir su consejo y adelantar inversión profesional deducible este trimestre"
+    label: Seguir su consejo y adelantar inversión profesional deducible (720 €)
     requirements:
       stats:
         money:
           min: 850
-    result_text: "Renuevas licencias y herramientas clave dentro del trimestre recortando legalmente la factura fiscal mientras mejoras tu capacidad de entrega."
+    result_text: Renuevas licencias y herramientas clave dentro del trimestre recortando legalmente la factura fiscal mientras mejoras tu capacidad de entrega.
     effects:
       deductible_expense: 720
       stress: -5
       moral: 5
       reputation: 4
       fiscal_risk: -6
-  - id: pedir_meter_gastos_personales
-    label: "Intentar colar también plataformas de series y compras del súper"
-    result_text: "Elena se sube las gafas un milímetro en silencio sepulcral, tacha los tickets improcedentes y te aplica solo una fracción bajo tu estricta responsabilidad."
-    effects:
-      cash_delta: 380
-      stress: 4
-      moral: -2
-      fiscal_risk: 12

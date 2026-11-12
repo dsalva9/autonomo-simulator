@@ -2,7 +2,7 @@ schema_version: 1
 id: hacienda_descuadre_modelo_347
 category: hacienda
 title: "Cruce anual con terceros: la factura fantasma de diciembre"
-body: "Salta una discrepancia informática en el cruce anual de operaciones con terceros: un cliente contabilizó tu factura del 29 de diciembre en enero del año siguiente y ahora tus cifras declaradas no casan con las suyas. El Inspector Gómez pide aclarar el baile antes del viernes."
+body: "Salta una discrepancia en el Modelo 347 anual: un cliente contabilizó tu factura del 29 de diciembre en enero y vuestras cifras declaradas no casan. El Inspector Gómez exige aclarar el descuadre antes del viernes."
 tags:
   - modelo_347
   - cruce_datos
@@ -12,29 +12,20 @@ character_expression: neutral
 illustration_id: null
 requirements:
   min_month: 11
+  months_of_year:
+    - 2
+    - 3
 weight: 9
-cooldown_months: 12
+cooldown_months: 10
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: conciliar_mayores_con_gestoria
-    label: "Encargar a tu gestoría cuadrar libros mayores y certificados con el cliente"
-    requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "En dos llamadas entre asesorías queda acreditado el criterio de devengo y el requerimiento se archiva sin tocar tus declaraciones."
-    effects:
-      deductible_expense: 140
-      stress: 2
-      moral: 3
-      fiscal_risk: -10
   - id: perseguir_contabilidad_del_cliente
-    label: "Perseguir tú mismo al cliente y subir libros y justificantes bancarios"
+    label: Perseguir tú mismo al cliente y subir libros y justificantes bancarios
     outcomes:
       - id: desfase_temporal_aclarado
         weight: 65
-        result_text: "Logras arrancar un certificado firmado a la administración del cliente y Gómez da por justificado el desfase tras tres tardes de escáner."
+        result_text: Logras arrancar un certificado firmado a la administración del cliente y Gómez da por justificado el desfase tras tres tardes de escáner.
         effects:
           deductible_expense: 40
           stress: 10
@@ -43,17 +34,29 @@ choices:
           fiscal_risk: -6
       - id: silencio_cliente_y_sancion_formal
         weight: 35
-        result_text: "El departamento financiero del cliente está «cambiando de programa», nadie contesta a tiempo y te comes una sanción formal por datos inexactos."
+        result_text: El departamento financiero del cliente está «cambiando de programa», nadie contesta a tiempo y te comes una sanción formal por datos inexactos.
         effects:
           cash_delta: -320
           stress: 13
           moral: -6
           fiscal_risk: 8
   - id: presentar_complementaria_preventiva
-    label: "Presentar declaración complementaria asumiendo el ajuste para cerrar ya (240 €)"
-    result_text: "Tragas con el coste del ajuste temporal para quitarte el expediente de la mesa en diez minutos y seguir trabajando."
+    label: Presentar declaración complementaria asumiendo el ajuste para cerrar ya (240 €)
+    result_text: Tragas con el coste del ajuste temporal para quitarte el expediente de la mesa en diez minutos y seguir trabajando.
     effects:
       cash_delta: -240
       stress: 5
       moral: -3
       fiscal_risk: -8
+  - id: conciliar_mayores_con_gestoria
+    label: Encargar a tu gestoría cuadrar libros mayores y certificados con el cliente
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: En dos llamadas entre asesorías queda acreditado el criterio de devengo y el requerimiento se archiva sin tocar tus declaraciones.
+    effects:
+      deductible_expense: 140
+      stress: 2
+      moral: 3
+      fiscal_risk: -10

@@ -97,6 +97,7 @@ export interface ScheduledEvent {
   event_id: string;
   trigger_month: number;
   source_event_id: string;
+  deferred_months?: number;
 }
 
 export interface TemporalModifier {
@@ -220,10 +221,15 @@ export interface MonthStartSummary {
   month: number;
   gross_billing: number;
   tax_accrued_on_billing: number;
+  deductible_expenses?: number;
+  tax_shield_on_expenses?: number;
+  net_tax_accrued?: number;
   total_expenses: number;
   net_recurring_cash: number;
   invoices_settled: InvoiceSettlementResult[];
   passive_stress_delta: number;
+  modifier_moral_delta?: number;
+  modifier_stress_delta?: number;
   drawn_events: string[];
   cooldown_relaxed: boolean;
 }
@@ -239,6 +245,8 @@ export interface ChoiceOutcomeSummary {
   personal_life_delta: number;
   reputation_delta: number;
   fiscal_risk_delta: number;
+  tax_accrued_delta?: number;
+  employee_satisfaction_delta?: number;
   scheduled_event_ids: string[];
 }
 

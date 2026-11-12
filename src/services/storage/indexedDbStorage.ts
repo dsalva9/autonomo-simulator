@@ -11,6 +11,7 @@ import {
   MAX_HALL_OF_FAME_ENTRIES,
   PROFILE_KEY,
   type ProfileEnvelope,
+  type SaveActiveRunOptions,
   type SaveEnvelope,
   type StoragePort,
   type SyncRunProgressResult,
@@ -110,23 +111,20 @@ export function createStorageAdapter(
         };
       }
 
-      if (migrated.envelope.state.ending !== null) {
-        await this.syncRunProgress(migrated.envelope.state);
-        return { envelope: null, corruptedRecovery: null };
-      }
-
       return { envelope: migrated.envelope, corruptedRecovery: null };
     },
 
     async saveActiveRun(
       state: GameState,
       nowIso: string = new Date().toISOString(),
+      options?: SaveActiveRunOptions,
     ): Promise<SaveEnvelope> {
       const envelope: SaveEnvelope = {
         save_version: CURRENT_SAVE_VERSION,
         engine_build: ENGINE_BUILD,
         updated_at: nowIso,
         state,
+        ...(options?.pendingTurn ? { pending_turn: options.pendingTurn } : {}),
       };
       await driver.set(ACTIVE_RUN_KEY, envelope);
       return envelope;
@@ -151,6 +149,7 @@ export function createStorageAdapter(
     async syncRunProgress(
       state: GameState,
       nowIso: string = new Date().toISOString(),
+      options?: SaveActiveRunOptions,
     ): Promise<SyncRunProgressResult> {
       const currentProfile = await this.loadProfile();
       const { achievements, newlyUnlocked } = evaluateUnlockedAchievements(
@@ -183,7 +182,7 @@ export function createStorageAdapter(
         };
       }
 
-      await this.saveActiveRun(state, nowIso);
+      await this.saveActiveRun(state, nowIso, options);
 
       let nextProfile = currentProfile;
       if (newlyUnlocked.length > 0) {

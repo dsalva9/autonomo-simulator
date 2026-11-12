@@ -1,0 +1,54 @@
+schema_version: 1
+id: familia_presidencia_comunidad_vecinos
+category: familia
+title: "Te ha tocado por sorteo presidir la comunidad"
+body: "No bajaste cinco minutos antes a la junta y el acta dicta sentencia: eres la nueva presidencia del bloque. Antes del desayuno ya te pican al timbre por una bajante húmeda y el bombín del portal."
+tags:
+  - vivienda
+  - comunidad
+  - vecinos
+  - burocracia
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 38
+weight: 10
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: atender_marrones_vecinales_a_ratitos
+    label: "Resignarte a recibir fontaneros y peritos entre entrega y entrega"
+    result_text: "No gastas un euro extra, pero pasas el trimestre abriendo el cuarto de contadores en mitad de cada reunión importante."
+    effects:
+      stress: 10
+      moral: -5
+      personal_life: -6
+      add_modifier:
+        id: mod_presidencia_escalera
+        label: "Presidencia vecinal absorbiendo horas"
+        remaining_months: 4
+        monthly_billed_delta: -130
+        monthly_stress_delta: 2
+  - id: delegar_todo_en_administrador_fincas
+    label: "Contratar gestoría de fincas externa y prohibir timbrazos (145 €)"
+    result_text: "Pagas tu parte del refuerzo profesional y desvías cada queja vecinal a un correo ajeno. Tu paz mental no tiene precio."
+    effects:
+      cash_delta: -145
+      stress: -6
+      moral: 5
+      personal_life: 4
+  - id: gestionar_con_mano_de_hierro
+    label: "Digitalizar las cuentas del edificio y cortar debates en diez minutos"
+    requirements:
+      stats:
+        reputation:
+          min: 45
+        stress:
+          max: 60
+    result_text: "Aplicas método de estudio a la escalera: saneas dos contratos inflados y te ganas el respeto temeroso del tercero derecha."
+    effects:
+      cash_delta: 60
+      stress: 6
+      moral: 7
+      personal_life: 2

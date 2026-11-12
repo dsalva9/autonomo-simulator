@@ -1,0 +1,48 @@
+schema_version: 1
+id: gestor_olvido_modelo_349_ue
+category: gestor
+title: El fantasma del Modelo 349 olvidado
+body: Llevando los papeles por tu cuenta facturaste sin IVA a dos clientes europeos, pero olvidaste que esa exención obliga a presentar también la declaración recapitulativa Modelo 349.
+tags:
+  - autogestion
+  - modelo_349
+  - intracomunitario
+  - burocracia
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 10
+  gestor_tiers:
+    - self
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+choices:
+  - id: presentar_349_extemporaneo_voluntario
+    label: Presentar el Modelo 349 fuera de plazo sin esperar aviso
+    result_text: Asumes la sanción reducida por presentación espontánea sin requerimiento y evitas un expediente mayor.
+    effects:
+      cash_delta: -150
+      stress: 4
+      moral: 1
+      fiscal_risk: -6
+  - id: pagar_consulta_puntual_operador_ue
+    label: Pagar a un fiscalista una revisión puntual de operaciones UE
+    requirements:
+      stats:
+        money:
+          min: 240
+    result_text: El especialista cuadra tus NIF europeos en VIES, subsana el modelo y deja tus libros listos para cualquier cruce.
+    effects:
+      deductible_expense: 145
+      stress: -5
+      moral: 4
+      reputation: 2
+      fiscal_risk: -9
+  - id: ignorar_modelo_informativo_este_ano
+    label: Ignorar el formulario confiando en que no mueve dinero
+    result_text: Te ahorras el trámite hoy, pero dejas una discrepancia cantosa entre tu IVA trimestral y el censo europeo VIES.
+    effects:
+      stress: -2
+      moral: -3
+      fiscal_risk: 14

@@ -11,8 +11,8 @@ tags:
 requirements:
   min_month: 58
 weight: 11
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 14
+max_occurrences: 4
 exclusive_with: []
 choices:
   - id: despejar_mananas_y_acompanarles

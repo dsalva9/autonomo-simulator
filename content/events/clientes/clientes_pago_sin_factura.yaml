@@ -1,7 +1,7 @@
 schema_version: 1
 id: clientes_pago_sin_factura
 category: clientes
-title: "¿Con IVA o... nos arreglamos?"
+title: ¿Con IVA o... nos arreglamos?
 body: "Borja aparece un viernes a última hora con un encargo «súper sencillo» para el lunes. Te guiña un ojo y baja la voz: «Si nos ahorramos el papeleo, te doy el sobre en mano el domingo y aquí paz y después gloria»."
 tags:
   - dinero_b
@@ -10,17 +10,26 @@ tags:
 character_id: cliente_regateador
 character_expression: pleased
 illustration_id: null
-weight: 10
-cooldown_months: 6
-max_occurrences: 5
+weight: 9
+cooldown_months: 9
+max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: exigir_factura_legal
+    label: Con factura, IVA y retención, como manda el BOE
+    result_text: Borja resopla como si le hubieras pedido un riñón, pero acaba firmando el presupuesto oficial. Apartas lo del trimestre y duermes con la conciencia cristalina.
+    effects:
+      billed_income: 1400
+      moral: 4
+      stress: 3
+      reputation: 4
+      fiscal_risk: -3
   - id: aceptar_sobre_en_b
-    label: "Aceptar el sobre «sin papeles» y pringar el finde"
+    label: Aceptar el sobre «sin papeles» y pringar el finde
     outcomes:
       - id: cobro_limpio
         weight: 70
-        result_text: "El domingo por la noche recibes un sobre de panadería con billetes arrugados. Liquidez inmediata lejos del trimestre, aunque cada furgoneta blanca aparcada en tu calle te sube las pulsaciones."
+        result_text: El domingo por la noche recibes un sobre de panadería con billetes arrugados. Liquidez inmediata lejos del trimestre, aunque cada furgoneta blanca aparcada en tu calle te sube las pulsaciones.
         effects:
           cash_delta: 1600
           stress: 7
@@ -48,18 +57,9 @@ choices:
             - event_id: hacienda_carta_certificada
               delay_months: 3
               probability: 0.65
-  - id: exigir_factura_legal
-    label: "Con factura, IVA y retención, como manda el BOE"
-    result_text: "Borja resopla como si le hubieras pedido un riñón, pero acaba firmando el presupuesto oficial. Apartas lo del trimestre y duermes con la conciencia cristalina."
-    effects:
-      billed_income: 1400
-      moral: 4
-      stress: 3
-      reputation: 4
-      fiscal_risk: -3
   - id: declinar_encargo
-    label: "Rechazar el marrón y salvar tu fin de semana"
-    result_text: "Le deseas mucha suerte encontrando a otro incauto un viernes a las ocho de la tarde. Cierras el portátil y recuperas la fe en el descanso dominical."
+    label: Rechazar el marrón y salvar tu fin de semana
+    result_text: Le deseas mucha suerte encontrando a otro incauto un viernes a las ocho de la tarde. Cierras el portátil y recuperas la fe en el descanso dominical.
     effects:
       stress: -7
       moral: 3

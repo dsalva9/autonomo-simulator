@@ -1,7 +1,7 @@
 schema_version: 1
 id: clientes_iguala_urgencias_mensual
 category: clientes
-title: "Contrato de iguala con línea caliente"
+title: Contrato de iguala con línea caliente
 body: "Marta quiere garantizarse respuesta prioritaria de tu estudio durante los próximos cinco meses: pagan un fijo mensual jugoso encima de tu facturación base, pero esperan que contestes incidencias en menos de dos horas."
 tags:
   - iguala
@@ -21,19 +21,19 @@ max_occurrences: 4
 exclusive_with: []
 choices:
   - id: firmar_sla_completo
-    label: "Firmar la iguala prioritaria completa (cinco meses de colchón y guardia)"
-    result_text: "Tu cuenta bancaria sonríe cada día uno, aunque ahora el tono de notificación del correo te provoca un reflejo pavloviano."
+    label: Firmar la iguala prioritaria completa (cinco meses de colchón y guardia)
+    result_text: Tu cuenta bancaria sonríe cada día uno, aunque ahora el tono de notificación del correo te provoca un reflejo pavloviano.
     effects:
       billed_income: 300
       add_modifier:
         id: mod_iguala_sla_marta
-        label: "Iguala prioritaria corporativa"
+        label: Iguala prioritaria corporativa
         remaining_months: 5
         monthly_billed_delta: 640
         monthly_stress_delta: 4
       reputation: 3
   - id: pactar_bolsa_horario_oficina
-    label: "Negociar una bolsa de horas estrictamente en horario de oficina"
+    label: Negociar una bolsa de horas estrictamente en horario de oficina
     requirements:
       stats:
         reputation:
@@ -42,15 +42,15 @@ choices:
     effects:
       add_modifier:
         id: mod_bolsa_horas_marta
-        label: "Bolsa de horas corporativa"
+        label: Bolsa de horas corporativa
         remaining_months: 5
         monthly_billed_delta: 420
         monthly_stress_delta: 1
       moral: 4
       reputation: 3
   - id: declinar_correa_electronica
-    label: "Rechazar la guardia permanente y trabajar solo bajo proyecto cerrado"
-    result_text: "Renuncias al dinero fácil a cambio de seguir siendo dueño de tu agenda."
+    label: Rechazar la guardia permanente y trabajar solo bajo proyecto cerrado
+    result_text: Renuncias al dinero fácil a cambio de seguir siendo dueño de tu agenda.
     effects:
       stress: -4
       moral: 2

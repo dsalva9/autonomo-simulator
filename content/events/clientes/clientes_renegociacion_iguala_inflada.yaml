@@ -16,6 +16,15 @@ cooldown_months: 10
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: cortar_excesos_con_contador_mensual
+    label: Instalar contador compartido y parar al llegar a la hora diez
+    result_text: Cada viernes reciben el saldo exacto de horas consumidas. Santo remedio contra las reuniones innecesarias.
+    effects:
+      billed_income: 520
+      stress: 4
+      moral: 3
+      personal_life: 2
+      reputation: 0
   - id: presentar_informe_horas_y_actualizar_cuota
     label: Mostrar el desglose real de horas y subir la iguala a su volumen
     outcomes:
@@ -40,19 +49,12 @@ choices:
           stress: 2
           moral: 2
           personal_life: 4
-  - id: cortar_excesos_con_contador_mensual
-    label: Instalar contador compartido y parar al llegar a la hora diez
-    result_text: Cada viernes reciben el saldo exacto de horas consumidas. Santo remedio contra las reuniones innecesarias.
-    effects:
-      billed_income: 600
-      stress: 4
-      moral: 3
-      reputation: 2
   - id: callar_y_seguir_regalando_horas
     label: No abrir el melón por miedo a que cancelen el contrato
     result_text: Conservas la relación sin roces, pero regalas dieciocho horas extra sin facturar un solo euro adicional.
     effects:
-      stress: 7
-      moral: -6
+      billed_income: 680
+      stress: 8
+      moral: -5
       personal_life: -3
-      reputation: -4
+      reputation: 3

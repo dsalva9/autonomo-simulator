@@ -12,7 +12,7 @@ requirements:
   min_month: 48
 weight: 11
 cooldown_months: 15
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: pagar_cuota_y_huir_a_biblioteca
@@ -45,12 +45,13 @@ choices:
           personal_life: -4
   - id: trabajar_con_tapones_en_casa
     label: "Pagar a plazos y aguantar el estruendo en casa con tapones de obra"
-    result_text: "Cada videollamada parece retransmitida desde una cantera, pero evitas soltar el dinero de golpe este mes."
+    result_text: "Cada videollamada parece retransmitida desde una cantera, pero evitas soltar el dinero de golpe este mes y no pierdes mañanas fuera."
     effects:
-      cash_delta: -110
-      stress: 9
-      moral: -3
-      personal_life: -5
+      cash_delta: -60
+      billed_income: 310
+      stress: 7
+      moral: -2
+      personal_life: -4
       add_modifier:
         id: mod_obras_edificio_ruido
         label: "Obras y derrama en el bloque"

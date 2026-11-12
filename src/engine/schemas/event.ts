@@ -42,7 +42,9 @@ export const RequirementsSpecSchema = z
   .object({
     min_month: z.number().int().min(1).nullable().optional(),
     max_month: z.number().int().min(1).nullable().optional(),
+    months_of_year: z.array(z.number().int().min(1).max(12)).min(1).nullable().optional(),
     stats: StatsRequirementSchema.nullable().optional(),
+    employee_satisfaction: StatRangeSchema.nullable().optional(),
     required_flags: z.array(z.string().min(1)).nullable().optional(),
     forbidden_flags: z.array(z.string().min(1)).nullable().optional(),
     gestor_tiers: z.array(GestorTierSchema).nullable().optional(),
@@ -125,6 +127,7 @@ export const EffectsSpecSchema = z
     personal_life: z.number().optional(),
     reputation: z.number().optional(),
     fiscal_risk: z.number().optional(),
+    employee_satisfaction: z.number().optional(),
     set_flags: z.array(z.string().min(1)).optional(),
     clear_flags: z.array(z.string().min(1)).optional(),
     schedule_events: z.array(ScheduleEventSpecSchema).optional(),
@@ -206,12 +209,21 @@ export function hasActiveRequirements(req?: RequirementsSpec | null): boolean {
   if (req.min_month != null || req.max_month != null) {
     return true;
   }
+  if (req.months_of_year && req.months_of_year.length > 0) {
+    return true;
+  }
   if (req.stats) {
     for (const statRange of Object.values(req.stats)) {
       if (statRange && (statRange.min != null || statRange.max != null)) {
         return true;
       }
     }
+  }
+  if (
+    req.employee_satisfaction &&
+    (req.employee_satisfaction.min != null || req.employee_satisfaction.max != null)
+  ) {
+    return true;
   }
   if (req.required_flags && req.required_flags.length > 0) {
     return true;

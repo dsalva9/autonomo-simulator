@@ -1,0 +1,64 @@
+schema_version: 1
+id: hacienda_comprobacion_linea_movil_unica
+category: hacienda
+title: Rechazo al paquete familiar de móvil y fibra
+body: "El Inspector Gómez tumba el cincuenta por ciento de tu tarifa convergente de fibra y móvil: recuerda que si mezclas llamadas personales y trabajo en una sola línea, la deducción cae entera."
+tags:
+  - comprobacion
+  - deducciones
+  - telefonia
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 7
+  forbidden_flags:
+    - estudio_calle_alquilado
+  stats:
+    fiscal_risk:
+      min: 16
+weight: 14
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: asumir_recorte_y_abrir_linea_exclusiva
+    label: Pagar la diferencia y dar de alta una SIM solo profesional
+    result_text: Abonas el ajuste sin recargo mayor y estrenas segundo número para blindar los próximos trimestres.
+    effects:
+      deductible_expense: 45
+      cash_delta: -220
+      stress: 4
+      moral: 1
+      fiscal_risk: -14
+  - id: defender_prorrateo_con_criterio_gestoria
+    label: Alegar criterio económico-administrativo vía gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría rescata la fibra afecta a los metros del despacho y reduce la liquidación a una fracción asumible.
+    effects:
+      deductible_expense: 115
+      cash_delta: -60
+      stress: 1
+      moral: 4
+      fiscal_risk: -16
+  - id: enviar_listado_llamadas_horario_comercial
+    label: Subir el detalle de llamadas de lunes a viernes por tu cuenta
+    outcomes:
+      - id: estimacion_parcial_horario_laboral
+        weight: 45
+        result_text: El desglose de llamadas a clientes convence parcialmente al actuario y salvas la mitad de la cuota.
+        effects:
+          cash_delta: -115
+          stress: 7
+          moral: 4
+          fiscal_risk: -12
+      - id: criterio_exclusividad_inflexible
+        weight: 55
+        result_text: Gómez señala dos llamadas de domingo en el listado y rechaza el recibo completo con intereses.
+        effects:
+          cash_delta: -340
+          stress: 10
+          moral: -5
+          fiscal_risk: -10

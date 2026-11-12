@@ -18,6 +18,14 @@ cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: deducir_solo_lampara_y_silla
+    label: "Frenar a Paco y meter únicamente la silla de escritorio real (135 €)"
+    result_text: "Paco resopla diciendo que eres más papista que el Papa, pero anota solo el material defendible con factura desglosada."
+    effects:
+      deductible_expense: 135
+      stress: -3
+      moral: 4
+      fiscal_risk: -5
   - id: colar_sofa_entero_en_trimestre
     label: "Seguir el consejo de Paco y deducir el sofá entero sin complejos"
     result_text: "La cuota trimestral baja de golpe y sales del despacho sintiéndote un tiburón de las finanzas de barrio. Ya veremos en dos meses."
@@ -32,18 +40,6 @@ choices:
         - event_id: gestor_paco_revision_gastos_dudosos
           delay_months: 2
           probability: 1
-  - id: deducir_solo_lampara_y_silla
-    label: "Frenar a Paco y meter únicamente la silla de escritorio real"
-    result_text: "Paco resopla diciendo que eres más papista que el Papa, pero anota solo el material defendible con factura desglosada."
-    effects:
-      deductible_expense: 135
-      stress: -3
-      moral: 4
-      fiscal_risk: -5
-      schedule_events:
-        - event_id: gestor_paco_revision_gastos_dudosos
-          delay_months: 2
-          probability: 0.85
   - id: dejar_muebles_fuera_de_libros
     label: "No mezclar ni un cojín doméstico con las cuentas del negocio"
     result_text: "Pagas tu trimestre íntegro sin inventos creativos y mantienes el salón de tu casa fuera del radar tributario."
@@ -51,7 +47,3 @@ choices:
       stress: -2
       moral: 2
       fiscal_risk: -3
-      schedule_events:
-        - event_id: gestor_paco_revision_gastos_dudosos
-          delay_months: 2
-          probability: 0.7

@@ -152,45 +152,45 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     page,
   }) => {
     await page.goto("./");
-    await page.getByTestId("seed-input").fill("FASE3-CASH-93");
+    await page.getByTestId("seed-input").fill("P35-CASH-158");
     await page.getByTestId("start-run-btn").click();
 
     await expect(page.getByTestId("game-screen")).toBeVisible();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
 
-    // Month 1 post-start cash: 2.600 € initial seed capital + 2.216 € billing - 1.600 € fixed costs = 3.216 €
-    // Accrued tax on Month 1 billing: -620 € -> Tax-adjusted Libre = 2.596 €
+    // Month 1 post-start cash: 2.600 € initial seed capital + 2.096 € billing - 1.715 € fixed costs = 2.981 €
+    // Net accrued tax on Month 1 (587 € gross - 87 € deductible RETA shield): -500 € -> Tax-adjusted Libre = 2.481 €
     const viewport = page.viewportSize();
     const moneyBox = page.getByTestId("indicator-money");
     const moneyValue = page.getByTestId("indicator-money-value");
     const netCash = page.getByTestId("indicator-net-cash");
 
-    await expect(page.getByTestId("month-economy-strip")).toContainText("Caja fija: +616 €");
+    await expect(page.getByTestId("month-economy-strip")).toContainText("Caja fija: +381 €");
     await expect(moneyBox).toBeVisible();
-    await expect(moneyValue).toHaveText("3.216 €");
+    await expect(moneyValue).toHaveText("2.981 €");
     await expect(netCash).toBeVisible();
     await expect(netCash).toContainText(
       viewport && viewport.width < 768 ? "Res.:" : "Reserva Trimestre:",
     );
-    await expect(netCash).toContainText("-620 €");
+    await expect(netCash).toContainText("-500 €");
     await expect(netCash).toContainText("Libre:");
-    await expect(netCash).toContainText("2.596 €");
+    await expect(netCash).toContainText("2.481 €");
 
     // Verify ledger-net-after-tax in CuentasPanel (desktop right column or mobile Cuentas tab)
-    if (viewport && viewport.width < 1024) {
+    if (viewport && viewport.width < 1280) {
       await page.getByTestId("mobile-tab-cuentas").click();
       await expect(page.getByTestId("ledger-net-after-tax")).toBeVisible();
-      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-4 €");
+      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-119 €");
       await page.getByTestId("mobile-tab-despacho").click();
     } else {
       await expect(page.getByTestId("ledger-net-after-tax")).toBeVisible();
-      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-4 €");
+      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-119 €");
     }
 
     // Step 1 (Negative Cash Effect, -90 €): click choice on Month 1 and verify immediate Month 1 preview
     const negChoice = page.locator('[data-choice-id="escapada_desconexion_total"]');
     await expect(negChoice).toBeEnabled();
-    if (viewport && viewport.width < 1024) {
+    if (viewport && viewport.width < 1280) {
       await negChoice.scrollIntoViewIfNeeded();
     }
     await negChoice.click();
@@ -200,24 +200,24 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
     await expect(page.getByTestId("indicator-calendar")).not.toContainText("Año 1 · Mes 2");
     // Cash and negative red delta update immediately on Month 1
-    await expect(moneyValue).toHaveText("3.126 €");
-    await expect(netCash).toContainText("2.506 €");
+    await expect(moneyValue).toHaveText("2.891 €");
+    await expect(netCash).toContainText("2.391 €");
 
     const moneyDelta = page.getByTestId("indicator-money-delta");
     await expect(moneyDelta).toBeVisible();
     await expect(moneyDelta).toHaveText("-90 €");
-    await expect(moneyDelta).toHaveClass(/text-\[#b42b24\]/);
+    await expect(moneyDelta).toHaveClass(/text-\[#9e221b\]/);
 
     // Only upon clicking outcome-continue-btn does calendar advance to Month 2
     await page.getByTestId("outcome-continue-btn").click();
     await expect(page.getByTestId("outcome-panel")).toBeHidden();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
-    await expect(moneyValue).toHaveText("3.800 €");
+    await expect(moneyValue).toHaveText("3.325 €");
 
     // Step 2 (Positive Cash Effect, +1.400 €): verify positive green delta stays on Month 2 until acknowledged
     const posChoice = page.locator('[data-choice-id="exigir_factura_legal"]');
     await expect(posChoice).toBeEnabled();
-    if (viewport && viewport.width < 1024) {
+    if (viewport && viewport.width < 1280) {
       await posChoice.scrollIntoViewIfNeeded();
     }
     await posChoice.click();
@@ -225,7 +225,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("outcome-panel")).toBeVisible();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
     await expect(page.getByTestId("indicator-calendar")).not.toContainText("Año 1 · Mes 3");
-    await expect(moneyValue).toHaveText("5.200 €");
+    await expect(moneyValue).toHaveText("4.725 €");
     await expect(moneyDelta).toBeVisible();
     await expect(moneyDelta).toHaveText("+1.400 €");
     await expect(moneyDelta).toHaveClass(/text-\[#1f5c53\]/);
@@ -254,7 +254,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
       await assertBoxContainedInViewport(heroStamp, vp.width, "TitleScreen hero stamp");
 
       // Start deterministic run with NPC Polaroid on Month 1
-      await page.getByTestId("seed-input").fill("FASE1-BANNER-1");
+      await page.getByTestId("seed-input").fill("P35-EN-LOCALE-134");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -416,7 +416,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("./");
 
-    await page.getByTestId("seed-input").fill("FASE1-BANNER-1");
+    await page.getByTestId("seed-input").fill("P35-BANNER-139");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -546,7 +546,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     }
 
     // 3. Start run and verify HUD Audio Mute (toggle-sfx-btn) & Fast Pacing (toggle-fast-pacing-btn)
-    await page.getByTestId("seed-input").fill("FASE3-CASH-93");
+    await page.getByTestId("seed-input").fill("P35-CASH-158");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -572,7 +572,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     const viewport = page.viewportSize();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
     const month1Choice = page.locator('[data-choice-id="quedarse_adelantando_entregas"]');
-    if (viewport && viewport.width < 1024) {
+    if (viewport && viewport.width < 1280) {
       await month1Choice.scrollIntoViewIfNeeded();
     }
     await month1Choice.click();

@@ -11,10 +11,17 @@ tags:
 requirements:
   min_month: 60
 weight: 12
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 24
+max_occurrences: 2
 exclusive_with: []
 choices:
+  - id: confiar_en_el_reloj_de_prescripcion
+    label: "No levantar alfombras antiguas y esperar a que prescriban solas"
+    result_text: "No gastas ni un euro en arqueología contable hoy, cruzando los dedos cada vez que llega un aviso certificado al buzón."
+    effects:
+      stress: -2
+      personal_life: 2
+      fiscal_risk: 8
   - id: contratar_auditoria_cuatro_anos
     label: "Encargar una auditoría preventiva de los años no prescritos (340 €)"
     requirements:
@@ -29,7 +36,7 @@ choices:
       reputation: 3
       fiscal_risk: -14
   - id: dar_salto_estable_a_elena
-    label: "Contratar de forma permanente el blindaje de Elena Montes (180 €/mes)"
+    label: "Contratar de forma permanente el blindaje de Elena Montes (170 €/mes)"
     requirements:
       gestor_tiers:
         - self
@@ -46,9 +53,3 @@ choices:
       stress: -10
       moral: 6
       fiscal_risk: -15
-  - id: confiar_en_el_reloj_de_prescripcion
-    label: "No levantar alfombras antiguas y esperar a que prescriban solas"
-    result_text: "No gastas ni un euro en arqueología contable hoy, cruzando los dedos cada vez que llega un aviso certificado al buzón."
-    effects:
-      stress: 4
-      fiscal_risk: 7

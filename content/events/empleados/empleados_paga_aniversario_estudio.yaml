@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_paga_aniversario_estudio
 category: empleados
 title: "Aniversario del estudio y paga de consolidación"
-body: "Tras superar media década en activo, tu estudio cumple otro año sacando adelante encargos complejos en equipo. Llega la conversación inevitable de madurez empresarial: reconocer la trayectoria con una paga extraordinaria de resultados o blindar cada euro líquido ante los próximos vencimientos fiscales."
+body: "Superada media década en activo, tu estudio cumple otro año sacando proyectos complejos en equipo. Toca elegir entre premiar la trayectoria con una paga de resultados o blindar liquidez ante el trimestre."
 tags:
   - plantilla
   - veterania
@@ -26,6 +26,7 @@ choices:
       stress: -8
       moral: 9
       reputation: 4
+      employee_satisfaction: 16
       clear_flags:
         - desgaste_plantilla
       add_modifier:
@@ -43,6 +44,7 @@ choices:
       moral: 5
       personal_life: 3
       reputation: 2
+      employee_satisfaction: 10
       clear_flags:
         - desgaste_plantilla
   - id: congelar_primas_por_tesoreria
@@ -51,6 +53,7 @@ choices:
     effects:
       stress: 7
       moral: -5
+      employee_satisfaction: -14
       set_flags:
         - desgaste_plantilla
       add_modifier:

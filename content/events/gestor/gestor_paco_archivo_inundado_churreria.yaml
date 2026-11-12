@@ -1,0 +1,56 @@
+schema_version: 1
+id: gestor_paco_archivo_inundado_churreria
+category: gestor
+title: Gotera histórica sobre el archivo de Paco
+body: Una tubería rota en la churrería encima del bajo de Paco ha empapado tres estanterías de carpetas AZ. Paco está secando tus facturas de proveedores de hace dos años con un calefactor.
+tags:
+  - gestoria
+  - paco
+  - archivo
+  - veterania
+character_id: gestor_barato_paco
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 38
+  gestor_tiers:
+    - cheap
+weight: 11
+cooldown_months: 14
+max_occurrences: 2
+choices:
+  - id: confiar_en_el_calefactor_de_paco
+    label: Confiar en que el calefactor salve los papeles y no mirar
+    result_text: No pierdes la semana pidiendo duplicados, pero la mitad de tus justificantes parecen pergaminos del mar Muerto.
+    effects:
+      stress: -1
+      moral: -3
+      fiscal_risk: 13
+      set_flags:
+        - susto_con_paco
+  - id: escanear_supervivientes_y_pedir_copias
+    label: Rescatar los legajos húmedos y pedir duplicados en PDF
+    result_text: Tu despacho huele a papel mojado tres días, pero reconstruyes el archivo digital antes de que se borre la tinta.
+    effects:
+      deductible_expense: 90
+      stress: 8
+      moral: 3
+      personal_life: -4
+      fiscal_risk: -5
+  - id: migrar_todo_a_boveda_digital_elena
+    label: Rescatar tu historial y migrar a la bóveda en nube de Elena
+    requirements:
+      stats:
+        money:
+          min: 340
+    result_text: El equipo de Elena digitaliza tus ejercicios no prescritos con copia verificada y jubilas para siempre las carpetas AZ.
+    effects:
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      deductible_expense: 220
+      stress: -8
+      moral: 6
+      fiscal_risk: -14
+      clear_flags:
+        - susto_con_paco

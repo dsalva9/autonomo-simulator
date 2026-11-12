@@ -12,6 +12,16 @@ cooldown_months: 0
 max_occurrences: null
 exclusive_with: []
 choices:
+  - id: liquidar_fase_hecha_y_cerrar
+    label: Dar el expediente por cerrado quedándote la señal cobrada
+    result_text: "Cierras la carpeta sin mirar atrás: menos facturación total de la prevista, pero cero incertidumbre colgando sobre tu cabeza."
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      clear_flags:
+        - clausula_pausa_firmada
+      reputation: -4
   - id: congelar_expediente_por_escrito
     label: Enviar aviso formal de parada técnica y liberar tu agenda
     result_text: Archivas el proyecto ordenadamente advirtiendo que reabrirlo tendrá coste de reactivación y llenas la semana con otros encargos.
@@ -34,13 +44,6 @@ choices:
         - event_id: clientes_reaparicion_urgente_fantasma
           delay_months: 1
       reputation: -4
-  - id: liquidar_fase_hecha_y_cerrar
-    label: Dar el expediente por cerrado quedándote la señal cobrada
-    result_text: "Cierras la carpeta sin mirar atrás: menos facturación total de la prevista, pero cero incertidumbre colgando sobre tu cabeza."
-    effects:
-      stress: -2
-      moral: 1
-      personal_life: 3
-      clear_flags:
-        - clausula_pausa_firmada
-      reputation: -4
+      billed_income: 250
+      set_flags:
+        - impago_pendiente

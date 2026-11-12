@@ -9,17 +9,20 @@ initial_indicators:
   fiscal_risk: 0
 
 base_monthly_billing: 2240
-base_living_cost: 1290
+base_living_cost: 1405
+annual_living_cost_growth: 64
 autonomo_quota: 310
 child_monthly_cost: 280
 
 reputation_multiplier_min: 0.74
-reputation_multiplier_max: 1.35
+reputation_multiplier_max: 1.24
 moral_multiplier_min: 0.70
-moral_multiplier_max: 1.15
+moral_multiplier_max: 1.13
 
-personal_life_recovery_threshold: 55
-personal_life_monthly_stress_relief: 2
+personal_life_recovery_threshold: 65
+personal_life_monthly_stress_relief: 1
+high_stat_decay_threshold: 60
+event_novelty_decay_k: 0.85
 
 effective_quarterly_tax_rate: 0.28
 deductible_tax_fraction: 0.28
@@ -37,9 +40,9 @@ gestor_tiers:
   self:
     monthly_fee: 0
     inspection_shield: 0
-    quarterly_error_prob: 0.18
-    quarterly_error_surcharge: 180
-    quarterly_error_stress: 5
+    quarterly_error_prob: 0.25
+    quarterly_error_surcharge: 240
+    quarterly_error_stress: 7
   cheap:
     monthly_fee: 60
     inspection_shield: 0.25
@@ -47,21 +50,21 @@ gestor_tiers:
     quarterly_error_surcharge: 120
     quarterly_error_stress: 3
   premium:
-    monthly_fee: 180
-    inspection_shield: 0.70
+    monthly_fee: 170
+    inspection_shield: 0.72
     quarterly_error_prob: 0.01
     quarterly_error_surcharge: 60
     quarterly_error_stress: 1
 
 default_partner_monthly_cost: 180
-default_partner_support_modifier: 2
+default_partner_support_modifier: 1
 
 inspection_curve:
-  min_fiscal_risk: 25
+  min_fiscal_risk: 15
   max_probability: 0.65
   exponent: 1.5
   risk_decay_on_trigger: 35
-  quarterly_natural_risk_decay: 4
+  quarterly_natural_risk_decay: 3
   fallback_fine_base: 600
   fallback_fine_per_risk: 12
   fallback_stress_penalty: 12

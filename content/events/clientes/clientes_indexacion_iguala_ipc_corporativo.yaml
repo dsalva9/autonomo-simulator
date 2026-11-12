@@ -1,0 +1,63 @@
+schema_version: 1
+id: clientes_indexacion_iguala_ipc_corporativo
+category: clientes
+title: "Cláusula de IPC en la iguala: «A proveedores externos no os aplica»"
+body: Llevas dos años cobrando los mismos 1.800 € mensuales en una iguala mientras la empresa sube sus propios precios un 9 %. Compras responde que «por política interna las tarifas de autónomos están congeladas».
+tags:
+  - iguala
+  - ipc
+  - negociacion
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 42
+weight: 9
+cooldown_months: 12
+max_occurrences: 3
+choices:
+  - id: recortar_horas_en_misma_proporcion
+    label: Mantener los 1.800 € pero reducir un 15 % las horas incluidas
+    result_text: "Jugada maestra: compras presume de no haber subido el importe nominal y tú ganas una mañana libre cada semana al mismo precio."
+    effects:
+      billed_income: 1800
+      moral: 6
+      stress: -5
+      personal_life: 5
+      reputation: 4
+    requirements:
+      stats:
+        reputation:
+          min: 56
+  - id: exigir_actualizacion_ipc_o_no_renovar
+    label: Plantarse en 2.050 € mensuales invocando el coste de sustitución
+    outcomes:
+      - id: compras_cede_ante_marta
+        weight: 65
+        result_text: Marta advierte de que formar a otro proveedor costaría el triple y compras autoriza la actualización anual.
+        effects:
+          billed_income: 2050
+          moral: 7
+          stress: 3
+          reputation: 5
+          add_modifier:
+            id: mod_tarifas_ipc
+            label: Tarifas actualizadas al IPC
+            remaining_months: 5
+            monthly_billed_delta: 280
+      - id: no_renuevan_y_liquidas_traspaso
+        weight: 35
+        result_text: Compras se enroca por orgullo burocrático; facturas 1.600 € de cierre documentado y liberas veinte horas mensuales mal pagadas.
+        effects:
+          billed_income: 1600
+          moral: 3
+          stress: -6
+          personal_life: 4
+  - id: aceptar_congelacion_otro_ano
+    label: Tragar con la tarifa congelada rascando un encargo suelto (1.920 €)
+    result_text: Aseguras la renovación sin roces más un pequeño extra puntual, aunque escuece ver cómo sube hasta el menú del día.
+    effects:
+      billed_income: 1920
+      moral: -4
+      stress: 4
+      reputation: 2

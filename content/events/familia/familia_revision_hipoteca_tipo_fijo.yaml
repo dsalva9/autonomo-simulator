@@ -1,0 +1,65 @@
+schema_version: 1
+id: familia_revision_hipoteca_tipo_fijo
+category: familia
+title: "Cita en el banco: tipos variables y letra pequeña"
+body: "Tras cuatro años demostrando ingresos de autónomo con tres carpetas de declaraciones, el banco se digna a revisar las condiciones de tu vivienda frente al vaivén de tipos. Cambiar tiene gastos de notaría."
+tags:
+  - vivienda
+  - hipoteca
+  - banco
+  - veterania
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 44
+weight: 10
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: amagar_con_otro_banco_sin_gasto
+    label: "Llevar oferta de otra entidad para rascar rebaja sin cambiar de banco"
+    outcomes:
+      - id: director_iguala_condiciones
+        weight: 60
+        result_text: "El milagro obra efecto: te quitan comisiones absurdas y rebajan el diferencial sin pasar por caja notarial."
+        effects:
+          stress: -6
+          moral: 7
+          personal_life: 4
+          add_modifier:
+            id: mod_cuota_vivienda_amortizada
+            label: "Cuota de vivienda aliviada"
+            remaining_months: 5
+            monthly_expense_delta: -60
+      - id: vinculacion_seguros_cara
+        weight: 40
+        result_text: "Solo te bajan el tramo si contratas alarma y seguro caro; sales igual que entraste tras perder toda la mañana."
+        effects:
+          stress: 5
+          moral: -3
+  - id: seguir_en_variable_sin_papeleo
+    label: "Dejarlo como está por no recopilar otra vez veinte modelos fiscales"
+    result_text: "Te ahorras la yincana bancaria para autónomos hoy, cruzando los dedos cada vez que hablan de tipos en el telediario."
+    effects:
+      billed_income: 320
+      stress: 4
+      moral: -1
+  - id: subrogar_a_tipo_fijo_estable
+    label: "Pagar gastos de novación hoy y blindar una cuota fija tranquila (540 €)"
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: "Sales de la notaría con menos liquidez inmediata, pero sabiendo al céntimo qué pagarás cada mes aunque tiemblen los mercados."
+    effects:
+      cash_delta: -540
+      stress: -10
+      moral: 8
+      personal_life: 6
+      add_modifier:
+        id: mod_hipoteca_tipo_fijo
+        label: "Cuota blindada a tipo fijo"
+        remaining_months: 6
+        monthly_expense_delta: -95
+        monthly_stress_delta: -2

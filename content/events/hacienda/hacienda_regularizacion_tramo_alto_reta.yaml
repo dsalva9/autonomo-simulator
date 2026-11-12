@@ -11,41 +11,51 @@ tags:
 character_id: null
 requirements:
   min_month: 56
+  months_of_year:
+    - 3
+    - 4
+    - 10
+    - 11
 weight: 12
 cooldown_months: 14
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: repartir_cargo_en_cinco_meses
+    label: Diluir el ajuste retroactivo en cinco recibos mensuales asumibles
+    result_text: Evitas descapitalizarte este mes asumiendo una mochila extra en tus costes fijos del próximo semestre.
+    effects:
+      add_modifier:
+        id: mod_reta_veterano_tramo
+        label: Ajuste veterano de tramo RETA
+        remaining_months: 5
+        monthly_expense_delta: 115
+        monthly_stress_delta: 1
+      stress: 2
+      moral: -1
+      fiscal_risk: -3
   - id: pagar_salto_tramo_al_contado
-    label: "Liquidar el ajuste de golpe pensando en tu futura base de jubilación"
-    result_text: "El cargo escuece en la tesorería del mes, aunque al menos consolidas una base de cotización más digna."
+    label: Liquidar el ajuste de golpe pensando en tu futura base de jubilación
+    result_text: El cargo escuece en la tesorería del mes, aunque al menos consolidas una base de cotización más digna.
     effects:
       cash_delta: -520
-      stress: 4
-      moral: 2
-      fiscal_risk: -5
+      stress: -2
+      moral: 3
+      fiscal_risk: -6
+    requirements:
+      stats:
+        money:
+          min: 900
   - id: depurar_rendimiento_neto_gestor
-    label: "Encargar a tu gestoría recalcular el rendimiento neto deducible"
+    label: Encargar a tu gestoría recalcular el rendimiento neto deducible
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Aplicando al milímetro amortizaciones y deducción general, tu asesoría rebaja un peldaño el tramo exigido."
+    result_text: Aplicando al milímetro amortizaciones y deducción general, tu asesoría rebaja un peldaño el tramo exigido.
     effects:
       deductible_expense: 130
       cash_delta: -210
       stress: -3
       moral: 5
       fiscal_risk: -6
-  - id: repartir_cargo_en_cinco_meses
-    label: "Diluir el ajuste retroactivo en cinco recibos mensuales asumibles"
-    result_text: "Evitas descapitalizarte este mes asumiendo una mochila extra en tus costes fijos del próximo semestre."
-    effects:
-      add_modifier:
-        id: mod_reta_veterano_tramo
-        label: "Ajuste veterano de tramo RETA"
-        remaining_months: 5
-        monthly_expense_delta: 115
-        monthly_stress_delta: 1
-      stress: 2
-      moral: -1

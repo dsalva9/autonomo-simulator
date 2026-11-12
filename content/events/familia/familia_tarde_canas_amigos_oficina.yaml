@@ -11,8 +11,8 @@ tags:
 requirements:
   min_month: 2
 weight: 12
-cooldown_months: 9
-max_occurrences: null
+cooldown_months: 12
+max_occurrences: 4
 exclusive_with: []
 choices:
   - id: cerrar_todo_y_bajar_a_la_terraza

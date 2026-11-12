@@ -1,0 +1,62 @@
+schema_version: 1
+id: familia_adopcion_mascota_estudio
+category: familia
+title: "Ojos color canela buscando casa en el barrio"
+body: "Trabajar en solitario convierte el piso en una biblioteca demasiado callada. La protectora vecinal busca hogar para un mestizo tranquilo que parece saber exactamente cuándo necesitas levantarte de la silla."
+tags:
+  - mascota
+  - hogar
+  - salud_mental
+  - rutina
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 8
+  family_statuses:
+    - single
+    - separated
+  forbidden_flags:
+    - mascota_en_casa
+    - sin_mascota_decidido
+weight: 11
+cooldown_months: 12
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: acogida_temporal_un_mes
+    label: "Empezar como casa de acogida temporal para probar la rutina (65 €)"
+    result_text: "A los diez días ya le has comprado cama mullida y sabes de sobra que esa «acogida temporal» se queda en casa para siempre."
+    effects:
+      cash_delta: -65
+      stress: -8
+      moral: 9
+      personal_life: 10
+      set_flags:
+        - mascota_en_casa
+  - id: adoptar_compania_fiel_estudio
+    label: "Adoptarlo con vacunas al día: paseos sagrados lejos del monitor (195 €)"
+    result_text: "A la semana ya duerme junto a la impresora y te obliga a ver la luz del sol dos veces al día pase lo que pase con el trimestre."
+    effects:
+      cash_delta: -195
+      stress: -12
+      moral: 12
+      personal_life: 14
+      set_flags:
+        - mascota_en_casa
+      add_modifier:
+        id: mod_paseos_mascota_diarios
+        label: "Paseos diarios con tu mascota"
+        remaining_months: 6
+        monthly_expense_delta: 45
+        monthly_moral_delta: 2
+        monthly_stress_delta: -2
+  - id: donar_saco_pienso_sin_adoptar
+    label: "Donar para pienso y admitir que hoy no puedes asumir horarios (35 €)"
+    result_text: "Echas un cable honesto a la protectora sin comprometerte a carreras imposibles cuando se complican las entregas."
+    effects:
+      cash_delta: -35
+      stress: -1
+      moral: 3
+      personal_life: -1
+      set_flags:
+        - sin_mascota_decidido

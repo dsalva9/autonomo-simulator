@@ -1,0 +1,51 @@
+schema_version: 1
+id: clientes_liquidacion_administrador_concursal
+category: clientes
+title: "El administrador concursal llama: «Vendemos la unidad productiva»"
+body: "Tres meses después, el administrador concursal te contacta: un grupo solvente compra la división sana del cliente quebrado. Ofrecen quita del 35 % sobre lo viejo o pagarte traspaso técnico completo."
+tags:
+  - concurso
+  - liquidacion
+  - cadena
+character_id: null
+character_expression: null
+illustration_id: null
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: 2
+choices:
+  - id: pactar_quita_rapida_y_traspaso_al_comprador
+    label: Cobrar 2.750 € de liquidación más traspaso al nuevo comprador solvente
+    result_text: Recuperas la mayor parte del susto en efectivo, cierras el expediente de impago y el comprador te ficha como proveedor limpio.
+    effects:
+      billed_income: 2750
+      moral: 7
+      stress: -6
+      reputation: 5
+      clear_flags:
+        - impago_pendiente
+      set_flags:
+        - proveedor_corporativo_activo
+  - id: rechazar_quita_y_pelear_cien_por_cien
+    label: Rechazar la quita y esperar a la liquidación judicial completa
+    outcomes:
+      - id: comprador_abona_deuda_integra_por_prisa
+        weight: 45
+        result_text: El comprador necesita tus claves y documentación esta semana, así que liquida 3.800 € íntegros para no retrasar la operación.
+        effects:
+          billed_income: 3800
+          moral: 9
+          stress: -4
+          reputation: 4
+          clear_flags:
+            - impago_pendiente
+      - id: cobro_parcial_tras_larga_espera
+        weight: 55
+        result_text: "El juzgado cierra con prorrata ordinaria: rescatas 1.450 € y pasas página jurando no concentrar jamás tanta cartera en uno solo."
+        effects:
+          billed_income: 1450
+          moral: -2
+          stress: 3
+          clear_flags:
+            - impago_pendiente

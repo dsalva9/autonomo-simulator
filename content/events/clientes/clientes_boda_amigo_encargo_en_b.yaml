@@ -14,15 +14,6 @@ cooldown_months: 12
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: hacer_precio_amigo_pero_con_factura
-    label: Aplicar un pequeño detalle comercial pero emitir factura legal
-    result_text: Le haces una rebajita elegante con su IVA reglamentario. Resopla medio minuto, paga por banco y dormís tranquilos los dos.
-    effects:
-      billed_income: 675
-      stress: 10
-      moral: 2
-      reputation: 2
-      fiscal_risk: -2
   - id: coger_los_billetes_en_la_terraza
     label: Guardar el fajo en el bolsillo y no emitir ni un recibo
     result_text: Efectivo limpio directo a la cartera sin pasar por el trimestre, con ese cosquilleo de saber quién más se enterará en la cena.
@@ -41,3 +32,12 @@ choices:
       moral: 1
       personal_life: 4
       reputation: -4
+  - id: hacer_precio_amigo_pero_con_factura
+    label: Aplicar un pequeño detalle comercial pero emitir factura legal
+    result_text: Le haces una rebajita elegante con su IVA reglamentario. Resopla medio minuto, paga por banco y dormís tranquilos los dos.
+    effects:
+      billed_income: 675
+      stress: 4
+      moral: 2
+      reputation: 2
+      fiscal_risk: -2

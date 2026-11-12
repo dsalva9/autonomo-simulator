@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_ultimatum_casero_mudanza
 category: familia
 title: "El sobrino imaginario de tu casero necesita el piso"
-body: "Vence tu contrato y el propietario llama con voz melosa: o aceptas un «pequeño ajuste» desorbitado para igualar el barrio, o casualmente un sobrino suyo necesita mudarse el mes que viene. Toca elegir entre tragar o empaquetar tu vida."
+body: "Vence tu contrato y el casero llama con voz melosa: o aceptas un «pequeño ajuste» desorbitado para igualar el barrio, o un supuesto sobrino necesita el piso el mes que viene. Toca tragar o empaquetar tu vida."
 tags:
   - vivienda
   - alquiler
@@ -15,19 +15,6 @@ cooldown_months: 16
 max_occurrences: 2
 exclusive_with: []
 choices:
-  - id: buscar_piso_y_mudarse
-    label: "Mandarle a paseo, alquilar en otro barrio y hacer mudanza (640 €)"
-    result_text: "Entre fianza, furgoneta y cajas de cartón se va un pico serio, pero te libras del chantaje anual y ganas un techo más razonable."
-    effects:
-      cash_delta: -640
-      stress: 8
-      moral: 7
-      personal_life: 4
-      set_flags:
-        - mudanza_reciente
-      schedule_events:
-        - event_id: familia_estreno_nuevo_piso
-          delay_months: 2
   - id: plantarse_con_la_ley_en_mano
     label: "Revisar cláusulas legales y exigir la prórroga obligatoria firmada"
     outcomes:
@@ -51,6 +38,19 @@ choices:
           schedule_events:
             - event_id: familia_estreno_nuevo_piso
               delay_months: 2
+  - id: buscar_piso_y_mudarse
+    label: "Mandarle a paseo, alquilar en otro barrio y hacer mudanza (640 €)"
+    result_text: "Entre fianza, furgoneta y cajas de cartón se va un pico serio, pero te libras del chantaje anual y ganas un techo más razonable."
+    effects:
+      cash_delta: -640
+      stress: 8
+      moral: 7
+      personal_life: 4
+      set_flags:
+        - mudanza_reciente
+      schedule_events:
+        - event_id: familia_estreno_nuevo_piso
+          delay_months: 2
   - id: tragar_con_el_nuevo_alquiler
     label: "Firmar la subida apretando los dientes por no perder semanas de curro"
     result_text: "No pierdes ni una hora facturable haciendo cajas, aunque cada día uno del mes sientes que trabajas medio lunes para tu casero."

@@ -12,20 +12,11 @@ character_id: cliente_corporativo_marta
 character_expression: neutral
 requirements:
   min_month: 60
-weight: 12
-cooldown_months: 10
+weight: 9
+cooldown_months: 15
 max_occurrences: null
 exclusive_with: []
 choices:
-  - id: liderar_intervencion_en_solitario
-    label: Ejecutar la auditoría e intervención intensiva de cabo a rabo
-    result_text: Desatascas en tres semanas lo que llevaba un año bloqueado. Facturas un pico memorable a cambio de acabar soñando con diagramas.
-    effects:
-      billed_income: 3000
-      stress: 14
-      moral: 4
-      personal_life: -6
-      reputation: 5
   - id: apoyarse_en_empleado_para_ejecucion
     label: Dirigir el diagnóstico y repartir la carga operativa con tu empleado
     requirements:
@@ -37,6 +28,16 @@ choices:
       stress: 5
       moral: 7
       personal_life: -1
+      reputation: 5
+      employee_satisfaction: 6
+  - id: liderar_intervencion_en_solitario
+    label: Ejecutar la auditoría e intervención intensiva de cabo a rabo
+    result_text: Desatascas en tres semanas lo que llevaba un año bloqueado. Facturas un pico memorable a cambio de acabar soñando con diagramas.
+    effects:
+      billed_income: 3000
+      stress: 14
+      moral: 4
+      personal_life: -6
       reputation: 5
   - id: declinar_marron_ajeno_y_descansar
     label: Pasar de apagar incendios heredados y cuidar las cervicales

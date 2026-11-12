@@ -1,0 +1,65 @@
+schema_version: 1
+id: clientes_acuerdo_marco_multianual_ibex
+category: clientes
+title: "Acuerdo marco bianual con cotizada: estabilidad de hierro o jaula dorada"
+body: "Ocho años de trayectoria te sientan frente a compras de un gran grupo cotizado: ofrecen acuerdo marco preferente con mínimo garantizado de 3.800 € si reservas capacidad mensual."
+tags:
+  - endless
+  - corporativo
+  - iguala
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 96
+  stats:
+    reputation:
+      min: 60
+weight: 10
+cooldown_months: 16
+max_occurrences: null
+choices:
+  - id: aceptar_disponibilidad_prioritaria_total
+    label: Aceptar el paquete completo de 4.400 € con prioridad de respuesta 24h
+    result_text: Tu cuenta bancaria entra en otra liga, aunque sabes que cuando llamen un jueves tarde toca despejar la mesa.
+    effects:
+      billed_income: 4400
+      moral: 4
+      stress: 8
+      personal_life: -4
+      reputation: 6
+      set_flags:
+        - proveedor_corporativo_activo
+      add_modifier:
+        id: mod_esposas_oro_vip
+        label: Iguala VIP 24/7
+        remaining_months: 5
+        monthly_billed_delta: 750
+        monthly_stress_delta: 4
+  - id: entrar_solo_para_proyectos_singulares
+    label: Rechazar reserva de horas y quedar dado de alta solo para hitos sénior
+    result_text: Facturas un primer encargo estratégico de 2.700 € manteniendo el 100 % de soberanía sobre tu calendario.
+    effects:
+      billed_income: 2700
+      moral: 6
+      stress: -1
+      personal_life: 3
+      reputation: 5
+  - id: firmar_marco_con_desconexion_y_tope_horas
+    label: Firmar el acuerdo blindando horario europeo y bolsa máxima mensual
+    requirements:
+      required_flags:
+        - proveedor_corporativo_activo
+    result_text: "Tu historial como proveedor homologado te permite imponer cláusula de desconexión: ingresos de roca sin perder tus fines de semana."
+    effects:
+      billed_income: 3800
+      moral: 8
+      stress: 2
+      personal_life: 3
+      reputation: 7
+      add_modifier:
+        id: mod_iguala_vip_sana
+        label: Iguala VIP con desconexión
+        remaining_months: 6
+        monthly_billed_delta: 650
+        monthly_stress_delta: 1

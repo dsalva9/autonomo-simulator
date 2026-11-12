@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_malabares_extraescolares
 category: familia
 title: "Días sin cole, fiebre y extraescolares"
-body: "El calendario escolar despliega su ofensiva sorpresa contra la conciliación: tres días no lectivos seguidos de unas décimas de fiebre y el recibo trimestral de actividades extraescolares. Con la criatura en casa a plena energía y dos encargos por cerrar, vuestra agenda salta por los aires."
+body: "El calendario escolar lanza su ofensiva contra la conciliación: tres días sin cole, décimas de fiebre y el recibo de extraescolares. Con la criatura a tope en casa y dos entregas pendientes, vuestra agenda salta por los aires."
 tags:
   - hijos
   - conciliacion
@@ -13,6 +13,9 @@ character_expression: stressed
 illustration_id: null
 requirements:
   min_month: 14
+  family_statuses:
+    - dating
+    - cohabiting
   required_flags:
     - criatura_en_casa
 weight: 15

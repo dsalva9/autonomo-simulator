@@ -14,6 +14,7 @@ import {
   getActiveEvent,
   resolveEndingQuote,
   resolveVictoryPrompt,
+  retireFromRun,
   settleQuarter,
   startNewRun,
 } from "../engine/index.ts";
@@ -26,8 +27,11 @@ import {
 import { defaultPlatformAdapter } from "../services/platform/PlatformPort.ts";
 import {
   type AchievementId,
+  type PersistedPendingTurn,
   type ProfileEnvelope,
+  type SaveActiveRunOptions,
   type StoragePort,
+  type SyncRunProgressResult,
   createDefaultProfileEnvelope,
   defaultStorageAdapter,
 } from "../services/storage/index.ts";
@@ -40,7 +44,15 @@ export interface PendingOutcomeView {
   outcome: ChoiceOutcomeSummary;
 }
 
+export interface AutoSettledQuarterInfo {
+  quarter: number;
+  month: number;
+  paidAmount: number;
+}
+
 export type IndicatorDeltas = Partial<Record<keyof Indicators, number>>;
+
+const FAST_PACING_AUTO_SETTLE_MIN_BUFFER = 1200;
 
 function diffIndicators(prev: Indicators, next: Indicators): IndicatorDeltas {
   const deltas: IndicatorDeltas = {};
@@ -55,9 +67,72 @@ function diffIndicators(prev: Indicators, next: Indicators): IndicatorDeltas {
 }
 
 let activeStoragePort: StoragePort = defaultStorageAdapter;
+let storageQueue: Promise<unknown> = Promise.resolve();
+
+function enqueueStorage<T>(task: () => Promise<T>): Promise<T> {
+  const next = storageQueue.then(task, task);
+  storageQueue = next.then(
+    () => undefined,
+    () => undefined,
+  );
+  return next;
+}
 
 export function setGameStoreStoragePort(port: StoragePort): void {
   activeStoragePort = port;
+  storageQueue = Promise.resolve();
+}
+
+export function canRetireHonorably(state: GameState | null): boolean {
+  return Boolean(
+    state &&
+      state.phase !== "game_over" &&
+      (state.endless_mode ||
+        state.month >= compiledCatalog.balance.victory_month ||
+        state.earned_victories.length > 0),
+  );
+}
+
+function tryAutoSettleQuarterlyTax(state: GameState): {
+  state: GameState;
+  autoSettled: AutoSettledQuarterInfo | null;
+  monthStart: MonthStartSummary | null;
+} {
+  if (state.phase !== "quarterly_tax" || !state.quarterly_report) {
+    return { state, autoSettled: null, monthStart: null };
+  }
+
+  const report = state.quarterly_report;
+  const totalDue =
+    (report.accrued_tax_due ?? 0) +
+    (report.deferred_tax_due ?? 0) +
+    (report.gestor_error_surcharge ?? 0) +
+    (report.inspection_fallback_fine ?? 0);
+
+  if (
+    !report.inspection_triggered &&
+    state.indicators.money - totalDue >= FAST_PACING_AUTO_SETTLE_MIN_BUFFER
+  ) {
+    const settled = settleQuarter(state, compiledCatalog, "pay");
+    const paidAmount =
+      settled.resolution.quarterlySettlement?.paid_amount ??
+      (report.accrued_tax_due ?? 0) + (report.deferred_tax_due ?? 0);
+    return {
+      state: settled.state,
+      autoSettled: {
+        quarter: report.quarter,
+        month: report.month,
+        paidAmount,
+      },
+      monthStart: settled.resolution.monthStart ?? null,
+    };
+  }
+
+  return { state, autoSettled: null, monthStart: null };
+}
+
+function buildRetiredRunState(current: GameState): GameState {
+  return retireFromRun(current, compiledCatalog).state;
 }
 
 export interface GameStoreState {
@@ -65,6 +140,7 @@ export interface GameStoreState {
   hydrating: boolean;
   activeRun: GameState | null;
   outcomePreviewState: GameState | null;
+  queuedFinalState: GameState | null;
   queuedPostOutcomeDeltas: IndicatorDeltas | null;
   queuedMonthStart: MonthStartSummary | null;
   profile: ProfileEnvelope;
@@ -72,6 +148,8 @@ export interface GameStoreState {
   pendingOutcome: PendingOutcomeView | null;
   lastMonthStart: MonthStartSummary | null;
   lastDeltas: IndicatorDeltas;
+  lastChoiceImmediateDeltas: IndicatorDeltas;
+  lastAutoSettledQuarter: AutoSettledQuarterInfo | null;
   newlyUnlockedAchievements: AchievementId[];
   hydrate: () => Promise<void>;
   startRun: (seed?: string) => Promise<void>;
@@ -82,6 +160,7 @@ export interface GameStoreState {
   decideVictory: (decision: VictoryDecision) => Promise<void>;
   closeAnnualSummary: () => Promise<void>;
   abandonActiveRun: (endingId?: AbandonEndingId) => Promise<void>;
+  retireActiveRun: () => Promise<void>;
   returnToTitle: () => void;
   dismissCorruptNotice: () => void;
   clearUnlockedToastQueue: () => void;
@@ -96,67 +175,8 @@ export function getVisibleGameState(
   return store.outcomePreviewState ?? store.activeRun;
 }
 
-export const useGameStore = create<GameStoreState>((set, get) => ({
-  hydrated: false,
-  hydrating: false,
-  activeRun: null,
-  outcomePreviewState: null,
-  queuedPostOutcomeDeltas: null,
-  queuedMonthStart: null,
-  profile: createDefaultProfileEnvelope(),
-  corruptedSaveNotice: null,
-  pendingOutcome: null,
-  lastMonthStart: null,
-  lastDeltas: {},
-  newlyUnlockedAchievements: [],
-
-  hydrate: async () => {
-    if (get().hydrating) {
-      return;
-    }
-    set({ hydrating: true });
-
-    void defaultPlatformAdapter.requestPersistentStorage();
-
-    const [profile, loadedRun] = await Promise.all([
-      activeStoragePort.loadProfile(),
-      activeStoragePort.loadActiveRun(),
-    ]);
-
-    useUIStore.getState().setReducedMotionOverride(profile.settings.reduced_motion);
-
-    set({
-      hydrated: true,
-      hydrating: false,
-      profile,
-      activeRun: loadedRun.envelope?.state ?? null,
-      outcomePreviewState: null,
-      queuedPostOutcomeDeltas: null,
-      queuedMonthStart: null,
-      corruptedSaveNotice: loadedRun.corruptedRecovery?.reason ?? null,
-      pendingOutcome: null,
-      lastMonthStart: null,
-      lastDeltas: {},
-    });
-  },
-
-  startRun: async (seed?: string) => {
-    const cleanSeed = seed?.trim() ? seed.trim() : undefined;
-    const { state, resolution } = startNewRun(compiledCatalog, { seed: cleanSeed });
-
-    useUIStore.getState().resetForRunEntry();
-
-    set({
-      activeRun: state,
-      outcomePreviewState: null,
-      queuedPostOutcomeDeltas: null,
-      queuedMonthStart: null,
-      pendingOutcome: null,
-      lastMonthStart: resolution.monthStart ?? null,
-      lastDeltas: {},
-    });
-
-    const synced = await activeStoragePort.syncRunProgress(state);
+export const useGameStore = create<GameStoreState>((set, get) => {
+  const applySyncedResult = (synced: SyncRunProgressResult) => {
     set((curr) => ({
       profile: synced.profile,
       newlyUnlockedAchievements:
@@ -164,320 +184,579 @@ export const useGameStore = create<GameStoreState>((set, get) => ({
           ? [...curr.newlyUnlockedAchievements, ...synced.newlyUnlocked]
           : curr.newlyUnlockedAchievements,
     }));
-  },
+  };
 
-  continueRun: () => {
-    const current = get().activeRun;
-    if (!current || current.ending !== null) {
-      return;
-    }
-    useUIStore.getState().resetForRunEntry();
-  },
-
-  chooseOption: async (choiceId: string) => {
-    const current = get().activeRun;
-    if (!current || current.phase !== "event_resolution" || get().pendingOutcome !== null) {
-      return;
-    }
-
-    const activeView = getActiveEvent(current, compiledCatalog);
-    if (!activeView) {
-      return;
-    }
-
-    const matchedChoice = activeView.choices.find((entry) => entry.choice.id === choiceId);
-    if (!matchedChoice || !matchedChoice.eligible) {
-      return;
-    }
-
-    const locale = get().profile.settings.locale;
-    const prevIndicators = current.indicators;
-    const { state: nextState, resolution } = applyPlayerChoice(current, compiledCatalog, choiceId);
-    const rawPostChoice = resolution.postChoiceState ?? nextState;
-    const previewState: GameState =
-      nextState.month === rawPostChoice.month
-        ? {
-            ...rawPostChoice,
-            phase: nextState.phase,
-            ending: nextState.ending ?? rawPostChoice.ending,
-          }
-        : rawPostChoice;
-
-    const choiceDeltas = diffIndicators(prevIndicators, rawPostChoice.indicators);
-    const postOutcomeDeltas = diffIndicators(rawPostChoice.indicators, nextState.indicators);
-
-    const autoAcknowledge = useUIStore.getState().fastPacing && nextState.ending === null;
-
-    const pendingOutcome: PendingOutcomeView | null =
-      !autoAcknowledge && resolution.choiceOutcome
-        ? {
-            event: activeView.event,
-            choiceId,
-            choiceLabel: resolveChoiceLabel(activeView.event.id, matchedChoice.choice, locale),
-            outcome: resolution.choiceOutcome,
-          }
-        : null;
-
-    if (pendingOutcome) {
-      set((curr) => ({
-        activeRun: nextState,
-        pendingOutcome,
-        outcomePreviewState: previewState,
-        queuedPostOutcomeDeltas: postOutcomeDeltas,
-        queuedMonthStart: resolution.monthStart ?? null,
-        lastMonthStart: curr.lastMonthStart,
-        lastDeltas: choiceDeltas,
-      }));
-    } else {
-      const totalDeltas = diffIndicators(prevIndicators, nextState.indicators);
-      set((curr) => ({
-        activeRun: nextState,
-        pendingOutcome: null,
-        outcomePreviewState: null,
-        queuedPostOutcomeDeltas: null,
-        queuedMonthStart: null,
-        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
-        lastDeltas: totalDeltas,
-      }));
-    }
-
-    const synced = await activeStoragePort.syncRunProgress(nextState);
-    set((curr) => ({
-      profile: synced.profile,
-      newlyUnlockedAchievements:
-        synced.newlyUnlocked.length > 0
-          ? [...curr.newlyUnlockedAchievements, ...synced.newlyUnlocked]
-          : curr.newlyUnlockedAchievements,
-    }));
-  },
-
-  acknowledgeOutcome: () => {
-    set((curr) => {
-      const monthAdvanced =
-        curr.activeRun !== null &&
-        curr.outcomePreviewState !== null &&
-        curr.activeRun.month !== curr.outcomePreviewState.month;
-      const hasSameMonthPostDeltas =
-        curr.queuedPostOutcomeDeltas !== null &&
-        Object.keys(curr.queuedPostOutcomeDeltas).length > 0;
-
-      return {
-        pendingOutcome: null,
-        outcomePreviewState: null,
-        queuedPostOutcomeDeltas: null,
-        queuedMonthStart: null,
-        lastDeltas: monthAdvanced
-          ? (curr.queuedPostOutcomeDeltas ?? {})
-          : hasSameMonthPostDeltas
-            ? (curr.queuedPostOutcomeDeltas ?? curr.lastDeltas)
-            : curr.lastDeltas,
-        lastMonthStart: monthAdvanced
-          ? (curr.queuedMonthStart ?? curr.lastMonthStart)
-          : curr.lastMonthStart,
-      };
-    });
-  },
-
-  settleQuarterlyTax: async (mode: QuarterlySettlementMode) => {
-    const current = get().activeRun;
-    if (!current || current.phase !== "quarterly_tax") {
-      return;
-    }
-
-    const prevIndicators = current.indicators;
-    const { state: nextState, resolution } = settleQuarter(current, compiledCatalog, mode);
-    const deltas = diffIndicators(prevIndicators, nextState.indicators);
-
-    set((curr) => ({
-      activeRun: nextState,
-      outcomePreviewState: null,
-      queuedPostOutcomeDeltas: null,
-      queuedMonthStart: null,
-      pendingOutcome: null,
-      lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
-      lastDeltas: deltas,
-    }));
-
-    const synced = await activeStoragePort.syncRunProgress(nextState);
-    set((curr) => ({
-      profile: synced.profile,
-      newlyUnlockedAchievements:
-        synced.newlyUnlocked.length > 0
-          ? [...curr.newlyUnlockedAchievements, ...synced.newlyUnlocked]
-          : curr.newlyUnlockedAchievements,
-    }));
-  },
-
-  decideVictory: async (decision: VictoryDecision) => {
-    const current = get().activeRun;
-    if (!current || current.phase !== "victory_prompt") {
-      return;
-    }
-
-    const prevIndicators = current.indicators;
-    const { state: nextState, resolution } = resolveVictoryPrompt(
-      current,
-      compiledCatalog,
-      decision,
+  const syncStateProgress = async (
+    state: GameState,
+    options?: SaveActiveRunOptions,
+  ): Promise<void> => {
+    const synced = await enqueueStorage(() =>
+      activeStoragePort.syncRunProgress(state, undefined, options),
     );
-    const deltas = diffIndicators(prevIndicators, nextState.indicators);
+    applySyncedResult(synced);
+  };
 
-    set((curr) => ({
-      activeRun: nextState,
-      outcomePreviewState: null,
-      queuedPostOutcomeDeltas: null,
-      queuedMonthStart: null,
-      pendingOutcome: null,
-      lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
-      lastDeltas: deltas,
-    }));
+  return {
+    hydrated: false,
+    hydrating: false,
+    activeRun: null,
+    outcomePreviewState: null,
+    queuedFinalState: null,
+    queuedPostOutcomeDeltas: null,
+    queuedMonthStart: null,
+    profile: createDefaultProfileEnvelope(),
+    corruptedSaveNotice: null,
+    pendingOutcome: null,
+    lastMonthStart: null,
+    lastDeltas: {},
+    lastChoiceImmediateDeltas: {},
+    lastAutoSettledQuarter: null,
+    newlyUnlockedAchievements: [],
 
-    const synced = await activeStoragePort.syncRunProgress(nextState);
-    set((curr) => ({
-      profile: synced.profile,
-      newlyUnlockedAchievements:
-        synced.newlyUnlocked.length > 0
-          ? [...curr.newlyUnlockedAchievements, ...synced.newlyUnlocked]
-          : curr.newlyUnlockedAchievements,
-    }));
-  },
+    hydrate: async () => {
+      if (get().hydrating) {
+        return;
+      }
+      set({ hydrating: true });
 
-  closeAnnualSummary: async () => {
-    const current = get().activeRun;
-    if (!current || current.phase !== "annual_summary") {
-      return;
-    }
+      void defaultPlatformAdapter.requestPersistentStorage();
 
-    const prevIndicators = current.indicators;
-    const { state: nextState, resolution } = dismissAnnualSummary(current, compiledCatalog);
-    const deltas = diffIndicators(prevIndicators, nextState.indicators);
+      const [loadedProfile, loadedRun] = await enqueueStorage(() =>
+        Promise.all([activeStoragePort.loadProfile(), activeStoragePort.loadActiveRun()]),
+      );
 
-    set((curr) => ({
-      activeRun: nextState,
-      outcomePreviewState: null,
-      queuedPostOutcomeDeltas: null,
-      queuedMonthStart: null,
-      pendingOutcome: null,
-      lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
-      lastDeltas: deltas,
-    }));
+      let resolvedProfile = loadedProfile;
+      let extraUnlocked: AchievementId[] = [];
+      const hydratedRun = loadedRun.envelope?.state ?? null;
+      const hydratedPendingTurn = loadedRun.envelope?.pending_turn ?? null;
 
-    const synced = await activeStoragePort.syncRunProgress(nextState);
-    set((curr) => ({
-      profile: synced.profile,
-      newlyUnlockedAchievements:
-        synced.newlyUnlocked.length > 0
-          ? [...curr.newlyUnlockedAchievements, ...synced.newlyUnlocked]
-          : curr.newlyUnlockedAchievements,
-    }));
-  },
+      useUIStore.getState().setReducedMotionOverride(resolvedProfile.settings.reduced_motion);
 
-  abandonActiveRun: async (endingId: AbandonEndingId = "abandon_oposiciones") => {
-    const current = get().activeRun;
-    if (!current || current.ending !== null) {
-      return;
-    }
+      if (
+        hydratedRun &&
+        !hydratedPendingTurn &&
+        (hydratedRun.phase === "game_over" || hydratedRun.ending !== null)
+      ) {
+        const synced = await enqueueStorage(() => activeStoragePort.syncRunProgress(hydratedRun));
+        resolvedProfile = synced.profile;
+        extraUnlocked = synced.newlyUnlocked;
+        useUIStore.getState().resetForRunEntry();
+      }
 
-    const quote = resolveEndingQuote(compiledCatalog, endingId);
-    const endedState: GameState = {
-      ...current,
-      phase: "game_over",
-      ending: {
-        id: endingId,
-        month: current.month,
-        summary_quote: quote,
-      },
-      history: appendHistory(
-        current.history,
-        {
-          id: `hist_abandon_${current.month}_${endingId}`,
-          month: current.month,
-          kind: "game_over",
-          summary: quote,
-        },
-        compiledCatalog.balance.max_history_entries,
-      ),
-    };
+      let restoredPendingOutcome: PendingOutcomeView | null = null;
+      if (hydratedRun && hydratedPendingTurn) {
+        const rawPending = hydratedPendingTurn.pending_outcome;
+        const catalogEvent =
+          compiledCatalog.events.find((ev) => ev.id === rawPending.event.id) ?? rawPending.event;
+        const matchedChoiceObj = catalogEvent.choices.find((c) => c.id === rawPending.choiceId);
+        restoredPendingOutcome = {
+          event: catalogEvent,
+          choiceId: rawPending.choiceId,
+          choiceLabel: matchedChoiceObj
+            ? resolveChoiceLabel(catalogEvent.id, matchedChoiceObj, resolvedProfile.settings.locale)
+            : rawPending.choiceLabel,
+          outcome: rawPending.outcome,
+        };
+      }
 
-    useUIStore.getState().setAbandonModalOpen(false);
-    useUIStore.getState().setScreenView("game");
+      set((curr) => ({
+        hydrated: true,
+        hydrating: false,
+        profile: resolvedProfile,
+        activeRun: hydratedRun,
+        outcomePreviewState: hydratedPendingTurn?.outcome_preview_state ?? null,
+        queuedFinalState: hydratedPendingTurn?.queued_final_state ?? null,
+        queuedPostOutcomeDeltas: hydratedPendingTurn?.queued_post_outcome_deltas ?? null,
+        queuedMonthStart: hydratedPendingTurn?.queued_month_start ?? null,
+        corruptedSaveNotice: loadedRun.corruptedRecovery?.reason ?? null,
+        pendingOutcome: restoredPendingOutcome,
+        lastMonthStart: hydratedPendingTurn?.last_month_start ?? null,
+        lastDeltas: hydratedPendingTurn?.last_deltas ?? {},
+        lastChoiceImmediateDeltas: hydratedPendingTurn?.last_deltas ?? {},
+        lastAutoSettledQuarter: null,
+        newlyUnlockedAchievements:
+          extraUnlocked.length > 0
+            ? [...curr.newlyUnlockedAchievements, ...extraUnlocked]
+            : curr.newlyUnlockedAchievements,
+      }));
+    },
 
-    set({
-      activeRun: endedState,
-      outcomePreviewState: null,
-      queuedPostOutcomeDeltas: null,
-      queuedMonthStart: null,
-      pendingOutcome: null,
-      lastDeltas: {},
-    });
+    startRun: async (seed?: string) => {
+      const cleanSeed = seed?.trim() ? seed.trim() : undefined;
+      const { state, resolution } = startNewRun(compiledCatalog, { seed: cleanSeed });
 
-    const synced = await activeStoragePort.syncRunProgress(endedState);
-    set((curr) => ({
-      profile: synced.profile,
-      newlyUnlockedAchievements:
-        synced.newlyUnlocked.length > 0
-          ? [...curr.newlyUnlockedAchievements, ...synced.newlyUnlocked]
-          : curr.newlyUnlockedAchievements,
-    }));
-  },
+      useUIStore.getState().resetForRunEntry();
 
-  returnToTitle: () => {
-    const current = get().activeRun;
-    useUIStore.getState().setAbandonModalOpen(false);
-    useUIStore.getState().setScreenView("title");
-
-    if (current && current.ending !== null) {
       set({
-        activeRun: null,
+        activeRun: state,
         outcomePreviewState: null,
+        queuedFinalState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        pendingOutcome: null,
+        lastMonthStart: resolution.monthStart ?? null,
+        lastDeltas: {},
+        lastChoiceImmediateDeltas: {},
+        lastAutoSettledQuarter: null,
+      });
+
+      await syncStateProgress(state);
+    },
+
+    continueRun: () => {
+      const current = get().activeRun;
+      if (!current) {
+        return;
+      }
+      useUIStore.getState().resetForRunEntry();
+    },
+
+    chooseOption: async (choiceId: string) => {
+      const current = get().activeRun;
+      if (!current || current.phase !== "event_resolution" || get().pendingOutcome !== null) {
+        return;
+      }
+
+      const activeView = getActiveEvent(current, compiledCatalog);
+      if (!activeView) {
+        return;
+      }
+
+      const matchedChoice = activeView.choices.find((entry) => entry.choice.id === choiceId);
+      if (!matchedChoice || !matchedChoice.eligible) {
+        return;
+      }
+
+      const locale = get().profile.settings.locale;
+      const prevIndicators = current.indicators;
+      const { state: nextState, resolution } = applyPlayerChoice(
+        current,
+        compiledCatalog,
+        choiceId,
+      );
+      const rawPostChoice = resolution.postChoiceState ?? nextState;
+      const previewState: GameState =
+        nextState.month === rawPostChoice.month
+          ? {
+              ...rawPostChoice,
+              phase: nextState.phase,
+              ending: nextState.ending ?? rawPostChoice.ending,
+            }
+          : rawPostChoice;
+
+      const choiceDeltas = diffIndicators(prevIndicators, rawPostChoice.indicators);
+      const postOutcomeDeltas = diffIndicators(rawPostChoice.indicators, nextState.indicators);
+
+      const isWeightedChoice = Boolean(
+        matchedChoice.choice.outcomes && matchedChoice.choice.outcomes.length > 1,
+      );
+      const fastPacing = useUIStore.getState().fastPacing;
+      const autoAcknowledge = fastPacing && !isWeightedChoice && nextState.ending === null;
+
+      const pendingOutcome: PendingOutcomeView | null =
+        !autoAcknowledge && resolution.choiceOutcome
+          ? {
+              event: activeView.event,
+              choiceId,
+              choiceLabel: resolveChoiceLabel(activeView.event.id, matchedChoice.choice, locale),
+              outcome: resolution.choiceOutcome,
+            }
+          : null;
+
+      if (pendingOutcome) {
+        const isFatalOutcome = nextState.phase === "game_over" || nextState.ending !== null;
+        const persistedState: GameState = isFatalOutcome
+          ? {
+              ...rawPostChoice,
+              phase: "event_resolution",
+              ending: null,
+            }
+          : nextState;
+        const queuedFinalState: GameState | null = isFatalOutcome ? nextState : null;
+        const priorLastMonthStart = get().lastMonthStart;
+        const pendingTurnPayload: PersistedPendingTurn = {
+          pending_outcome: pendingOutcome,
+          outcome_preview_state: previewState,
+          queued_final_state: queuedFinalState,
+          queued_post_outcome_deltas: postOutcomeDeltas,
+          queued_month_start: resolution.monthStart ?? null,
+          last_deltas: choiceDeltas,
+          last_month_start: priorLastMonthStart,
+        };
+
+        set((curr) => ({
+          activeRun: persistedState,
+          pendingOutcome,
+          outcomePreviewState: previewState,
+          queuedFinalState,
+          queuedPostOutcomeDeltas: postOutcomeDeltas,
+          queuedMonthStart: resolution.monthStart ?? null,
+          lastMonthStart: curr.lastMonthStart,
+          lastDeltas: choiceDeltas,
+          lastChoiceImmediateDeltas: choiceDeltas,
+          lastAutoSettledQuarter: null,
+        }));
+
+        if (isFatalOutcome) {
+          await enqueueStorage(() =>
+            activeStoragePort.saveActiveRun(persistedState, undefined, {
+              pendingTurn: pendingTurnPayload,
+            }),
+          );
+        } else {
+          await syncStateProgress(persistedState, { pendingTurn: pendingTurnPayload });
+        }
+        return;
+      }
+
+      const autoQ =
+        fastPacing && nextState.phase === "quarterly_tax"
+          ? tryAutoSettleQuarterlyTax(nextState)
+          : { state: nextState, autoSettled: null, monthStart: null };
+
+      const finalState = autoQ.state;
+      const totalDeltas = diffIndicators(prevIndicators, finalState.indicators);
+      const visibleDeltas = Object.keys(choiceDeltas).length > 0 ? choiceDeltas : totalDeltas;
+
+      set((curr) => ({
+        activeRun: finalState,
+        pendingOutcome: null,
+        outcomePreviewState: null,
+        queuedFinalState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        lastMonthStart: autoQ.monthStart ?? resolution.monthStart ?? curr.lastMonthStart,
+        lastDeltas: visibleDeltas,
+        lastChoiceImmediateDeltas: choiceDeltas,
+        lastAutoSettledQuarter: autoQ.autoSettled,
+      }));
+
+      await syncStateProgress(finalState);
+    },
+
+    acknowledgeOutcome: () => {
+      const snapshot = get();
+      const activeRun = snapshot.activeRun;
+      if (!activeRun) {
+        return;
+      }
+
+      const finalEndedState =
+        snapshot.queuedFinalState ??
+        (activeRun.phase === "game_over" || activeRun.ending !== null ? activeRun : null);
+
+      if (finalEndedState !== null) {
+        set((curr) => ({
+          activeRun: finalEndedState,
+          pendingOutcome: null,
+          outcomePreviewState: null,
+          queuedFinalState: null,
+          queuedPostOutcomeDeltas: null,
+          queuedMonthStart: null,
+          lastDeltas: curr.lastDeltas,
+          lastAutoSettledQuarter: null,
+        }));
+        void syncStateProgress(finalEndedState);
+        return;
+      }
+
+      if (useUIStore.getState().fastPacing && activeRun.phase === "quarterly_tax") {
+        const autoQ = tryAutoSettleQuarterlyTax(activeRun);
+        if (autoQ.autoSettled !== null) {
+          const deltas = diffIndicators(activeRun.indicators, autoQ.state.indicators);
+          set((curr) => ({
+            activeRun: autoQ.state,
+            pendingOutcome: null,
+            outcomePreviewState: null,
+            queuedFinalState: null,
+            queuedPostOutcomeDeltas: null,
+            queuedMonthStart: null,
+            lastMonthStart: autoQ.monthStart ?? curr.queuedMonthStart ?? curr.lastMonthStart,
+            lastDeltas: deltas,
+            lastAutoSettledQuarter: autoQ.autoSettled,
+          }));
+          void syncStateProgress(autoQ.state);
+          return;
+        }
+      }
+
+      set((curr) => {
+        const monthAdvanced =
+          curr.activeRun !== null &&
+          curr.outcomePreviewState !== null &&
+          curr.activeRun.month !== curr.outcomePreviewState.month;
+        const hasSameMonthPostDeltas =
+          curr.queuedPostOutcomeDeltas !== null &&
+          Object.keys(curr.queuedPostOutcomeDeltas).length > 0;
+
+        return {
+          pendingOutcome: null,
+          outcomePreviewState: null,
+          queuedFinalState: null,
+          queuedPostOutcomeDeltas: null,
+          queuedMonthStart: null,
+          lastAutoSettledQuarter: null,
+          lastDeltas: monthAdvanced
+            ? (curr.queuedPostOutcomeDeltas ?? {})
+            : hasSameMonthPostDeltas
+              ? (curr.queuedPostOutcomeDeltas ?? curr.lastDeltas)
+              : curr.lastDeltas,
+          lastMonthStart: monthAdvanced
+            ? (curr.queuedMonthStart ?? curr.lastMonthStart)
+            : curr.lastMonthStart,
+        };
+      });
+      void syncStateProgress(activeRun);
+    },
+
+    settleQuarterlyTax: async (mode: QuarterlySettlementMode) => {
+      const current = get().activeRun;
+      if (!current || current.phase !== "quarterly_tax") {
+        return;
+      }
+
+      const prevIndicators = current.indicators;
+      const { state: nextState, resolution } = settleQuarter(current, compiledCatalog, mode);
+      const deltas = diffIndicators(prevIndicators, nextState.indicators);
+
+      set((curr) => ({
+        activeRun: nextState,
+        outcomePreviewState: null,
+        queuedFinalState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        pendingOutcome: null,
+        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastDeltas: deltas,
+        lastChoiceImmediateDeltas: {},
+        lastAutoSettledQuarter: null,
+      }));
+
+      await syncStateProgress(nextState);
+    },
+
+    decideVictory: async (decision: VictoryDecision) => {
+      const current = get().activeRun;
+      if (!current || current.phase !== "victory_prompt") {
+        return;
+      }
+
+      const prevIndicators = current.indicators;
+      const { state: nextState, resolution } = resolveVictoryPrompt(
+        current,
+        compiledCatalog,
+        decision,
+      );
+      const deltas = diffIndicators(prevIndicators, nextState.indicators);
+
+      set((curr) => ({
+        activeRun: nextState,
+        outcomePreviewState: null,
+        queuedFinalState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        pendingOutcome: null,
+        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastDeltas: deltas,
+        lastChoiceImmediateDeltas: {},
+        lastAutoSettledQuarter: null,
+      }));
+
+      await syncStateProgress(nextState);
+    },
+
+    closeAnnualSummary: async () => {
+      const current = get().activeRun;
+      if (!current || current.phase !== "annual_summary") {
+        return;
+      }
+
+      const prevIndicators = current.indicators;
+      const { state: nextState, resolution } = dismissAnnualSummary(current, compiledCatalog);
+      const deltas = diffIndicators(prevIndicators, nextState.indicators);
+
+      set((curr) => ({
+        activeRun: nextState,
+        outcomePreviewState: null,
+        queuedFinalState: null,
+        queuedPostOutcomeDeltas: null,
+        queuedMonthStart: null,
+        pendingOutcome: null,
+        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastDeltas: deltas,
+        lastChoiceImmediateDeltas: {},
+        lastAutoSettledQuarter: null,
+      }));
+
+      await syncStateProgress(nextState);
+    },
+
+    abandonActiveRun: async (endingId: AbandonEndingId = "abandon_oposiciones") => {
+      const current = get().activeRun;
+      if (!current || current.ending !== null || get().queuedFinalState !== null) {
+        useUIStore.getState().setAbandonModalOpen(false);
+        return;
+      }
+
+      const quote = resolveEndingQuote(compiledCatalog, endingId);
+      const endedState: GameState = {
+        ...current,
+        phase: "game_over",
+        ending: {
+          id: endingId,
+          month: current.month,
+          summary_quote: quote,
+        },
+        history: appendHistory(
+          current.history,
+          {
+            id: `hist_abandon_${current.month}_${endingId}`,
+            month: current.month,
+            kind: "game_over",
+            summary: quote,
+          },
+          compiledCatalog.balance.max_history_entries,
+        ),
+      };
+
+      useUIStore.getState().setAbandonModalOpen(false);
+      useUIStore.getState().setScreenView("game");
+
+      set({
+        activeRun: endedState,
+        outcomePreviewState: null,
+        queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
         pendingOutcome: null,
         lastDeltas: {},
+        lastChoiceImmediateDeltas: {},
+        lastAutoSettledQuarter: null,
       });
-    } else {
+
+      await syncStateProgress(endedState);
+    },
+
+    retireActiveRun: async () => {
+      const current = get().activeRun;
+      if (!current || !canRetireHonorably(current) || get().queuedFinalState !== null) {
+        useUIStore.getState().setAbandonModalOpen(false);
+        return;
+      }
+
+      const retiredState = buildRetiredRunState(current);
+
+      useUIStore.getState().setAbandonModalOpen(false);
+      useUIStore.getState().setScreenView("game");
+
       set({
+        activeRun: retiredState,
         outcomePreviewState: null,
+        queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
         pendingOutcome: null,
+        lastDeltas: {},
+        lastChoiceImmediateDeltas: {},
+        lastAutoSettledQuarter: null,
       });
-    }
-  },
 
-  dismissCorruptNotice: () => set({ corruptedSaveNotice: null }),
+      await syncStateProgress(retiredState);
+    },
 
-  clearUnlockedToastQueue: () => set({ newlyUnlockedAchievements: [] }),
+    returnToTitle: () => {
+      const current = get().activeRun;
+      const hasPendingOutcome = get().pendingOutcome !== null;
+      useUIStore.getState().setAbandonModalOpen(false);
+      useUIStore.getState().setScreenView("title");
 
-  setReducedMotionPreference: async (value: boolean | null) => {
-    useUIStore.getState().setReducedMotionOverride(value);
-    const nextProfile: ProfileEnvelope = {
-      ...get().profile,
-      settings: {
-        ...get().profile.settings,
-        reduced_motion: value,
-      },
-    };
-    set({ profile: nextProfile });
-    await activeStoragePort.saveProfile(nextProfile);
-  },
+      if (current && current.ending !== null && !hasPendingOutcome) {
+        set({
+          activeRun: null,
+          outcomePreviewState: null,
+          queuedFinalState: null,
+          queuedPostOutcomeDeltas: null,
+          queuedMonthStart: null,
+          pendingOutcome: null,
+          lastDeltas: {},
+          lastChoiceImmediateDeltas: {},
+          lastAutoSettledQuarter: null,
+        });
+        void syncStateProgress(current);
+      } else if (hasPendingOutcome) {
+        set({
+          lastAutoSettledQuarter: null,
+        });
+      } else {
+        set({
+          outcomePreviewState: null,
+          queuedFinalState: null,
+          queuedPostOutcomeDeltas: null,
+          queuedMonthStart: null,
+          pendingOutcome: null,
+          lastAutoSettledQuarter: null,
+        });
+      }
+    },
 
-  setLocalePreference: async (locale: UILocale) => {
-    const normalized = normalizeLocale(locale);
-    const nextProfile: ProfileEnvelope = {
-      ...get().profile,
-      settings: {
-        ...get().profile.settings,
-        locale: normalized,
-      },
-    };
-    set({ profile: nextProfile });
-    await activeStoragePort.saveProfile(nextProfile);
-  },
+    dismissCorruptNotice: () => set({ corruptedSaveNotice: null }),
 
-  toggleLocalePreference: async () => {
-    const current = normalizeLocale(get().profile.settings.locale);
-    const next: UILocale = current === "en" ? "es-ES" : "en";
-    await get().setLocalePreference(next);
-  },
-}));
+    clearUnlockedToastQueue: () => set({ newlyUnlockedAchievements: [] }),
+
+    setReducedMotionPreference: async (value: boolean | null) => {
+      useUIStore.getState().setReducedMotionOverride(value);
+      set((curr) => ({
+        profile: {
+          ...curr.profile,
+          settings: {
+            ...curr.profile.settings,
+            reduced_motion: value,
+          },
+        },
+      }));
+      await enqueueStorage(async () => {
+        const stored = await activeStoragePort.loadProfile();
+        const merged: ProfileEnvelope = {
+          ...stored,
+          settings: {
+            ...stored.settings,
+            reduced_motion: value,
+          },
+        };
+        await activeStoragePort.saveProfile(merged);
+        set({ profile: merged });
+      });
+    },
+
+    setLocalePreference: async (locale: UILocale) => {
+      const normalized = normalizeLocale(locale);
+      set((curr) => ({
+        profile: {
+          ...curr.profile,
+          settings: {
+            ...curr.profile.settings,
+            locale: normalized,
+          },
+        },
+      }));
+      await enqueueStorage(async () => {
+        const stored = await activeStoragePort.loadProfile();
+        const merged: ProfileEnvelope = {
+          ...stored,
+          settings: {
+            ...stored.settings,
+            locale: normalized,
+          },
+        };
+        await activeStoragePort.saveProfile(merged);
+        set({ profile: merged });
+      });
+    },
+
+    toggleLocalePreference: async () => {
+      const current = normalizeLocale(get().profile.settings.locale);
+      const next: UILocale = current === "en" ? "es-ES" : "en";
+      await get().setLocalePreference(next);
+    },
+  };
+});

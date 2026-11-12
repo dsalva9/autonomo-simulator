@@ -1,0 +1,59 @@
+schema_version: 1
+id: hacienda_revision_decenal_veterano
+category: hacienda
+title: Verificación integral de cuatro ejercicios en la élite veterana
+body: En el tramo final de una trayectoria larga, el Inspector Gómez abre una revisión cruzada de tus últimos cuatro años abiertos en IVA, IRPF y bienes de inversión para cerrar ciclo.
+tags:
+  - inspeccion
+  - veterania
+  - largo_plazo
+  - auditoria
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: illus_hito_inspeccion_hacienda
+requirements:
+  min_month: 90
+weight: 14
+cooldown_months: 18
+max_occurrences: 2
+choices:
+  - id: defender_cuatro_anos_carpeta_a_carpeta
+    label: Sentarte con Gómez a cuadrar los cuatro años documento en mano
+    outcomes:
+      - id: acta_blanca_de_veterano
+        weight: 60
+        result_text: "Sales del despacho de Gómez con diligencia conforme sin sanción: una medalla invisible al superviviente fiscal."
+        effects:
+          stress: 6
+          moral: 10
+          reputation: 4
+          fiscal_risk: -18
+      - id: ajuste_menor_ultimo_ejercicio
+        weight: 40
+        result_text: Tres ejercicios pasan limpios y solo abonas una pequeña diferencia de prorrateo en el último año.
+        effects:
+          cash_delta: -390
+          stress: 9
+          moral: 1
+          fiscal_risk: -15
+  - id: cerrar_expediente_con_blindaje_elena
+    label: Presentar auditoría histórica certificada con Elena Montes
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: El dosier impecable de Elena cierra la revisión en tiempo récord y te vale un contrato corporativo nuevo.
+    effects:
+      billed_income: 780
+      deductible_expense: 260
+      stress: -6
+      moral: 9
+      reputation: 5
+      fiscal_risk: -20
+  - id: acatar_regularizacion_residual_rapida
+    label: Liquidar los flecos menores al contado y blindar tu paz mental
+    result_text: Pagas las pequeñas discrepancias formales sin pestañear y encaras la recta final con el expediente despejado.
+    effects:
+      cash_delta: -440
+      stress: 2
+      moral: 2
+      fiscal_risk: -16

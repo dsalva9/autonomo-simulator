@@ -16,21 +16,6 @@ cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: firmar_acuerdo_reparto_claro
-    label: "Redactar antes un acuerdo escrito de hitos y reparto (180 €)"
-    result_text: "Gastáis una tarde y algo de asesoría dejando negro sobre blanco qué factura cada cual. Ganáis el encargo inicial con las reglas cristalinas."
-    effects:
-      billed_income: 1450
-      deductible_expense: 180
-      moral: 4
-      stress: 2
-      reputation: 4
-      set_flags:
-        - acuerdo_colaboradores_firmado
-      schedule_events:
-        - event_id: empleados_reparto_proyecto_conjunto
-          delay_months: 2
-          probability: 1
   - id: lanzarse_de_palabra_por_prisa
     label: "Arrancar de palabra con un brindis para no perder el cliente"
     result_text: "Os adjudican la primera fase y empezáis a todo trapo en un grupo de mensajería lleno de entusiasmo y cero cláusulas sobre horas extra."
@@ -48,3 +33,18 @@ choices:
     effects:
       stress: -3
       moral: 1
+  - id: firmar_acuerdo_reparto_claro
+    label: "Redactar antes un acuerdo escrito de hitos y reparto (180 €)"
+    result_text: "Gastáis una tarde y algo de asesoría dejando negro sobre blanco qué factura cada cual. Ganáis el encargo inicial con las reglas cristalinas."
+    effects:
+      billed_income: 1450
+      deductible_expense: 180
+      moral: 4
+      stress: 2
+      reputation: 4
+      set_flags:
+        - acuerdo_colaboradores_firmado
+      schedule_events:
+        - event_id: empleados_reparto_proyecto_conjunto
+          delay_months: 2
+          probability: 1

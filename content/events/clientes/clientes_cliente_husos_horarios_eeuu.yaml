@@ -15,6 +15,14 @@ cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: declinar_desfase_horario
+    label: Rechazar el desfase horario y respetar tus horas de sueño
+    result_text: Dejas pasar los billetes verdes sabiendo que tu reloj biológico lleva fatal vivir en dos continentes a la vez.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 4
+      reputation: -4
   - id: aceptar_horario_costa_oeste
     label: Aceptar el proyecto trasnochando y abriendo cuenta multidivisa
     result_text: Al cambio en euros la factura es una maravilla, aunque cenas con auriculares puestos tres noches por semana.
@@ -25,6 +33,8 @@ choices:
       moral: 1
       personal_life: -6
       reputation: 3
+      set_flags:
+        - cliente_internacional_activo
   - id: acordar_franja_solapada_tarde
     label: Fijar reuniones solo a las seis de la tarde hora española
     requirements:
@@ -39,11 +49,5 @@ choices:
       moral: 8
       personal_life: 1
       reputation: 4
-  - id: declinar_desfase_horario
-    label: Rechazar el desfase horario y respetar tus horas de sueño
-    result_text: Dejas pasar los billetes verdes sabiendo que tu reloj biológico lleva fatal vivir en dos continentes a la vez.
-    effects:
-      stress: -2
-      moral: 1
-      personal_life: 4
-      reputation: -4
+      set_flags:
+        - cliente_internacional_activo

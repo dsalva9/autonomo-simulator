@@ -12,30 +12,32 @@ character_id: cliente_corporativo_marta
 character_expression: angry
 requirements:
   min_month: 6
+  months_of_year:
+    - 7
 weight: 10
-cooldown_months: 12
-max_occurrences: 5
+cooldown_months: 11
+max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: escalonar_entregas_a_septiembre
+    label: Entregar avances hoy y pactar los remates reales para septiembre
+    result_text: Les das tranquilidad para irse de vacaciones sin inmolarte tú por archivos que iban a dormir un mes en una bandeja.
+    effects:
+      billed_income: 775
+      stress: 6
+      moral: 3
+      personal_life: 2
+      reputation: 1
   - id: surfear_la_ola_de_julio
     label: Encerrarte con el aire acondicionado y facturar los tres cierres
     result_text: Llegas al uno de agosto derretido en la silla, pero con una reserva espléndida para cruzar el desierto veraniego.
     effects:
       billed_income: 1375
       deductible_expense: 70
-      stress: 19
+      stress: 14
       moral: -1
       personal_life: -5
       reputation: 2
-  - id: escalonar_entregas_a_septiembre
-    label: Entregar avances hoy y pactar los remates reales para septiembre
-    result_text: Les das tranquilidad para irse de vacaciones sin inmolarte tú por archivos que iban a dormir un mes en una bandeja.
-    effects:
-      billed_income: 775
-      stress: 10
-      moral: 3
-      personal_life: 2
-      reputation: 1
   - id: aplicar_jornada_intensiva_propia
     label: Echar el cierre a las tres de la tarde y no aceptar picos nuevos
     result_text: Descubres el placer revolucionario de tener jornada intensiva siendo autónomo aunque ingreses menos este mes.

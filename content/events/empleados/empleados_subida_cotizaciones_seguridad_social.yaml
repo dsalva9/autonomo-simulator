@@ -1,0 +1,58 @@
+schema_version: 1
+id: empleados_subida_cotizaciones_seguridad_social
+category: empleados
+title: "Nuevo recargo en los seguros sociales de enero"
+body: "El año arranca con actualización normativa de bases y cotizaciones empresariales: tu persona en plantilla recibe idéntico sueldo neto, pero el recibo bancario de final de mes vuelve a subir sin comerlo ni beberlo."
+tags:
+  - plantilla
+  - seguridad_social
+  - costes_fijos
+  - enero
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 48
+  months_of_year:
+    - 1
+    - 2
+  has_employee: true
+weight: 11
+cooldown_months: 10
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: asumir_sobrecoste_contra_margen
+    label: "Absorber la subida contra tu propio margen para no tocar precios ahora"
+    result_text: "Evitas conversaciones de tarifas con clientes y mantienes al equipo tranquilo mientras tu margen absorbe el golpe."
+    effects:
+      stress: 4
+      moral: 3
+      reputation: 2
+      employee_satisfaction: 5
+      add_modifier:
+        id: mod_alza_seguridad_social_empresa
+        label: "Subida de cotización empresarial"
+        remaining_months: 5
+        monthly_expense_delta: 85
+        monthly_stress_delta: 1
+  - id: recortar_extras_internos_para_compensar
+    label: "Tijeretazo a formación, cafés y pequeños extras para cuadrar la cuenta"
+    result_text: "Compensas el cargo oficial en el banco hoy mismo a costa de un ambiente de oficina gris y tacaño."
+    effects:
+      cash_delta: 90
+      stress: 4
+      moral: -4
+      employee_satisfaction: -9
+  - id: repercutir_alza_en_presupuestos_nuevos
+    label: "Ajustar un cinco por ciento tus tarifas nuevas para absorber el coste"
+    requirements:
+      stats:
+        reputation:
+          min: 55
+    result_text: "Tu reputación permite trasladar el incremento con naturalidad comercial y mantener sano el margen del estudio."
+    effects:
+      billed_income: 480
+      stress: -2
+      moral: 4
+      reputation: 1
+      employee_satisfaction: 3

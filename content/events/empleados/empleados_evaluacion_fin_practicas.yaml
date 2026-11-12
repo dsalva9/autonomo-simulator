@@ -10,15 +10,14 @@ tags:
   - cantera
 character_id: empleado_junior_dani
 character_expression: pleased
-requirements:
-  has_employee: false
+requirements: null
 weight: 0
 cooldown_months: 0
 max_occurrences: null
 exclusive_with: []
 choices:
   - id: contratar_dani_tras_practicas
-    label: "Hacerle contrato en plantilla ya rodado (1.400 €/mes, ×1,35)"
+    label: "Hacerle contrato en plantilla ya rodado (1.350 €/mes, ×1,58)"
     requirements:
       has_employee: false
     result_text: "Te ahorras semanas de adaptación: el lunes entra sabiendo dónde está cada carpeta y el estudio despega sin perder ni media mañana."

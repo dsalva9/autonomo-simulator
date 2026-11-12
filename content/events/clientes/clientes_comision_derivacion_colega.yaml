@@ -20,7 +20,7 @@ choices:
     effects:
       billed_income: 1300
       deductible_expense: 130
-      stress: 13
+      stress: 7
       moral: 3
       reputation: 2
   - id: repartir_en_efectivo_sin_papeles

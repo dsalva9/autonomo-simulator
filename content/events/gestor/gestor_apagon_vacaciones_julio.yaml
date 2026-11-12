@@ -2,7 +2,7 @@ schema_version: 1
 id: gestor_apagon_vacaciones_julio
 category: gestor
 title: "Quince de julio: gestoría en servicios mínimos"
-body: "Treinta y nueve grados en la calle y cinco días para cerrar el trimestre de verano. Necesitas aclarar con urgencia dos facturas con retención especial, pero en tu gestoría salta un contestador veraniego y Paco solo manda una foto borrosa desde un chiringuito diciendo que el becario lo mira luego."
+body: "Treinta y nueve grados en la calle y cinco días para cerrar el trimestre de verano. Necesitas aclarar dos facturas con retención, pero salta el contestador y Paco manda una foto borrosa desde un chiringuito."
 tags:
   - verano
   - trimestre
@@ -12,35 +12,17 @@ character_expression: stressed
 illustration_id: null
 requirements:
   min_month: 6
+  months_of_year:
+    - 7
   gestor_tiers:
     - cheap
-    - premium
-weight: 10
-cooldown_months: 12
-max_occurrences: 4
+weight: 12
+cooldown_months: 11
+max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: pagar_revision_externa_guardia
-    label: "Pagar una revisión puntual de guardia para presentar clavado y en plazo (190 €)"
-    result_text: "Un fiscalista que veranea en agosto repasa tus libros en una hora, corrige las retenciones y deja todo listo para domiciliar sin sustos."
-    effects:
-      deductible_expense: 190
-      stress: -4
-      moral: 2
-      fiscal_risk: -8
-  - id: activar_canal_urgente_elena
-    label: "Activar el protocolo prioritario de Elena Montes para clientes en cierre"
-    requirements:
-      gestor_tiers:
-        - premium
-    result_text: "La socia de guardia del despacho toma el relevo en media hora y valida cada asiento con precisión quirúrgica."
-    effects:
-      deductible_expense: 60
-      stress: -7
-      moral: 5
-      fiscal_risk: -10
   - id: cuadrar_asientos_con_cafe_con_hielo
-    label: "Armarte de ventilador y cuadrar tú mismo los asientos dudosos antes del día veinte"
+    label: "Armarte de ventilador y cuadrar tú mismo los asientos antes del veinte"
     outcomes:
       - id: cuadre_veraniego_limpio
         weight: 60
@@ -58,3 +40,30 @@ choices:
           stress: 11
           moral: -5
           fiscal_risk: 3
+          set_flags:
+            - susto_con_paco
+  - id: pagar_revision_externa_guardia
+    label: "Pagar una revisión puntual de guardia para presentar en plazo (190 €)"
+    result_text: "Un fiscalista que veranea en agosto repasa tus libros en una hora, corrige las retenciones y deja todo listo para domiciliar sin sustos."
+    effects:
+      deductible_expense: 190
+      stress: -4
+      moral: 2
+      fiscal_risk: -8
+  - id: saltar_a_elena_en_pleno_julio
+    label: "Cortar con el chiringuito y fichar al despacho de Elena Montes (170 €/mes)"
+    requirements:
+      stats:
+        money:
+          min: 350
+    result_text: "La socia de guardia del despacho de Elena asume tus libros en media hora, clava el cierre de julio y jubila para siempre los audios playeros."
+    effects:
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      deductible_expense: 160
+      stress: -9
+      moral: 6
+      fiscal_risk: -12
+      clear_flags:
+        - susto_con_paco

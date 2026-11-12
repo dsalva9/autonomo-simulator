@@ -20,6 +20,8 @@ import {
   resolveLocalizedEndingQuote,
 } from "../../src/services/endings/endingMetadata.ts";
 import {
+  EXACT_FLAG_LABELS_EN,
+  EXACT_FLAG_LABELS_ES,
   MODIFIER_LABELS_BY_ID_EN,
   MODIFIER_LABELS_EN,
   clearLocaleOverlays,
@@ -272,15 +274,39 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
       "Renting equipo de trabajo",
     );
 
-    // Enforce 100% EN coverage for every add_modifier.id & add_modifier.label across the 200-event catalog
+    // Enforce 100% ES/EN coverage for every add_modifier.id, add_modifier.label & flag across the 300-event catalog
+    expect(compiledCatalog.events).toHaveLength(300);
     const seenModifierIds = new Set<string>();
+    const seenFlags = new Set<string>(["ex_pareja_alex", "historia_con_alex"]);
+    const collectReqFlags = (
+      req?: { required_flags?: string[] | null; forbidden_flags?: string[] | null } | null,
+    ) => {
+      if (!req) {
+        return;
+      }
+      for (const flag of req.required_flags ?? []) {
+        seenFlags.add(flag);
+      }
+      for (const flag of req.forbidden_flags ?? []) {
+        seenFlags.add(flag);
+      }
+    };
+
     for (const event of compiledCatalog.events) {
+      collectReqFlags(event.requirements);
       for (const choice of event.choices) {
+        collectReqFlags(choice.requirements);
         const blocks = [
           ...(choice.effects ? [choice.effects] : []),
           ...(choice.outcomes ? choice.outcomes.map((o) => o.effects) : []),
         ];
         for (const eff of blocks) {
+          for (const flag of eff.set_flags ?? []) {
+            seenFlags.add(flag);
+          }
+          for (const flag of eff.clear_flags ?? []) {
+            seenFlags.add(flag);
+          }
           if (!eff.add_modifier) {
             continue;
           }
@@ -301,7 +327,27 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
         }
       }
     }
-    expect(seenModifierIds.size).toBeGreaterThanOrEqual(70);
+    expect(seenModifierIds.size).toBeGreaterThanOrEqual(80);
+    expect(seenFlags.size).toBeGreaterThanOrEqual(30);
+
+    expect(Object.keys(EXACT_FLAG_LABELS_ES).sort()).toEqual(
+      Object.keys(EXACT_FLAG_LABELS_EN).sort(),
+    );
+    for (const flag of seenFlags) {
+      expect(
+        EXACT_FLAG_LABELS_ES[flag],
+        `Missing EXACT_FLAG_LABELS_ES entry for '${flag}'`,
+      ).toBeDefined();
+      expect(
+        EXACT_FLAG_LABELS_EN[flag],
+        `Missing EXACT_FLAG_LABELS_EN entry for '${flag}'`,
+      ).toBeDefined();
+      const esFlag = humanizeFlag(flag, "es-ES");
+      const enFlag = humanizeFlag(flag, "en");
+      expect(esFlag).not.toContain("_");
+      expect(enFlag).not.toContain("_");
+      expect(enFlag).not.toBe(esFlag);
+    }
   });
 
   it("keeps persistent base locale overlays intact when clearLocaleOverlays clears test overlays", () => {
@@ -530,5 +576,62 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
     // Verify helper parity on live compiledCatalog sample
     const sampleExpected = buildExpectedEventLocaleKeys(compiledCatalog.events.slice(0, 2));
     expect(sampleExpected.size).toBeGreaterThanOrEqual(8);
+  });
+
+  it("translates abandonment Spanish summary_quotes in EN and explains Phase 3.5 flag, months_of_year, and employee_satisfaction locks", () => {
+    const rawOposicionesEs =
+      "Das de baja la actividad, archivas las carpetas del trimestre y despejas la mesa para el temario y el cronómetro: cambias clientes de viernes tarde por una meta estable.";
+    const enAbandonQuote = resolveLocalizedEndingQuote(
+      "abandon_oposiciones",
+      rawOposicionesEs,
+      "en",
+    );
+    expect(enAbandonQuote).not.toContain("Das de baja");
+    expect(enAbandonQuote.toLowerCase()).toMatch(/exam|syllab|civil|gazette/);
+
+    expect(humanizeFlag("estudio_propio_activo", "en")).toBe("active private studio");
+    expect(humanizeFlag("clausula_pausa_firmada", "en")).toBe("signed project-pause clause");
+    expect(humanizeFlag("ex_pareja_alex", "en")).toBe("history as Álex's ex-partner");
+    expect(humanizeFlag("web_corporativa_activa", "en")).toBe("live business website");
+
+    const { state } = startNewRun(compiledCatalog, { seed: "P35-LOCKS-01" });
+    const withLowSatStaff: GameState = {
+      ...state,
+      month: 2, // February
+      employee: {
+        character_id: "empleado_junior_dani",
+        role_label: "Asistente júnior",
+        monthly_cost: 1450,
+        billing_multiplier: 1.35,
+        satisfaction: 40,
+        months_employed: 3,
+      },
+    };
+
+    const enLockReasons = explainChoiceLockReasons(
+      withLowSatStaff,
+      {
+        months_of_year: [7, 8],
+        employee_satisfaction: { min: 65 },
+        required_flags: ["estudio_propio_activo"],
+      } as Parameters<typeof explainChoiceLockReasons>[1],
+      "en",
+    );
+    expect(enLockReasons).toContain("Only available in July or August");
+    expect(enLockReasons).toContain("Requires min. Staff satisfaction 65");
+    expect(enLockReasons).toContain('Requires "active private studio"');
+
+    const esLockReasons = explainChoiceLockReasons(
+      withLowSatStaff,
+      {
+        months_of_year: [8],
+        employee_satisfaction: { min: 65 },
+        required_flags: ["clausula_pausa_firmada"],
+      } as Parameters<typeof explainChoiceLockReasons>[1],
+      "es-ES",
+    );
+    expect(esLockReasons).toContain("Solo disponible en Agosto");
+    expect(esLockReasons).toContain("Requiere Satisfacción laboral mín. 65");
+    expect(esLockReasons).toContain("Requiere «cláusula de pausa firmada»");
   });
 });

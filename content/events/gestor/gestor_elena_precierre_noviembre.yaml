@@ -12,13 +12,30 @@ character_id: gestor_premium_elena
 character_expression: neutral
 requirements:
   min_month: 9
+  months_of_year:
+    - 11
   gestor_tiers:
     - premium
-weight: 12
+weight: 14
 cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: escalonar_vencimientos_enero
+    label: "Ajustar retenciones y ordenar entregas sin gastar tesorería hoy"
+    result_text: "Reordenáis el calendario de cierres con elegancia legal y llegas a fin de año sin sustos ni desembolsos extraordinarios."
+    effects:
+      stress: -4
+      moral: 3
+      fiscal_risk: -5
+  - id: facturar_a_tope_ignorando_tramo
+    label: "Ignorar el aviso y exprimir entregas extra antes de Nochevieja"
+    result_text: "Haces caja bruta rápida este mes a cambio de un atracón de horas y una mordida fiscal bastante más áspera al liquidar."
+    effects:
+      billed_income: 920
+      stress: 8
+      personal_life: -4
+      fiscal_risk: 3
   - id: adelantar_gastos_fijos_deducibles
     label: "Adelantar seguros y licencias anuales antes del cierre (390 €)"
     requirements:
@@ -36,18 +53,3 @@ choices:
         label: "Tramo anual amortiguado"
         remaining_months: 4
         monthly_expense_delta: -95
-  - id: escalonar_vencimientos_enero
-    label: "Ajustar retenciones y ordenar entregas sin gastar tesorería hoy"
-    result_text: "Reordenáis el calendario de cierres con elegancia legal y llegas a fin de año sin sustos ni desembolsos extraordinarios."
-    effects:
-      stress: -4
-      moral: 3
-      fiscal_risk: -5
-  - id: facturar_a_tope_ignorando_tramo
-    label: "Ignorar el aviso y exprimir entregas extra antes de Nochevieja"
-    result_text: "Haces caja bruta rápida este mes a cambio de un atracón de horas y una mordida fiscal bastante más áspera al liquidar."
-    effects:
-      billed_income: 920
-      stress: 8
-      personal_life: -4
-      fiscal_risk: 3

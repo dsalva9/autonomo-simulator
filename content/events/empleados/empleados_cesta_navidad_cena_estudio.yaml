@@ -1,0 +1,51 @@
+schema_version: 1
+id: empleados_cesta_navidad_cena_estudio
+category: empleados
+title: "Cesta de Navidad, cierre anual y turrón en la mesa"
+body: "Diciembre llena el barrio de repartidores cargando cajas de vino y paletillas. Toca decidir cómo cerrar el año con tu persona en plantilla antes de que aterrice la cuesta fiscal de enero."
+tags:
+  - plantilla
+  - navidad
+  - cultura_estudio
+  - cierre_anual
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 12
+  months_of_year:
+    - 12
+  has_employee: true
+weight: 12
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: detalle_sobrio_y_brindis_mediodia
+    label: "Encargar un lote gourmet digno y tomar el aperitivo el último viernes (110 €)"
+    result_text: "Quedas como alguien detallista sin descuadrar la tesorería previa al cierre anual de impuestos."
+    effects:
+      deductible_expense: 110
+      stress: -3
+      moral: 5
+      personal_life: 3
+      employee_satisfaction: 6
+  - id: cesta_artesana_cena_y_tarde_libre
+    label: "Regalar buena cesta, comida de cierre y el día 24 libre entero (320 €)"
+    result_text: "Cerráis el año brindando sin mirar el reloj; en enero arranca el trimestre con la lealtad del estudio por las nubes."
+    effects:
+      deductible_expense: 320
+      stress: -7
+      moral: 9
+      personal_life: 6
+      employee_satisfaction: 14
+      clear_flags:
+        - desgaste_plantilla
+  - id: felicitacion_por_correo_y_austeridad
+    label: "Alegar prudencia contable y despachar diciembre con un mensaje amable"
+    result_text: "Ahorras cada céntimo hoy, pero el contraste con las cestas de amigos ajenos deja un silencio gélido hasta Reyes."
+    effects:
+      stress: 5
+      moral: -5
+      employee_satisfaction: -12
+      set_flags:
+        - desgaste_plantilla

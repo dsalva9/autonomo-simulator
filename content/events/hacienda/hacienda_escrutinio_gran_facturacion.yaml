@@ -1,0 +1,70 @@
+schema_version: 1
+id: hacienda_escrutinio_gran_facturacion
+category: hacienda
+title: Radar de facturación alta en Gestión Tributaria
+body: "Superar varios ejercicios con facturación potente y cartera estable activa un control selectivo: el Inspector Gómez pide cruzar márgenes, subcontratas y gastos deducidos de dos años."
+tags:
+  - inspeccion
+  - veterania
+  - gran_facturacion
+  - largo_plazo
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: illus_hito_inspeccion_hacienda
+requirements:
+  min_month: 48
+  stats:
+    reputation:
+      min: 55
+    fiscal_risk:
+      min: 15
+weight: 15
+cooldown_months: 16
+max_occurrences: 3
+choices:
+  - id: comparecer_con_contratos_y_libros_propios
+    label: Defender personalmente dos años de márgenes y contratos
+    outcomes:
+      - id: coherencia_economica_validada
+        weight: 55
+        result_text: Tus contratos y cobros bancarios casan al milímetro; Gómez cierra diligencia sin abrir acta sancionadora.
+        effects:
+          deductible_expense: 95
+          stress: 9
+          moral: 7
+          reputation: 3
+          fiscal_risk: -18
+      - id: pase_a_inspeccion_formal
+        weight: 45
+        result_text: Dos trimestres con picos de gasto levantan dudas y Gómez traslada el expediente a inspección formal.
+        effects:
+          cash_delta: -360
+          stress: 14
+          moral: -6
+          fiscal_risk: -10
+          set_flags:
+            - expediente_inspeccion_abierto
+          schedule_events:
+            - event_id: hacienda_acta_inspeccion
+              delay_months: 2
+              probability: 1
+  - id: desplegar_auditoria_defensiva_elena
+    label: Blindar la comparecencia con el equipo fiscalista de Elena
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: Elena entrega un informe pericial de márgenes sectoriales que desactiva el control en una sola mañana.
+    effects:
+      deductible_expense: 290
+      stress: -2
+      moral: 7
+      reputation: 3
+      fiscal_risk: -22
+  - id: pactar_regularizacion_voluntaria_de_gastos
+    label: Recortar partidas grises y abonar liquidación sin conflicto
+    result_text: Soltar liquidez escuece, pero evitas meses de requerimientos encadenados y limpias tu perfil de riesgo.
+    effects:
+      cash_delta: -620
+      stress: 5
+      moral: -4
+      fiscal_risk: -20

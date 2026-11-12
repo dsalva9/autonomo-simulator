@@ -1,0 +1,70 @@
+schema_version: 1
+id: empleados_dimision_silenciosa_desgaste
+category: empleados
+title: "Respuestas de dos sílabas y cero iniciativa"
+body: "Lo notas en cada detalle: cámara apagada cuando puede, entregas cumplidas al milímetro frío y ni media sugerencia nueva. El hartazgo acumulado ha instalado la dimisión silenciosa en el estudio."
+tags:
+  - plantilla
+  - desgaste
+  - retencion
+  - clima_laboral
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 14
+  has_employee: true
+  employee_satisfaction:
+    max: 45
+weight: 14
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: apretar_tuercas_y_exigir_ritmo
+    label: "Exigir más implicación recordando el esfuerzo de pagar nóminas puntuales"
+    outcomes:
+      - id: cumplimiento_helado
+        weight: 50
+        result_text: "Saca el trabajo delante con corrección robótica mientras actualiza su currículum cada noche en casa."
+        effects:
+          billed_income: 390
+          stress: 9
+          moral: -6
+          employee_satisfaction: -14
+          set_flags:
+            - desgaste_plantilla
+      - id: carta_baja_voluntaria_lunes
+        weight: 50
+        result_text: "El lunes a primera hora te deja firmada la baja voluntaria reglamentaria. Ahorras indemnización y heredas toda su cola."
+        effects:
+          dismiss_employee:
+            severance_cost: 0
+          stress: 14
+          moral: -8
+          reputation: -3
+          clear_flags:
+            - empleado_dani_activo
+            - empleada_laura_activa
+            - desgaste_plantilla
+  - id: sentarse_a_escuchar_y_reajustar_carga
+    label: "Hacer autocrítica real, podar urgencias absurdas y dar dos días libres (180 €)"
+    result_text: "Hablar sin reproches desbloquea meses de quejas calladas; a la vuelta se respira otro aire en cada reunión."
+    effects:
+      cash_delta: -180
+      stress: -6
+      moral: 7
+      employee_satisfaction: 18
+      clear_flags:
+        - desgaste_plantilla
+  - id: pactar_salida_ordenada_mutuo_acuerdo
+    label: "Reconocer que la etapa se agotó y cerrar salida pactada limpia (620 €)"
+    result_text: "Firmáis un traspaso ordenado de carpetas sin dramas personales y recuperas ligereza de costes fijos."
+    effects:
+      dismiss_employee:
+        severance_cost: 620
+      stress: 6
+      moral: -2
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla

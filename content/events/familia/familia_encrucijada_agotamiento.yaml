@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_encrucijada_agotamiento
 category: familia
 title: "Tres de la madrugada frente al techo"
-body: "Te despiertas en mitad de la noche repasando mentalmente cuotas, facturas e impuestos antes siquiera de mirar el reloj. En la quietud de la cocina, con una infusión caliente entre las manos, te preguntas con total honestidad si seguir sosteniendo el negocio merece este desgaste o si ha llegado el momento de cambiar de rumbo."
+body: "Te despiertas a las tres repasando cuotas, facturas e impuestos antes de mirar el reloj. Con una infusión en la cocina silenciosa, te preguntas en serio si compensa este desgaste o toca cambiar de vida."
 tags:
   - agotamiento
   - encrucijada
@@ -11,17 +11,17 @@ tags:
 character_id: null
 illustration_id: null
 requirements:
-  min_month: 10
+  min_month: 18
   stats:
     stress:
-      min: 68
-weight: 6
-cooldown_months: 18
-max_occurrences: 2
+      min: 58
+weight: 14
+cooldown_months: 12
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: recomponerse_y_seguir_peleando
-    label: "Echar el freno un par de días, marcar límites sanos y seguir adelante"
+    label: "Frenar dos días, marcar límites y seguir peleando"
     result_text: "Cancelas un par de reuniones secundarias, sales a caminar al sol y reorganizas tu semana. No resuelve la burocracia de golpe, pero recuperas el pulso para seguir en pie."
     effects:
       cash_delta: -70
@@ -29,17 +29,17 @@ choices:
       stress: -12
       personal_life: 5
   - id: cerrar_y_preparar_oposiciones
-    label: "Cerrar el chiringuito y volcarte en preparar unas oposiciones"
+    label: "Dar de baja el negocio y preparar unas oposiciones"
     result_text: "Das de baja la actividad, archivas las carpetas del trimestre y despejas la mesa para el temario y el cronómetro: cambias clientes de viernes tarde por una meta estable."
     effects:
       trigger_ending: abandon_oposiciones
   - id: volver_a_empleo_asalariado
-    label: "Aceptar una oferta por cuenta ajena con horario cerrado y nómina fija"
+    label: "Aceptar un contrato en plantilla con nómina y horario"
     result_text: "Cambias la épica emprendedora por un contrato en plantilla y horario de oficina: el primer domingo sin abrir el correo sientes que vuelves a respirar."
     effects:
       trigger_ending: abandon_salaried
   - id: solicitar_cese_y_prestacion
-    label: "Tramitar el cese de actividad y acogerte a la prestación cotizada para recuperarte"
+    label: "Tramitar el cese de actividad y tu prestación cotizada"
     result_text: "Tras tantos meses cotizando religiosamente, acreditas el cese de actividad y te apoyas en la protección pública que te corresponde para descansar y recomponerte con calma."
     effects:
       trigger_ending: abandon_subsidies

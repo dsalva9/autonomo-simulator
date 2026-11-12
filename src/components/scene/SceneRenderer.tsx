@@ -1,4 +1,5 @@
 import { LampDesk } from "lucide-react";
+import type { SyntheticEvent } from "react";
 import type {
   CharacterDef,
   EventCategory,
@@ -50,7 +51,7 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
 
   const bgAsset = resolveDeskBackgroundAsset(manifest, state);
   const showCafe = state.indicators.stress >= 50;
-  const showFacturas = state.finances.accrued_tax_liability > 0;
+  const showFacturas = state.finances.accrued_tax_liability >= 1200;
   const showNumerosRojos = state.indicators.money < 0;
   const showFamilia = state.family.status !== "single";
 
@@ -98,10 +99,18 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
 
   const deskStatusTone =
     isBurnoutDesk || showNumerosRojos
-      ? "bg-[#fdf0ef] text-[#b42b24] border border-[#b42b24]/35"
+      ? "bg-[#fdf0ef] text-[#9e221b] border border-[#9e221b]/35"
       : showCafe
-        ? "bg-[#fcf4df] text-[#8f510d] border border-[#8f510d]/35"
+        ? "bg-[#fcf4df] text-[#7a4308] border border-[#7a4308]/35"
         : "bg-[#efe4ce] text-[#373f3a]";
+
+  const handleFallbackArtError = (event: SyntheticEvent<HTMLImageElement>) => {
+    const img = event.currentTarget;
+    if (img.src !== fallbackAsset.url && !img.dataset.fallbackApplied) {
+      img.dataset.fallbackApplied = "true";
+      img.src = fallbackAsset.url;
+    }
+  };
 
   return (
     <section
@@ -109,10 +118,10 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
       aria-label={ui.scene.sectionAria}
       className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
     >
-      {/* Standardized Desktop Dossier Header */}
-      <div className="hidden lg:flex dossier-header">
+      {/* Standardized Desktop Dossier Header (>= 1280px) */}
+      <div className="hidden xl:flex dossier-header">
         <div className="flex items-center gap-2 min-w-0">
-          <LampDesk className="w-4 h-4 text-[#8f510d] shrink-0" aria-hidden="true" />
+          <LampDesk className="w-4 h-4 text-[#7a4308] shrink-0" aria-hidden="true" />
           <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
             {ui.scene.heading}
           </h2>
@@ -123,7 +132,7 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
       </div>
 
       {/* Panoramic Desk Stage: clean unobstructed art with 4 non-overlapping prop slots */}
-      <div className="scene-stage-frame relative w-full h-20 sm:h-32 overflow-hidden border-b border-[#1f2421]/18 bg-[#e9decb]">
+      <div className="scene-stage-frame relative w-full h-20 sm:h-28 overflow-hidden border-b border-[#1f2421]/18 bg-[#e9decb]">
         {bgAsset && (
           <img
             data-testid="scene-bg"
@@ -133,7 +142,8 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
             width={bgAsset.width}
             height={bgAsset.height}
             decoding="async"
-            className={`w-full h-full object-cover object-bottom ${renderModeClass(bgAsset.render_mode)}`}
+            onError={handleFallbackArtError}
+            className={`w-full h-full object-cover object-[center_62%] ${renderModeClass(bgAsset.render_mode)}`}
           />
         )}
 
@@ -146,11 +156,11 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
             width={numerosRojosAsset.width}
             height={numerosRojosAsset.height}
             decoding="async"
-            className={`absolute top-1.5 left-2 w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
+            className={`absolute top-1.5 left-2 w-11 h-11 sm:w-14 sm:h-14 xl:w-16 xl:h-16 pointer-events-none ${renderModeClass(numerosRojosAsset.render_mode)}`}
           />
         )}
 
-        {/* Slot 2 (Bottom-Left): Accrued Tax Stack (Modelo 303) */}
+        {/* Slot 2 (Bottom-Left): Accrued Tax Stack (Modelo 303) when >= 1,200 € */}
         {facturasAsset && (
           <img
             data-testid="scene-prop-facturas"
@@ -159,7 +169,7 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
             width={facturasAsset.width}
             height={facturasAsset.height}
             decoding="async"
-            className={`absolute bottom-1 left-2.5 w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
+            className={`absolute bottom-1 left-2.5 w-11 h-11 sm:w-14 sm:h-14 xl:w-16 xl:h-16 drop-shadow-sm pointer-events-none ${renderModeClass(facturasAsset.render_mode)}`}
           />
         )}
 
@@ -172,7 +182,7 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
             width={familiaAsset.width}
             height={familiaAsset.height}
             decoding="async"
-            className={`absolute bottom-1 right-[24%] w-10 h-10 sm:w-13 sm:h-13 lg:w-14 lg:h-14 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
+            className={`absolute bottom-1 right-[24%] w-10 h-10 sm:w-13 sm:h-13 xl:w-14 xl:h-14 drop-shadow-sm pointer-events-none ${renderModeClass(familiaAsset.render_mode)}`}
           />
         )}
 
@@ -185,13 +195,13 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
             width={cafeAsset.width}
             height={cafeAsset.height}
             decoding="async"
-            className={`absolute bottom-1 right-2.5 w-10 h-10 sm:w-13 sm:h-13 lg:w-14 lg:h-14 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
+            className={`absolute bottom-1 right-2.5 w-10 h-10 sm:w-13 sm:h-13 xl:w-14 xl:h-14 drop-shadow-sm pointer-events-none ${renderModeClass(cafeAsset.render_mode)}`}
           />
         )}
       </div>
 
-      {/* Mobile Slim 1-Line Subject Strip (< 1024px) — Zero Desk Art Occlusion */}
-      <div className="lg:hidden px-3 py-1 bg-[#fffdf8] flex items-center justify-between gap-2">
+      {/* Mobile / Tablet Slim 1-Line Subject Strip (< 1280px) — Zero Desk Art Occlusion */}
+      <div className="xl:hidden px-3 py-1 bg-[#fffdf8] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <img
             data-testid="scene-subject-mobile-art"
@@ -201,18 +211,28 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
             width={subjectArt.width}
             height={subjectArt.height}
             decoding="async"
+            onError={handleFallbackArtError}
             className={`w-6 h-6 rounded object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
           />
           <p className="text-xs font-bold text-[#1f2421] truncate">{subjectLabel}</p>
         </div>
 
-        <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#f6efe0] text-[#8f510d] border border-[#1f2421]/18 shrink-0">
+        <span className="stamp-badge inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-[#f6efe0] text-[#7a4308] border border-[#1f2421]/18 shrink-0">
+          <img
+            src={fallbackAsset.url}
+            alt=""
+            aria-hidden="true"
+            width={12}
+            height={12}
+            decoding="async"
+            className="w-3 h-3 rounded-xs object-cover shrink-0"
+          />
           {subjectSubLabel}
         </span>
       </div>
 
-      {/* Desktop Compact Interlocutor Footer (>= 1024px) */}
-      <div className="hidden lg:flex items-center gap-2.5 px-3 py-2 bg-[#fffdf8]">
+      {/* Desktop Compact Interlocutor Footer (>= 1280px) */}
+      <div className="scene-interlocutor-footer hidden xl:flex items-center gap-2.5 px-3 py-2 bg-[#fffdf8]">
         <img
           data-testid="scene-subject-art"
           data-asset-id={subjectArt.id}
@@ -221,15 +241,26 @@ export function SceneRenderer({ state, activeEvent, locale: localeProp }: SceneR
           width={subjectArt.width}
           height={subjectArt.height}
           decoding="async"
+          onError={handleFallbackArtError}
           className={`w-9 h-9 rounded-lg object-cover shrink-0 border border-[#1f2421]/60 bg-[#f6efe0] ${renderModeClass(subjectArt.render_mode)}`}
         />
         <div className="min-w-0 flex-1 space-y-0.5">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a]">
+            <span className="stamp-badge inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a]">
+              <img
+                data-testid="scene-category-stamp"
+                src={fallbackAsset.url}
+                alt=""
+                aria-hidden="true"
+                width={12}
+                height={12}
+                decoding="async"
+                className="w-3 h-3 rounded-xs object-cover shrink-0"
+              />
               {subjectSubLabel}
             </span>
             {showCafe && (
-              <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#8f510d]">
+              <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#7a4308]">
                 {ui.scene.caffeineActive}
               </span>
             )}

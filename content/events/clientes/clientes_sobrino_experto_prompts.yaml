@@ -17,6 +17,25 @@ cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: desear_suerte_al_sobrino_y_cerrar
+    label: Felicitar al sobrino prodigio y tomarte la tarde libre
+    result_text: Cierras el hilo con una sonrisa zen y te vas a pasear sin tocar ni una línea de aquel experimento.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 4
+      reputation: -4
+  - id: cobrar_informe_auditoria_previo
+    label: Cobrar una auditoría cerrada por listar todos los fallos antes
+    result_text: Facturas una revisión técnica sin asumir responsabilidad sobre el engendro y le entregas doce páginas de errores críticos.
+    effects:
+      billed_income: 600
+      stress: 6
+      moral: 2
+      reputation: 1
+      schedule_events:
+        - event_id: clientes_rescate_desastre_generativo
+          delay_months: 1
   - id: mantener_tarifa_sin_tocar_engendro
     label: Negarte al «repasito» y dejar tu presupuesto real sobre la mesa
     result_text: Le explicas con educación exquisita que arreglar estropicios automáticos cuesta más que hacerlo bien desde cero. Ya volverá.
@@ -27,22 +46,3 @@ choices:
       schedule_events:
         - event_id: clientes_rescate_desastre_generativo
           delay_months: 1
-  - id: cobrar_informe_auditoria_previo
-    label: Cobrar una auditoría cerrada por listar todos los fallos antes
-    result_text: Facturas una revisión técnica sin asumir responsabilidad sobre el engendro y le entregas doce páginas de errores críticos.
-    effects:
-      billed_income: 600
-      stress: 13
-      moral: 2
-      reputation: 1
-      schedule_events:
-        - event_id: clientes_rescate_desastre_generativo
-          delay_months: 1
-  - id: desear_suerte_al_sobrino_y_cerrar
-    label: Felicitar al sobrino prodigio y tomarte la tarde libre
-    result_text: Cierras el hilo con una sonrisa zen y te vas a pasear sin tocar ni una línea de aquel experimento.
-    effects:
-      stress: -2
-      moral: 1
-      personal_life: 4
-      reputation: -4

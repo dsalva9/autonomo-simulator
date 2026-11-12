@@ -1,8 +1,8 @@
 schema_version: 1
 id: hacienda_plan_control_tributario_anual
 category: hacienda
-title: "Campaña anual de control sobre profesionales consolidados"
-body: "El boletín oficial publica las líneas maestras de vigilancia del año y pone el foco en autónomos veteranos con facturación digital recurrente. El Inspector Gómez inicia barridos preventivos de archivo."
+title: Campaña anual de control sobre profesionales consolidados
+body: El boletín oficial publica las líneas maestras de vigilancia del año y pone el foco en autónomos veteranos con facturación digital recurrente. El Inspector Gómez inicia barridos preventivos de archivo.
 tags:
   - plan_control
   - veterania
@@ -11,27 +11,17 @@ character_id: hacienda_inspector_gomez
 character_expression: neutral
 requirements:
   min_month: 48
+  months_of_year:
+    - 1
+    - 2
 weight: 12
 cooldown_months: 14
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: auditoria_preventiva_gestoria
-    label: "Encargar a tu gestoría un prechequeo de libros antes del barrido"
-    requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "Tu asesoría repasa correlaciones y numeraciones con lupa, dejándote blindado frente a cualquier cruce masivo."
-    effects:
-      deductible_expense: 180
-      stress: -6
-      moral: 6
-      reputation: 2
-      fiscal_risk: -14
   - id: cuadrar_cuatro_anos_en_fin_de_semana
-    label: "Dedicar el fin de semana a cruzar cuatro años de bancos y facturas"
-    result_text: "Acabas con los ojos cuadrados frente a hojas de cálculo, pero localizas y corriges dos recibos sueltos a tiempo."
+    label: Dedicar el fin de semana a cruzar cuatro años de bancos y facturas
+    result_text: Acabas con los ojos cuadrados frente a hojas de cálculo, pero localizas y corriges dos recibos sueltos a tiempo.
     effects:
       deductible_expense: 60
       stress: 5
@@ -39,20 +29,33 @@ choices:
       personal_life: -4
       fiscal_risk: -10
   - id: confiar_en_inercia_veterana
-    label: "Seguir trabajando sin tocar nada confiando en tu historial veterano"
+    label: Seguir trabajando sin tocar nada confiando en tu historial veterano
     outcomes:
       - id: filtro_superado_sin_ruido
         weight: 65
-        result_text: "Los robots de selección pasan de largo sobre tu NIF y el trimestre transcurre en bendito silencio administrativo."
+        result_text: Los robots de selección pasan de largo sobre tu NIF y el trimestre transcurre en bendito silencio administrativo.
         effects:
           stress: -3
           moral: 4
           fiscal_risk: -5
       - id: aclaracion_menor_trimestral
         weight: 35
-        result_text: "Salta un descuadre menor de redondeos acumulados que te obliga a pagar una pequeña liquidación rápida."
+        result_text: Salta un descuadre menor de redondeos acumulados que te obliga a pagar una pequeña liquidación rápida.
         effects:
           cash_delta: -260
           stress: 7
           moral: -3
           fiscal_risk: -4
+  - id: auditoria_preventiva_gestoria
+    label: Encargar a tu gestoría un prechequeo de libros antes del barrido
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu asesoría repasa correlaciones y numeraciones con lupa, dejándote blindado frente a cualquier cruce masivo.
+    effects:
+      deductible_expense: 180
+      stress: -6
+      moral: 6
+      reputation: 2
+      fiscal_risk: -14

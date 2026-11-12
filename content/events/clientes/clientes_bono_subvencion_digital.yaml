@@ -16,19 +16,14 @@ cooldown_months: 12
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: ejecutar_expediente_legal_impecable
-    label: Hacer el proyecto real y justificar hasta la última coma legal
-    result_text: Rellenas memorias hasta soñar con sellos oficiales, pero entregas valor real y aseguras un cobro limpio garantizado.
+  - id: huir_de_papeleo_subvencionado
+    label: Negarte en redondo a tramitar bonos con trampa o papeleo eterno
+    result_text: Le cierras la puerta al chanchullo y a las cuarenta páginas de anexos en un solo gesto saludable.
     effects:
-      deferred_invoice:
-        amount: 1650
-        delay_months: 3
-        default_prob: 0.04
-      deductible_expense: 90
-      stress: 16
+      stress: -2
       moral: 1
-      reputation: 1
-      fiscal_risk: -3
+      personal_life: 2
+      reputation: -4
   - id: entrar_en_chanchullo_comision_borja
     label: Inflar conceptos y devolverle una mordida en mano como sugiere
     outcomes:
@@ -51,11 +46,16 @@ choices:
           moral: -9
           fiscal_risk: 20
           reputation: -4
-  - id: huir_de_papeleo_subvencionado
-    label: Negarte en redondo a tramitar bonos con trampa o papeleo eterno
-    result_text: Le cierras la puerta al chanchullo y a las cuarenta páginas de anexos en un solo gesto saludable.
+  - id: ejecutar_expediente_legal_impecable
+    label: Hacer el proyecto real y justificar hasta la última coma legal
+    result_text: Rellenas memorias hasta soñar con sellos oficiales, pero entregas valor real y aseguras un cobro limpio garantizado.
     effects:
-      stress: -2
+      deferred_invoice:
+        amount: 1650
+        delay_months: 3
+        default_prob: 0.04
+      deductible_expense: 90
+      stress: 9
       moral: 1
-      personal_life: 2
-      reputation: -4
+      reputation: 1
+      fiscal_risk: -3

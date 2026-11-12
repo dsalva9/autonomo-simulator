@@ -1,0 +1,78 @@
+schema_version: 1
+id: familia_terapia_pareja_ultimatum
+category: familia
+title: "«Vivo en la sala de espera de tus entregas»"
+body: "Álex apaga la tele y habla sin levantar la voz: «Siento que solo te quedan las migajas del día cuando cierras el ordenador». El desgaste acumulado pide reaccionar ya antes de que la distancia sea irreversible."
+tags:
+  - pareja
+  - crisis
+  - terapia
+  - limites
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 16
+  family_statuses:
+    - dating
+    - cohabiting
+  required_flags:
+    - crisis_pareja_latente
+weight: 14
+cooldown_months: 12
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: escapada_honesta_reconstruir_pacto
+    label: "Reconocer tu parte y reservar dos días fuera para hablar con calma (120 €)"
+    result_text: "Sin notificaciones de por medio pactáis horarios humanos y desactiváis la tormenta antes de que vaya a mayores."
+    effects:
+      cash_delta: -120
+      stress: -6
+      moral: 7
+      personal_life: 11
+      clear_flags:
+        - crisis_pareja_latente
+  - id: defenderse_con_facturas_y_choque
+    label: "Saltar a la defensiva recordando quién sostiene los picos de gastos"
+    outcomes:
+      - id: tregua_fria_y_distancia
+        weight: 45
+        result_text: "La discusión se apaga por agotamiento mutuo: salváis los muebles por ahora, pero el pasillo parece Siberia."
+        effects:
+          billed_income: 520
+          stress: 10
+          moral: -7
+          personal_life: -10
+      - id: ruptura_definitiva_alex
+        weight: 55
+        result_text: "Álex recoge sus cosas con tristeza serena el domingo por la mañana. Tienes todo el escritorio para ti y un vacío inmenso."
+        effects:
+          stress: 16
+          moral: -14
+          personal_life: -16
+          set_family_status:
+            status: separated
+            partner_character_id: null
+          clear_flags:
+            - convivencia_estable
+            - pareja_estable
+            - relacion_con_alex
+            - crisis_pareja_latente
+  - id: ir_a_terapia_pareja_y_cumplir
+    label: "Empezar terapia de pareja y apagar pantallas a las seis sin excusas (180 €)"
+    result_text: "Cuesta sostener el hábito las primeras semanas, pero escuchar de verdad desactiva el rencor y devuelve aire limpio a casa."
+    effects:
+      cash_delta: -180
+      stress: -9
+      moral: 10
+      personal_life: 15
+      clear_flags:
+        - crisis_pareja_latente
+      add_modifier:
+        id: pacto_desconexion_familiar
+        label: "Vínculo familiar reforzado"
+        remaining_months: 4
+        monthly_billed_delta: -110
+        monthly_moral_delta: 2
+        monthly_stress_delta: -2

@@ -1,0 +1,52 @@
+schema_version: 1
+id: empleados_paga_extra_verano
+category: empleados
+title: "Paga de verano y trimestre en el mismo mes"
+body: "Llega el calor y, aunque sobre el papel las pagas van prorrateadas, tu persona en plantilla tantea si habrá gratificación estival tras seis meses de buen ritmo. En diez días toca pagar el segundo trimestre."
+tags:
+  - plantilla
+  - verano
+  - salario
+  - tesoreria
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 10
+  months_of_year:
+    - 6
+    - 7
+  has_employee: true
+weight: 12
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: diferir_gratificacion_a_septiembre
+    label: "Explicar el pico fiscal de julio y dar media prima ahora (190 €)"
+    result_text: "La transparencia con las cuentas del estudio funciona: agradece el detalle sin dejarte temblando ante Hacienda."
+    effects:
+      deductible_expense: 190
+      stress: -2
+      moral: 4
+      employee_satisfaction: 7
+  - id: abonar_gratificacion_verano_completa
+    label: "Incluir una prima estival completa en la nómina de este mes (450 €)"
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: "Se va de vacaciones con una sonrisa de oreja a oreja y vuelve en plena forma para el arranque de otoño."
+    effects:
+      deductible_expense: 450
+      stress: -5
+      moral: 8
+      employee_satisfaction: 15
+      clear_flags:
+        - desgaste_plantilla
+  - id: recordar_prorrateo_sin_extra
+    label: "Recordar con tacto que las pagas extra ya están prorrateadas mes a mes"
+    result_text: "No sueltas ni un euro fuera de convenio, aunque el entusiasmo para cubrir imprevistos estivales baja varios grados."
+    effects:
+      stress: 4
+      moral: -3
+      employee_satisfaction: -10

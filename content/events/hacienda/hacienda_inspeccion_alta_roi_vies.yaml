@@ -1,0 +1,65 @@
+schema_version: 1
+id: hacienda_inspeccion_alta_roi_vies
+category: hacienda
+title: Examen con lupa para entrar en el censo VIES
+body: Solicitas el alta en el Registro de Operadores Intracomunitarios para facturar a Europa sin IVA y el Inspector Gómez congela el trámite exigiendo pruebas reales de actividad exterior.
+tags:
+  - inspeccion
+  - vies
+  - intracomunitario
+  - censo
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 11
+  stats:
+    fiscal_risk:
+      min: 17
+weight: 14
+cooldown_months: 15
+max_occurrences: 2
+choices:
+  - id: aportar_contratos_europeos_y_medios
+    label: Enviar propuestas firmadas, web profesional y correos UE
+    outcomes:
+      - id: alta_intracomunitaria_aprobada
+        weight: 65
+        result_text: Gómez valida tu necesidad comercial real, activa tu NIF europeo y desbloqueas el cobro del cliente exterior.
+        effects:
+          billed_income: 520
+          stress: 5
+          moral: 6
+          reputation: 3
+          fiscal_risk: -12
+      - id: peticion_documental_adicional
+        weight: 35
+        result_text: Falta traducir un anexo contractual, el alta se retrasa semanas y pierdes parte del encargo inicial.
+        effects:
+          cash_delta: -150
+          stress: 9
+          moral: -4
+          fiscal_risk: -8
+  - id: tramitar_memoria_roi_con_gestoria
+    label: Presentar memoria completa de solvencia vía gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: El dosier entra sin una sola fisura formal, obtienes el NIF-IVA europeo en días y facturas el proyecto íntegro.
+    effects:
+      billed_income: 580
+      deductible_expense: 145
+      stress: -2
+      moral: 6
+      reputation: 3
+      fiscal_risk: -15
+  - id: desistir_del_alta_y_repercutir_iva_nacional
+    label: Retirar la solicitud por ahora y facturar con IVA español
+    result_text: Cierras el requerimiento al instante, aunque el cliente europeo tuerce el gesto ante el sobrecoste administrativo.
+    effects:
+      cash_delta: -140
+      stress: 3
+      moral: -3
+      reputation: -2
+      fiscal_risk: -10

@@ -3,6 +3,7 @@ import type { GameState, RenderMode } from "../../engine/index.ts";
 import { compiledCatalog, resolveCharacterPortraitAsset } from "../../services/content/catalog.ts";
 import {
   formatEuros,
+  normalizeLocale,
   translateCharacterName,
   translateEmployeeRoleLabel,
   translateFamilyStatus,
@@ -23,6 +24,7 @@ function renderModeClass(mode: RenderMode): string {
 export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
   const storeLocale = useGameStore((s) => s.profile.settings.locale);
   const locale = localeProp ?? storeLocale;
+  const isEn = normalizeLocale(locale) === "en";
   const ui = getUiStrings(locale);
   const { characters, manifest } = compiledCatalog;
 
@@ -42,6 +44,22 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
   const employeeRoleLabel = state.employee
     ? translateEmployeeRoleLabel(state.employee.role_label, locale)
     : "";
+  const employeeSatisfaction = state.employee
+    ? Math.max(0, Math.min(100, Math.round(state.employee.satisfaction)))
+    : 0;
+
+  const empSatBarColor =
+    employeeSatisfaction >= 65
+      ? "bg-[#1f5c53]"
+      : employeeSatisfaction >= 40
+        ? "bg-[#c97a16]"
+        : "bg-[#b42b24]";
+  const empSatTextColor =
+    employeeSatisfaction >= 65
+      ? "text-[#1f5c53]"
+      : employeeSatisfaction >= 40
+        ? "text-[#7a4308]"
+        : "text-[#9e221b]";
 
   return (
     <section
@@ -84,12 +102,12 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
               </div>
             ) : (
               <div className="w-9 h-9 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
-                <ShieldCheck className="w-4 h-4 text-[#8f510d]" aria-hidden="true" />
+                <ShieldCheck className="w-4 h-4 text-[#7a4308]" aria-hidden="true" />
               </div>
             )}
           </div>
           <div className="min-w-0 flex-1 text-xs space-y-0.5">
-            <div className="stamp-badge text-[10px] text-[#8f510d] leading-none">
+            <div className="stamp-badge text-[10px] text-[#7a4308] leading-none">
               {ui.entorno.gestorHeader}
             </div>
             <p className="font-bold text-[#1f2421] truncate">
@@ -125,12 +143,12 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
               </div>
             ) : (
               <div className="w-9 h-9 rounded-lg border border-[#1f2421]/25 bg-[#f6efe0] flex items-center justify-center">
-                <Heart className="w-4 h-4 text-[#b42b24]" aria-hidden="true" />
+                <Heart className="w-4 h-4 text-[#9e221b]" aria-hidden="true" />
               </div>
             )}
           </div>
           <div className="min-w-0 flex-1 text-xs space-y-0.5">
-            <div className="stamp-badge text-[10px] text-[#b42b24] leading-none">
+            <div className="stamp-badge text-[10px] text-[#9e221b] leading-none">
               {ui.entorno.personalLifeHeader}
             </div>
             <p className="font-bold text-[#1f2421] truncate">
@@ -187,6 +205,28 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
                   {ui.entorno.perMonth} ·{" "}
                   {ui.entorno.billingMultiplier(state.employee.billing_multiplier)}
                 </p>
+                <div
+                  data-testid="entorno-employee-satisfaction"
+                  className="pt-0.5 flex items-center gap-2"
+                >
+                  <span className="text-[10.5px] font-semibold text-[#4a524e] shrink-0">
+                    {isEn ? "Morale" : "Clima"}
+                  </span>
+                  <div
+                    aria-hidden="true"
+                    className="flex-1 h-1.5 rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
+                  >
+                    <div
+                      className={`h-full transition-all duration-200 ${empSatBarColor}`}
+                      style={{ width: `${employeeSatisfaction}%` }}
+                    />
+                  </div>
+                  <span
+                    className={`font-bureau text-[10.5px] font-bold tabular-nums shrink-0 ${empSatTextColor}`}
+                  >
+                    {employeeSatisfaction}%
+                  </span>
+                </div>
               </>
             ) : (
               <>

@@ -11,13 +11,24 @@ character_id: gestor_premium_elena
 character_expression: stressed
 requirements:
   min_month: 10
+  months_of_year:
+    - 1
+    - 2
   gestor_tiers:
     - premium
-weight: 11
-cooldown_months: 12
+weight: 12
+cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: pactar_descuento_por_orden_estricto
+    label: "Congelar la subida subiendo tus facturas ordenadas el día uno"
+    result_text: "Elena acepta mantenerte la tarifa si entregas todo masticado el primer lunes de mes: ahorras dinero a cambio de disciplina marcial."
+    effects:
+      stress: 5
+      moral: 3
+      personal_life: -3
+      fiscal_risk: -5
   - id: aceptar_anexo_defensa_integral
     label: "Suscribir el anexo de blindaje total ante comprobaciones (175 €)"
     requirements:
@@ -36,14 +47,6 @@ choices:
         remaining_months: 4
         monthly_expense_delta: 30
         monthly_stress_delta: -2
-  - id: pactar_descuento_por_orden_estricto
-    label: "Congelar la subida subiendo tus facturas ordenadas el día uno"
-    result_text: "Elena acepta mantenerte la tarifa si entregas todo masticado el primer lunes de mes: ahorras dinero a cambio de disciplina marcial."
-    effects:
-      stress: 5
-      moral: 3
-      personal_life: -3
-      fiscal_risk: -5
   - id: darse_de_baja_y_volver_a_autogestion
     label: "Rechazar la subida, cerrar contrato y gestionar tú los modelos"
     result_text: "Elena te entrega un pendrive impecablemente indexado con tus libros y vuelves al ruedo solitario de la sede electrónica."

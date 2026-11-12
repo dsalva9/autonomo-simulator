@@ -11,21 +11,16 @@ character_id: gestor_barato_paco
 character_expression: neutral
 requirements:
   min_month: 6
+  months_of_year:
+    - 1
+    - 2
   gestor_tiers:
     - cheap
-weight: 11
-cooldown_months: 11
+weight: 12
+cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: asumir_suplemento_con_factura
-    label: "Exigir factura desglosada deducible y pagar sin hacer sangre (95 €)"
-    result_text: "Paco te extiende factura formal al momento, deduces el gasto íntegro y te aseguras de que mime tus resúmenes anuales."
-    effects:
-      deductible_expense: 95
-      stress: -3
-      moral: -1
-      fiscal_risk: -4
   - id: regatear_en_barra_con_paco
     label: "Bajar a la churrería a negociar que te deje el cargo a la mitad"
     outcomes:
@@ -44,6 +39,14 @@ choices:
           deductible_expense: 75
           stress: 6
           moral: -3
+  - id: asumir_suplemento_con_factura
+    label: "Exigir factura desglosada deducible y pagar sin hacer sangre (95 €)"
+    result_text: "Paco te extiende factura formal al momento, deduces el gasto íntegro y te aseguras de que mime tus resúmenes anuales."
+    effects:
+      deductible_expense: 95
+      stress: -3
+      moral: -1
+      fiscal_risk: -4
   - id: devolver_recibo_y_marcharse
     label: "Devolver el recibo en la app del banco y volver a la autogestión"
     result_text: "Recuperas tus noventa y cinco euros al instante, recoges tu archivador y vuelves a ser tu propio departamento contable."

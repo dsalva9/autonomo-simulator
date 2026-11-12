@@ -1,9 +1,10 @@
 schema_version: 1
 id: hacienda_gastos_afectos_vivienda
 category: hacienda
-title: "La regla del treinta por ciento del veinte por ciento"
-body: "El Inspector Gómez firma una propuesta de liquidación paralela digna de olimpiada matemática: cuestiona tus deducciones de luz, fibra y suministros del despacho en casa recordándote que calentar el pasillo fuera de horario laboral no guarda correlación íntegra con tu actividad."
+title: La regla del treinta por ciento del veinte por ciento
+body: "El Inspector Gómez firma una liquidación paralela digna de olimpiada matemática: cuestiona tus recibos de luz y calefacción del despacho en casa recordándote que calentar el pasillo de noche no es gasto deducible."
 tags:
+  - comprobacion
   - deducciones
   - suministros
   - paralela
@@ -12,38 +13,22 @@ character_expression: angry
 illustration_id: null
 requirements:
   min_month: 6
+  forbidden_flags:
+    - estudio_calle_alquilado
+  stats:
+    fiscal_risk:
+      min: 15
 weight: 10
 cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: aceptar_prorrateo_y_pagar
-    label: "Aceptar el recálculo oficial al céntimo y abonar la paralela sin pleitos (390 €)"
-    result_text: "Pagas la diferencia con sus intereses milimétricos y aprendes que el contador eléctrico de casa es territorio minado."
-    effects:
-      cash_delta: -390
-      stress: 6
-      moral: -4
-      fiscal_risk: -10
-  - id: acreditar_superficie_con_gestoria
-    label: "Presentar planos, alta censal y cálculo técnico elaborado por tu gestoría"
-    requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "Tu gestoría acredita al milímetro los metros cuadrados afectos y cierra el expediente rebajando el ajuste a un pellizco asumible."
-    effects:
-      deductible_expense: 130
-      cash_delta: -110
-      stress: 2
-      moral: 3
-      fiscal_risk: -12
   - id: alegar_uso_exclusivo_por_libre
-    label: "Defender por escrito que esa habitación y esa línea son cien por cien trabajo"
+    label: Defender por escrito que esa habitación y esa línea son cien por cien trabajo
     outcomes:
       - id: estimacion_parcial_datos
         weight: 40
-        result_text: "Gómez admite la línea de fibra dedicada a clientes y recorta la liquidación a la mitad, aunque mantiene la tijera sobre la electricidad."
+        result_text: Gómez admite la línea de fibra dedicada a clientes y recorta la liquidación a la mitad, aunque mantiene la tijera sobre la electricidad.
         effects:
           cash_delta: -210
           stress: 9
@@ -51,9 +36,30 @@ choices:
           fiscal_risk: -6
       - id: desestimado_con_jurisprudencia
         weight: 60
-        result_text: "Te contestan citando tres resoluciones administrativas implacables y acabas abonando la cuota íntegra más intereses."
+        result_text: Te contestan citando tres resoluciones administrativas implacables y acabas abonando la cuota íntegra más intereses.
         effects:
           cash_delta: -540
           stress: 13
           moral: -7
           fiscal_risk: 6
+  - id: acreditar_superficie_con_gestoria
+    label: Presentar planos, alta censal y cálculo técnico elaborado por tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría acredita al milímetro los metros cuadrados afectos y cierra el expediente rebajando el ajuste a un pellizco asumible.
+    effects:
+      deductible_expense: 130
+      cash_delta: -110
+      stress: 2
+      moral: 3
+      fiscal_risk: -12
+  - id: aceptar_prorrateo_y_pagar
+    label: Aceptar el recálculo oficial al céntimo y abonar la paralela sin pleitos (390 €)
+    result_text: Pagas la diferencia con sus intereses milimétricos y aprendes que el contador eléctrico de casa es territorio minado.
+    effects:
+      cash_delta: -390
+      stress: 6
+      moral: -4
+      fiscal_risk: -10

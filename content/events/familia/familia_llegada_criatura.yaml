@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_llegada_criatura
 category: familia
 title: "Ampliación de plantilla doméstica"
-body: "Después de meses mirando carritos de reojo y haciendo cuentas en servilletas, Álex y tú tenéis la conversación definitiva: ampliar la familia. Entre una ilusión inmensa, gastos fijos permanentes (+280 €/mes) y el arte acrobático de facturar durmiendo cuatro horas, nada volverá a ser igual."
+body: "Tras meses mirando carritos de reojo y haciendo cuentas en servilletas, Álex y tú habláis en serio de tener criatura. Entre una ilusión enorme y gastos fijos (+280 €/mes), facturar sin dormir promete cambiarlo todo."
 tags:
   - hijos
   - crianza
@@ -10,18 +10,21 @@ tags:
   - conciliacion
 character_id: pareja_alex
 character_expression: pleased
-illustration_id: null
+illustration_id: illus_hito_criatura_casa
 requirements:
   min_month: 12
   family_statuses:
     - cohabiting
+  forbidden_flags:
+    - criatura_en_casa
 weight: 9
 cooldown_months: 24
-max_occurrences: 2
-exclusive_with: []
+max_occurrences: 1
+exclusive_with:
+  - familia_test_positivo_sorpresa
 choices:
   - id: dar_el_paso_y_conciliar
-    label: "Dar el paso, bajar el ritmo unos meses y disfrutar la crianza (+280 €/mes fijos)"
+    label: "Dar el paso, bajar el ritmo unos meses y vivir la crianza (+280 €/mes)"
     result_text: "Llegan los pañales, las madrugadas en vela y una felicidad descomunal que hace que cualquier urgencia de cliente parezca ridícula. Facturas algo menos al principio, pero ganas vida de verdad."
     effects:
       add_child: 1

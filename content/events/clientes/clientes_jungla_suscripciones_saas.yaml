@@ -1,8 +1,8 @@
 schema_version: 1
 id: clientes_jungla_suscripciones_saas
 category: clientes
-title: "La jungla de las suscripciones automáticas"
-body: "El día uno amanece con una ráfaga de cargos bancarios que te corta la digestión del café: tu suite principal de trabajo, el almacenamiento en la nube y tres herramientas «imprescindibles» han renovado su plan anual de golpe aplicando una subida del 35 % por funciones inteligentes que jamás pediste."
+title: La jungla de las suscripciones automáticas
+body: "El día uno amanece con cargos que cortan el café: tu suite principal, la nube y tres apps «imprescindibles» renuevan plan anual aplicando un +35 % (540 €) por funciones de IA que nadie pidió."
 tags:
   - suscripciones
   - gasto_deducible
@@ -16,29 +16,24 @@ cooldown_months: 12
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: pagar_suite_anual_deducible
-    label: "Tragar con la renovación anual completa y desgravar la factura (540 €)"
-    requirements:
-      stats:
-        money:
-          min: 600
-    result_text: "El sablazo escuece en la cuenta corriente, pero no pierdes ni media hora migrando archivos y metes la factura íntegra en los gastos deducibles del trimestre."
+  - id: podar_planes_al_minimo
+    label: Podar complementos y bajar al plan básico limpiando espacio (240 €)
+    result_text: Pasas la tarde borrando copias antiguas para entrar en el límite de almacenamiento, pero contienes la hemorragia sin paralizar el despacho.
     effects:
-      deductible_expense: 540
-      stress: -3
-      moral: -2
-      reputation: 2
+      deductible_expense: 240
+      stress: 4
+      moral: -1
   - id: migrar_alternativas_sin_cuota
-    label: "Cancelar las licencias caras y pasar el fin de semana migrando a programas libres"
+    label: Cancelar licencias caras y migrar el finde a herramientas libres
     outcomes:
       - id: migracion_limpia_y_ahorro
         weight: 55
-        result_text: "Tras dos días reaprendiendo atajos de teclado, todo abre a la primera sin pagar peaje mensual. Sientes una pequeña victoria moral frente a los monopolios digitales."
+        result_text: Tras dos días reaprendiendo atajos de teclado, todo abre a la primera sin pagar peaje mensual. Sientes una pequeña victoria moral frente a los monopolios digitales.
         effects:
           deductible_expense: 60
           add_modifier:
             id: mod_ahorro_software_libre
-            label: "Herramientas sin peaje mensual"
+            label: Herramientas sin peaje mensual
             remaining_months: 5
             monthly_expense_delta: -65
           stress: 6
@@ -46,17 +41,22 @@ choices:
           personal_life: -4
       - id: incompatibilidad_en_plena_entrega
         weight: 45
-        result_text: "Un formato rebelde descuadra dos entregables el miércoles por la tarde y terminas recomprando licencias mensuales sueltas a precio de oro mientras pides disculpas."
+        result_text: Un formato rebelde descuadra dos entregables el miércoles por la tarde y terminas recomprando licencias mensuales sueltas a precio de oro mientras pides disculpas.
         effects:
           deductible_expense: 290
           stress: 12
           moral: -6
           personal_life: -4
           reputation: -3
-  - id: podar_planes_al_minimo
-    label: "Podar complementos superfluos y bajar al plan básico ajustando espacio (240 €)"
-    result_text: "Pasas la tarde borrando copias antiguas para entrar en el límite de almacenamiento, pero contienes la hemorragia sin paralizar el despacho."
+  - id: pagar_suite_anual_deducible
+    label: Tragar con la renovación anual completa y desgravar la factura (540 €)
+    requirements:
+      stats:
+        money:
+          min: 600
+    result_text: El sablazo escuece en la cuenta corriente, pero no pierdes ni media hora migrando archivos y metes la factura íntegra en los gastos deducibles del trimestre.
     effects:
-      deductible_expense: 240
-      stress: 4
-      moral: -1
+      deductible_expense: 540
+      stress: -3
+      moral: -2
+      reputation: 2

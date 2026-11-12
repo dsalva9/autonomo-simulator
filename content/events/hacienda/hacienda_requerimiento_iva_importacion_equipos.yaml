@@ -1,0 +1,58 @@
+schema_version: 1
+id: hacienda_requerimiento_iva_importacion_equipos
+category: hacienda
+title: El IVA de importación exige DUA aduanero, no albarán
+body: Compraste periféricos especializados fuera de la Unión Europea y dedujiste el IVA con el recibo del mensajero. El Inspector Gómez advierte que sin documento único aduanero DUA no vale.
+tags:
+  - requerimiento
+  - aduana
+  - iva
+  - deducciones
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 20
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: perseguir_al_agente_de_aduanas_por_el_dua
+    label: Rastrear al transitario hasta conseguir el DUA y carta 031
+    outcomes:
+      - id: dua_descargado_en_plazo
+        weight: 60
+        result_text: Tras cuatro teléfonos de soporte logístico das con el levante oficial y salvas toda la cuota deducida.
+        effects:
+          stress: 7
+          moral: 6
+          fiscal_risk: -10
+      - id: despacho_simplificado_a_nombre_tercero
+        weight: 40
+        result_text: El mensajero tramitó un despacho global no deducible y te toca devolver el IVA más intereses.
+        effects:
+          cash_delta: -315
+          stress: 10
+          moral: -5
+          fiscal_risk: -8
+  - id: aceptar_recorte_iva_y_meterlo_a_mayor_coste
+    label: Renunciar al IVA de aduana e integrarlo como mayor gasto
+    result_text: Abonas la diferencia en IVA recuperando una parte vía gasto en IRPF y das carpetazo rápido al asunto.
+    effects:
+      cash_delta: -245
+      stress: 3
+      moral: -2
+      fiscal_risk: -10
+  - id: subsanar_asiento_importacion_con_gestor
+    label: Localizar el expediente aduanero en sede con tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría descarga el justificante electrónico desde aduanas y salva el grueso de la deducción.
+    effects:
+      deductible_expense: 125
+      cash_delta: -55
+      stress: 1
+      moral: 4
+      fiscal_risk: -12

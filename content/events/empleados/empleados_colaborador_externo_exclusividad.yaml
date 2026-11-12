@@ -1,0 +1,57 @@
+schema_version: 1
+id: empleados_colaborador_externo_exclusividad
+category: empleados
+title: "Tu colaborador habitual etiqueta directo a tu cliente"
+body: "Trabajar sin nóminas fijas te da ligereza tras cinco años, pero exige cuidar fronteras: un colaborador autónomo al que subcontratas picos empieza a lucir en redes un proyecto tuyo etiquetando a la dirección del cliente."
+tags:
+  - subcontratacion
+  - marca_blanca
+  - veterania
+  - limites
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 60
+  has_employee: false
+weight: 11
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: cortar_colaboracion_y_rotar_proveedor
+    label: "Cerrar accesos al terminar este hito y asumir tú la cuenta mientras rotas"
+    result_text: "Proteges tu relación directa con el cliente de raíz, aunque te comes un par de semanas intensas de teclado."
+    effects:
+      billed_income: 690
+      stress: 9
+      moral: 4
+      personal_life: -5
+      reputation: 2
+  - id: dejarlo_pasar_por_no_tener_conversacion_incomoda
+    label: "Dejarlo correr para no abrir roces a mitad de entrega"
+    outcomes:
+      - id: queda_en_ego_de_escaparate
+        weight: 45
+        result_text: "Solo buscaba engordar su escaparate personal y la sangre no llega al río esta vez."
+        effects:
+          billed_income: 520
+          stress: 5
+          moral: -3
+      - id: puenteo_comercial_siguiente_fase
+        weight: 55
+        result_text: "Al mes siguiente descubres que ofreció presupuesto directo más barato a tus espaldas para la segunda fase."
+        effects:
+          stress: 12
+          moral: -8
+          reputation: -5
+  - id: firmar_marca_blanca_con_tarifa_justa
+    label: "Firmar anexo de marca blanca mejorando ligeramente su tarifa (160 €)"
+    result_text: "Aclarar reglas y pagar bien desactiva tentaciones: retira las etiquetas comerciales y seguís facturando en paz."
+    effects:
+      deductible_expense: 160
+      billed_income: 760
+      stress: -4
+      moral: 7
+      reputation: 3
+      set_flags:
+        - acuerdo_colaboradores_firmado

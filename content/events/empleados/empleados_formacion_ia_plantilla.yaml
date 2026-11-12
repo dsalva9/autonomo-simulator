@@ -1,0 +1,52 @@
+schema_version: 1
+id: empleados_formacion_ia_plantilla
+category: empleados
+title: "Atajos con IA gratuita y datos confidenciales"
+body: "Descubres de refilón que tu persona en plantilla pega borradores de clientes en herramientas abiertas de IA para ganar tiempo. Acelera tareas mecánicas, pero un desliz de privacidad puede costarte carísimo."
+tags:
+  - plantilla
+  - ia
+  - privacidad
+  - formacion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 26
+  has_employee: true
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: redactar_guia_interna_sin_datos_sensibles
+    label: "Permitir uso solo con textos anonimizados y revisión obligatoria"
+    result_text: "Pones orden razonable en media mañana sin gastar dinero extra ni cortar la curiosidad técnica del equipo."
+    effects:
+      billed_income: 280
+      stress: -2
+      moral: 5
+      reputation: 1
+      employee_satisfaction: 4
+  - id: licencia_privada_y_protocolo_equipo
+    label: "Pagar licencia privada sin entrenamiento externo y taller práctico (240 €)"
+    requirements:
+      stats:
+        money:
+          min: 900
+    result_text: "Aprovecháis el salto de velocidad con garantías serias de confidencialidad y criterio humano al mando."
+    effects:
+      deductible_expense: 240
+      billed_income: 390
+      stress: -5
+      moral: 8
+      reputation: 3
+      employee_satisfaction: 10
+  - id: prohibicion_tajante_y_bronca
+    label: "Prohibir cualquier asistente de golpe tras una charla tensa"
+    result_text: "Blindas la confidencialidad al cien por cien ante clientes celosos, aunque dejas un ambiente frío en el estudio."
+    effects:
+      stress: 6
+      moral: -4
+      reputation: 3
+      fiscal_risk: -4
+      employee_satisfaction: -12

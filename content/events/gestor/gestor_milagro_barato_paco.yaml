@@ -19,35 +19,39 @@ cooldown_months: 12
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: dejarlo_pasar_sin_estres
+    label: "Agradecer el chivatazo pero no meterse en papeleos de última hora"
+    result_text: "Sigues con tu jornada en paz sin perseguir ventanillas ni compromisos documentales de cinco años."
+    effects:
+      stress: -7
+      moral: 2
+      personal_life: 4
+      fiscal_risk: -2
+  - id: reclamar_comisiones_indebidas
+    label: "Pasar de subvenciones y pedirle reclamar comisiones bancarias indebidas"
+    result_text: "Con una plantilla veterana de dos párrafos, Paco logra que tu banco te devuelva comisiones de mantenimiento cobradas de más."
+    effects:
+      cash_delta: 280
+      stress: -4
+      moral: 4
   - id: tramitar_subvencion_relampago
     label: "Pagarle 50 € de gestión urgente y firmar la solicitud al vuelo"
     outcomes:
       - id: concesion_aprobada
-        weight: 75
-        result_text: "Paco clava hasta el último sello compulsado sobre la bocina y semanas después aterriza una ayuda limpia en tu cuenta. Hoy le invitas tú a los churros."
+        weight: 65
+        result_text: "Paco clava los sellos sobre la bocina y aterriza una ayuda limpia en cuenta, aunque queda sujeta a control tributario."
         effects:
           deductible_expense: 50
-          cash_delta: 920
-          stress: -7
-          moral: 8
+          cash_delta: 840
+          stress: 6
+          moral: 7
           reputation: 2
+          fiscal_risk: 7
       - id: cupo_agotado_por_segundos
-        weight: 25
-        result_text: "El presupuesto de la convocatoria se agota tres minutos antes de vuestro registro, aunque al menos la tasa de tramitación te la deduces."
+        weight: 35
+        result_text: "El presupuesto de la convocatoria se agota tres minutos antes de vuestro registro tras una mañana frenética de fotocopias."
         effects:
           deductible_expense: 50
-          stress: 4
-          moral: -3
-  - id: reclamar_comisiones_indebidas
-    label: "Pasar de subvenciones y pedirle que reclame solo cargos bancarios indebidos"
-    result_text: "Con una plantilla veterana de dos párrafos, Paco logra que tu banco te devuelva comisiones de mantenimiento cobradas de más."
-    effects:
-      cash_delta: 240
-      stress: -4
-      moral: 4
-  - id: dejarlo_pasar_sin_estres
-    label: "Agradecer el chivatazo pero no meterse en papeleos de última hora"
-    result_text: "Sigues con tu jornada en paz sin perseguir ventanillas."
-    effects:
-      stress: -2
-      moral: 1
+          stress: 9
+          moral: -4
+          personal_life: -3

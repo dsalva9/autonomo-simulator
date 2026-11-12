@@ -1,0 +1,58 @@
+schema_version: 1
+id: hacienda_inspeccion_cotizaciones_estudio
+category: hacienda
+title: Cruce conjunto de retenciones y cotizaciones del estudio
+body: "Tener plantilla activa cruces entre Hacienda y Tesorería: el Inspector Gómez pide cuadrar retenciones del Modelo 111, pluses de teletrabajo y cuadrantes horarios del último semestre."
+tags:
+  - inspeccion
+  - laboral
+  - cotizaciones
+  - modelo_111
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: illus_hito_inspeccion_hacienda
+requirements:
+  min_month: 14
+  has_employee: true
+  stats:
+    fiscal_risk:
+      min: 15
+weight: 15
+cooldown_months: 15
+max_occurrences: 3
+choices:
+  - id: exhibir_registro_horario_y_nominas_cuadradas
+    label: Entregar el registro horario homologado y recibos al día
+    requirements:
+      required_flags:
+        - registro_horario_al_dia
+    result_text: Tu sistema horario al día desmonta cualquier sospecha en diez minutos y refuerza la confianza del estudio.
+    effects:
+      stress: -3
+      moral: 8
+      reputation: 3
+      fiscal_risk: -18
+      employee_satisfaction: 5
+  - id: firmar_ajuste_por_dietas_y_pluses
+    label: Asumir acta menor por pluses de material mal cotizados
+    result_text: Ingresas las diferencias de cotización y retención de golpe; el susto administrativo enfría el ánimo del equipo.
+    effects:
+      cash_delta: -390
+      stress: 8
+      moral: -4
+      fiscal_risk: -15
+      employee_satisfaction: -4
+  - id: comparecer_con_asesoria_laboral_y_fiscal
+    label: Defender la estructura salarial del estudio con tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría justifica la exención de herramientas de trabajo y cierra la actuación con un ajuste simbólico.
+    effects:
+      deductible_expense: 195
+      cash_delta: -110
+      stress: 2
+      moral: 4
+      fiscal_risk: -17
+      employee_satisfaction: 3

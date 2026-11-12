@@ -2,7 +2,7 @@ schema_version: 1
 id: gestor_migracion_verifactu_caos
 category: gestor
 title: "Código QR obligatorio y adiós a tus plantillas"
-body: "Entra en vigor la nueva normativa técnica de facturación verificable y cunde el pánico en el gremio: tus plantillas de toda la vida quedan jubiladas por decreto, cada factura exige huella encadenada y Elena Montes advierte de que emitir fuera del sistema homologado sale carísimo."
+body: "Entra en vigor la normativa de facturación verificable VeriFactu: tus plantillas clásicas quedan jubiladas por decreto, cada factura exige huella encadenada y Elena Montes advierte de sanciones duras si emites fuera de norma."
 tags:
   - facturacion_digital
   - verifactu
@@ -12,40 +12,16 @@ character_expression: stressed
 illustration_id: null
 requirements:
   min_month: 7
+  gestor_tiers:
+    - premium
 weight: 11
 cooldown_months: 14
-max_occurrences: 3
-exclusive_with: []
+max_occurrences: 2
+exclusive_with:
+  - hacienda_panico_verifactu_software
 choices:
-  - id: implantar_conector_con_gestoria
-    label: "Pagar la implantación homologada conectada directamente con tu gestoría (280 €)"
-    requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "Duele el desembolso inicial, pero tus facturas salen numeradas, selladas y sincronizadas al segundo con los libros oficiales."
-    effects:
-      deductible_expense: 280
-      stress: -5
-      moral: 4
-      reputation: 2
-      fiscal_risk: -10
-  - id: suscribir_programa_comercial_nube
-    label: "Contratar un programa comercial homologado y migrar datos este fin de semana"
-    result_text: "Sumas otra cuota mensual a la mochila del autónomo, pero el lunes a primera hora ya puedes facturar sin sudores fríos."
-    effects:
-      deductible_expense: 150
-      add_modifier:
-        id: mod_cuota_facturacion_digital
-        label: "Suscripción software facturación verificable"
-        remaining_months: 5
-        monthly_expense_delta: 45
-      stress: 5
-      moral: 1
-      personal_life: -3
-      fiscal_risk: -6
   - id: picar_facturas_formulario_publico
-    label: "Ahorrarte licencias metiendo cada factura a mano en el formulario público gratuito"
+    label: "Ahorrarte licencias metiendo cada factura en el formulario público gratuito"
     outcomes:
       - id: paciencia_infinita_sin_gasto
         weight: 55
@@ -63,3 +39,30 @@ choices:
           stress: 13
           moral: -6
           fiscal_risk: 7
+  - id: suscribir_programa_comercial_nube
+    label: "Contratar un programa comercial homologado y migrar este fin de semana"
+    result_text: "Sumas otra cuota mensual a la mochila del autónomo, pero el lunes a primera hora ya puedes facturar sin sudores fríos."
+    effects:
+      deductible_expense: 150
+      add_modifier:
+        id: mod_cuota_facturacion_digital
+        label: "Suscripción software facturación verificable"
+        remaining_months: 5
+        monthly_expense_delta: 45
+      stress: 5
+      moral: 1
+      personal_life: -3
+      fiscal_risk: -6
+  - id: implantar_conector_con_gestoria
+    label: "Implantar la pasarela homologada conectada al despacho de Elena (280 €)"
+    requirements:
+      stats:
+        money:
+          min: 350
+    result_text: "Duele el desembolso inicial, pero tus facturas salen numeradas, selladas con QR y sincronizadas al segundo con los libros de Elena."
+    effects:
+      deductible_expense: 280
+      stress: -6
+      moral: 5
+      reputation: 3
+      fiscal_risk: -11

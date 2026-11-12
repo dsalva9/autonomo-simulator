@@ -1,0 +1,49 @@
+schema_version: 1
+id: gestor_elena_cuadro_amortizacion_acelerada
+category: gestor
+title: Cuadro de amortización acelerada de Elena
+body: "Elena Montes revisa tu inventario de equipos y licencias profesionales: acogiéndote al régimen de reducida dimensión puedes acelerar amortizaciones hoy o guardar escudo fiscal para más adelante."
+tags:
+  - gestoria
+  - elena
+  - amortizacion
+  - optimizacion_fiscal
+character_id: gestor_premium_elena
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 20
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 11
+max_occurrences: 3
+choices:
+  - id: mantener_tabla_lineal_conservadora
+    label: Mantener la amortización lineal clásica sin agotar margen
+    result_text: Repartes el escudo fiscal de forma estable entre varios ejercicios con riesgo cero ante comprobaciones.
+    effects:
+      stress: -4
+      moral: 3
+      fiscal_risk: -8
+  - id: activar_coeficiente_acelerado_este_trimestre
+    label: Aplicar el coeficiente acelerado para rebajar factura fiscal ya
+    result_text: Elena documenta cada número de serie en el libro de bienes de inversión y recorta de forma limpia tu pago trimestral.
+    effects:
+      deductible_expense: 520
+      stress: -3
+      moral: 5
+      fiscal_risk: -5
+  - id: renovar_respaldo_y_amortizar_conjunto
+    label: Sumar sistema de copias de respaldo y amortizar el lote
+    requirements:
+      stats:
+        money:
+          min: 700
+    result_text: Blindas tu infraestructura técnica contra averías y maximizas la deducción trimestral con factura impecable.
+    effects:
+      deductible_expense: 680
+      stress: -6
+      moral: 6
+      reputation: 4
+      fiscal_risk: -9

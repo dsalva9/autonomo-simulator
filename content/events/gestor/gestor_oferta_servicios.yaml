@@ -2,19 +2,29 @@ schema_version: 1
 id: gestor_oferta_servicios
 category: gestor
 title: "El dilema de la gestoría"
-body: "Tu mesa acumula recibos arrugados y avisos del calendario fiscal. Paco «El Rápido» se ofrece a llevarte los papeles a precio de menú del día, Elena Montes propone su blindaje fiscal de precisión quirúrgica, y siempre puedes seguir peleándote a solas con la sede electrónica."
+body: "Tu mesa acumula recibos arrugados y avisos fiscales. Paco «El Rápido» ofrece llevarte los papeles a precio de menú del día, Elena Montes propone su blindaje quirúrgico, o puedes seguir peleándote a solas con la sede electrónica."
 tags:
   - gestoria
   - impuestos
   - costes_fijos
-character_id: gestor_barato_paco
-character_expression: pleased
+character_id: null
 illustration_id: null
+requirements:
+  gestor_tiers:
+    - self
 weight: 10
-cooldown_months: 6
-max_occurrences: null
+cooldown_months: 12
+max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: seguir_autogestion
+    label: "Llevar yo mis propias cuentas a pelo (0 €/mes)"
+    result_text: "Decides ahorrarte la iguala mensual y enfrentarte en solitario a los formularios oficiales. Lo que te ahorras en euros lo inviertes en carácter."
+    effects:
+      set_gestor:
+        tier: self
+      stress: 4
+      moral: -1
   - id: contratar_paco_barato
     label: "Confiar los papeles a Paco «El Rápido» (60 €/mes)"
     result_text: "Paco te mete en una carpeta de anillas con olor a churrería y te contesta con un pulgar arriba. No es la NASA, pero ya no estás completamente solo ante el trimestre."
@@ -26,7 +36,7 @@ choices:
       stress: -5
       moral: 2
   - id: contratar_elena_premium
-    label: "Pasarse al despacho de Elena Montes (180 €/mes)"
+    label: "Pasarse al despacho de Elena Montes (170 €/mes)"
     requirements:
       stats:
         money:
@@ -40,11 +50,3 @@ choices:
       stress: -10
       moral: 4
       fiscal_risk: -8
-  - id: seguir_autogestion
-    label: "Llevar yo mis propias cuentas a pelo (0 €/mes)"
-    result_text: "Decides ahorrarte la iguala mensual y enfrentarte en solitario a los formularios oficiales. Lo que te ahorras en euros lo inviertes en carácter."
-    effects:
-      set_gestor:
-        tier: self
-      stress: 4
-      moral: -1

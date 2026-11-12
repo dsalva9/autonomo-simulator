@@ -10,5 +10,5 @@ expressions:
   pleased: char_empleado_junior_dani_motivado
 employee_params:
   role_label: "Junior Multiusos"
-  monthly_cost: 1400
-  billing_multiplier: 1.35
+  monthly_cost: 1350
+  billing_multiplier: 1.58

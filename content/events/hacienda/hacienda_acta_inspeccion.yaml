@@ -1,8 +1,8 @@
 schema_version: 1
 id: hacienda_acta_inspeccion
 category: hacienda
-title: "Comparecencia y acta de inspección"
-body: "Despacho metálico de la Agencia Tributaria, nueve en punto de la mañana. El Inspector Gómez desenrosca su estilográfica roja frente a tres carpetas de anillas con tu nombre y te invita amablemente a justificar hasta el último céntimo del libro registro."
+title: Comparecencia y acta de inspección
+body: Despacho metálico de la Agencia Tributaria, nueve de la mañana. El Inspector Gómez desenrosca su estilográfica roja frente a tres carpetas con tu nombre y te invita a justificar hasta el último céntimo de tus libros.
 tags:
   - inspeccion
   - acta
@@ -17,37 +17,12 @@ cooldown_months: 12
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: defensa_presencial_asesoria_premium
-    label: "Acudir escoltado por Elena Montes con dosier de consultas vinculantes"
-    requirements:
-      gestor_tiers:
-        - premium
-    result_text: "Elena rebate cada partida con jurisprudencia milimétrica. El Inspector Gómez asiente con respeto funcionarial y cierra el acta con un ajuste testimonial."
-    effects:
-      deductible_expense: 320
-      stress: 3
-      moral: 6
-      fiscal_risk: -25
-      clear_flags:
-        - expediente_inspeccion_abierto
-        - tickets_dudosos_deducidos
-  - id: firmar_acta_en_conformidad
-    label: "Firmar el acta en conformidad para aplicar la reducción legal y pasar página"
-    result_text: "Estampas tu firma asumiendo la regularización reducida. Tu cuenta bancaria sale magullada, pero al cruzar la puerta giratoria vuelves a respirar oxígeno limpio."
-    effects:
-      cash_delta: -850
-      stress: 9
-      moral: -6
-      fiscal_risk: -25
-      clear_flags:
-        - expediente_inspeccion_abierto
-        - tickets_dudosos_deducidos
   - id: firmar_en_disconformidad_y_alegar
-    label: "Firmar en disconformidad y defender tus facturas línea por línea"
+    label: Firmar en disconformidad y defender tus facturas línea por línea
     outcomes:
       - id: estimacion_parcial_salvadora
         weight: 45
-        result_text: "Acreditas que los gastos cuestionados eran herramientas reales de trabajo y logras rebajar la liquidación a un rasguño asumible."
+        result_text: Acreditas que los gastos cuestionados eran herramientas reales de trabajo y logras rebajar la liquidación a un rasguño asumible.
         effects:
           cash_delta: -280
           deductible_expense: 120
@@ -59,7 +34,7 @@ choices:
             - tickets_dudosos_deducidos
       - id: liquidacion_integra_con_intereses
         weight: 55
-        result_text: "Gómez desmonta tus argumentos con educación glacial y añade intereses de demora por haber perdido la reducción de conformidad."
+        result_text: Gómez desmonta tus argumentos con educación glacial y añade intereses de demora por haber perdido la reducción de conformidad.
         effects:
           cash_delta: -1350
           stress: 17
@@ -68,3 +43,28 @@ choices:
           clear_flags:
             - expediente_inspeccion_abierto
             - tickets_dudosos_deducidos
+  - id: defensa_presencial_asesoria_premium
+    label: Acudir escoltado por Elena Montes con dosier de consultas vinculantes
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: Elena rebate cada partida con jurisprudencia milimétrica. El Inspector Gómez asiente con respeto funcionarial y cierra el acta con un ajuste testimonial.
+    effects:
+      deductible_expense: 320
+      stress: 3
+      moral: 6
+      fiscal_risk: -25
+      clear_flags:
+        - expediente_inspeccion_abierto
+        - tickets_dudosos_deducidos
+  - id: firmar_acta_en_conformidad
+    label: Firmar el acta en conformidad para aplicar la reducción legal y pasar página
+    result_text: Estampas tu firma asumiendo la regularización reducida. Tu cuenta bancaria sale magullada, pero al cruzar la puerta giratoria vuelves a respirar oxígeno limpio.
+    effects:
+      cash_delta: -850
+      stress: 9
+      moral: -6
+      fiscal_risk: -25
+      clear_flags:
+        - expediente_inspeccion_abierto
+        - tickets_dudosos_deducidos

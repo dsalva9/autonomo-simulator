@@ -1,8 +1,8 @@
 schema_version: 1
 id: hacienda_requerimiento_movimientos_bancarios
 category: hacienda
-title: "Requerimiento de movimientos bancarios y Bizums"
-body: "El Inspector Gómez invoca sus facultades de comprobación y exige el extracto íntegro de tus cuentas del último año. Quiere saber qué son exactamente esos ingresos sueltos que no casan con tu libro de IVA."
+title: Requerimiento de movimientos bancarios y Bizums
+body: El Inspector Gómez invoca sus facultades de comprobación y exige el extracto íntegro de tus cuentas del último año. Quiere saber qué son exactamente esos ingresos sueltos que no casan con tu libro de IVA.
 tags:
   - requerimiento
   - bancos
@@ -13,15 +13,36 @@ requirements:
   min_month: 8
   stats:
     fiscal_risk:
-      min: 25
+      min: 20
 weight: 16
 cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: presentar_complementaria_previa
+    label: Adelantarte con una complementaria voluntaria para frenar daños (580 €)
+    result_text: "Aflojas la cartera antes de que abran inspección completa: escuece de lo lindo, pero apagas el incendio a tiempo."
+    effects:
+      cash_delta: -580
+      stress: 9
+      moral: -6
+      fiscal_risk: -22
+  - id: conciliar_cuentas_con_gestoria
+    label: Pagar a tu gestoría para puntear y justificar cada apunte bancario
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu asesoría documenta devoluciones, gastos suplidos y traspasos propios, dejando el requerimiento en un ajuste menor.
+    effects:
+      deductible_expense: 260
+      cash_delta: -180
+      stress: 5
+      moral: 2
+      fiscal_risk: -20
   - id: aportar_extractos_y_esperar
-    label: "Remitir los extractos en PDF y esperar su propuesta de liquidación"
-    result_text: "Entregas hasta el último movimiento bancario en formato electrónico y pasas el mes contando cada Bizum de cenas compartidas."
+    label: Remitir los extractos en PDF y esperar su propuesta de liquidación
+    result_text: Entregas hasta el último movimiento bancario en formato electrónico y pasas el mes contando cada Bizum de cenas compartidas.
     effects:
       deductible_expense: 80
       stress: 10
@@ -31,24 +52,3 @@ choices:
         - event_id: hacienda_propuesta_liquidacion_provisional
           delay_months: 2
           probability: 1
-  - id: conciliar_cuentas_con_gestoria
-    label: "Pagar a tu gestoría para puntear y justificar cada apunte bancario"
-    requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "Tu asesoría documenta devoluciones, gastos suplidos y traspasos propios, dejando el requerimiento en un ajuste menor."
-    effects:
-      deductible_expense: 260
-      cash_delta: -180
-      stress: 5
-      moral: 2
-      fiscal_risk: -20
-  - id: presentar_complementaria_previa
-    label: "Adelantarte con una complementaria voluntaria para frenar daños (580 €)"
-    result_text: "Aflojas la cartera antes de que abran inspección completa: escuece de lo lindo, pero apagas el incendio a tiempo."
-    effects:
-      cash_delta: -580
-      stress: 9
-      moral: -6
-      fiscal_risk: -22

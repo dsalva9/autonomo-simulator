@@ -1,0 +1,55 @@
+schema_version: 1
+id: familia_campamento_verano_julio
+category: familia
+title: "Once semanas sin colegio y facturas que no paran"
+body: "Terminan las clases en junio y se abre el abismo estival de las familias autónomas: la criatura tiene casi tres meses de vacaciones y tu cartera de clientes sigue viva bajo el sol de julio."
+tags:
+  - hijos
+  - verano
+  - campamento
+  - conciliacion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 36
+  months_of_year:
+    - 6
+    - 7
+  required_flags:
+    - criatura_en_casa
+weight: 13
+cooldown_months: 10
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: combinar_abuelos_y_media_jornada
+    label: "Madrugar a las seis para trabajar y repartir tardes de piscina y familia (120 €)"
+    result_text: "Vives a base de gazpacho y café frío, pero ahorras un dineral y compartís chapuzones memorables cada tarde de julio."
+    effects:
+      cash_delta: -120
+      billed_income: 410
+      stress: 4
+      moral: 9
+      personal_life: 11
+  - id: intentar_teletrabajar_con_juegos
+    label: "Ahorrar el campamento intentando trabajar con manualidades al lado"
+    result_text: "No sueltas un euro en cuotas de verano y sacas las facturas a trompicones, aunque acabas con purpurina hasta en el teclado."
+    effects:
+      billed_income: 460
+      stress: 12
+      moral: -5
+      personal_life: -4
+      reputation: -2
+  - id: apuntar_campamento_urbano_completo
+    label: "Pagar el campamento urbano con piscina y comedor todo el mes (420 €)"
+    requirements:
+      stats:
+        money:
+          min: 900
+    result_text: "Es prácticamente otra cuota mensual, pero vuelve a casa agotado y feliz mientras tú sacas cinco horas limpias de foco cada mañana."
+    effects:
+      cash_delta: -420
+      billed_income: 740
+      stress: -6
+      moral: 7
+      personal_life: 8

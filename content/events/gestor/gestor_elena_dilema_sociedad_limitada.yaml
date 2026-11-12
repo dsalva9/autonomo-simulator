@@ -19,6 +19,26 @@ cooldown_months: 14
 max_occurrences: 2
 exclusive_with: []
 choices:
+  - id: mantener_estructura_ligera_actual
+    label: "Descartar notarías por ahora y seguir ligero como persona física"
+    result_text: "Cierras la carpeta societaria sin asumir libros mercantiles ni costes notariales y sigues facturando ágil como autónomo."
+    effects:
+      stress: -3
+      moral: 2
+  - id: pedir_informe_comparativo_previo
+    label: "Pagar solo el estudio fiscal comparativo antes de decidir (180 €)"
+    result_text: "Recibes una simulación honesta al céntimo con pros, contras y costes reales de Registro Mercantil para decidir en dos meses."
+    effects:
+      deductible_expense: 180
+      stress: -4
+      moral: 3
+      fiscal_risk: -5
+      set_flags:
+        - dossier_sl_elena
+      schedule_events:
+        - event_id: gestor_elena_escritura_notarial_sl
+          delay_months: 2
+          probability: 0.95
   - id: encargar_protocolo_mercantil_sl
     label: "Encargar el proyecto mercantil y reserva de denominación (640 €)"
     requirements:
@@ -38,25 +58,3 @@ choices:
         - event_id: gestor_elena_escritura_notarial_sl
           delay_months: 2
           probability: 1
-  - id: pedir_informe_comparativo_previo
-    label: "Pagar solo el estudio fiscal comparativo antes de decidir (180 €)"
-    result_text: "Recibes una simulación honesta al céntimo con pros, contras y costes reales de registro mercantil para decidir en frío."
-    effects:
-      deductible_expense: 180
-      stress: -4
-      moral: 3
-      fiscal_risk: -5
-      schedule_events:
-        - event_id: gestor_elena_escritura_notarial_sl
-          delay_months: 2
-          probability: 0.9
-  - id: mantener_estructura_ligera_actual
-    label: "Descartar notarías por ahora y seguir ligero como persona física"
-    result_text: "Ahorras costes fijos de libros mercantiles hoy, aunque Elena deja programada una revisión de seguimiento en dos meses."
-    effects:
-      stress: -3
-      moral: 1
-      schedule_events:
-        - event_id: gestor_elena_escritura_notarial_sl
-          delay_months: 2
-          probability: 0.65

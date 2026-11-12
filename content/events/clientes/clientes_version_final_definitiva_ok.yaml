@@ -16,14 +16,14 @@ cooldown_months: 9
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: facturar_bolsa_cambios_adicional
-    label: Bloquear la versión doce hasta que aprueben anexo de horas extra
-    result_text: Les muestras el historial de aprobaciones firmadas. Gruñen en tres departamentos, pero validan una orden de compra complementaria.
+  - id: plantarse_en_alcance_firmado
+    label: Entregar la última ronda incluida en contrato y dar por concluido
+    result_text: Cierras el bucle infinito con educación férrea. No sacas extras, pero salvas tu salud mental de otro mes de rotondas.
     effects:
-      billed_income: 825
-      stress: 13
-      moral: 3
-      reputation: 1
+      stress: -2
+      moral: 1
+      personal_life: 3
+      reputation: -4
   - id: rescatar_archivo_antiguo_y_cerrar
     label: Recuperar tu archivo guardado del mes pasado y facturar cierre
     requirements:
@@ -36,11 +36,11 @@ choices:
       stress: -1
       moral: 7
       reputation: 3
-  - id: plantarse_en_alcance_firmado
-    label: Entregar la última ronda incluida en contrato y dar por concluido
-    result_text: Cierras el bucle infinito con educación férrea. No sacas extras, pero salvas tu salud mental de otro mes de rotondas.
+  - id: facturar_bolsa_cambios_adicional
+    label: Bloquear la versión doce hasta que aprueben anexo de horas extra
+    result_text: Les muestras el historial de aprobaciones firmadas. Gruñen en tres departamentos, pero validan una orden de compra complementaria.
     effects:
-      stress: -2
-      moral: 1
-      personal_life: 3
-      reputation: -4
+      billed_income: 825
+      stress: 7
+      moral: 3
+      reputation: 1

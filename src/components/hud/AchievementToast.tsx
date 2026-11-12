@@ -9,13 +9,27 @@ import { useUIStore } from "../../store/uiStore.ts";
 export function AchievementToast() {
   const newlyUnlockedAchievements = useGameStore((s) => s.newlyUnlockedAchievements);
   const clearUnlockedToastQueue = useGameStore((s) => s.clearUnlockedToastQueue);
+  const activeRun = useGameStore((s) => s.activeRun);
+  const pendingOutcome = useGameStore((s) => s.pendingOutcome);
   const locale = useGameStore((s) => s.profile.settings.locale);
   const sfxMuted = useUIStore((s) => s.sfxMuted);
+  const abandonModalOpen = useUIStore((s) => s.abandonModalOpen);
 
   const ui = getUiStrings(locale);
   const lastPlayedSignatureRef = useRef<string>("");
 
   const queueSignature = newlyUnlockedAchievements.join(",");
+
+  const isPhaseModalOpen =
+    activeRun !== null &&
+    pendingOutcome === null &&
+    (activeRun.phase === "quarterly_tax" ||
+      activeRun.phase === "victory_prompt" ||
+      activeRun.phase === "annual_summary");
+  const pauseAutoDismiss = abandonModalOpen || isPhaseModalOpen;
+
+  const isInActiveGameDesk =
+    activeRun !== null && (activeRun.ending === null || pendingOutcome !== null);
 
   useEffect(() => {
     if (!queueSignature) {
@@ -28,11 +42,15 @@ export function AchievementToast() {
       playUiSound("achievement_seal", { muted: sfxMuted });
     }
 
+    if (pauseAutoDismiss) {
+      return;
+    }
+
     const timer = window.setTimeout(() => {
       clearUnlockedToastQueue();
     }, 4500);
     return () => window.clearTimeout(timer);
-  }, [queueSignature, sfxMuted, clearUnlockedToastQueue]);
+  }, [queueSignature, sfxMuted, pauseAutoDismiss, clearUnlockedToastQueue]);
 
   if (newlyUnlockedAchievements.length === 0) {
     return null;
@@ -48,11 +66,17 @@ export function AchievementToast() {
       },
   );
 
+  // On desktop (>=1280px): bottom-right corner clear of center stage & EndRunScreen headings.
+  // On mobile/tablet (<1280px): below HUD during active desk play; bottom-anchored on EndRunScreen/TitleScreen so h1 is never occluded.
+  const positionClasses = isInActiveGameDesk
+    ? "top-[calc(var(--hud-height,7.25rem)+0.35rem)] left-3 right-3 mx-auto xl:top-auto xl:left-auto xl:mx-0 xl:bottom-4 xl:right-4"
+    : "bottom-3 left-3 right-3 mx-auto xl:left-auto xl:mx-0 xl:bottom-4 xl:right-4";
+
   return (
     <output
       data-testid="achievement-toast"
       aria-live="polite"
-      className="fixed top-[7.5rem] left-3 right-3 mx-auto lg:top-auto lg:left-auto lg:mx-0 lg:bottom-4 lg:right-4 z-40 w-[calc(100vw-1.5rem)] max-w-xs paper-dossier animate-dossier rounded-xl overflow-hidden bg-[#1f5c53] text-[#fffdf8]"
+      className={`fixed ${positionClasses} z-[60] w-[calc(100vw-1.5rem)] max-w-xs paper-dossier animate-dossier rounded-xl overflow-hidden bg-[#1f5c53] text-[#fffdf8]`}
     >
       <div className="px-3.5 py-2.5 flex items-start justify-between gap-2.5">
         <div className="flex items-start gap-2.5 min-w-0">
@@ -69,7 +93,7 @@ export function AchievementToast() {
               {unlockedEntries.map((e) => e.title).join(" · ")}
             </strong>
             {unlockedEntries.length === 1 && unlockedEntries[0]?.description && (
-              <span className="block text-[11px] text-[#e8f5f1]/90 line-clamp-1 mt-0.5">
+              <span className="block text-[11px] text-[#f0faf7] line-clamp-1 mt-0.5">
                 {unlockedEntries[0].description}
               </span>
             )}

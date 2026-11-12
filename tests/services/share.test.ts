@@ -402,4 +402,42 @@ describe("Share Summary & i18n Helpers", () => {
       });
     }
   });
+
+  it("auto-shrinks long Endless durations (186 months) onto a single line inside CASILLA [01] without wrapping or clipping", () => {
+    const { state } = startNewRun(compiledCatalog, { seed: "ENDLESS-186M-FIT" });
+    const mockIllustration = {
+      naturalWidth: 960,
+      naturalHeight: 540,
+    } as unknown as CanvasImageSource;
+
+    const summary = createShareSummaryFromState({
+      ...state,
+      month: 186,
+      endless_mode: true,
+      earned_victories: ["hero_120m"],
+      ending: {
+        id: "retired_hero",
+        month: 186,
+        summary_quote: "Quince años y medio cotizando sin perder el humor.",
+      },
+    });
+
+    for (const locale of ["es-ES", "en"] as const) {
+      const { fakeCanvas, drawnText } = createRecordedCanvasHarness();
+      const ok = renderShareCardToCanvas(fakeCanvas, summary, {
+        illustrationImage: mockIllustration,
+        locale,
+      });
+      expect(ok).toBe(true);
+
+      // CASILLA [01] occupies x=84..528, y=804..912: header draws at y=828, value draws on 1 line at y=879 (never a 2nd wrapped line at y>=900)
+      const casilla01Calls = drawnText.filter(
+        (c) => !c.inSavedTransform && c.x === 102 && c.y >= 804 && c.y <= 912,
+      );
+      expect(casilla01Calls).toHaveLength(2);
+      const valueCall = casilla01Calls[1]!;
+      expect(valueCall.text).toContain("186");
+      expect(valueCall.y).toBeLessThanOrEqual(885);
+    }
+  });
 });

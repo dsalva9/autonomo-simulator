@@ -1,7 +1,8 @@
-import { BookOpen, Clock, FileWarning, TrendingUp } from "lucide-react";
+import { BookOpen, Clock, FileWarning, ShieldCheck, TrendingUp } from "lucide-react";
 import {
   type GameState,
   computeBaselineMonthlyBilling,
+  computeMonthlyDeductibleExpenses,
   computeMonthlyRecurringExpenses,
 } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
@@ -9,6 +10,7 @@ import {
   formatEuros,
   formatSignedEuros,
   formatSignedInt,
+  normalizeLocale,
   translateEmployeeRoleLabel,
   translateModifierLabel,
 } from "../../services/i18n/resolveEventText.ts";
@@ -23,14 +25,22 @@ export interface CuentasPanelProps {
 export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
   const storeLocale = useGameStore((s) => s.profile.settings.locale);
   const locale = localeProp ?? storeLocale;
+  const isEn = normalizeLocale(locale) === "en";
   const ui = getUiStrings(locale);
 
   const { balance } = compiledCatalog;
   const baselineBilling = computeBaselineMonthlyBilling(state, compiledCatalog);
   const totalFixedExpenses = computeMonthlyRecurringExpenses(state, compiledCatalog);
+  const deductibleExpenses = computeMonthlyDeductibleExpenses(state, compiledCatalog);
+  const livingCostCreep =
+    Math.max(0, Math.floor((state.month - 1) / 12)) * (balance.annual_living_cost_growth ?? 0);
+  const effectiveLivingCost = Math.round(balance.base_living_cost + livingCostCreep);
   const netMonthlyBaseline = baselineBilling - totalFixedExpenses;
-  const estMonthlyTax = Math.round(baselineBilling * balance.effective_quarterly_tax_rate);
-  const netMonthlyAfterTax = netMonthlyBaseline - estMonthlyTax;
+
+  const grossMonthlyTax = Math.round(baselineBilling * balance.effective_quarterly_tax_rate);
+  const monthlyTaxShield = Math.round(deductibleExpenses * balance.deductible_tax_fraction);
+  const estNetMonthlyTax = Math.max(0, grossMonthlyTax - monthlyTaxShield);
+  const netMonthlyAfterTax = netMonthlyBaseline - estNetMonthlyTax;
 
   const modifierExpenseDelta = state.modifiers.reduce(
     (sum, mod) => sum + (mod.monthly_expense_delta ?? 0),
@@ -44,13 +54,13 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
       className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
     >
       <div className="dossier-header">
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-1.5 min-w-0">
           <BookOpen className="w-4 h-4 text-[#1f5c53] shrink-0" aria-hidden="true" />
-          <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
+          <h2 className="font-editorial font-bold text-[15px] leading-tight text-[#1f2421] whitespace-nowrap">
             {ui.cuentas.heading}
           </h2>
         </div>
-        <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] shrink-0">
+        <span className="stamp-badge text-[9.5px] px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] shrink-0">
           {ui.cuentas.badge}
         </span>
       </div>
@@ -72,7 +82,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
             <div className="flex items-center justify-between gap-2">
               <span className="truncate">{ui.cuentas.livingCost}</span>
               <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(balance.base_living_cost, locale)}
+                -{formatEuros(effectiveLivingCost, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2">
@@ -119,12 +129,12 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
             )}
           </div>
 
-          <div className="border-t border-[#1f2421]/18 pt-1.5 space-y-1">
+          <div className="border-t border-[#1f2421]/18 pt-1.5 space-y-0.5">
             <div className="flex items-center justify-between gap-2 font-semibold text-[#1f2421]">
               <span className="truncate">{ui.cuentas.marginBeforeTax}</span>
               <span
                 className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
-                  netMonthlyBaseline >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
+                  netMonthlyBaseline >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
                 }`}
               >
                 {formatSignedEuros(netMonthlyBaseline, locale)}
@@ -135,15 +145,33 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
                 {ui.cuentas.estTaxProvision(Math.round(balance.effective_quarterly_tax_rate * 100))}
               </span>
               <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                -{formatEuros(estMonthlyTax, locale)}
+                -{formatEuros(estNetMonthlyTax, locale)}
               </span>
             </div>
+            {monthlyTaxShield > 0 && (
+              <div
+                data-testid="ledger-deductible-shield"
+                className="flex items-center justify-between gap-2 text-[10.5px] text-[#1f5c53]"
+              >
+                <span className="inline-flex items-center gap-1 truncate">
+                  <ShieldCheck className="w-3 h-3 shrink-0" aria-hidden="true" />
+                  <span className="truncate">
+                    {isEn
+                      ? `Deductible shield (${formatEuros(deductibleExpenses, locale)})`
+                      : `Escudo deducible (${formatEuros(deductibleExpenses, locale)})`}
+                  </span>
+                </span>
+                <span className="font-bureau font-bold tabular-nums whitespace-nowrap shrink-0">
+                  +{formatEuros(monthlyTaxShield, locale)}
+                </span>
+              </div>
+            )}
             <div className="flex items-center justify-between gap-2 font-bold pt-0.5 text-[#1f2421]">
               <span className="truncate">{ui.cuentas.marginAfterTax}</span>
               <span
                 data-testid="ledger-net-after-tax"
                 className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
-                  netMonthlyAfterTax >= 0 ? "text-[#1f5c53]" : "text-[#b42b24]"
+                  netMonthlyAfterTax >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
                 }`}
               >
                 {formatSignedEuros(netMonthlyAfterTax, locale)}
@@ -170,7 +198,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
             <span className="text-[#373f3a] truncate">{ui.cuentas.accruedTaxes}</span>
             <span
               data-testid="ledger-accrued-tax"
-              className="font-bureau font-bold text-[#b42b24] tabular-nums whitespace-nowrap shrink-0"
+              className="font-bureau font-bold text-[#9e221b] tabular-nums whitespace-nowrap shrink-0"
             >
               {formatEuros(state.finances.accrued_tax_liability, locale)}
             </span>
@@ -187,9 +215,9 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
         {state.finances.deferred_tax && (
           <div
             data-testid="ledger-deferred-tax"
-            className="rounded-lg border border-[#b42b24] bg-[#fdf0ef] px-3 py-2 space-y-0.5"
+            className="rounded-lg border border-[#9e221b] bg-[#fdf0ef] px-3 py-2 space-y-0.5"
           >
-            <div className="flex items-center gap-1.5 stamp-badge text-[10px] text-[#b42b24]">
+            <div className="flex items-center gap-1.5 stamp-badge text-[10px] text-[#9e221b]">
               <FileWarning className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
               {ui.cuentas.activeDeferralHeading(state.finances.deferred_tax.due_month)}
             </div>
@@ -198,7 +226,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
               {formatEuros(state.finances.deferred_tax.principal, locale)} +{" "}
               {ui.cuentas.surchargeWord}{" "}
               {formatEuros(state.finances.deferred_tax.surcharge, locale)} ={" "}
-              <strong className="font-bureau text-[#b42b24] whitespace-nowrap">
+              <strong className="font-bureau text-[#9e221b] whitespace-nowrap">
                 {formatEuros(
                   state.finances.deferred_tax.principal + state.finances.deferred_tax.surcharge,
                   locale,
@@ -209,7 +237,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
         )}
 
         {/* Pending Invoices */}
-        <div className="border-t border-[#1f2421]/14 pt-2.5 space-y-1.5">
+        <div className="border-t border-[#1f2421]/14 pt-2 space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <h3 className="stamp-badge text-[10px] text-[#4a524e] flex items-center gap-1">
               <Clock className="w-3 h-3 shrink-0" aria-hidden="true" />
@@ -222,7 +250,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
             )}
           </div>
           {state.finances.pending_invoices.length > 0 && (
-            <ul className="space-y-1 max-h-24 overflow-y-auto dossier-scroll pr-0.5">
+            <ul className="space-y-1 xl:max-h-24 overflow-y-auto dossier-scroll pr-0.5">
               {state.finances.pending_invoices.map((inv) => (
                 <li
                   key={inv.id}
@@ -236,7 +264,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
                       {ui.cuentas.defaultRiskPct(Math.round(inv.default_prob * 100))}
                     </span>
                   </div>
-                  <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#8f510d] shrink-0">
+                  <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#7a4308] shrink-0">
                     M{inv.due_month}
                   </span>
                 </li>
@@ -247,11 +275,11 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
 
         {/* Active Temporal Modifiers */}
         {state.modifiers.length > 0 && (
-          <div className="border-t border-[#1f2421]/14 pt-2.5 space-y-1.5">
+          <div className="border-t border-[#1f2421]/14 pt-2 space-y-1.5">
             <h3 className="stamp-badge text-[10px] text-[#4a524e]">
               {ui.cuentas.temporalModifiersHeading(state.modifiers.length)}
             </h3>
-            <ul className="space-y-1 max-h-24 overflow-y-auto dossier-scroll pr-0.5">
+            <ul className="space-y-1 xl:max-h-24 overflow-y-auto dossier-scroll pr-0.5">
               {state.modifiers.map((mod) => (
                 <li
                   key={mod.id}
@@ -259,7 +287,7 @@ export function CuentasPanel({ state, locale: localeProp }: CuentasPanelProps) {
                 >
                   <div className="flex items-center justify-between gap-2 font-bold text-[#1f2421]">
                     <span className="truncate">{translateModifierLabel(mod, locale)}</span>
-                    <span className="font-bureau text-[10px] text-[#8f510d] tabular-nums whitespace-nowrap shrink-0">
+                    <span className="font-bureau text-[10px] text-[#7a4308] tabular-nums whitespace-nowrap shrink-0">
                       {ui.cuentas.remainingMonths(mod.remaining_months)}
                     </span>
                   </div>

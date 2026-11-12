@@ -11,6 +11,8 @@ tags:
 requirements:
   min_month: 7
   has_employee: true
+  forbidden_flags:
+    - registro_horario_al_dia
 weight: 9
 cooldown_months: 14
 max_occurrences: 2
@@ -24,6 +26,7 @@ choices:
       moral: 3
       stress: -3
       fiscal_risk: -4
+      employee_satisfaction: 6
       set_flags:
         - registro_horario_al_dia
   - id: llevar_hojas_firmadas_a_mano
@@ -32,6 +35,7 @@ choices:
     effects:
       moral: -2
       stress: 4
+      employee_satisfaction: -3
   - id: pasar_del_tramite_por_pequenos
     label: "Ignorar el papeleo confiando en que nadie mira un estudio diminuto"
     outcomes:

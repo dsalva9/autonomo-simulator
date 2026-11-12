@@ -1,0 +1,62 @@
+schema_version: 1
+id: clientes_feria_sectorial_primavera
+category: clientes
+title: "Feria de primavera en el pabellón 7: acreditación, moqueta y tarjetas"
+body: Arranca la gran feria anual del sector. Tres días de pase profesional, cafés a 4 € y directivos con presupuesto fresco buscando proveedores antes del verano.
+tags:
+  - estacional
+  - networking
+  - primavera
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 36
+  months_of_year:
+    - 3
+    - 4
+    - 5
+weight: 9
+cooldown_months: 10
+max_occurrences: 3
+choices:
+  - id: patear_pabellones_dos_dias_a_puerta_fria
+    label: Pagar pase de 220 € y recorrer stands dos días repartiendo tarjetas
+    outcomes:
+      - id: cazas_expositor_en_apuros
+        weight: 60
+        result_text: Un expositor desbordado de contactos te contrata allí mismo por 2.500 € para ejecutar su campaña post-feria.
+        effects:
+          billed_income: 2500
+          deductible_expense: 220
+          moral: 5
+          stress: 7
+          reputation: 5
+      - id: bolsa_llena_de_boligrafos_y_pies_rotos
+        weight: 40
+        result_text: Vuelves con catorce bolígrafos promocionales, dolor de gemelos y solo un encargo menor para amortizar el pase.
+        effects:
+          billed_income: 750
+          deductible_expense: 220
+          moral: -2
+          stress: 6
+  - id: agenda_cerrada_con_portfolio_en_tablet
+    label: Ir un solo día con 6 reuniones cerradas y tu portfolio actualizado (140 €)
+    requirements:
+      required_flags:
+        - portfolio_actualizado
+    result_text: En seis cafés ejecutivos cierras un proyecto de primavera de 2.850 € sin gastar suela ni tragar humo de pabellón.
+    effects:
+      billed_income: 2850
+      deductible_expense: 140
+      moral: 6
+      stress: 3
+      reputation: 6
+  - id: quedarse_en_estudio_atendiendo_urgencias
+    label: Ahorrarte la feria y facturar tranquilo mientras tu competencia pasea
+    result_text: Mientras medio sector está afónico en los stands, tú atiendes dos pedidos rápidos con cero competencia.
+    effects:
+      billed_income: 1350
+      moral: 3
+      stress: -2
+      personal_life: 2

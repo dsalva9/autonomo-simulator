@@ -1,0 +1,61 @@
+schema_version: 1
+id: hacienda_inspeccion_patrimonio_tesoreria
+category: hacienda
+title: Lupa sobre los intereses de tu colchón de tesorería
+body: "Tras años ahorrando con cabeza, la rentabilidad de tu colchón bancario salta en los datos fiscales: Gómez revisa si mezclas rendimientos del ahorro personal con cuentas afectas al negocio."
+tags:
+  - inspeccion
+  - tesoreria
+  - veterania
+  - largo_plazo
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 68
+  stats:
+    money:
+      min: 16000
+weight: 13
+cooldown_months: 16
+max_occurrences: 2
+choices:
+  - id: presentar_complementaria_ahorro_limpia
+    label: Reclasificar los intereses en la base del ahorro y abonar
+    result_text: Corriges el encuadre entre base general y ahorro con un desembolso asumible para tu nivel de reservas.
+    effects:
+      cash_delta: -340
+      stress: 4
+      moral: 2
+      fiscal_risk: -14
+  - id: separar_patrimonio_y_circulante_con_gestor
+    label: Ordenar cuentas afectas y ahorro privado con tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría delimita qué saldo cubre impuestos y circulante, dejando tus reservas blindadas hacia delante.
+    effects:
+      deductible_expense: 190
+      cash_delta: -95
+      stress: -4
+      moral: 6
+      fiscal_risk: -15
+  - id: alegar_provision_operativa_de_estudio
+    label: Alegar que todo el saldo es fondo de maniobra profesional
+    outcomes:
+      - id: fondo_maniobra_admitido
+        weight: 55
+        result_text: Tu volumen anual de impuestos y gastos fijos justifica el colchón operativo y Gómez acepta el encuadre.
+        effects:
+          stress: 6
+          moral: 6
+          fiscal_risk: -12
+      - id: liquidacion_con_intereses_demora
+        weight: 45
+        result_text: Gómez separa la remuneración financiera pura y gira liquidación paralela con intereses de demora.
+        effects:
+          cash_delta: -560
+          stress: 10
+          moral: -4
+          fiscal_risk: -11

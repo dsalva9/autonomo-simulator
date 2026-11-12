@@ -1,0 +1,56 @@
+schema_version: 1
+id: familia_soledad_domingo_autonomo
+category: familia
+title: "Cuarenta y ocho horas sin usar las cuerdas vocales"
+body: "Cae la tarde del domingo y descubres que la última frase que dijiste en voz alta fue «gracias, en el tercero» al repartidor el viernes a mediodía. El silencio del piso pesa hoy más que cualquier factura."
+tags:
+  - soledad
+  - salud_mental
+  - social
+  - domingo
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 24
+  family_statuses:
+    - single
+    - separated
+weight: 11
+cooldown_months: 13
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: adelantar_semana_en_pijama
+    label: "Ignorar el bajón y adelantar entregas del lunes"
+    result_text: "Empiezas la semana con medio buzón resuelto y la sensación incómoda de vivir dentro de tu propio monitor."
+    effects:
+      billed_income: 540
+      stress: 9
+      moral: -6
+      personal_life: -8
+  - id: trabajar_dos_dias_fuera_casa
+    label: "Salir martes y jueves a trabajar entre gente (30 €)"
+    result_text: "El murmullo de cafetería y saludar a caras conocidas por la mañana airean tu cabeza sin frenar la facturación."
+    effects:
+      cash_delta: -30
+      billed_income: 360
+      stress: -4
+      moral: 5
+      personal_life: 5
+  - id: apuntarse_club_senderismo_barrio
+    label: "Apuntarte a un grupo local de rutas de domingo (35 €)"
+    result_text: "Vuelves con barro en las botas, pulmones limpios y un cansancio físico sano que apaga de golpe el ruido mental."
+    effects:
+      cash_delta: -35
+      stress: -11
+      moral: 7
+      personal_life: 9
+  - id: organizar_comida_fija_amigos
+    label: "Instaurar vermú dominical fijo con amistades (48 €)"
+    result_text: "Recuperas risas de terraza, calor de gente querida y hasta algún contacto inesperado antes de que llegue el lunes."
+    effects:
+      cash_delta: -48
+      stress: -7
+      moral: 10
+      personal_life: 13
+      reputation: 1

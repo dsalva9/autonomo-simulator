@@ -1,8 +1,8 @@
 schema_version: 1
 id: clientes_factura_corporativa_90_dias
 category: clientes
-title: "Alta de proveedor y pago a noventa días"
-body: "Marta, de Compras Corporativas, aprueba tu propuesta para un proyecto jugoso. Solo hay un detallito: debes subir doce certificados a una intranet de 1998 que solo abre en Internet Explorer y aceptar su «política estándar de pago a 90 días fecha validación»."
+title: Alta de proveedor y pago a noventa días
+body: "Marta, de Compras, aprueba un proyecto de 2.600 € con una pega: subir doce certificados a una intranet de 1998 y aceptar su «política estándar de pago a 90 días fecha validación»."
 tags:
   - corporativo
   - factura_diferida
@@ -15,31 +15,18 @@ requirements:
   stats:
     reputation:
       min: 30
-weight: 12
-cooldown_months: 8
-max_occurrences: 5
+weight: 9
+cooldown_months: 10
+max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: pasar_por_el_aro_corporativo
-    label: "Superar la gincana burocrática y financiarles tres meses"
-    result_text: "Pierdes una tarde peleándote con códigos de pedido y entregas el proyecto. La cifra es hermosa sobre el papel; ahora toca cruzar el desierto hasta que Tesorería pulse el botón."
-    effects:
-      deferred_invoice:
-        amount: 2600
-        delay_months: 3
-        default_prob: 0.08
-      stress: 8
-      moral: 1
-      reputation: 5
-      set_flags:
-        - proveedor_corporativo_activo
   - id: exigir_anticipo_inicio
     label: "Plantarse: 40 % por adelantado o no se arranca"
     requirements:
       stats:
         reputation:
           min: 55
-    result_text: "Marta suspira mirando su reloj, consulta con Financiero y desbloquea una excepción de anticipo. Cobras una parte hoy y el resto a sesenta días."
+    result_text: Marta suspira mirando su reloj, consulta con Financiero y desbloquea una excepción de anticipo. Cobras una parte hoy y el resto a sesenta días.
     effects:
       billed_income: 1050
       deferred_invoice:
@@ -51,9 +38,22 @@ choices:
       reputation: 4
       set_flags:
         - proveedor_corporativo_activo
+  - id: pasar_por_el_aro_corporativo
+    label: Superar la gincana burocrática y financiarles tres meses
+    result_text: Pierdes una tarde peleándote con códigos de pedido y entregas el proyecto. La cifra es hermosa sobre el papel; ahora toca cruzar el desierto hasta que Tesorería pulse el botón.
+    effects:
+      deferred_invoice:
+        amount: 2600
+        delay_months: 3
+        default_prob: 0.08
+      stress: 8
+      moral: 1
+      reputation: 5
+      set_flags:
+        - proveedor_corporativo_activo
   - id: rechazar_financiar_multinacional
     label: "Declinar la oferta: no eres un banco sin intereses"
-    result_text: "Le agradeces la oportunidad y cierras el portal jurásico. Menos volumen en el Excel anual, pero cero riesgo de asfixia de caja."
+    result_text: Le agradeces la oportunidad y cierras el portal jurásico. Menos volumen en el Excel anual, pero cero riesgo de asfixia de caja.
     effects:
       stress: -5
       moral: 3

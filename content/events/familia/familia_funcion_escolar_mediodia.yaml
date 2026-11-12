@@ -1,0 +1,49 @@
+schema_version: 1
+id: familia_funcion_escolar_mediodia
+category: familia
+title: "Disfraz de árbol un martes a las once y media"
+body: "La función escolar cae un martes laborable a media mañana. Has cosido hojas de fieltro hasta medianoche y, por supuesto, un cliente pide justo a esa hora defender un presupuesto jugoso."
+tags:
+  - hijos
+  - colegio
+  - conciliacion
+  - prioridades
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 28
+  required_flags:
+    - criatura_en_casa
+weight: 11
+cooldown_months: 12
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: defender_presupuesto_y_llegar_al_final
+    label: "Hacer la videollamada primero y correr al colegio para la foto final"
+    result_text: "Aseguras el contrato completo sudando por la acera, aunque llegas cuando ya se están quitando el disfraz en el patio."
+    effects:
+      billed_income: 880
+      stress: 8
+      moral: -7
+      personal_life: -9
+      reputation: 3
+  - id: primera_fila_y_reprogramar_cliente
+    label: "Sentarte en primera fila a aplaudir y mover la llamada a la tarde"
+    outcomes:
+      - id: cliente_comprensivo_y_orgullo
+        weight: 70
+        result_text: "Cuando te busca entre el público y sonríe dentro de una cartulina verde sabes que has elegido bien; por la tarde cierras la venta igual."
+        effects:
+          billed_income: 580
+          stress: -8
+          moral: 11
+          personal_life: 13
+      - id: cliente_impaciente_se_enfria
+        weight: 30
+        result_text: "El cliente contrata a otro proveedor con más prisa, pero esa cara de felicidad al verte aplaudir no la paga ninguna factura."
+        effects:
+          stress: -5
+          moral: 8
+          personal_life: 14
+          reputation: -2

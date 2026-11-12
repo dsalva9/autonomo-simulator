@@ -20,22 +20,6 @@ cooldown_months: 14
 max_occurrences: 2
 exclusive_with: []
 choices:
-  - id: financiar_matricula_y_tardes
-    label: "Pagar el curso deducible (480 €) y reservarle las tardes de jueves"
-    result_text: "A la tercera semana Dani ya ha montado plantillas que ahorran horas de picar datos y presume de estudio en todas partes."
-    effects:
-      deductible_expense: 480
-      moral: 6
-      stress: -3
-      reputation: 3
-      clear_flags:
-        - desgaste_plantilla
-      add_modifier:
-        id: mod_dani_formacion_aplicada
-        label: "Flujos ágiles tras formación técnica"
-        remaining_months: 5
-        monthly_billed_delta: 340
-        monthly_stress_delta: -1
   - id: cofinanciar_fuera_de_jornada
     label: "Pagar la mitad de la matrícula (240 €) si lo cursa fuera de horario"
     result_text: "Dani acepta el trato a medias: aprovecha parte del temario sin restar horas facturables, aunque acaba el mes con buenas ojeras."
@@ -43,6 +27,7 @@ choices:
       deductible_expense: 240
       moral: 1
       stress: 2
+      employee_satisfaction: 5
       add_modifier:
         id: mod_dani_mejora_parcial
         label: "Mejora parcial de herramientas internas"
@@ -54,5 +39,23 @@ choices:
     effects:
       moral: -4
       stress: 3
+      employee_satisfaction: -10
       set_flags:
         - desgaste_plantilla
+  - id: financiar_matricula_y_tardes
+    label: "Pagar el curso deducible (480 €) y reservarle las tardes de jueves"
+    result_text: "A la tercera semana Dani ya ha montado plantillas que ahorran horas de picar datos y presume de estudio en todas partes."
+    effects:
+      deductible_expense: 480
+      moral: 6
+      stress: -3
+      reputation: 3
+      employee_satisfaction: 14
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_dani_formacion_aplicada
+        label: "Flujos ágiles tras formación técnica"
+        remaining_months: 5
+        monthly_billed_delta: 340
+        monthly_stress_delta: -1

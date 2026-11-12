@@ -1,0 +1,54 @@
+schema_version: 1
+id: clientes_peritaje_independiente_litigio
+category: clientes
+title: "Peritaje independiente: un despacho mercantil paga tu criterio sénior"
+body: Tras más de siete años en el oficio, un bufete mercantil te localiza para redactar un dictamen técnico independiente sobre un proyecto corporativo fallido. Pagan 3.900 € por tu firma y solvencia.
+tags:
+  - endless
+  - veterano
+  - peritaje
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 90
+  stats:
+    reputation:
+      min: 55
+weight: 10
+cooldown_months: 16
+max_occurrences: null
+choices:
+  - id: emitir_dictamen_completo_y_ratificacion
+    label: Aceptar el dictamen completo con provisión de fondos de 3.900 €
+    result_text: Tu informe es tan demoledor y claro que las partes pactan antes de entrar en sala. Dinero limpio y prestigio de referencia.
+    effects:
+      billed_income: 3900
+      moral: 8
+      stress: 5
+      reputation: 8
+  - id: publicar_servicio_pericial_en_tu_web
+    label: Firmar el informe y abrir línea fija de auditoría pericial en tu web
+    requirements:
+      required_flags:
+        - web_corporativa_activa
+    result_text: Descubres un nicho de altísimo margen donde nadie regatea jamás un euro cuando hay abogados de por medio.
+    effects:
+      billed_income: 4200
+      moral: 9
+      stress: 4
+      reputation: 9
+      add_modifier:
+        id: mod_ticket_minimo_senior
+        label: Posicionamiento sénior de alto margen
+        remaining_months: 5
+        monthly_billed_delta: 480
+  - id: limitarse_a_nota_tecnica_sin_juzgado
+    label: Redactar solo preinforme interno de 2.100 € sin acudir a vistas
+    result_text: Cobras muy bien dos tardes de análisis forense sin pisar un pasillo judicial.
+    effects:
+      billed_income: 2100
+      moral: 5
+      stress: -1
+      personal_life: 2
+      reputation: 4

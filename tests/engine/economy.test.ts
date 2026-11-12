@@ -1,10 +1,15 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { loadAndValidateContent } from "../../scripts/validate-content.ts";
+import { parse as parseYaml } from "yaml";
 import {
+  BalanceConfigSchema,
+  CharacterSchema,
   applyPlayerChoice,
   applyRecurringMonthEconomy,
   canDeferQuarterlyTax,
   computeBaselineMonthlyBilling,
+  computeMonthlyDeductibleExpenses,
   computeMonthlyRecurringExpenses,
   computeNetCashAfterTaxReserve,
   computeReservedTaxObligation,
@@ -16,7 +21,7 @@ import {
 import { createFixtureCatalog } from "./fixtures.ts";
 
 describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
-  it("computes baseline monthly billing and recurring expenses accurately", () => {
+  it("computes baseline monthly billing, deductible overhead, and recurring expenses accurately", () => {
     const catalog = createFixtureCatalog();
     const state = createInitialGameState(catalog, { seed: "ECON-1" });
 
@@ -24,13 +29,20 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
     const billing = computeBaselineMonthlyBilling(state, catalog);
     expect(billing).toBe(2323);
 
+    const deductible = computeMonthlyDeductibleExpenses(state, catalog);
+    expect(deductible).toBe(310);
+
     const expenses = computeMonthlyRecurringExpenses(state, catalog);
     expect(expenses).toBe(1560);
 
     const afterRecurring = applyRecurringMonthEconomy(state, catalog);
     expect(afterRecurring.state.indicators.money).toBe(3500 + 2323 - 1560);
     expect(afterRecurring.state.finances.lifetime_billed).toBe(2323);
-    expect(afterRecurring.state.finances.accrued_tax_liability).toBe(Math.round(2323 * 0.28));
+    expect(afterRecurring.taxAccruedOnBilling).toBe(Math.round(2323 * 0.28));
+    expect(afterRecurring.deductibleExpenses).toBe(310);
+    expect(afterRecurring.taxShieldOnExpenses).toBe(Math.round(310 * 0.28));
+    expect(afterRecurring.netTaxAccrued).toBe(Math.round(2323 * 0.28) - Math.round(310 * 0.28));
+    expect(afterRecurring.state.finances.accrued_tax_liability).toBe(afterRecurring.netTaxAccrued);
   });
 
   it("distinguishes billed_income, untaxed cash_delta, and deductible_expense", () => {
@@ -101,7 +113,7 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
       due_month: 6,
     });
     expect(deferred.state.finances.accrued_tax_liability).toBe(
-      deferred.resolution.monthStart?.tax_accrued_on_billing,
+      deferred.resolution.monthStart?.net_tax_accrued,
     );
 
     let q2State = deferred.state;
@@ -173,25 +185,167 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
     expect(computeNetCashAfterTaxReserve(underwater)).toBe(-400);
   });
 
-  it("enforces Phase 2 balance.yaml starting cash window and negative after-tax passive baseline", () => {
-    const validated = loadAndValidateContent(process.cwd());
-    expect(validated.ok).toBe(true);
-    expect(validated.balance).not.toBeNull();
+  it("offsets recurring tax accrual with deductible business expenses, scales living cost creep, modulates employee satisfaction, and applies late-game stat drift", () => {
+    const catalog = createFixtureCatalog();
+    catalog.balance = {
+      ...catalog.balance,
+      annual_living_cost_growth: 30,
+      high_stat_decay_threshold: 68,
+      personal_life_recovery_threshold: 62,
+      personal_life_monthly_stress_relief: 1,
+    };
 
+    const dani = CharacterSchema.parse(
+      parseYaml(
+        readFileSync(join(process.cwd(), "content/characters/empleado_junior_dani.yaml"), "utf8"),
+      ),
+    );
+    const laura = CharacterSchema.parse(
+      parseYaml(
+        readFileSync(join(process.cwd(), "content/characters/empleada_senior_laura.yaml"), "utf8"),
+      ),
+    );
+    expect(dani.employee_params).toEqual({
+      role_label: "Junior Multiusos",
+      monthly_cost: 1350,
+      billing_multiplier: 1.58,
+    });
+    expect(laura.employee_params).toEqual({
+      role_label: "Especialista sénior",
+      monthly_cost: 2100,
+      billing_multiplier: 2.05,
+    });
+
+    const base = createInitialGameState(catalog, { seed: "DEDUCTIBLE-AND-SAT" });
+
+    // Employee satisfaction modulation: 75 -> 1.0x boost, 100 -> 1.2x boost, 25 -> 0.6x boost
+    const unroundedSolo = 2250 * (0.75 + 0.35 * 0.7) * (0.7 + 0.75 * 0.45);
+    const stateSat75 = {
+      ...base,
+      gestor: {
+        tier: "premium" as const,
+        character_id: "gestor_premium_elena",
+        monthly_fee: 170,
+        inspection_shield: 0.72,
+        months_active: 3,
+      },
+      employee: {
+        character_id: "empleada_senior_laura",
+        role_label: laura.employee_params!.role_label,
+        monthly_cost: laura.employee_params!.monthly_cost,
+        billing_multiplier: laura.employee_params!.billing_multiplier,
+        satisfaction: 75,
+        months_employed: 2,
+      },
+    };
+    const stateSat100 = {
+      ...stateSat75,
+      employee: { ...stateSat75.employee, satisfaction: 100 },
+    };
+    const stateSat25 = {
+      ...stateSat75,
+      employee: { ...stateSat75.employee, satisfaction: 25 },
+    };
+
+    expect(computeBaselineMonthlyBilling(stateSat75, catalog)).toBe(
+      Math.round(unroundedSolo * 2.05),
+    );
+    expect(computeBaselineMonthlyBilling(stateSat100, catalog)).toBe(
+      Math.round(unroundedSolo * (1 + (2.05 - 1) * 1.2)),
+    );
+    expect(computeBaselineMonthlyBilling(stateSat25, catalog)).toBe(
+      Math.round(unroundedSolo * (1 + (2.05 - 1) * 0.6)),
+    );
+
+    // Deductible expenses: RETA (310) + Gestor (170) + Laura (2100) + max(0, modifierExpenseDelta)
+    expect(computeMonthlyDeductibleExpenses(stateSat75, catalog)).toBe(310 + 170 + 2100);
+    const withPosMod = {
+      ...stateSat75,
+      modifiers: [
+        { id: "coworking", label: "Coworking", remaining_months: 2, monthly_expense_delta: 200 },
+      ],
+    };
+    const withNegMod = {
+      ...stateSat75,
+      modifiers: [
+        { id: "subvencion", label: "Descuento", remaining_months: 2, monthly_expense_delta: -150 },
+      ],
+    };
+    expect(computeMonthlyDeductibleExpenses(withPosMod, catalog)).toBe(310 + 170 + 2100 + 200);
+    expect(computeMonthlyDeductibleExpenses(withNegMod, catalog)).toBe(310 + 170 + 2100);
+
+    // Annual cost-of-living creep: Year 1 (month 12) = +0, Year 2 (month 13) = +30, Year 10 (month 115) = +270
+    expect(computeMonthlyRecurringExpenses({ ...base, month: 12 }, catalog)).toBe(1250 + 310);
+    expect(computeMonthlyRecurringExpenses({ ...base, month: 13 }, catalog)).toBe(1250 + 30 + 310);
+    expect(computeMonthlyRecurringExpenses({ ...base, month: 115 }, catalog)).toBe(
+      1250 + 270 + 310,
+    );
+
+    // High-stat maintenance drift & personal_life >= 82 stress relief
+    const highStatState = {
+      ...stateSat75,
+      indicators: {
+        money: 10000,
+        moral: 80,
+        stress: 40,
+        personal_life: 84,
+        reputation: 75,
+      },
+      family: {
+        ...stateSat75.family,
+        support_modifier: 1,
+      },
+    };
+    const drifted = applyRecurringMonthEconomy(highStatState, catalog);
+    // personal_life = 84 >= 82 -> -2 stress + -1 partner support = -3 passiveStressDelta
+    expect(drifted.passiveStressDelta).toBe(-3);
+    expect(drifted.state.indicators.stress).toBe(37);
+    // reputation 75 >= 68 -> 74; personal_life 84 >= 78 with employee -> 82; moral 80 >= 78 -> 79
+    expect(drifted.state.indicators.reputation).toBe(74);
+    expect(drifted.state.indicators.personal_life).toBe(82);
+    expect(drifted.state.indicators.moral).toBe(79);
+  });
+
+  it("enforces Phase 3.5 balance.yaml starting cash window, tax-deductible parameters, and negative after-tax passive baseline", () => {
+    const liveBalance = BalanceConfigSchema.parse(
+      parseYaml(readFileSync(join(process.cwd(), "content/config/balance.yaml"), "utf8")),
+    );
+    expect(liveBalance.annual_living_cost_growth).toBe(64);
+    expect(liveBalance.high_stat_decay_threshold).toBe(60);
+    expect(liveBalance.event_novelty_decay_k).toBe(0.85);
+    expect(liveBalance.personal_life_recovery_threshold).toBe(65);
+    expect(liveBalance.personal_life_monthly_stress_relief).toBe(1);
+    expect(liveBalance.default_partner_support_modifier).toBe(1);
+    expect(liveBalance.gestor_tiers.self).toMatchObject({
+      quarterly_error_prob: 0.25,
+      quarterly_error_surcharge: 240,
+      quarterly_error_stress: 7,
+    });
+    expect(liveBalance.gestor_tiers.cheap.monthly_fee).toBe(60);
+    expect(liveBalance.gestor_tiers.premium).toMatchObject({
+      monthly_fee: 170,
+      inspection_shield: 0.72,
+    });
+    expect(liveBalance.inspection_curve.min_fiscal_risk).toBe(15);
+    expect(liveBalance.inspection_curve.quarterly_natural_risk_decay).toBe(3);
+
+    const fixtureCatalog = createFixtureCatalog();
     const liveCatalog = {
-      balance: validated.balance!,
-      characters: validated.characters,
-      events: validated.events,
-      manifest: validated.manifest ?? undefined,
+      ...fixtureCatalog,
+      balance: liveBalance,
     };
 
     const started = startNewRun(liveCatalog, { seed: "BALANCE-WINDOW-CHECK" });
     expect(started.state.indicators.money).toBeGreaterThanOrEqual(2900);
     expect(started.state.indicators.money).toBeLessThanOrEqual(3500);
 
-    // Passive Month 1 cashflow after quarterly tax reserve must be negative without client gigs
+    // Passive Month 1 cashflow after net tax reserve (even with deductible RETA shield) must be negative without client gigs
     const m1Summary = started.resolution.monthStart!;
-    const passiveAfterTax = m1Summary.net_recurring_cash - m1Summary.tax_accrued_on_billing;
-    expect(passiveAfterTax).toBeLessThan(0);
+    expect(m1Summary.deductible_expenses).toBe(liveBalance.autonomo_quota);
+    expect(m1Summary.tax_shield_on_expenses).toBe(
+      Math.round(liveBalance.autonomo_quota * liveBalance.deductible_tax_fraction),
+    );
+    const passiveAfterNetTax = m1Summary.net_recurring_cash - (m1Summary.net_tax_accrued ?? 0);
+    expect(passiveAfterNetTax).toBeLessThan(0);
   });
 });

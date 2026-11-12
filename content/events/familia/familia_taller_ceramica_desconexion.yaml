@@ -15,6 +15,14 @@ cooldown_months: 12
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: ir_a_clase_de_prueba_suelta
+    label: "Probar una sesión suelta de sábado sin atarte el calendario (30 €)"
+    result_text: "Pasas una mañana estupenda manchándote hasta los codos y vuelves a casa con una taza torcida y buen humor."
+    effects:
+      cash_delta: -30
+      stress: -6
+      moral: 5
+      personal_life: 6
   - id: apuntarse_al_trimestre_completo
     label: "Pagar el trimestre del taller y blindar los martes tarde (95 €)"
     result_text: "Tus primeros tazones parecen ceniceros prehistóricos, pero esas dos horas semanales sin notificaciones te resetean el cerebro."
@@ -29,14 +37,6 @@ choices:
         remaining_months: 3
         monthly_stress_delta: -2
         monthly_moral_delta: 1
-  - id: ir_a_clase_de_prueba_suelta
-    label: "Probar una sesión suelta de sábado sin atarte el calendario (30 €)"
-    result_text: "Pasas una mañana estupenda manchándote hasta los codos y vuelves a casa con una taza torcida y buen humor."
-    effects:
-      cash_delta: -30
-      stress: -6
-      moral: 5
-      personal_life: 6
   - id: intentar_vender_lo_que_hagas
     label: "Descartarlo y dedicar ese hueco a prospectar clientes nuevos"
     result_text: "Tu cerebro autónomo gana la partida otra vez: consigues un encargo menor y cero conversación fuera del sector."

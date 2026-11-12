@@ -8,6 +8,9 @@ tags:
   - mudanza
   - internet
   - hogar
+requirements:
+  required_flags:
+    - mudanza_reciente
 weight: 0
 cooldown_months: 12
 max_occurrences: 2

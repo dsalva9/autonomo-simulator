@@ -1,0 +1,62 @@
+schema_version: 1
+id: gestor_actualizacion_navegador_autofirma_solo
+category: gestor
+title: Autofirma declara la huelga tras actualizar el navegador
+body: Tu navegador se actualizó anoche y ahora Autofirma se niega a abrir el puerto local en pleno cierre fiscal. Doce foros sugieren tocar certificados raíz mientras corre el reloj.
+tags:
+  - autogestion
+  - autofirma
+  - certificado_digital
+  - plazos
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 15
+  gestor_tiers:
+    - self
+weight: 11
+cooldown_months: 11
+max_occurrences: 3
+choices:
+  - id: montar_navegador_antiguo_de_guerra
+    label: Instalar una versión vieja del navegador siguiendo un foro
+    outcomes:
+      - id: firma_milagrosa_en_puerto_local
+        weight: 65
+        result_text: Tras reinstalar tres veces los certificados raíz, la ventana emergente resucita y firmas los modelos sobre la bocina.
+        effects:
+          stress: 7
+          moral: 4
+          personal_life: -3
+          fiscal_risk: -3
+      - id: almacen_certificados_bloqueado
+        weight: 35
+        result_text: Corrompes el almacén de claves del sistema y terminas pagando de urgencia a una gestoría de guardia al día siguiente.
+        effects:
+          deductible_expense: 130
+          stress: 11
+          moral: -5
+          fiscal_risk: 4
+  - id: firmar_desde_movil_con_app_oficial
+    label: Exportar el certificado al móvil y firmar desde pantalla enana
+    result_text: Te dejas las pestañas haciendo zoom sobre casillas minúsculas, pero logras presentar sin depender del escritorio.
+    effects:
+      deductible_expense: 25
+      stress: 5
+      moral: 2
+      fiscal_risk: -3
+  - id: pasar_a_elena_y_olvidar_autofirma
+    label: Jubilar la autogestión y contratar al despacho de Elena Montes
+    requirements:
+      stats:
+        money:
+          min: 300
+    result_text: Autorizas a Elena como representante colaboradora y cierras Autofirma con la paz espiritual de quien sale de prisión.
+    effects:
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      deductible_expense: 150
+      stress: -10
+      moral: 6
+      fiscal_risk: -10

@@ -1,6 +1,6 @@
 import { pickWeighted } from "./prng.ts";
 import type { ChoiceSpec, EventDef, RequirementsSpec } from "./schemas/index.ts";
-import type { ContentCatalog, GameState, ScheduledEvent } from "./types.ts";
+import type { ContentCatalog, GameState, PrngState, ScheduledEvent } from "./types.ts";
 
 export function evaluateRequirements(
   state: GameState,
@@ -15,6 +15,12 @@ export function evaluateRequirements(
   }
   if (requirements.max_month != null && state.month > requirements.max_month) {
     return false;
+  }
+  if (requirements.months_of_year && requirements.months_of_year.length > 0) {
+    const monthOfYear = ((state.month - 1) % 12) + 1;
+    if (!requirements.months_of_year.includes(monthOfYear)) {
+      return false;
+    }
   }
 
   if (requirements.stats) {
@@ -34,6 +40,29 @@ export function evaluateRequirements(
       if (range.max != null && currentVal > range.max) {
         return false;
       }
+    }
+  }
+
+  if (
+    requirements.employee_satisfaction &&
+    (requirements.employee_satisfaction.min != null ||
+      requirements.employee_satisfaction.max != null)
+  ) {
+    if (state.employee === null) {
+      return false;
+    }
+    const sat = state.employee.satisfaction;
+    if (
+      requirements.employee_satisfaction.min != null &&
+      sat < requirements.employee_satisfaction.min
+    ) {
+      return false;
+    }
+    if (
+      requirements.employee_satisfaction.max != null &&
+      sat > requirements.employee_satisfaction.max
+    ) {
+      return false;
     }
   }
 
@@ -119,6 +148,36 @@ export function isEventHardEligible(
   return getEligibleChoices(state, event).length >= 1;
 }
 
+export function computeEffectiveEventWeight(
+  event: EventDef,
+  state: GameState,
+  catalog: ContentCatalog,
+): number {
+  if (event.weight <= 0) {
+    return 0;
+  }
+  const seenCount = state.occurrences[event.id] ?? 0;
+  if (seenCount <= 0) {
+    return event.weight;
+  }
+  const decayK = catalog.balance.event_novelty_decay_k ?? 0.85;
+  return event.weight / (1 + decayK * seenCount) ** 1.35;
+}
+
+export function pickNoveltyWeightedEvent(
+  prng: PrngState,
+  pool: readonly EventDef[],
+  state: GameState,
+  catalog: ContentCatalog,
+): { item: EventDef; prng: PrngState } {
+  const weightedPool = pool.map((event) => ({
+    event,
+    weight: computeEffectiveEventWeight(event, state, catalog),
+  }));
+  const picked = pickWeighted(prng, weightedPool);
+  return { item: picked.item.event, prng: picked.prng };
+}
+
 export interface DrawTurnEventsResult {
   state: GameState;
   drawnEventIds: string[];
@@ -149,8 +208,16 @@ export function drawTurnEvents(state: GameState, catalog: ContentCatalog): DrawT
     const targetEvent = eventMap.get(queued.event_id);
     if (targetEvent && isEventHardEligible(state, targetEvent)) {
       slot1Event = targetEvent;
+    } else if (targetEvent && (queued.deferred_months ?? 0) < 6) {
+      remainingQueue.push({
+        ...queued,
+        trigger_month: state.month + 1,
+        deferred_months: (queued.deferred_months ?? 0) + 1,
+      });
     }
   }
+
+  remainingQueue.sort((a, b) => a.trigger_month - b.trigger_month);
 
   const excludedIds = new Set<string>();
   if (slot1Event) {
@@ -172,11 +239,11 @@ export function drawTurnEvents(state: GameState, catalog: ContentCatalog): DrawT
   let cooldownRelaxed = false;
 
   if (readyPool.length > 0) {
-    const picked = pickWeighted(prng, readyPool);
+    const picked = pickNoveltyWeightedEvent(prng, readyPool, state, catalog);
     slot2Event = picked.item;
     prng = picked.prng;
   } else if (hardEligibleRandomPool.length > 0) {
-    const picked = pickWeighted(prng, hardEligibleRandomPool);
+    const picked = pickNoveltyWeightedEvent(prng, hardEligibleRandomPool, state, catalog);
     slot2Event = picked.item;
     prng = picked.prng;
     cooldownRelaxed = true;
@@ -202,21 +269,144 @@ export function drawTurnEvents(state: GameState, catalog: ContentCatalog): DrawT
   };
 }
 
+const NON_AUDIT_HACIENDA_ID_PATTERNS = [
+  "bucle_clave_pin",
+  "clave_pin",
+  "certificado_caducado",
+  "certificado_digital",
+  "certificado_corriente",
+  "caida_sede",
+  "sede_electronica",
+  "notificacion_agosto",
+  "dias_cortesia",
+  "encuesta_ine",
+  "epigrafe_iae",
+  "panico_verifactu",
+  "verifactu",
+  "devolucion",
+  "prescripcion",
+  "sello_cumplimiento",
+  "subvencion_kit",
+  "susto_primer_trimestre",
+  "campana_renta",
+];
+
+const NON_AUDIT_HACIENDA_TAGS = new Set([
+  "clave_pin",
+  "certificado_digital",
+  "caida_sede",
+  "sede_electronica",
+  "notificacion_agosto",
+  "dias_cortesia",
+  "ine",
+  "estadistica",
+  "verifactu",
+  "devolucion",
+  "prescripcion",
+  "expediente_limpio",
+  "homologacion",
+  "bautismo_fiscal",
+]);
+
+const AUDIT_HACIENDA_KEYWORDS = [
+  "inspeccion",
+  "comprobacion",
+  "requerimiento",
+  "carta_certificada",
+  "auditoria",
+  "paralela",
+  "cruce",
+  "ratios",
+  "deduccion",
+  "deducciones",
+  "revision",
+  "regularizacion",
+  "embargo",
+  "movimientos_bancarios",
+  "gastos_afectos",
+  "ticket",
+  "amortizacion",
+  "operaciones_vinculadas",
+  "plan_control",
+  "retenciones",
+  "modelo_347",
+  "modelo_190",
+  "modelo_303",
+  "vies",
+  "intracomunitar",
+  "bizum",
+  "recargo",
+  "apremio",
+  "sancion",
+  "acta",
+  "dehu",
+];
+
+export function isInspectableHaciendaEvent(event: EventDef): boolean {
+  if (event.category !== "hacienda" || event.weight <= 0) {
+    return false;
+  }
+
+  const frReq = event.requirements?.stats?.fiscal_risk;
+  if (frReq && frReq.max != null && frReq.min == null) {
+    return false;
+  }
+
+  for (const pattern of NON_AUDIT_HACIENDA_ID_PATTERNS) {
+    if (event.id.includes(pattern)) {
+      return false;
+    }
+  }
+
+  if (event.tags) {
+    for (const tag of event.tags) {
+      if (NON_AUDIT_HACIENDA_TAGS.has(tag)) {
+        return false;
+      }
+    }
+  }
+
+  if (frReq?.min != null || event.character_id === "hacienda_inspector_gomez") {
+    return true;
+  }
+
+  for (const keyword of AUDIT_HACIENDA_KEYWORDS) {
+    if (event.id.includes(keyword)) {
+      return true;
+    }
+    if (event.tags?.some((tag) => tag.includes(keyword))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function selectInspectableHaciendaEvent(
+  state: GameState,
+  catalog: ContentCatalog,
+): { eventId: string | null; prng: PrngState } {
+  const alreadyQueued = new Set(state.scheduled_queue.map((q) => q.event_id));
+  const hardEligible = catalog.events.filter(
+    (event) =>
+      !alreadyQueued.has(event.id) &&
+      isInspectableHaciendaEvent(event) &&
+      isEventHardEligible(state, event),
+  );
+
+  if (hardEligible.length === 0) {
+    return { eventId: null, prng: state.prng };
+  }
+
+  const nonCooldown = hardEligible.filter((event) => !isEventOnCooldown(state, event.id));
+  const candidates = nonCooldown.length > 0 ? nonCooldown : hardEligible;
+  const picked = pickWeighted(state.prng, candidates);
+  return { eventId: picked.item.id, prng: picked.prng };
+}
+
 export function findInspectableHaciendaEventId(
   state: GameState,
   catalog: ContentCatalog,
 ): string | null {
-  const alreadyQueued = new Set(state.scheduled_queue.map((q) => q.event_id));
-  for (const event of catalog.events) {
-    if (event.category !== "hacienda") {
-      continue;
-    }
-    if (alreadyQueued.has(event.id)) {
-      continue;
-    }
-    if (isEventHardEligible(state, event)) {
-      return event.id;
-    }
-  }
-  return null;
+  return selectInspectableHaciendaEvent(state, catalog).eventId;
 }

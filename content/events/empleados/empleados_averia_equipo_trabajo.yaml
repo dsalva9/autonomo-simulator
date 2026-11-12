@@ -16,20 +16,6 @@ cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: renovar_equipo_y_silla_deducible
-    label: "Comprar equipo potente y silla ergonómica deducible (1.150 €)"
-    result_text: "Al día siguiente el puesto nuevo vuela en silencio absoluto, suben las entregas por semana y te anotas el gasto para el trimestre."
-    effects:
-      deductible_expense: 1150
-      moral: 6
-      stress: -5
-      reputation: 2
-      add_modifier:
-        id: mod_puesto_renovado_estudio
-        label: "Equipo rápido y puesto ergonómico"
-        remaining_months: 5
-        monthly_billed_delta: 250
-        monthly_stress_delta: -1
   - id: alquilar_portatil_sustitucion
     label: "Alquilar un equipo profesional de sustitución este mes (260 €)"
     result_text: "Salvas la semana sin descapitalizarte de golpe: solución limpia, factura deducible y cero dramas técnicos inmediatos."
@@ -37,12 +23,33 @@ choices:
       deductible_expense: 260
       moral: 2
       stress: 1
+      employee_satisfaction: 4
+  - id: renovar_equipo_y_silla_deducible
+    label: "Comprar equipo potente y silla ergonómica deducible (1.150 €)"
+    requirements:
+      stats:
+        money:
+          min: 1600
+    result_text: "Al día siguiente el puesto nuevo vuela en silencio absoluto, suben las entregas por semana y te anotas el gasto para el trimestre."
+    effects:
+      deductible_expense: 1150
+      moral: 6
+      stress: -5
+      reputation: 2
+      employee_satisfaction: 12
+      add_modifier:
+        id: mod_puesto_renovado_estudio
+        label: "Equipo rápido y puesto ergonómico"
+        remaining_months: 5
+        monthly_billed_delta: 250
+        monthly_stress_delta: -1
   - id: desempolvar_portatil_viejo_cajon
     label: "Prestarle tu viejo portátil de 2016 cuyo ventilador parece un avión"
     result_text: "Cada archivo tarda media vida en abrirse y la frustración diaria ralentiza el ritmo comercial de todo el despacho."
     effects:
       moral: -4
       stress: 7
+      employee_satisfaction: -12
       add_modifier:
         id: mod_equipo_lento_prestado
         label: "Ordenador antiguo haciendo cuello de botella"

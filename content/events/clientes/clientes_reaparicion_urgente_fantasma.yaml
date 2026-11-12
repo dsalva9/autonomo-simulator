@@ -12,17 +12,6 @@ cooldown_months: 0
 max_occurrences: null
 exclusive_with: []
 choices:
-  - id: cobrar_reactivacion_y_resto_contado
-    label: Aplicar suplemento de reactivación y el 100 % restante hoy
-    result_text: Les toca pagar peaje por el viaje en el tiempo. Cobras íntegro el cierre más recargo y rematas el entregable en dos tardes intensas.
-    effects:
-      billed_income: 1500
-      stress: 9
-      moral: 6
-      personal_life: -3
-      reputation: 3
-      clear_flags:
-        - clausula_pausa_firmada
   - id: reprogramar_para_proximo_mes
     label: Aceptar sin recargo pero en tu próximo hueco real a 30 días
     result_text: Se tragan las prisas cuando entienden que no vivías congelado en ámbar esperándoles. Entregas a ritmo humano y cobras el cierre.
@@ -35,6 +24,20 @@ choices:
       moral: 5
       reputation: 2
       clear_flags:
+        - clausula_pausa_firmada
+  - id: cobrar_reactivacion_y_resto_contado
+    label: Aplicar suplemento de reactivación y el 100 % restante hoy
+    result_text: Les toca pagar peaje por el viaje en el tiempo. Cobras íntegro el cierre más recargo y rematas el entregable en dos tardes intensas.
+    effects:
+      billed_income: 1650
+      stress: 4
+      moral: 8
+      personal_life: 0
+      reputation: 4
+      clear_flags:
+        - clausula_pausa_firmada
+    requirements:
+      required_flags:
         - clausula_pausa_firmada
   - id: entregar_archivos_base_y_despedirse
     label: Entregar lo cubierto por la señal y declinar continuar

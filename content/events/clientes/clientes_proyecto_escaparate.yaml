@@ -1,8 +1,8 @@
 schema_version: 1
 id: clientes_proyecto_escaparate
 category: clientes
-title: "«Presupuesto hay poquito, pero te verá todo el sector»"
-body: "Un festival cultural de relumbrón te ofrece firmar su campaña principal. Pagan poco más que los costes, pero Borja jura que la repercusión en prensa especializada te pondrá en el mapa nacional."
+title: «Presupuesto hay poquito, pero te verá todo el sector»
+body: Un festival cultural de relumbrón te ofrece firmar su campaña principal. Pagan poco más que los costes, pero Borja jura que la repercusión en prensa especializada te pondrá en el mapa nacional.
 tags:
   - visibilidad
   - portfolio
@@ -17,8 +17,16 @@ cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: presupuestar_sin_rebaja
+    label: "Pasar tarifa comercial normal: en el súper no aceptan prestigio"
+    result_text: Recortan el alcance a lo que realmente pueden pagar y cobras un encargo digno sin regalar noches.
+    effects:
+      billed_income: 950
+      stress: 4
+      moral: 3
+      reputation: 2
   - id: apostar_por_el_escaparate
-    label: "Volcarte para lucir músculo creativo y ganar prestigio"
+    label: Volcarte para lucir músculo creativo y ganar prestigio
     outcomes:
       - id: escaparate_real
         weight: 65
@@ -29,25 +37,19 @@ choices:
           stress: 8
           moral: 6
           reputation: 9
+          set_flags:
+            - portfolio_actualizado
       - id: creditos_recortados
         weight: 35
-        result_text: "El proyecto queda precioso, pero en la nota de prensa olvidan poner tu nombre y agradecen solo al patrocinador de cervezas."
+        result_text: El proyecto queda precioso, pero en la nota de prensa olvidan poner tu nombre y agradecen solo al patrocinador de cervezas.
         effects:
           billed_income: 450
           stress: 10
           moral: -6
           reputation: 2
-  - id: presupuestar_sin_rebaja
-    label: "Pasar tarifa comercial normal: en el súper no aceptan prestigio"
-    result_text: "Recortan el alcance a lo que realmente pueden pagar y cobras un encargo digno sin regalar noches."
-    effects:
-      billed_income: 950
-      stress: 4
-      moral: 3
-      reputation: 2
   - id: pasar_del_festival
-    label: "Agradecer la invitación y guardar energías para quien pague en euros"
-    result_text: "Ves la inauguración desde el sofá sin ojeras ni rencor."
+    label: Agradecer la invitación y guardar energías para quien pague en euros
+    result_text: Ves la inauguración desde el sofá sin ojeras ni rencor.
     effects:
       stress: -5
       moral: 1

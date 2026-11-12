@@ -10,8 +10,8 @@ tags:
   - largo_plazo
 requirements:
   min_month: 60
-weight: 10
-cooldown_months: 14
+weight: 9
+cooldown_months: 15
 max_occurrences: null
 exclusive_with: []
 choices:
@@ -19,12 +19,17 @@ choices:
     label: Preparar las dos sesiones a fondo y exprimir el escaparate sénior
     result_text: Llegas afónico al viernes, pero cobras un caché espléndido y sales con tarjetas de clientes que no discuten presupuestos.
     effects:
-      billed_income: 2025
+      billed_income: 2250
       deductible_expense: 150
       stress: 10
       moral: 7
       personal_life: -4
       reputation: 6
+      set_flags:
+        - web_corporativa_activa
+    requirements:
+      required_flags:
+        - portfolio_actualizado
   - id: hacer_solo_formacion_ejecutiva
     label: Aceptar únicamente el taller privado mejor pagado sin viajar
     result_text: Impartes cuatro horas impecables sin maletas ni hoteles y ingresas una factura limpia con esfuerzo medido.

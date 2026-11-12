@@ -136,8 +136,8 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     });
 
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 1024) {
-      // Mobile (< 1024px): slim mobile subject art visible, desktop footer hidden; bottom tabs switch panels
+    if (viewport && viewport.width < 1280) {
+      // Mobile / Tablet (< 1280px): slim mobile subject art visible, desktop footer hidden; bottom tabs switch panels
       await expect(page.getByTestId("scene-subject-mobile-art")).toBeVisible();
       await expect(page.getByTestId("scene-subject-art")).toBeHidden();
 
@@ -191,10 +191,12 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     await expect(page.getByTestId("trimestre-modal")).toBeHidden();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
 
-    // Start a second seeded run to verify 1-time Aplazamiento ("defer")
+    // Start a second seeded run to verify 1-time Aplazamiento ("defer") via overwrite guard
     await page.getByTestId("return-title-btn").click();
     await page.getByTestId("seed-input").fill("FASE0-TRIMESTRE-DEFER");
     await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("confirm-overwrite-run-modal")).toBeVisible();
+    await page.getByTestId("confirm-overwrite-run-btn").click();
 
     await advanceUntilQuarterlyTaxModal(page);
     const deferBtn = page.getByTestId("trimestre-defer-btn");
@@ -205,7 +207,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
 
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 1024) {
+    if (viewport && viewport.width < 1280) {
       await page.getByTestId("mobile-tab-cuentas").click();
     }
     await expect(page.getByTestId("ledger-deferred-tax")).toContainText("VENCE MES 6");

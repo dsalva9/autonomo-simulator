@@ -1,0 +1,55 @@
+schema_version: 1
+id: familia_sabatico_largo_veterano
+category: familia
+title: "Siete años de oficio y vértigo a parar tres semanas"
+body: "Tras años encadenando cierres trimestrales tienes oficio y margen para desconectar tres semanas seguidas lejos del teclado, pero el viejo reflejo del autónomo sigue susurrando que al volver no sonará el teléfono."
+tags:
+  - veterania
+  - descanso
+  - sabatico
+  - salud_mental
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 84
+weight: 10
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: cerrar_tres_semanas_ruta_larga
+    label: "Bloquear tres semanas en agenda, avisar con tiempo y viajar sin portátil (890 €)"
+    requirements:
+      stats:
+        money:
+          min: 3200
+    result_text: "Descubres que tu cartera veterana te espera encantada a la vuelta y regresas con una claridad mental que no sentías desde el primer año."
+    effects:
+      cash_delta: -890
+      stress: -20
+      moral: 15
+      personal_life: 17
+      reputation: 1
+  - id: reducir_a_cuatro_dias_trimestre
+    label: "Implantar semanas de cuatro días este trimestre y liberar cada viernes"
+    result_text: "Renuncias a exprimir cada hora facturable a cambio de viernes enteros de lectura, recados tranquilos y sueño reparador."
+    effects:
+      stress: -10
+      moral: 9
+      personal_life: 11
+      add_modifier:
+        id: mod_semana_cuatro_dias_senior
+        label: "Semana veterana de cuatro días"
+        remaining_months: 3
+        monthly_billed_delta: -250
+        monthly_moral_delta: 3
+        monthly_stress_delta: -3
+  - id: posponer_descanso_por_inercia
+    label: "Dejar el gran descanso «para más adelante» y aceptar otro lote de encargos"
+    result_text: "Engordas la cuenta corriente por pura inercia profesional mientras la mochila del cansancio acumulado sigue sumando piedras."
+    effects:
+      billed_income: 960
+      stress: 10
+      moral: -6
+      personal_life: -9
+      reputation: 2

@@ -1,4 +1,13 @@
-import type { EndingId, GameState, HistoryEntryKind, VictoryBadge } from "../../engine/index.ts";
+import type {
+  ChoiceOutcomeSummary,
+  EndingId,
+  EventDef,
+  GameState,
+  HistoryEntryKind,
+  Indicators,
+  MonthStartSummary,
+  VictoryBadge,
+} from "../../engine/index.ts";
 
 export const ACTIVE_RUN_KEY = "autonomo:active_run";
 export const PROFILE_KEY = "autonomo:profile";
@@ -174,11 +183,33 @@ function hasRecoveredFromNegativeCash(state: GameState): boolean {
   return false;
 }
 
+export interface PersistedPendingOutcome {
+  event: EventDef;
+  choiceId: string;
+  choiceLabel: string;
+  outcome: ChoiceOutcomeSummary;
+}
+
+export interface PersistedPendingTurn {
+  pending_outcome: PersistedPendingOutcome;
+  outcome_preview_state: GameState | null;
+  queued_final_state: GameState | null;
+  queued_post_outcome_deltas: Partial<Record<keyof Indicators, number>> | null;
+  queued_month_start: MonthStartSummary | null;
+  last_deltas: Partial<Record<keyof Indicators, number>>;
+  last_month_start: MonthStartSummary | null;
+}
+
+export interface SaveActiveRunOptions {
+  pendingTurn?: PersistedPendingTurn | null;
+}
+
 export interface SaveEnvelope {
   save_version: typeof CURRENT_SAVE_VERSION;
   engine_build: string;
   updated_at: string;
   state: GameState;
+  pending_turn?: PersistedPendingTurn | null;
 }
 
 export interface PastRunSummary {
@@ -231,11 +262,19 @@ export interface KeyValueDriver {
 
 export interface StoragePort {
   loadActiveRun(): Promise<LoadActiveRunResult>;
-  saveActiveRun(state: GameState, nowIso?: string): Promise<SaveEnvelope>;
+  saveActiveRun(
+    state: GameState,
+    nowIso?: string,
+    options?: SaveActiveRunOptions,
+  ): Promise<SaveEnvelope>;
   clearActiveRun(): Promise<void>;
   loadProfile(): Promise<ProfileEnvelope>;
   saveProfile(profile: ProfileEnvelope): Promise<void>;
-  syncRunProgress(state: GameState, nowIso?: string): Promise<SyncRunProgressResult>;
+  syncRunProgress(
+    state: GameState,
+    nowIso?: string,
+    options?: SaveActiveRunOptions,
+  ): Promise<SyncRunProgressResult>;
   loadCorruptBackup(): Promise<CorruptSaveBackup | null>;
 }
 
@@ -269,7 +308,13 @@ export function evaluateUnlockedAchievements(
     }
   };
 
-  maybeUnlock("primer_trimestre", state.month >= 3);
+  const hasSettledFirstQuarter =
+    state.month > 3 ||
+    state.annual_snapshot.taxes_paid > 0 ||
+    state.finances.deferred_tax !== null ||
+    state.history.some((entry) => entry.kind === "quarterly_tax");
+
+  maybeUnlock("primer_trimestre", hasSettledFirstQuarter);
   maybeUnlock("primer_ano", state.month >= 12);
   maybeUnlock("gestor_contratado", state.gestor.tier !== "self");
   maybeUnlock("aplazamiento_solicitado", state.finances.deferred_tax !== null);
@@ -289,7 +334,7 @@ export function evaluateUnlockedAchievements(
   maybeUnlock("criatura_en_casa", state.family.children_count >= 1);
   maybeUnlock("cinco_anos", state.month >= 60);
   maybeUnlock("facturacion_100k", state.finances.lifetime_billed >= 100_000);
-  maybeUnlock("heroe_120m", state.month >= 120 || state.earned_victories.includes("hero_120m"));
+  maybeUnlock("heroe_120m", state.earned_victories.includes("hero_120m"));
   maybeUnlock(
     "ricachon_150k",
     state.indicators.money >= 150_000 || state.earned_victories.includes("rich_150k"),

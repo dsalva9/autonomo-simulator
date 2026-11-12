@@ -1,0 +1,57 @@
+schema_version: 1
+id: familia_aniversario_convivencia_hito
+category: familia
+title: "Años de trinchera compartida y brindis en viernes"
+body: "Cumplís años conviviendo entre cierres fiscales, mudanzas y madrugones. Álex aparece el viernes a mediodía con dos billetes abiertos y una sonrisa cómplice: habéis aprendido a bailar encima del alambre sin pisaros."
+tags:
+  - pareja
+  - convivencia
+  - celebracion
+  - veterania
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 54
+  family_statuses:
+    - cohabiting
+  required_flags:
+    - convivencia_estable
+weight: 11
+cooldown_months: 16
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: cena_especial_y_tarde_libre
+    label: "Cerrar hoy a las dos y reservar en vuestro restaurante favorito (115 €)"
+    result_text: "Cumples entregas por la mañana y disfrutas una sobremesa eterna sin mirar la hora ni una sola vez."
+    effects:
+      cash_delta: -115
+      billed_income: 310
+      stress: -9
+      moral: 10
+      personal_life: 12
+  - id: celebrar_escapada_a_lo_grande
+    label: "Hacer las maletas al vuelo y celebrar tres días a cuerpo de rey (340 €)"
+    result_text: "Brindáis frente al mar recordando aquel primer piso minúsculo y volvéis con la certeza tranquila de formar un equipazo."
+    effects:
+      cash_delta: -340
+      stress: -15
+      moral: 14
+      personal_life: 16
+      add_modifier:
+        id: mod_complicidad_hogar_veterano
+        label: "Hogar cómplice a prueba de trimestres"
+        remaining_months: 5
+        monthly_moral_delta: 2
+        monthly_stress_delta: -2
+  - id: brindis_casero_por_entrega_lunes
+    label: "Improvisar tapeo rico en el balcón porque el lunes entregas proyecto (38 €)"
+    result_text: "Álex conoce tus cierres mejor que nadie: reís en el balcón con algo rico y el lunes facturas con deberes hechos."
+    effects:
+      cash_delta: -38
+      billed_income: 690
+      stress: 2
+      moral: 4
+      personal_life: 4
+      reputation: 2

@@ -1,4 +1,4 @@
-# English ('en') localization overlay for all 40 'familia' category events
+# English ('en') localization overlay for all 57 'familia' category events
 
 # 1. familia_adaptacion_guarderia
 "familia_adaptacion_guarderia.title": "Nursery Settling-In Week and the First Daycare Bug"
@@ -126,18 +126,18 @@
 "familia_derrama_comunidad_ascensor.choices.bajar_a_pelear_presupuestos_junta.outcomes.ahorro_vecinal_aplaudido.result_text": "You spot padded line items in five minutes and halve the bill; the only danger now is getting drafted as building president."
 "familia_derrama_comunidad_ascensor.choices.bajar_a_pelear_presupuestos_junta.outcomes.tres_horas_de_gritos_en_portal.result_text": "Neighbors argue over doormat colors until midnight and you walk out with the exact same levy plus a migraine."
 "familia_derrama_comunidad_ascensor.choices.trabajar_con_tapones_en_casa.label": "Pay in installments and endure the racket at home with earplugs"
-"familia_derrama_comunidad_ascensor.choices.trabajar_con_tapones_en_casa.result_text": "Every video call sounds like a live broadcast from a quarry, though you avoid paying the lump sum upfront."
+"familia_derrama_comunidad_ascensor.choices.trabajar_con_tapones_en_casa.result_text": "Every video call sounds like a quarry broadcast, though you avoid the lump sum upfront and keep your work mornings."
 
 # 13. familia_encrucijada_agotamiento
 "familia_encrucijada_agotamiento.title": "Three AM Staring at the Kitchen Ceiling"
-"familia_encrucijada_agotamiento.body": "You wake in the dead of night mentally tallying social security fees, invoices, and taxes before checking the clock. Over herbal tea in a silent kitchen, you ask yourself honestly if this grind is still worth it."
-"familia_encrucijada_agotamiento.choices.recomponerse_y_seguir_peleando.label": "Hit the brakes for two days, set healthy boundaries, and carry on"
+"familia_encrucijada_agotamiento.body": "You wake at three a.m. tallying quotas, invoices, and taxes before checking the clock. Over tea in a silent kitchen, you ask yourself honestly whether this grind is worth it or it's time to pivot."
+"familia_encrucijada_agotamiento.choices.recomponerse_y_seguir_peleando.label": "Brake for two days, set boundaries, and carry on"
 "familia_encrucijada_agotamiento.choices.recomponerse_y_seguir_peleando.result_text": "You drop minor meetings, walk in the sun, and restructure your week. The bureaucracy remains, yet you steady your pulse to keep going."
-"familia_encrucijada_agotamiento.choices.cerrar_y_preparar_oposiciones.label": "Shut up shop and study full-time for civil service exams"
+"familia_encrucijada_agotamiento.choices.cerrar_y_preparar_oposiciones.label": "Close the business and study for civil service"
 "familia_encrucijada_agotamiento.choices.cerrar_y_preparar_oposiciones.result_text": "You deregister as self-employed, archive your tax binders, and clear the desk for exam syllabi and a stopwatch: steady horizons ahead."
-"familia_encrucijada_agotamiento.choices.volver_a_empleo_asalariado.label": "Accept a salaried office job with fixed hours and a steady paycheck"
+"familia_encrucijada_agotamiento.choices.volver_a_empleo_asalariado.label": "Take a salaried job with fixed hours and paycheck"
 "familia_encrucijada_agotamiento.choices.volver_a_empleo_asalariado.result_text": "You trade solo-boss heroics for a payroll contract and fixed hours: on your first Sunday without checking email, you breathe again."
-"familia_encrucijada_agotamiento.choices.solicitar_cese_y_prestacion.label": "File for cessation of activity and draw your contributory benefit"
+"familia_encrucijada_agotamiento.choices.solicitar_cese_y_prestacion.label": "File for cessation and draw your contributory benefit"
 "familia_encrucijada_agotamiento.choices.solicitar_cese_y_prestacion.result_text": "After months of faithfully paying contributions, you qualify for cessation support and take calm, earned time to recover."
 
 # 14. familia_escapada_rural_sin_cobertura
@@ -223,11 +223,11 @@
 
 # 22. familia_padres_sermon_oposiciones
 "familia_padres_sermon_oposiciones.title": "The Civil-Service Clipping Beside the Croquettes"
-"familia_padres_sermon_oposiciones.body": "Sunday lunch at your parents' place. Before dessert, they slide a highlighted notice for municipal civil-service exams across the tablecloth with the ritual question: 'When will you sit oposiciones for a real job?'"
+"familia_padres_sermon_oposiciones.body": "Sunday lunch at your parents' place. Before dessert, they slide a highlighted notice for municipal civil-service exams across the tablecloth with the ritual question: 'When will you take civil-service exams for a real job?'"
 "familia_padres_sermon_oposiciones.choices.explicar_proyecto_con_paciencia.label": "Breathe deep, share your latest wins, and thank them warmly"
 "familia_padres_sermon_oposiciones.choices.explicar_proyecto_con_paciencia.result_text": "They still barely grasp what you invoice for, yet relax enough to send you home with fruit and homemade leftovers."
 "familia_padres_sermon_oposiciones.choices.guardar_convocatoria_en_cajon.label": "Fold the clipping into your pocket 'just in case' and change topic"
-"familia_padres_sermon_oposiciones.choices.guardar_convocatoria_en_cajon.result_text": "You escape dessert without an argument, though that folded clipping glares from your nightstand whenever fees go up."
+"familia_padres_sermon_oposiciones.choices.guardar_convocatoria_en_cajon.result_text": "You escape dessert with coffee and zero arguments: free Sunday peace and an unbothered ride home."
 "familia_padres_sermon_oposiciones.choices.defender_orgullo_autonomo_en_mesa.label": "Deliver an epic speech on being your own boss while washing dishes"
 "familia_padres_sermon_oposiciones.choices.defender_orgullo_autonomo_en_mesa.result_text": "Defending your independence feels great in the moment, even if it drives you to spend Sunday evening rage-invoicing."
 
@@ -244,7 +244,7 @@
 
 # 24. familia_plan_fin_de_semana
 "familia_plan_fin_de_semana.title": "Operation Unplug with Álex"
-"familia_plan_fin_de_semana.body": "Friday afternoon arrives. Álex proposes a simple weekend getaway out of town under one non-negotiable rule: the laptop stays powered off at home, far from wall sockets and 'five-minute' client tweaks."
+"familia_plan_fin_de_semana.body": "Friday afternoon. After a couple of dates with great chemistry, Álex suggests an out-of-town getaway under one strict rule: the laptop stays off at home, far from outlets and last-minute client tweaks."
 "familia_plan_fin_de_semana.choices.empezar_relacion_alex.label": "Power down the laptop and give the two of you a real shot"
 "familia_plan_fin_de_semana.choices.empezar_relacion_alex.result_text": "Between country walks, unhurried lunches, and zero pings, you return Sunday with something steadier than any schedule: you're dating."
 "familia_plan_fin_de_semana.choices.escapada_desconexion_total.label": "Take the trip, mute your phone, and recharge properly"
@@ -415,3 +415,180 @@
 "familia_visita_sorpresa_tuppers.choices.recibirles_con_auricular_puesto.result_text": "Your schedule stays intact and you keep the stew, though your mother's hallway sigh echoes until Thursday."
 "familia_visita_sorpresa_tuppers.choices.invitarles_tu_al_menu_del_dia.label": "Take them downstairs and treat them to the daily set lunch (48 €)"
 "familia_visita_sorpresa_tuppers.choices.invitarles_tu_al_menu_del_dia.result_text": "Seeing you pick up the bill without flinching makes their week, and you return to your desk grinning."
+
+
+# 41. familia_adopcion_mascota_estudio
+"familia_adopcion_mascota_estudio.title": "Cinnamon-Colored Eyes Looking for a Home Nearby"
+"familia_adopcion_mascota_estudio.body": "Working solo turns your flat into an eerily quiet library. A neighborhood shelter needs a home for a calm mixed-breed rescue who looks like he knows the exact second you need to step away from your chair."
+"familia_adopcion_mascota_estudio.choices.adoptar_compania_fiel_estudio.label": "Adopt with full shots: sacred daily walks off-screen (195 €)"
+"familia_adopcion_mascota_estudio.choices.adoptar_compania_fiel_estudio.result_text": "Within a week he naps beside the printer and forces you out into daylight twice a day no matter how wild the quarter gets."
+"familia_adopcion_mascota_estudio.choices.acogida_temporal_un_mes.label": "Start as a temporary foster home to test the routine (65 €)"
+"familia_adopcion_mascota_estudio.choices.acogida_temporal_un_mes.result_text": "Ten days in, you have already bought a plush dog bed and know perfectly well that 'temporary foster' means forever."
+"familia_adopcion_mascota_estudio.choices.donar_saco_pienso_sin_adoptar.label": "Donate pet food and admit your schedule cannot handle it (35 €)"
+"familia_adopcion_mascota_estudio.choices.donar_saco_pienso_sin_adoptar.result_text": "You pitch in honestly for the shelter without signing up for impossible sprints whenever client deadlines pile up."
+
+# 42. familia_amigo_startup_socio_tecnico
+"familia_amigo_startup_socio_tecnico.title": "Craft Beers and 'Fifteen Percent of Nothing'"
+"familia_amigo_startup_socio_tecnico.body": "An old college classmate invites you out with a brand-new notebook: he wants a 'technical co-founder' for his revolutionary app in exchange for 15% future equity and zero euros today, since 'freelancers have flexible hours'."
+"familia_amigo_startup_socio_tecnico.choices.declinar_socios_y_pasar_tarifa.label": "Pay for the round, wish him luck, and offer a standard quote (16 €)"
+"familia_amigo_startup_socio_tecnico.choices.declinar_socios_y_pasar_tarifa.result_text": "You keep both the friendship and your weekends intact—and once he learns real market rates, he even refers a paying contact."
+"familia_amigo_startup_socio_tecnico.choices.pactar_prototipo_pagado_pequeno.label": "Offer to validate a tiny paid prototype phase with an invoice first"
+"familia_amigo_startup_socio_tecnico.choices.pactar_prototipo_pagado_pequeno.outcomes.valida_y_paga_fase_uno.result_text": "He grasps the line between friendship and trade: you invoice a tight phase one and save him from burning his savings blind."
+"familia_amigo_startup_socio_tecnico.choices.pactar_prototipo_pagado_pequeno.outcomes.se_ofende_por_hablar_de_dinero.result_text": "He sulks that you 'lack founder mindset', sparing you six months of unpaid Sunday brainstorm calls right on the spot."
+"familia_amigo_startup_socio_tecnico.choices.trabajar_noches_por_participacion.label": "Buy the unicorn pitch and grind unpaid nights for sweat equity"
+"familia_amigo_startup_socio_tecnico.choices.trabajar_noches_por_participacion.outcomes.consigue_inversor_modesto.result_text": "Against all odds he raises modest seed funding and buys out your initial build on a clean invoice, leaving you wiped out."
+"familia_amigo_startup_socio_tecnico.choices.trabajar_noches_por_participacion.outcomes.humo_y_ojeras_gratis.result_text": "Three months later he gets bored and goes back to his day job, leaving you forty lost nights poorer and feeling played."
+
+# 43. familia_aniversario_convivencia_hito
+"familia_aniversario_convivencia_hito.title": "Years in the Trenches Together and a Friday Toast"
+"familia_aniversario_convivencia_hito.body": "Another milestone year of living together through tax filings, moves, and half-finished coffees. Álex turns up Friday at noon with two open tickets and a knowing grin: you learned to walk the high wire together."
+"familia_aniversario_convivencia_hito.choices.celebrar_escapada_a_lo_grande.label": "Pack in ten minutes and celebrate three days in grand style (340 €)"
+"familia_aniversario_convivencia_hito.choices.celebrar_escapada_a_lo_grande.result_text": "You toast by the sea laughing about your tiny first flat and return with the calm certainty that you make a great team."
+"familia_aniversario_convivencia_hito.choices.cena_especial_y_tarde_libre.label": "Wrap up at two today and book your favorite restaurant (115 €)"
+"familia_aniversario_convivencia_hito.choices.cena_especial_y_tarde_libre.result_text": "You ship morning work cleanly and stretch dinner talk into the night without glancing at the clock once."
+"familia_aniversario_convivencia_hito.choices.brindis_casero_por_entrega_lunes.label": "Set up gourmet tapas on the balcony ahead of Monday's deadline (38 €)"
+"familia_aniversario_convivencia_hito.choices.brindis_casero_por_entrega_lunes.result_text": "Álex knows your crunch weeks inside out: you laugh on the balcony over good food and invoice smoothly on Monday."
+
+# 44. familia_campamento_verano_julio
+"familia_campamento_verano_julio.title": "Eleven Weeks Out of School and Nonstop Client Work"
+"familia_campamento_verano_julio.body": "School lets out in June and opens the classic summer chasm for self-employed parents: nearly three months of kids' holidays while your client roster stays wide awake under the July sun."
+"familia_campamento_verano_julio.choices.apuntar_campamento_urbano_completo.label": "Pay full-month day camp with pool hours and lunch included (420 €)"
+"familia_campamento_verano_julio.choices.apuntar_campamento_urbano_completo.result_text": "It feels like a second monthly quota, yet your kid comes home happily worn out while you bank five focused morning hours."
+"familia_campamento_verano_julio.choices.combinar_abuelos_y_media_jornada.label": "Start work at six a.m. and split pool afternoons with family (120 €)"
+"familia_campamento_verano_julio.choices.combinar_abuelos_y_media_jornada.result_text": "You run on chilled gazpacho and iced coffee, save a bundle, and share unforgettable pool afternoons all July."
+"familia_campamento_verano_julio.choices.intentar_teletrabajar_con_juegos.label": "Skip camp fees and try working beside craft supplies at home"
+"familia_campamento_verano_julio.choices.intentar_teletrabajar_con_juegos.result_text": "By day three your keyboard is coated in glitter, you have apologized on four calls, and you vow to book camp in March."
+
+# 45. familia_cena_nochebuena_clientes
+"familia_cena_nochebuena_clientes.title": "Prawns on the Table and a 'Quick Tweak' on the 24th"
+"familia_cena_nochebuena_clientes.body": "It is six p.m. on Christmas Eve, homemade broth simmers in the kitchen, and a client who ignored your draft for three weeks demands an urgent edit 'before year-end'. Nougat trays are already hitting the table."
+"familia_cena_nochebuena_clientes.choices.activar_respuesta_festiva_y_brindar.label": "Switch on your holiday auto-reply until the 27th and go toast (90 €)"
+"familia_cena_nochebuena_clientes.choices.activar_respuesta_festiva_y_brindar.result_text": "You pick up good wine on the way, power your phone off for real, and confirm on the 27th that the emergency could wait."
+"familia_cena_nochebuena_clientes.choices.cobrar_recargo_festivo_una_hora.label": "Accept only if they sign a holiday rush fee and cap it at one hour"
+"familia_cena_nochebuena_clientes.choices.cobrar_recargo_festivo_una_hora.outcomes.aprueba_recargo_navideno.result_text": "Shockingly, they approve the holiday surcharge on the spot: you ship before starters and pay for every gift under the tree."
+"familia_cena_nochebuena_clientes.choices.cobrar_recargo_festivo_una_hora.outcomes.regateo_y_cena_tardia.result_text": "Absurd follow-up edits drag on and you sit down to Christmas Eve dinner just as everyone else finishes the prawns."
+"familia_cena_nochebuena_clientes.choices.tragar_gratis_por_no_discutir.label": "Do the quick tweak at no extra charge just to close the year in peace"
+"familia_cena_nochebuena_clientes.choices.tragar_gratis_por_no_discutir.result_text": "The client replies with a glittery tree GIF while you eat cold soup swearing never to repeat this next December."
+
+# 46. familia_crisis_ergonomica_tunel_carpiano
+"familia_crisis_ergonomica_tunel_carpiano.title": "Wrist Cramp Halfway Through a Sprint"
+"familia_crisis_ergonomica_tunel_carpiano.body": "For two weeks you have woken up with tingling fingers and a sharp electric twinge up your forearm on every double-click. Thousands of hours on cheap mice and hunched shoulders are presenting their bill."
+"familia_crisis_ergonomica_tunel_carpiano.choices.fisioterapeuta_y_perifericos_deducibles.label": "Book physio today and buy a deductible vertical mouse and keyboard (350 €)"
+"familia_crisis_ergonomica_tunel_carpiano.choices.fisioterapeuta_y_perifericos_deducibles.result_text": "By day three the nighttime numbness fades, you work pain-free, and you deduct the new peripherals on a clean invoice."
+"familia_crisis_ergonomica_tunel_carpiano.choices.parar_tres_dias_y_estirar.label": "Ease off for three days, ice your wrist, and space out minor tasks"
+"familia_crisis_ergonomica_tunel_carpiano.choices.parar_tres_dias_y_estirar.result_text": "You bill slightly less this week, stopping tendonitis in its tracks before it sidelines you for an entire month."
+"familia_crisis_ergonomica_tunel_carpiano.choices.munequera_farmacia_y_seguir.label": "Buy a pharmacy wrist brace and keep typing through gritted teeth (28 €)"
+"familia_crisis_ergonomica_tunel_carpiano.choices.munequera_farmacia_y_seguir.result_text": "You ship every file strapped up like an injured tennis player, banking cash while tension climbs with every click."
+
+# 47. familia_cuesta_enero_hogar
+"familia_cuesta_enero_hogar.title": "The January Crunch Barges Right In"
+"familia_cuesta_enero_hogar.body": "January dawns with frost on the windowpane, a brutal winter heating bill, two annual insurance renewals auto-charging unannounced, and an echoing fridge right in the middle of quarterly tax month."
+"familia_cuesta_enero_hogar.choices.auditar_recibos_y_cambiar_tarifas.label": "Spend an afternoon renegotiating power, insurance, and dead plans"
+"familia_cuesta_enero_hogar.choices.auditar_recibos_y_cambiar_tarifas.result_text": "Two hours of hold music trim phantom charges and lock in lighter household utility bills for the coming months."
+"familia_cuesta_enero_hogar.choices.pagar_todo_y_apretar_cinturon.label": "Pay every annual bill upfront and live on lentil stew this month (360 €)"
+"familia_cuesta_enero_hogar.choices.pagar_todo_y_apretar_cinturon.result_text": "Your checking account winces for two weeks, yet the whole year's renewals sit paid in full with zero February hangover."
+"familia_cuesta_enero_hogar.choices.fraccionar_seguros_y_buscar_extra.label": "Split annual renewals into installments and take a weekend rush gig"
+"familia_cuesta_enero_hogar.choices.fraccionar_seguros_y_buscar_extra.result_text": "You plug the January gap with Saturday keyboard hours—saving short-term liquidity at the cost of starting the year tired."
+
+# 48. familia_funcion_escolar_mediodia
+"familia_funcion_escolar_mediodia.title": "A Cardboard Tree Costume on Tuesday at 11:30"
+"familia_funcion_escolar_mediodia.body": "The school play lands mid-morning on a working Tuesday. You sewed felt leaves until midnight, and naturally a client picks that exact slot to ask you to pitch a high-value proposal."
+"familia_funcion_escolar_mediodia.choices.primera_fila_y_reprogramar_cliente.label": "Claim a front-row seat to clap and move the client call to afternoon"
+"familia_funcion_escolar_mediodia.choices.primera_fila_y_reprogramar_cliente.outcomes.cliente_comprensivo_y_orgullo.result_text": "Seeing your kid beam inside green poster board tells you everything—and by afternoon you still close the contract."
+"familia_funcion_escolar_mediodia.choices.primera_fila_y_reprogramar_cliente.outcomes.cliente_impaciente_se_enfria.result_text": "The impatient client hires someone faster, yet that proud wave from the stage outshines any invoice you missed."
+"familia_funcion_escolar_mediodia.choices.defender_presupuesto_y_llegar_al_final.label": "Run the pitch call first and sprint to school for the group photo"
+"familia_funcion_escolar_mediodia.choices.defender_presupuesto_y_llegar_al_final.result_text": "You lock down the full budget breathless on the sidewalk, arriving just as costumes come off in the courtyard."
+
+# 49. familia_presidencia_comunidad_vecinos
+"familia_presidencia_comunidad_vecinos.title": "Drafted by Lottery as Building HOA President"
+"familia_presidencia_comunidad_vecinos.body": "You arrived five minutes late to the neighbors' meeting and the minutes sealed your fate: you now chair the building association. Before breakfast, someone rings your bell over a damp pipe and the lobby lock."
+"familia_presidencia_comunidad_vecinos.choices.delegar_todo_en_administrador_fincas.label": "Hire external property management and ban doorbell ambushes (145 €)"
+"familia_presidencia_comunidad_vecinos.choices.delegar_todo_en_administrador_fincas.result_text": "You pay your share for professional administration and route every neighbor complaint to someone else's inbox. Pure peace."
+"familia_presidencia_comunidad_vecinos.choices.gestionar_con_mano_de_hierro.label": "Digitize building accounts and cap stairwell debates at ten minutes"
+"familia_presidencia_comunidad_vecinos.choices.gestionar_con_mano_de_hierro.result_text": "You run the building like a tight studio sprint: two bloated service contracts get trimmed and flat 3B treats you with awe."
+"familia_presidencia_comunidad_vecinos.choices.atender_marrones_vecinales_a_ratitos.label": "Resign yourself to letting plumbers and adjusters in between calls"
+"familia_presidencia_comunidad_vecinos.choices.atender_marrones_vecinales_a_ratitos.result_text": "You spend zero extra cash, at the price of unlocking the meter closet right in the middle of every key client call."
+
+# 50. familia_primer_dia_colegio_primaria
+"familia_primer_dia_colegio_primaria.title": "A Giant Backpack and the Start of Big-Kid School"
+"familia_primer_dia_colegio_primaria.body": "September kicks off primary school with an endless book list, name labels ironed onto every sock, and a solemn nine a.m. gate drop-off colliding head-on with a client pitch."
+"familia_primer_dia_colegio_primaria.choices.mover_reunion_y_llevar_al_cole.label": "Reschedule the call unapologetically and walk to the gate (260 €)"
+"familia_primer_dia_colegio_primaria.choices.mover_reunion_y_llevar_al_cole.result_text": "Watching that walking backpack march through the gate without looking back mends your soul, and the client reschedules happily."
+"familia_primer_dia_colegio_primaria.choices.comprar_lote_usado_y_madrugar.label": "Use the secondhand book bank and time the morning to the minute (115 €)"
+"familia_primer_dia_colegio_primaria.choices.comprar_lote_usado_y_madrugar.result_text": "You wrap textbooks at midnight like a medieval monk, make the gate photo, and join your call from the parked car five minutes later."
+"familia_primer_dia_colegio_primaria.choices.delegar_entrada_por_presentacion.label": "Buy new supplies, hand off drop-off, and prioritize the pitch (310 €)"
+"familia_primer_dia_colegio_primaria.choices.delegar_entrada_por_presentacion.result_text": "You nail the pitch and close a strong budget, though seeing the school-gate photo on your phone leaves a heavy knot."
+
+# 51. familia_puente_mayo_escapada
+"familia_puente_mayo_escapada.title": "May Long Weekend and Half of Spain on the Highway"
+"familia_puente_mayo_escapada.body": "May arrives with back-to-back public holidays, suitcases in the hallway, and friends heading for the coast. Right as you wrap up Thursday, an anxious client asks if you will be 'reachable a tiny sec Friday just in case'."
+"familia_puente_mayo_escapada.choices.quedarse_de_guardia_en_puente.label": "Stay on call Friday to bill the rush holiday assignment"
+"familia_puente_mayo_escapada.choices.quedarse_de_guardia_en_puente.result_text": "An empty city works wonders for shipping clean invoices, though eating lunch at your monitor on a sunny holiday stings."
+"familia_puente_mayo_escapada.choices.pactar_entrega_lunes_y_escapar.label": "Wrap up essentials today and join the long-weekend getaway (175 €)"
+"familia_puente_mayo_escapada.choices.pactar_entrega_lunes_y_escapar.result_text": "You set polite boundaries before hitting the highway and enjoy three days of sea breeze without corporate civilization collapsing."
+"familia_puente_mayo_escapada.choices.descansar_en_ciudad_vacia.label": "Mute alerts and enjoy your deserted city with zero hotel bills (45 €)"
+"familia_puente_mayo_escapada.choices.descansar_en_ciudad_vacia.result_text": "You stroll quiet streets, read in the park sun, and recharge fully without sitting through a three-hour Sunday traffic jam."
+
+# 52. familia_reforma_habitacion_infantil_estudio
+"familia_reforma_habitacion_infantil_estudio.title": "A Territorial Claim on Your Home-Office Room"
+"familia_reforma_habitacion_infantil_estudio.body": "Your kid is shooting up and needs a proper bedroom with a study desk far from your tax binders. The spare room housing your home studio has officially entered diplomatic dispute."
+"familia_reforma_habitacion_infantil_estudio.choices.ceder_cuarto_y_cerrar_galeria_estudio.label": "Hand over the room and glaze in a soundproofed nook for work (680 €)"
+"familia_reforma_habitacion_infantil_estudio.choices.ceder_cuarto_y_cerrar_galeria_estudio.result_text": "You paint the new kid's room together and christen a sunlit glassed-in study with its own door and zero plastic bricks underfoot."
+"familia_reforma_habitacion_infantil_estudio.choices.alquilar_mesa_fija_barrio.label": "Give up the whole room and rent a fixed desk five minutes away (190 €)"
+"familia_reforma_habitacion_infantil_estudio.choices.alquilar_mesa_fija_barrio.result_text": "Separating family roof from working hours works like magic: at six sharp you lock up and actually come home."
+"familia_reforma_habitacion_infantil_estudio.choices.encajar_escritorio_plegable_dormitorio.label": "Squeeze your computer onto a fold-down desk beside the wardrobe (95 €)"
+"familia_reforma_habitacion_infantil_estudio.choices.encajar_escritorio_plegable_dormitorio.result_text": "Your kid rules the new room happily, though framing video calls so the duvet stays off-camera takes Olympic aim."
+
+# 53. familia_revision_hipoteca_tipo_fijo
+"familia_revision_hipoteca_tipo_fijo.title": "At the Bank Branch: Floating Rates and Fine Print"
+"familia_revision_hipoteca_tipo_fijo.body": "After four years proving freelance income with three thick binders of tax returns, the bank finally agrees to review your variable housing rate. Switching terms carries upfront notary fees."
+"familia_revision_hipoteca_tipo_fijo.choices.subrogar_a_tipo_fijo_estable.label": "Pay novation costs today to lock in a calm fixed payment (540 €)"
+"familia_revision_hipoteca_tipo_fijo.choices.subrogar_a_tipo_fijo_estable.result_text": "You leave the notary lighter on cash today, knowing to the exact cent what you will pay each month whatever rates do."
+"familia_revision_hipoteca_tipo_fijo.choices.amagar_con_otro_banco_sin_gasto.label": "Bring a rival bank's offer to bargain a rate cut with zero fees"
+"familia_revision_hipoteca_tipo_fijo.choices.amagar_con_otro_banco_sin_gasto.outcomes.director_iguala_condiciones.result_text": "The bluff works: junk fees vanish and your spread drops without paying a single euro at the notary."
+"familia_revision_hipoteca_tipo_fijo.choices.amagar_con_otro_banco_sin_gasto.outcomes.vinculacion_seguros_cara.result_text": "They only trim the rate if you bundle a pricey alarm and life policy; you walk out unchanged after wasting all morning."
+"familia_revision_hipoteca_tipo_fijo.choices.seguir_en_variable_sin_papeleo.label": "Leave terms untouched rather than gathering twenty tax forms again"
+"familia_revision_hipoteca_tipo_fijo.choices.seguir_en_variable_sin_papeleo.result_text": "You dodge the freelance banking obstacle course today, crossing your fingers whenever central-bank news comes on TV."
+
+# 54. familia_sabatico_largo_veterano
+"familia_sabatico_largo_veterano.title": "Seven Years In and Scared to Unplug for Three Weeks"
+"familia_sabatico_largo_veterano.body": "After years of back-to-back quarters you finally have the savings and craft to unplug for three straight weeks without a laptop—yet your old freelancer reflex whispers the phone will go silent forever."
+"familia_sabatico_largo_veterano.choices.cerrar_tres_semanas_ruta_larga.label": "Block three weeks ahead, notify clients, and travel laptop-free (890 €)"
+"familia_sabatico_largo_veterano.choices.cerrar_tres_semanas_ruta_larga.result_text": "Your veteran clients wait gladly for your return, and you come back with mental clarity you had not felt since year one."
+"familia_sabatico_largo_veterano.choices.reducir_a_cuatro_dias_trimestre.label": "Switch to four-day weeks this quarter and keep every Friday off"
+"familia_sabatico_largo_veterano.choices.reducir_a_cuatro_dias_trimestre.result_text": "You trade maximum billable hours for quiet Fridays filled with reading, unhurried errands, and proper sleep."
+"familia_sabatico_largo_veterano.choices.posponer_descanso_por_inercia.label": "Put off the big break 'until next year' and take on another batch"
+"familia_sabatico_largo_veterano.choices.posponer_descanso_por_inercia.result_text": "Your bank balance swells on sheer professional momentum while cumulative fatigue adds one more stone to your pack."
+
+# 55. familia_soledad_domingo_autonomo
+"familia_soledad_domingo_autonomo.title": "Forty-Eight Hours Without Using Your Vocal Cords"
+"familia_soledad_domingo_autonomo.body": "Sunday evening falls and you realize the last sentence you spoke out loud was 'thanks, third floor' to Friday's courier at noon. The silence in your flat weighs heavier today than any invoice."
+"familia_soledad_domingo_autonomo.choices.apuntarse_club_senderismo_barrio.label": "Join a local Sunday hiking group nearby (35 €)"
+"familia_soledad_domingo_autonomo.choices.apuntarse_club_senderismo_barrio.result_text": "You come home with muddy boots, healthy sore legs, and four real conversations where nobody mentioned VAT once."
+"familia_soledad_domingo_autonomo.choices.organizar_comida_fija_amigos.label": "Start a fixed Sunday vermouth with friends (48 €)"
+"familia_soledad_domingo_autonomo.choices.organizar_comida_fija_amigos.result_text": "Terrace laughs pop your home-office bubble right before Monday morning tries to swallow your calendar whole."
+"familia_soledad_domingo_autonomo.choices.trabajar_dos_dias_fuera_casa.label": "Work from busy cafés Tuesdays and Thursdays (30 €)"
+"familia_soledad_domingo_autonomo.choices.trabajar_dos_dias_fuera_casa.result_text": "Morning café chatter and greeting familiar faces clear your head without slowing down your monthly billings."
+"familia_soledad_domingo_autonomo.choices.adelantar_semana_en_pijama.label": "Shrug off the slump and get ahead on Monday work"
+"familia_soledad_domingo_autonomo.choices.adelantar_semana_en_pijama.result_text": "You start Monday with half your inbox cleared and the eerie sensation of living inside your own monitor."
+
+# 56. familia_terapia_pareja_ultimatum
+"familia_terapia_pareja_ultimatum.title": "'I Live in the Waiting Room of Your Deadlines'"
+"familia_terapia_pareja_ultimatum.body": "Álex switches off the TV and speaks without raising a voice: 'It feels like I only get the scraps of your day once the laptop closes.' Months of strain demand action now before the gap turns permanent."
+"familia_terapia_pareja_ultimatum.choices.ir_a_terapia_pareja_y_cumplir.label": "Start couples therapy and shut screens at six sharp daily (180 €)"
+"familia_terapia_pareja_ultimatum.choices.ir_a_terapia_pareja_y_cumplir.result_text": "Holding the boundary takes effort at first, yet honest listening defuses resentment and brings fresh air back home."
+"familia_terapia_pareja_ultimatum.choices.escapada_honesta_reconstruir_pacto.label": "Own your part and book two quiet days away to talk it out (120 €)"
+"familia_terapia_pareja_ultimatum.choices.escapada_honesta_reconstruir_pacto.result_text": "With notifications off, you agree on humane hours and defuse the storm before it breaks anything essential."
+"familia_terapia_pareja_ultimatum.choices.defenderse_con_facturas_y_choque.label": "Get defensive and point out whose invoices cover spike months"
+"familia_terapia_pareja_ultimatum.choices.defenderse_con_facturas_y_choque.outcomes.tregua_fria_y_distancia.result_text": "The argument fizzles out from sheer exhaustion: nobody packs a bag tonight, though the hallway feels like Siberia."
+"familia_terapia_pareja_ultimatum.choices.defenderse_con_facturas_y_choque.outcomes.ruptura_definitiva_alex.result_text": "Álex packs calmly on Sunday morning. You have the entire desk to yourself and a hollow echo across the flat."
+
+# 57. familia_urgencia_hospital_padres
+"familia_urgencia_hospital_padres.title": "A Nine AM Call: Your Parents at the ER"
+"familia_urgencia_hospital_padres.body": "Later years bring scares that freeze your fingers over the keyboard: early Wednesday you hear one of your parents is under ER observation after a dizzy spell. You have a client delivery due today."
+"familia_urgencia_hospital_padres.choices.cerrar_portatil_y_correr_al_hospital.label": "Shut everything down, grab a cab, and stay by their side (65 €)"
+"familia_urgencia_hospital_padres.choices.cerrar_portatil_y_correr_al_hospital.result_text": "It turns out to be a manageable medication tweak. Holding their hand when the doctor walks out erases every work rush."
+"familia_urgencia_hospital_padres.choices.coordinar_turnos_familia_y_entregar_noche.label": "Spend the morning at the hospital and finish the job late (45 €)"
+"familia_urgencia_hospital_padres.choices.coordinar_turnos_familia_y_entregar_noche.result_text": "You show up where it truly counts and salvage the invoice past midnight, grateful it stayed a mild observation scare."
+"familia_urgencia_hospital_padres.choices.trabajar_desde_sala_de_espera.label": "Bring your laptop to the hospital corridor so you don't fall behind"
+"familia_urgencia_hospital_padres.choices.trabajar_desde_sala_de_espera.result_text": "You upload files balanced on your knees amid intercom chimes—saving the gig while walking out with a pounding head."

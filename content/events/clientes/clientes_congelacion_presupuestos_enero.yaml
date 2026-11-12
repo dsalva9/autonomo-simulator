@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_congelacion_presupuestos_enero
+category: clientes
+title: "Cuesta de enero: «Dirección aún no ha abierto las partidas del año»"
+body: Marta te pide arrancar ya el proyecto de 2.200 € del primer trimestre, pero avisa de que finanzas tiene congeladas las órdenes de compra de enero y que «ya regularizaremos la factura en marzo».
+tags:
+  - estacional
+  - enero
+  - corporativo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 12
+  months_of_year:
+    - 1
+    - 2
+weight: 10
+cooldown_months: 9
+max_occurrences: 4
+choices:
+  - id: no_mover_un_dedo_sin_orden_compra
+    label: Bloquear el inicio hasta tener número de pedido oficial firmado
+    result_text: En cuanto ven peligrar su calendario, aparece misteriosamente una partida de urgencia de 1.500 € para la fase inicial.
+    effects:
+      billed_income: 1500
+      moral: 4
+      stress: 2
+      reputation: 3
+  - id: adelantar_trabajo_confiando_en_marzo
+    label: Empezar de buena fe esperando cobrarlo todo junto en primavera
+    outcomes:
+      - id: liberan_presupuesto_con_retraso
+        weight: 55
+        result_text: Pasas enero a pan y agua, pero compras desbloquea por fin la orden completa con vencimiento diferido.
+        effects:
+          deferred_invoice:
+            amount: 2200
+            delay_months: 2
+            default_prob: 0.08
+          stress: 7
+          reputation: 3
+      - id: recorte_sorpresa_de_partidas
+        weight: 45
+        result_text: En febrero recortan un 40 % del área de Marta y te dejan media entrega colgada pendiente de reclamación.
+        effects:
+          billed_income: 900
+          moral: -6
+          stress: 11
+          reputation: -2
+          set_flags:
+            - impago_pendiente
+  - id: facturar_diagnostico_menor_por_tarjeta
+    label: Trocear una fase previa de 890 € pagadera con tarjeta de departamento
+    result_text: Esquivas el bloqueo de compras entrando por el límite de gastos menores de Marta y aseguras liquidez inmediata.
+    effects:
+      billed_income: 890
+      moral: 3
+      stress: -1
+      reputation: 4

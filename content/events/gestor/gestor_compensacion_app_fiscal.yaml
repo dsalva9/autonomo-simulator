@@ -7,11 +7,21 @@ tags:
   - autogestion
   - software_fiscal
   - compensacion
+requirements:
+  gestor_tiers:
+    - self
 weight: 0
 cooldown_months: 0
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: exportar_libros_y_cerrar_cuenta
+    label: "Descargar el histórico limpio, borrar la cuenta y seguir por libre"
+    result_text: "Guardas tus facturas en carpetas locales bien ordenadas y te quitas de encima notificaciones absurdas a medianoche."
+    effects:
+      stress: -5
+      moral: 3
+      fiscal_risk: -4
   - id: exigir_reembolso_por_incidencia
     label: "Reclamar en firme la devolución íntegra de cuotas y daños"
     requirements:
@@ -26,9 +36,6 @@ choices:
       fiscal_risk: -3
   - id: migrar_historico_a_paco
     label: "Exportar tus libros y pasarte a la carpeta física de Paco (60 €/mes)"
-    requirements:
-      gestor_tiers:
-        - self
     result_text: "Cambias la inteligencia artificial rota por el bolígrafo bic de Paco: al menos si se equivoca puedes bajar a protestarle en persona."
     effects:
       set_gestor:
@@ -38,10 +45,3 @@ choices:
       stress: -6
       moral: 3
       fiscal_risk: -4
-  - id: exportar_libros_y_cerrar_cuenta
-    label: "Descargar el histórico limpio, borrar la cuenta y seguir por libre"
-    result_text: "Guardas tus facturas en carpetas locales bien ordenadas y te quitas de encima notificaciones absurdas a medianoche."
-    effects:
-      stress: -3
-      moral: 2
-      fiscal_risk: -2

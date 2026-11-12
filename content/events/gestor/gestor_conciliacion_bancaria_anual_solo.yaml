@@ -10,25 +10,16 @@ tags:
   - largo_plazo
 requirements:
   min_month: 48
+  months_of_year:
+    - 1
+    - 12
   gestor_tiers:
     - self
 weight: 12
 cooldown_months: 10
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: comprar_conector_conciliacion
-    label: "Adquirir una herramienta profesional de conciliación bancaria (160 €)"
-    requirements:
-      stats:
-        money:
-          min: 250
-    result_text: "Cruzas tres mil apuntes en diez minutos, cazas comisiones deducibles olvidadas y dejas el libro mayor limpio como una patena."
-    effects:
-      deductible_expense: 160
-      stress: -6
-      moral: 4
-      fiscal_risk: -8
   - id: puntear_extractos_el_fin_de_semana
     label: "Encerrarte el sábado entero con rotulador fluorescente y extractos"
     result_text: "Terminas viendo números hasta al cerrar los párpados, pero cuadras hasta el último céntimo de pasarela sin gastar un euro."
@@ -41,6 +32,19 @@ choices:
     label: "Meter un apunte genérico de ajuste y rezar para que cuele"
     result_text: "Cierras la carpeta en cinco minutos y ganas la tarde libre, dejando un descuadre latente bajo la alfombra contable."
     effects:
-      stress: -3
+      stress: -4
       moral: -2
+      personal_life: 2
       fiscal_risk: 12
+  - id: comprar_conector_conciliacion
+    label: "Adquirir una herramienta profesional de conciliación bancaria (160 €)"
+    requirements:
+      stats:
+        money:
+          min: 250
+    result_text: "Cruzas tres mil apuntes en diez minutos, cazas comisiones deducibles olvidadas y dejas el libro mayor limpio como una patena."
+    effects:
+      deductible_expense: 160
+      stress: -6
+      moral: 4
+      fiscal_risk: -8

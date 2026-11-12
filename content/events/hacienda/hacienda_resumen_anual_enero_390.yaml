@@ -1,0 +1,47 @@
+schema_version: 1
+id: hacienda_resumen_anual_enero_390
+category: hacienda
+title: La cuesta fiscal de enero y el Modelo 390
+body: "Enero no perdona: además del cuarto trimestre toca cuadrar el resumen anual Modelo 390, y el formulario rechaza el envío porque tus redondeos acumulados bailan tres euros con cuarenta."
+tags:
+  - modelo_390
+  - resumen_anual
+  - iva
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 12
+  months_of_year:
+    - 1
+weight: 12
+cooldown_months: 11
+max_occurrences: 4
+choices:
+  - id: forzar_casilla_para_pasar_validacion
+    label: Retocar una base imponible a mano para que trague el envío
+    result_text: El formulario valida en verde en dos minutos, pero dejas un descuadre entre el anual y tus trimestres previos.
+    effects:
+      stress: -2
+      moral: -2
+      fiscal_risk: 12
+  - id: puntear_cuatro_trimestres_factura_a_factura
+    label: Revisar los cuatro trimestres hasta cazar el céntimo rebelde
+    result_text: Encuentras dos facturas con tres decimales de junio, ajustas el cuarto trimestre y cierras el año limpio.
+    effects:
+      cash_delta: -15
+      stress: 6
+      moral: 4
+      personal_life: -3
+      fiscal_risk: -5
+  - id: delegar_cierre_enero_en_gestoria
+    label: Dejar que tu gestoría cuadre el cierre anual completo
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría concilia libros de IVA y resúmenes informativos antes del día treinta sin que pierdas el sueño.
+    effects:
+      deductible_expense: 115
+      stress: -5
+      moral: 4
+      fiscal_risk: -8

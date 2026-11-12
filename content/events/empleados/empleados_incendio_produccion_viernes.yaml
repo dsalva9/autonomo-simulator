@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_incendio_produccion_viernes
 category: empleados
 title: "Viernes a las siete: carpeta equivocada"
-body: "Faltan diez minutos para cerrar la semana cuando Dani palidece frente al monitor con el termo en la mano: al limpiar archivos temporales ha machacado la versión final que el cliente presenta el lunes a primera hora, y la copia automática está a medias."
+body: "Diez minutos antes de cerrar el viernes, Dani palidece con el termo en la mano: limpiando temporales ha machacado la versión final que el cliente presenta el lunes a las nueve, y la copia en nube quedó a medias."
 tags:
   - plantilla
   - junior
@@ -14,8 +14,8 @@ illustration_id: null
 requirements:
   min_month: 6
   has_employee: true
-  forbidden_flags:
-    - empleada_laura_activa
+  required_flags:
+    - empleado_dani_activo
 weight: 8
 cooldown_months: 12
 max_occurrences: 3
@@ -33,6 +33,7 @@ choices:
           stress: 6
           personal_life: -4
           reputation: 3
+          employee_satisfaction: 12
           add_modifier:
             id: protocolo_calidad_estudio
             label: "Protocolo de copias y revisión en estudio"
@@ -47,6 +48,7 @@ choices:
           moral: 1
           stress: 10
           personal_life: -6
+          employee_satisfaction: 6
   - id: echar_bronca_y_dejarlo_solo
     label: "Echarle la bronca del siglo y exigirle que lo arregle él solo el fin de semana"
     outcomes:
@@ -58,6 +60,7 @@ choices:
           moral: -6
           stress: 10
           reputation: -7
+          employee_satisfaction: -16
           set_flags:
             - desgaste_plantilla
           schedule_events:
@@ -71,13 +74,15 @@ choices:
           moral: -5
           stress: 3
           reputation: -1
+          employee_satisfaction: -14
           set_flags:
             - desgaste_plantilla
   - id: dar_la_cara_y_pedir_margen
-    label: "Llamar tú mismo al cliente, asumir el fallo como estudio y pactar entrega el martes"
+    label: "Llamar tú al cliente, asumir el fallo como estudio y entregar el martes"
     result_text: "Asumes la responsabilidad sin señalar a nadie y compensas la demora con un pequeño ajuste comercial. Pierdes algo de margen hoy, pero ganas respeto dentro y fuera."
     effects:
       cash_delta: -250
       moral: 3
       stress: 4
       reputation: -2
+      employee_satisfaction: 9

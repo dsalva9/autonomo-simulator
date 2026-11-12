@@ -82,7 +82,17 @@ describe("StoragePort & Save Migrations", () => {
       runId: "run_ach_01",
     });
 
-    const month3State: GameState = { ...baseState, month: 3 };
+    // Reaching Month 3 alone (before settling Q1) must NOT prematurely unlock primer_trimestre
+    const month3PreQuarter: GameState = { ...baseState, month: 3 };
+    const syncM3Pre = await storage.syncRunProgress(month3PreQuarter, "2026-11-11T10:02:30.000Z");
+    expect(syncM3Pre.newlyUnlocked).toEqual([]);
+
+    // Settling Q1 (month > 3 or taxes_paid > 0 / quarterly_tax history) unlocks primer_trimestre
+    const month3State: GameState = {
+      ...baseState,
+      month: 4,
+      annual_snapshot: { ...baseState.annual_snapshot, taxes_paid: 420 },
+    };
     const syncM3 = await storage.syncRunProgress(month3State, "2026-11-11T10:03:00.000Z");
     expect(syncM3.newlyUnlocked).toEqual(["primer_trimestre"]);
     expect(syncM3.profile.achievements.primer_trimestre).toBe("2026-11-11T10:03:00.000Z");
@@ -166,7 +176,16 @@ describe("StoragePort & Save Migrations", () => {
     const syncM12 = await storage.syncRunProgress(month12State, "2026-11-11T10:12:00.000Z");
     expect(syncM12.newlyUnlocked).toEqual(["primer_ano"]);
 
-    // Late-game & Endless milestones: 60m, 100k billed, 120m hero, 150k rich, endless_mode
+    // Reaching start of Month 120 without earned_victories["hero_120m"] must NOT prematurely unlock heroe_120m
+    const month120StartState: GameState = { ...month12State, month: 120, earned_victories: [] };
+    const syncM120Start = await storage.syncRunProgress(
+      month120StartState,
+      "2026-11-11T11:55:00.000Z",
+    );
+    expect(syncM120Start.newlyUnlocked).toEqual(["cinco_anos"]);
+    expect(syncM120Start.profile.achievements.heroe_120m).toBeUndefined();
+
+    // Late-game & Endless milestones: 100k billed, 120m hero seal, 150k rich, endless_mode
     const endlessVeteranState: GameState = {
       ...month12State,
       month: 121,
@@ -177,7 +196,6 @@ describe("StoragePort & Save Migrations", () => {
     };
     const syncVet = await storage.syncRunProgress(endlessVeteranState, "2026-11-11T12:00:00.000Z");
     expect(syncVet.newlyUnlocked).toEqual([
-      "cinco_anos",
       "facturacion_100k",
       "heroe_120m",
       "ricachon_150k",
@@ -313,5 +331,67 @@ describe("StoragePort & Save Migrations", () => {
     const preservedProfile = await storage.loadProfile();
     expect(preservedProfile.achievements.primer_trimestre).toBe("2026-11-10T00:00:00.000Z");
     expect(preservedProfile.settings.reduced_motion).toBe(true);
+  });
+
+  it("round-trips SaveEnvelope.pending_turn cleanly and safely drops malformed pending_turn payloads", async () => {
+    const driver = createMemoryStorageDriver();
+    const storage = createStorageAdapter(driver);
+
+    const { state } = startNewRun(compiledCatalog, {
+      seed: "PENDING-TURN-01",
+      runId: "run_pending_turn_01",
+    });
+    const sampleEvent = compiledCatalog.events[0]!;
+    const sampleChoice = sampleEvent.choices[0]!;
+
+    await storage.saveActiveRun(state, "2026-11-12T10:00:00.000Z", {
+      pendingTurn: {
+        pending_outcome: {
+          event: sampleEvent,
+          choiceId: sampleChoice.id,
+          choiceLabel: sampleChoice.label,
+          outcome: {
+            event_id: sampleEvent.id,
+            choice_id: sampleChoice.id,
+            outcome_id: null,
+            result_text: "Resultado pendiente.",
+            money_delta: 250,
+            moral_delta: 0,
+            stress_delta: 4,
+            personal_life_delta: 0,
+            reputation_delta: 1,
+            fiscal_risk_delta: 0,
+            scheduled_event_ids: [],
+          },
+        },
+        outcome_preview_state: state,
+        queued_final_state: null,
+        queued_post_outcome_deltas: { stress: 2 },
+        queued_month_start: null,
+        last_deltas: { money: 250, stress: 4, reputation: 1 },
+        last_month_start: null,
+      },
+    });
+
+    const loaded = await storage.loadActiveRun();
+    expect(loaded.corruptedRecovery).toBeNull();
+    expect(loaded.envelope?.pending_turn?.pending_outcome.choiceId).toBe(sampleChoice.id);
+    expect(loaded.envelope?.pending_turn?.last_deltas).toEqual({
+      money: 250,
+      stress: 4,
+      reputation: 1,
+    });
+
+    // Malformed pending_turn should be stripped without corrupting the valid GameState
+    const migratedMalformed = migrateSaveEnvelope({
+      save_version: 1,
+      state,
+      pending_turn: { pending_outcome: "invalid" },
+    });
+    expect(migratedMalformed.ok).toBe(true);
+    if (migratedMalformed.ok) {
+      expect(migratedMalformed.envelope.state).toEqual(state);
+      expect(migratedMalformed.envelope.pending_turn).toBeUndefined();
+    }
   });
 });

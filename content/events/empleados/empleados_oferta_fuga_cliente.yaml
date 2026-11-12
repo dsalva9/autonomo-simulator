@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_oferta_fuga_cliente
 category: empleados
 title: "Oferta furtiva desde la trinchera cliente"
-body: "Después de meses puliendo procesos y sacando proyectos impecables juntos, descubres que el departamento de Marta ha tanteado por privado a tu persona en plantilla para ficharla en su nómina interna y ahorrarse de paso tu intermediación como estudio."
+body: "Tras meses sacando proyectos impecables juntos, descubres que el equipo de Marta ha tanteado en privado a tu persona en plantilla para ficharla en su nómina interna y ahorrarse tu margen como estudio."
 tags:
   - plantilla
   - retencion
@@ -20,7 +20,7 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: blindar_con_prima_y_marcar_limites
-    label: "Abonar una prima de fidelización (550 €) y hacer valer la cláusula comercial ante Marta"
+    label: "Abonar prima de retención (550 €) y marcar límites claros ante Marta"
     result_text: "Tu fichaje agradece el gesto quedándose a tu lado y Marta acepta renovar el proyecto respetando escrupulosamente el perímetro de tu estudio."
     effects:
       cash_delta: -550
@@ -28,6 +28,7 @@ choices:
       stress: 5
       moral: 7
       reputation: 4
+      employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
   - id: pactar_cesion_y_cobrar_traspaso
@@ -54,6 +55,7 @@ choices:
           moral: 5
           stress: 4
           reputation: 2
+          employee_satisfaction: 8
       - id: marcha_con_quince_dias_preaviso
         weight: 50
         result_text: "Firma las catorce pagas corporativas dejando el preaviso legal sobre tu mesa. Te quedas sin equipo en mitad del trimestre y reorganizar entregas te cuesta dinero."

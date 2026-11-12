@@ -17,18 +17,6 @@ cooldown_months: 12
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: descontar_pagare_en_banco
-    label: Aceptar y descontar el pagaré en el banco asumiendo comisión (180 €)
-    result_text: El director de la sucursal se frota las manos con los intereses, pero sales con liquidez inmediata y desgravas los gastos financieros.
-    effects:
-      billed_income: 1600
-      deductible_expense: 180
-      stress: 12
-      moral: -4
-      reputation: 1
-      schedule_events:
-        - event_id: clientes_renovacion_pagare_tesoreria
-          delay_months: 3
   - id: guardar_pagare_hasta_vencimiento
     label: Ejecutar el pedido y custodiar el pagaré los noventa días
     result_text: Custodias ese papelito timbrado como si fuera el anillo único esperando que dentro de tres meses haya fondos y nadie ponga pegas.
@@ -37,8 +25,20 @@ choices:
         amount: 1900
         delay_months: 3
         default_prob: 0.1
-      stress: 15
+      stress: 10
       moral: -5
+      reputation: 1
+      schedule_events:
+        - event_id: clientes_renovacion_pagare_tesoreria
+          delay_months: 3
+  - id: descontar_pagare_en_banco
+    label: Aceptar y descontar el pagaré en el banco asumiendo comisión (180 €)
+    result_text: El director de la sucursal se frota las manos con los intereses, pero sales con liquidez inmediata y desgravas los gastos financieros.
+    effects:
+      billed_income: 1600
+      deductible_expense: 180
+      stress: 7
+      moral: -4
       reputation: 1
       schedule_events:
         - event_id: clientes_renovacion_pagare_tesoreria

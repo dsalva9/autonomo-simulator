@@ -1,7 +1,17 @@
 import { type SupportedLocale, type UILocale, normalizeLocale } from "./resolveEventText.ts";
 
+export interface ConfirmOverwriteRunStrings {
+  heading: string;
+  body: string;
+  confirmBtn: string;
+  cancelBtn: string;
+}
+
 export interface UiStrings {
   locale: UILocale;
+  retireHonorablyBtn: string;
+  autoSettledQuarterBadge: (quarter: number, formattedPaid: string) => string;
+  confirmOverwriteRun: ConfirmOverwriteRunStrings;
   app: {
     loadingBadge: string;
     loadingTitle: string;
@@ -63,6 +73,7 @@ export interface UiStrings {
     hallBilledPrefix: string;
     achievementUnlockedBadge: string;
     achievementPendingBadge: string;
+    confirmOverwriteRun: ConfirmOverwriteRunStrings;
   };
   hud: {
     liveMoney: string;
@@ -85,6 +96,9 @@ export interface UiStrings {
     abandonShort: string;
     abandonLong: string;
     abandonTitle: string;
+    retireHonorablyBtn: string;
+    retireHonorablyShort: string;
+    retireHonorablyTitle: string;
     cashLabel: string;
     overdraftLong: (cur: number, max: number) => string;
     overdraftShort: (cur: number, max: number) => string;
@@ -122,6 +136,7 @@ export interface UiStrings {
     vatIrpfShort: string;
     invoicePaid: (amount: string) => string;
     invoiceDefaulted: (amount: string) => string;
+    autoSettledQuarterBadge: (quarter: number, formattedPaid: string) => string;
     dossierClosedBadge: string;
     rulingRecordedBadge: string;
     decisionTakenLabel: string;
@@ -311,6 +326,14 @@ export interface UiStrings {
       salariedDesc: string;
       ceseTitle: string;
       ceseDesc: string;
+      retireHonorablyBtn: string;
+      honorableBadge: string;
+      honorableHeading: string;
+      honorablePrompt: string;
+      honorableSummary: string;
+      honorableCancelBtn: string;
+      enterKeyLabel: string;
+      escKeyLabel: string;
     };
   };
   endRun: {
@@ -340,8 +363,26 @@ export interface UiStrings {
   };
 }
 
+const ES_CONFIRM_OVERWRITE_RUN: ConfirmOverwriteRunStrings = {
+  heading: "¿Reemplazar expediente en curso?",
+  body: "Tienes una partida activa guardada. Iniciar una nueva alta archivará sin certificado el expediente actual.",
+  confirmBtn: "Sí, iniciar nueva alta",
+  cancelBtn: "Cancelar y mantener expediente",
+};
+
+const EN_CONFIRM_OVERWRITE_RUN: ConfirmOverwriteRunStrings = {
+  heading: "Replace active dossier?",
+  body: "You have an active saved run in progress. Starting a new registration will overwrite your current dossier.",
+  confirmBtn: "Yes, start new run",
+  cancelBtn: "Cancel & keep active run",
+};
+
 const ES_STRINGS: UiStrings = {
   locale: "es-ES",
+  retireHonorablyBtn: "Jubilarse con honores",
+  autoSettledQuarterBadge: (quarter, formattedPaid) =>
+    `✓ T${quarter} autoliquidado (-${formattedPaid})`,
+  confirmOverwriteRun: ES_CONFIRM_OVERWRITE_RUN,
   app: {
     loadingBadge: "MODELO 036 · CARGANDO",
     loadingTitle: "Abriendo carpeta fiscal...",
@@ -391,7 +432,8 @@ const ES_STRINGS: UiStrings = {
     sfxMutedLabel: "Silenciado",
     sfxActiveLabel: "Activo",
     fastPacingTitle: "Modo ágil",
-    fastPacingDesc: "Avanza directamente al siguiente trámite salvo fin de partida.",
+    fastPacingDesc:
+      "Avanza directo en trámites rutinarios salvo tiradas con incertidumbre o fin de partida.",
     fastPacingTitleAttr: "Alternar modo ágil (F)",
     fastPacingOn: "Ágil: SÍ",
     fastPacingNormal: "Normal",
@@ -407,6 +449,7 @@ const ES_STRINGS: UiStrings = {
     hallBilledPrefix: "Facturado",
     achievementUnlockedBadge: "SELLADO",
     achievementPendingBadge: "PENDIENTE",
+    confirmOverwriteRun: ES_CONFIRM_OVERWRITE_RUN,
   },
   hud: {
     liveMoney: "Dinero",
@@ -429,6 +472,9 @@ const ES_STRINGS: UiStrings = {
     abandonShort: "Baja",
     abandonLong: "Darse de baja",
     abandonTitle: "Tramitar baja voluntaria Modelo 036 (B)",
+    retireHonorablyBtn: "Jubilarse con honores",
+    retireHonorablyShort: "Jubilarse",
+    retireHonorablyTitle: "Tramitar jubilación con honores y emitir certificado (B)",
     cashLabel: "Caja:",
     overdraftLong: (cur, max) => `NÚMEROS ROJOS (${cur}/${max})`,
     overdraftShort: (cur, max) => `ROJOS ${cur}/${max}`,
@@ -466,6 +512,8 @@ const ES_STRINGS: UiStrings = {
     vatIrpfShort: "IVA/IRPF: ",
     invoicePaid: (amount) => `✓ Factura cobrada: +${amount}`,
     invoiceDefaulted: (amount) => `✗ Factura impagada (${amount})`,
+    autoSettledQuarterBadge: (quarter, formattedPaid) =>
+      `✓ T${quarter} autoliquidado (-${formattedPaid})`,
     dossierClosedBadge: "Expediente cerrado",
     rulingRecordedBadge: "Resolución registrada",
     decisionTakenLabel: "Decisión tomada: ",
@@ -669,6 +717,16 @@ const ES_STRINGS: UiStrings = {
       salariedDesc: "Vuelves a tener jefe, pero recuperas las vacaciones pagadas.",
       ceseTitle: "📄 Solicitar el cese de actividad",
       ceseDesc: "Cierras la persiana tras comprobar la letra pequeña de emprender.",
+      retireHonorablyBtn: "Jubilarse con honores",
+      honorableBadge: "MODELO 036 · CESE CON HONORES",
+      honorableHeading: "Jubilarse con honores",
+      honorablePrompt:
+        "Tras superar la meta histórica del RETA (10+ años cotizados o 150.000 € de colchón), puedes cerrar el despacho por la puerta grande.",
+      honorableSummary:
+        "Se archivará tu expediente con el sello oficial de retirada triunfal y podrás descargar o compartir tu certificado definitivo.",
+      honorableCancelBtn: "Seguir cotizando en el despacho",
+      enterKeyLabel: "Intro",
+      escKeyLabel: "Esc",
     },
   },
   endRun: {
@@ -701,6 +759,10 @@ const ES_STRINGS: UiStrings = {
 
 const EN_STRINGS: UiStrings = {
   locale: "en",
+  retireHonorablyBtn: "Retire with honors",
+  autoSettledQuarterBadge: (quarter, formattedPaid) =>
+    `✓ Q${quarter} auto-settled (-${formattedPaid})`,
+  confirmOverwriteRun: EN_CONFIRM_OVERWRITE_RUN,
   app: {
     loadingBadge: "FORM 036 · LOADING",
     loadingTitle: "Opening tax dossier...",
@@ -749,7 +811,7 @@ const EN_STRINGS: UiStrings = {
     sfxMutedLabel: "Muted",
     sfxActiveLabel: "Active",
     fastPacingTitle: "Fast pacing",
-    fastPacingDesc: "Jump straight to the next month unless the run ends.",
+    fastPacingDesc: "Skips routine pauses except risky rolls or run-ending events.",
     fastPacingTitleAttr: "Toggle fast pacing (F)",
     fastPacingOn: "Fast: ON",
     fastPacingNormal: "Normal",
@@ -765,6 +827,7 @@ const EN_STRINGS: UiStrings = {
     hallBilledPrefix: "Billed",
     achievementUnlockedBadge: "SEALED",
     achievementPendingBadge: "LOCKED",
+    confirmOverwriteRun: EN_CONFIRM_OVERWRITE_RUN,
   },
   hud: {
     liveMoney: "Cash",
@@ -787,6 +850,9 @@ const EN_STRINGS: UiStrings = {
     abandonShort: "Quit",
     abandonLong: "Deregister",
     abandonTitle: "File voluntary Form 036 deregistration (B)",
+    retireHonorablyBtn: "Retire with honors",
+    retireHonorablyShort: "Retire",
+    retireHonorablyTitle: "Retire with honors and issue official certificate (B)",
     cashLabel: "Cash:",
     overdraftLong: (cur, max) => `OVERDRAFT (${cur}/${max})`,
     overdraftShort: (cur, max) => `RED ${cur}/${max}`,
@@ -824,6 +890,8 @@ const EN_STRINGS: UiStrings = {
     vatIrpfShort: "VAT/Tax: ",
     invoicePaid: (amount) => `✓ Invoice paid: +${amount}`,
     invoiceDefaulted: (amount) => `✗ Invoice defaulted (${amount})`,
+    autoSettledQuarterBadge: (quarter, formattedPaid) =>
+      `✓ Q${quarter} auto-settled (-${formattedPaid})`,
     dossierClosedBadge: "Dossier closed",
     rulingRecordedBadge: "Outcome logged",
     decisionTakenLabel: "Chosen action: ",
@@ -1026,6 +1094,16 @@ const EN_STRINGS: UiStrings = {
       salariedDesc: "You have a boss again, but paid vacations are back on the menu.",
       ceseTitle: "📄 File for cessation of activity",
       ceseDesc: "Pull down the shutters after experiencing the fine print of freelancing.",
+      retireHonorablyBtn: "Retire with honors",
+      honorableBadge: "FORM 036 · HONORABLE RETIREMENT",
+      honorableHeading: "Retire with honors",
+      honorablePrompt:
+        "After conquering self-employment's ultimate milestone (10+ years survived or 150,000 € banked), you may close your RETA registration with full honors.",
+      honorableSummary:
+        "Your dossier will be permanently archived with an official triumph seal and you can claim your retirement certificate right away.",
+      honorableCancelBtn: "Keep filing at the desk",
+      enterKeyLabel: "Enter",
+      escKeyLabel: "Esc",
     },
   },
   endRun: {

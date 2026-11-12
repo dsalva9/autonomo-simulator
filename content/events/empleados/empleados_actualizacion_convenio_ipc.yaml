@@ -10,10 +10,13 @@ tags:
   - largo_plazo
 requirements:
   min_month: 54
+  months_of_year:
+    - 1
+    - 2
   has_employee: true
 weight: 10
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 10
+max_occurrences: 4
 exclusive_with: []
 choices:
   - id: actualizar_sueldo_sobre_ipc
@@ -24,6 +27,7 @@ choices:
       moral: 6
       stress: -4
       reputation: 3
+      employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
       add_modifier:
@@ -40,6 +44,7 @@ choices:
       deductible_expense: 390
       moral: 3
       stress: -2
+      employee_satisfaction: 7
       clear_flags:
         - desgaste_plantilla
   - id: absorber_subida_en_complementos
@@ -48,6 +53,7 @@ choices:
     effects:
       moral: -5
       stress: 6
+      employee_satisfaction: -14
       set_flags:
         - desgaste_plantilla
       add_modifier:

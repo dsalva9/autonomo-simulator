@@ -1,0 +1,57 @@
+schema_version: 1
+id: clientes_maqueta_ia_ochenta_euros
+category: clientes
+title: «Mi cuñado ya sacó el borrador en ChatGPT, solo es pulirlo por 80 €»
+body: "Borja te reenvía un engendro generado por IA lleno de datos inventados y piezas que no encajan: «El 90 % ya está hecho, te pago 80 € por darle tu toquecito profesional esta tarde»."
+tags:
+  - ia
+  - regateo
+  - criterio
+character_id: cliente_regateador
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 24
+weight: 9
+cooldown_months: 12
+max_occurrences: 3
+choices:
+  - id: aceptar_el_remiendo_por_necesidad
+    label: Meterte al barro cobrando las horas reales de reconstrucción (520 €)
+    result_text: "En cuanto tocas una pieza se caen seis: sacas 520 € a base de horas extra, pero pierdes dos días limpiando alucinaciones ajenas."
+    effects:
+      billed_income: 520
+      moral: -5
+      stress: 9
+      reputation: -2
+  - id: cobrar_auditoria_de_errores_cerrada
+    label: Cobrar 420 € solo por auditar fallos críticos sin tocar su archivo
+    result_text: En dos horas entregas un informe demoledor de dieciocho puntos y cobras por tu ojo clínico sin heredar la chapuza.
+    effects:
+      billed_income: 420
+      moral: 4
+      stress: 1
+      personal_life: 2
+      reputation: 4
+    requirements:
+      stats:
+        reputation:
+          min: 48
+  - id: desearle_suerte_con_su_cunado
+    label: Felicitar al cuñado y recordar que tu tarifa mínima parte de 1.200 €
+    outcomes:
+      - id: vuelve_a_las_dos_semanas_humillado
+        weight: 55
+        result_text: El invento explota delante de sus propios clientes y Borja regresa manso aceptando tu presupuesto completo de reconstrucción.
+        effects:
+          billed_income: 1450
+          moral: 7
+          stress: 3
+          reputation: 5
+      - id: no_vuelve_y_ganas_paz_mental
+        weight: 45
+        result_text: Borja se ofende y desaparece un trimestre entero. La paz que reina en tu WhatsApp no tiene precio.
+        effects:
+          moral: 5
+          stress: -6
+          personal_life: 4

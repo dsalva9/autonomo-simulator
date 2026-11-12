@@ -5,6 +5,7 @@ title: "Carta «informativa»: tus gastos superan la media del sector"
 body: "Recibes una misiva de cortesía gélida firmada por el Inspector Gómez: el algoritmo ha detectado que tu porcentaje de gastos deducidos dobla la media estadística de tu epígrafe y te invita a reflexionar."
 tags:
   - ratios
+  - comprobacion
   - algoritmo
   - deducciones
 character_id: hacienda_inspector_gomez
@@ -13,37 +14,37 @@ requirements:
   min_month: 9
   stats:
     fiscal_risk:
-      min: 25
+      min: 16
 weight: 14
 cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: archivar_aviso_y_seguir_deduciendo
+    label: Ignorar el aviso estadístico y exprimir hasta el último ticket del mes
+    result_text: Te ahorras el ajuste hoy mismo convencido de que es un farol informático, aunque tu expediente pasa a carpeta roja.
+    effects:
+      cash_delta: 180
+      stress: 6
+      moral: -2
+      fiscal_risk: 18
   - id: presentar_ajuste_prudencial
-    label: "Darse por aludido y presentar un pequeño ajuste voluntario (250 €)"
-    result_text: "Recortas un par de partidas fronterizas mediante complementaria preventiva y sales del radar algorítmico al instante."
+    label: Darse por aludido y presentar un pequeño ajuste voluntario (250 €)
+    result_text: Recortas un par de partidas fronterizas mediante complementaria preventiva y sales del radar algorítmico al instante.
     effects:
       cash_delta: -250
       stress: 4
       moral: -2
       fiscal_risk: -16
   - id: enviar_memoria_inversiones_gestor
-    label: "Encargar a tu gestoría un escrito acreditando renovación de equipos"
+    label: Encargar a tu gestoría un escrito acreditando renovación de equipos
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu asesoría adjunta facturas de licencias y equipamiento real, desactivando la alerta estadística sin pagar recargos."
+    result_text: Tu asesoría adjunta facturas de licencias y equipamiento real, desactivando la alerta estadística sin pagar recargos.
     effects:
       deductible_expense: 140
       stress: 2
       moral: 4
       fiscal_risk: -18
-  - id: archivar_aviso_y_seguir_deduciendo
-    label: "Ignorar el aviso estadístico y exprimir hasta el último ticket del mes"
-    result_text: "Te ahorras el ajuste hoy mismo convencido de que es un farol informático, aunque tu expediente pasa a carpeta roja."
-    effects:
-      cash_delta: 180
-      stress: 6
-      moral: -2
-      fiscal_risk: 18

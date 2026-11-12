@@ -1,10 +1,18 @@
-import type { GameState, TurnPhase } from "../../engine/index.ts";
+import type {
+  ChoiceOutcomeSummary,
+  EventDef,
+  GameState,
+  Indicators,
+  MonthStartSummary,
+  TurnPhase,
+} from "../../engine/index.ts";
 import {
   CURRENT_PROFILE_VERSION,
   CURRENT_SAVE_VERSION,
   ENGINE_BUILD,
   MAX_HALL_OF_FAME_ENTRIES,
   type PastRunSummary,
+  type PersistedPendingTurn,
   type ProfileEnvelope,
   type SaveEnvelope,
   createDefaultProfileEnvelope,
@@ -44,6 +52,7 @@ export const SAVE_MIGRATIONS: Record<number, SaveMigrationStep> = {
     updated_at:
       typeof legacy.updated_at === "string" ? legacy.updated_at : new Date(0).toISOString(),
     state: legacy.state,
+    ...(legacy.pending_turn !== undefined ? { pending_turn: legacy.pending_turn } : {}),
   }),
 };
 
@@ -122,6 +131,76 @@ export function isValidGameStateShape(candidate: unknown): candidate is GameStat
   return true;
 }
 
+function sanitizeIndicatorDeltas(
+  candidate: unknown,
+): Partial<Record<keyof Indicators, number>> | null {
+  if (!isRecord(candidate)) {
+    return null;
+  }
+  const out: Partial<Record<keyof Indicators, number>> = {};
+  const keys: (keyof Indicators)[] = ["money", "moral", "stress", "personal_life", "reputation"];
+  for (const key of keys) {
+    const val = candidate[key];
+    if (isFiniteNumber(val) && val !== 0) {
+      out[key] = val;
+    }
+  }
+  return out;
+}
+
+function sanitizePersistedPendingTurn(candidate: unknown): PersistedPendingTurn | undefined {
+  if (!isRecord(candidate)) {
+    return undefined;
+  }
+
+  const po = candidate.pending_outcome;
+  if (!isRecord(po)) {
+    return undefined;
+  }
+  if (
+    !isRecord(po.event) ||
+    typeof po.event.id !== "string" ||
+    !Array.isArray(po.event.choices) ||
+    typeof po.choiceId !== "string" ||
+    typeof po.choiceLabel !== "string" ||
+    !isRecord(po.outcome) ||
+    !isFiniteNumber(po.outcome.money_delta) ||
+    !Array.isArray(po.outcome.scheduled_event_ids)
+  ) {
+    return undefined;
+  }
+
+  const rawPreview = candidate.outcome_preview_state;
+  if (rawPreview !== null && rawPreview !== undefined && !isValidGameStateShape(rawPreview)) {
+    return undefined;
+  }
+
+  const rawFinal = candidate.queued_final_state;
+  if (rawFinal !== null && rawFinal !== undefined && !isValidGameStateShape(rawFinal)) {
+    return undefined;
+  }
+
+  const sanitizeMonthStart = (ms: unknown): MonthStartSummary | null =>
+    isRecord(ms) && isFiniteNumber(ms.month) && Array.isArray(ms.invoices_settled)
+      ? (ms as unknown as MonthStartSummary)
+      : null;
+
+  return {
+    pending_outcome: {
+      event: po.event as unknown as EventDef,
+      choiceId: po.choiceId,
+      choiceLabel: po.choiceLabel,
+      outcome: po.outcome as unknown as ChoiceOutcomeSummary,
+    },
+    outcome_preview_state: rawPreview ?? null,
+    queued_final_state: rawFinal ?? null,
+    queued_post_outcome_deltas: sanitizeIndicatorDeltas(candidate.queued_post_outcome_deltas),
+    queued_month_start: sanitizeMonthStart(candidate.queued_month_start),
+    last_deltas: sanitizeIndicatorDeltas(candidate.last_deltas) ?? {},
+    last_month_start: sanitizeMonthStart(candidate.last_month_start),
+  };
+}
+
 export type MigrateSaveResult =
   | { ok: true; envelope: SaveEnvelope }
   | { ok: false; reason: string };
@@ -185,6 +264,8 @@ export function migrateSaveEnvelope(raw: unknown): MigrateSaveResult {
     return { ok: false, reason: "GameState inside SaveEnvelope failed structural validation." };
   }
 
+  const sanitizedPendingTurn = sanitizePersistedPendingTurn(working.pending_turn);
+
   return {
     ok: true,
     envelope: {
@@ -196,6 +277,7 @@ export function migrateSaveEnvelope(raw: unknown): MigrateSaveResult {
       updated_at:
         typeof working.updated_at === "string" ? working.updated_at : new Date(0).toISOString(),
       state: working.state,
+      ...(sanitizedPendingTurn ? { pending_turn: sanitizedPendingTurn } : {}),
     },
   };
 }

@@ -28,6 +28,7 @@ choices:
       moral: 7
       stress: -4
       reputation: 4
+      employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
   - id: asumirlo_tu_solo_de_noche
@@ -38,6 +39,7 @@ choices:
       moral: -3
       stress: 12
       personal_life: -7
+      employee_satisfaction: 3
   - id: presionar_para_quedarse_ambos
     label: "Pedirle como excepción crítica que se quede hoy contigo hasta tarde"
     result_text: "Sacáis el encargo adelante en dos horas tensas, pero Laura toma nota mental del límite cruzado en su libreta."
@@ -45,6 +47,7 @@ choices:
       billed_income: 950
       moral: -7
       stress: 9
+      employee_satisfaction: -15
       set_flags:
         - desgaste_plantilla
       schedule_events:

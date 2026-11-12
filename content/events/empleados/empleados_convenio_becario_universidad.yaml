@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_convenio_becario_universidad
 category: empleados
 title: "Convenio de prácticas formativas"
-body: "Un centro formativo local te propone acoger durante un trimestre a alguien en prácticas curriculares. Bien enfocado aporta aire fresco al despacho, pero tutorizar de verdad exige tiempo y no confundir aprendizaje con mano de obra barata."
+body: "Un centro formativo local te propone acoger un trimestre de prácticas curriculares. Bien llevado aporta aire fresco al estudio, pero tutorizar exige tiempo y no confundir formación con mano de obra barata."
 tags:
   - practicas
   - formacion

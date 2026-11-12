@@ -1,8 +1,8 @@
 schema_version: 1
 id: clientes_licitacion_publica_pliego
 category: clientes
-title: "Pliego administrativo de noventa páginas"
-body: "Un organismo público saca a licitación un contrato menor calcado a tu especialidad. El presupuesto luce espléndido sobre el papel, pero el pliego exige declaraciones responsables compulsadas, solvencia técnica acreditada y facturación electrónica con tres códigos administrativos que parecen coordenadas navales."
+title: Pliego administrativo de noventa páginas
+body: Sale a concurso un contrato público de 2.850 € calcado a tu oficio, pero el pliego exige declaraciones compulsadas, solvencia acreditada y tres códigos contables que parecen coordenadas navales.
 tags:
   - licitacion
   - burocracia
@@ -20,31 +20,19 @@ cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: presentar_pliego_blindado_elena
-    label: "Preparar toda la solvencia documental con Elena Montes y concursar sobre seguro"
-    requirements:
-      gestor_tiers:
-        - premium
-      stats:
-        money:
-          min: 400
-    result_text: "La minuta administrativa pica hoy, pero superas la mesa de contratación sin un solo reparo y aseguras un cobro público garantizado a tres meses vista."
+  - id: cerrar_pestana_contratacion
+    label: Cerrar el expediente antes de perder el juicio entre pólizas y sellos
+    result_text: Decides que la vida es demasiado corta para descifrar prosa administrativa del siglo diecinueve y dedicas la semana a clientes privados.
     effects:
-      deductible_expense: 320
-      deferred_invoice:
-        amount: 2850
-        delay_months: 3
-        default_prob: 0.02
-      stress: 6
-      moral: 5
-      reputation: 6
-      fiscal_risk: -4
+      stress: -4
+      moral: 2
+      personal_life: 2
   - id: rellenar_anexos_de_madrugada
-    label: "Pelearse en solitario con los anexos y la plataforma electrónica de madrugada"
+    label: Pelearse en solitario con los anexos de madrugada (90 € en tasas)
     outcomes:
       - id: adjudicacion_heroica
         weight: 55
-        result_text: "Sobrevives a dos requerimientos de subsanación sobre la bocina y te adjudican el expediente. Tardarás en ver el dinero, pero pagarán hasta el último euro."
+        result_text: Sobrevives a dos requerimientos de subsanación sobre la bocina y te adjudican el expediente. Tardarás en ver el dinero, pero pagarán hasta el último euro.
         effects:
           deductible_expense: 90
           deferred_invoice:
@@ -57,16 +45,28 @@ choices:
           reputation: 5
       - id: excluido_por_anexo_bis
         weight: 45
-        result_text: "Quedas fuera en la apertura del sobre administrativo por olvidar firmar digitalmente la página diecisiete del Anexo IV-Bis. Tres noches de trabajo evaporadas."
+        result_text: Quedas fuera en la apertura del sobre administrativo por olvidar firmar digitalmente la página diecisiete del Anexo IV-Bis. Tres noches de trabajo evaporadas.
         effects:
           deductible_expense: 90
           stress: 14
           moral: -8
           personal_life: -5
-  - id: cerrar_pestana_contratacion
-    label: "Cerrar el expediente antes de perder el juicio entre pólizas y sellos"
-    result_text: "Decides que la vida es demasiado corta para descifrar prosa administrativa del siglo diecinueve y dedicas la semana a clientes privados."
+  - id: presentar_pliego_blindado_elena
+    label: Blindar solvencia y anexos con Elena Montes para ir sobre seguro (320 €)
+    requirements:
+      gestor_tiers:
+        - premium
+      stats:
+        money:
+          min: 400
+    result_text: La minuta administrativa pica hoy, pero superas la mesa de contratación sin un solo reparo y aseguras un cobro público garantizado a tres meses vista.
     effects:
-      stress: -4
-      moral: 2
-      personal_life: 2
+      deductible_expense: 320
+      deferred_invoice:
+        amount: 2850
+        delay_months: 3
+        default_prob: 0.02
+      stress: 6
+      moral: 5
+      reputation: 6
+      fiscal_risk: -4

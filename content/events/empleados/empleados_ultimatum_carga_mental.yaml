@@ -1,0 +1,61 @@
+schema_version: 1
+id: empleados_ultimatum_carga_mental
+category: empleados
+title: "«Si seguimos apagando fuegos así, me bajo»"
+body: "Tu persona en plantilla pide hablar el jueves por la tarde con ojeras hondas: «Valoro el estudio, pero llevo semanas absorbiendo caos ajeno y ya tengo propuestas fuera». Toca mover ficha hoy."
+tags:
+  - plantilla
+  - ultimatum
+  - burnout_laboral
+  - retencion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 20
+  has_employee: true
+  employee_satisfaction:
+    max: 42
+weight: 15
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: contratar_apoyo_puntual_para_aliviar
+    label: "Subcontratar fuera las tareas repetitivas este mes para darle aire (290 €)"
+    result_text: "Le quitas de encima el trabajo más ingrato de inmediato y ganáis margen real para reorganizar la cartera."
+    effects:
+      deductible_expense: 290
+      stress: -4
+      moral: 5
+      employee_satisfaction: 14
+      clear_flags:
+        - desgaste_plantilla
+  - id: blindar_horarios_y_prima_retencion
+    label: "Frenar clientes caóticos hoy mismo y firmar prima de retención (480 €)"
+    result_text: "Ver que cumples con hechos y no con promesas vacías frena su marcha y sanea la forma de trabajar de todo el estudio."
+    effects:
+      deductible_expense: 480
+      stress: -8
+      moral: 8
+      employee_satisfaction: 22
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_pacto_reconciliacion_laboral
+        label: "Acuerdo renovado de convivencia en estudio"
+        remaining_months: 5
+        monthly_billed_delta: 220
+        monthly_stress_delta: -2
+  - id: dejar_que_acepte_oferta_externa
+    label: "No prometer calma que hoy no tienes y desearle suerte en su nuevo destino"
+    result_text: "Agradece tu franqueza en la despedida; cierras nómina sin coste de despido, pero vuelves a remar en solitario."
+    effects:
+      dismiss_employee:
+        severance_cost: 0
+      stress: 12
+      moral: -4
+      reputation: -2
+      clear_flags:
+        - empleado_dani_activo
+        - empleada_laura_activa
+        - desgaste_plantilla

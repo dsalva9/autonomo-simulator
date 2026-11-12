@@ -1,0 +1,48 @@
+schema_version: 1
+id: gestor_caos_carpetas_cuatro_anos_solo
+category: gestor
+title: Arqueología digital de cuatro años en solitario
+body: Casi cinco años llevando tus cuentas a pulso han engendrado carpetas llamadas «IVA_BUENO_FINAL_v4» repartidas en tres nubes. Si hoy piden un libro registro antiguo, tardarías semanas.
+tags:
+  - autogestion
+  - archivo
+  - veterania
+  - largo_plazo
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 56
+  gestor_tiers:
+    - self
+weight: 12
+cooldown_months: 14
+max_occurrences: 2
+choices:
+  - id: encerrarse_un_puente_a_renombrar_pdfs
+    label: Sacrificar un puente entero unificando libros y justificantes
+    result_text: Acabas soñando con fechas de devengo, pero tus cuatro ejercicios abiertos quedan indexados con rigor suizo.
+    effects:
+      stress: 9
+      moral: 4
+      personal_life: -5
+      fiscal_risk: -8
+  - id: pagar_digitalizacion_y_auditoria_puntual
+    label: Contratar un volcado documental y conciliación externa
+    requirements:
+      stats:
+        money:
+          min: 380
+    result_text: Un equipo contable reconstruye tus libros auxiliares, detecta duplicados y te entrega un archivo listo para inspección.
+    effects:
+      deductible_expense: 230
+      stress: -7
+      moral: 5
+      reputation: 2
+      fiscal_risk: -12
+  - id: confiar_en_el_buscador_del_correo
+    label: Cerrar la carpeta y fiarlo todo al buscador del correo
+    result_text: Ganas la tarde libre hoy, sabiendo que cualquier requerimiento retroactivo será una gymkana infernal.
+    effects:
+      stress: -3
+      moral: -2
+      fiscal_risk: 11

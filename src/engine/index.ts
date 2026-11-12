@@ -4,18 +4,21 @@ export {
   canDeferQuarterlyTax,
   clampStat,
   computeBaselineMonthlyBilling,
+  computeMonthlyDeductibleExpenses,
   computeMonthlyRecurringExpenses,
   computeNetCashAfterTaxReserve,
   computeReservedTaxObligation,
   enqueueScheduledEvent,
   prepareQuarterlyTax,
   resolveEndingQuote,
+  type InspectableEventFinder,
   type RecurringMonthResult,
 } from "./economy.ts";
 export { resolveChoiceEffects } from "./effects.ts";
 export { createPrng, nextFloat, nextInt, nextUint32, pickWeighted } from "./prng.ts";
 export * from "./schemas/index.ts";
 export {
+  computeEffectiveEventWeight,
   drawTurnEvents,
   evaluateRequirements,
   findInspectableHaciendaEventId,
@@ -23,6 +26,9 @@ export {
   isChoiceEligible,
   isEventHardEligible,
   isEventOnCooldown,
+  isInspectableHaciendaEvent,
+  pickNoveltyWeightedEvent,
+  selectInspectableHaciendaEvent,
   type DrawTurnEventsResult,
 } from "./selector.ts";
 export {
@@ -39,6 +45,7 @@ export {
   getCharacterById,
   getEventById,
   resolveVictoryPrompt,
+  retireFromRun,
   settleQuarter,
   startNewRun,
   stepMonthStart,

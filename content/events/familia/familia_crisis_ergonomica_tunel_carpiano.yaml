@@ -1,0 +1,56 @@
+schema_version: 1
+id: familia_crisis_ergonomica_tunel_carpiano
+category: familia
+title: "Calambre en la muñeca a mitad de entrega"
+body: "Llevas dos semanas despertándote con hormigueo en los dedos y un latigazo en el antebrazo cada vez que haces doble clic. Tu cuerpo pasa factura tras miles de horas de ratón barato y hombros encogidos."
+tags:
+  - salud
+  - ergonomia
+  - fisioterapia
+  - prevencion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 32
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: parar_tres_dias_y_estirar
+    label: "Bajar revoluciones tres días, aplicar frío y espaciar entregas menores"
+    result_text: "Facturas algo menos esta semana, pero frenas la tendinitis antes de que te obligue a parar un mes entero."
+    effects:
+      billed_income: 220
+      stress: -6
+      moral: 4
+      personal_life: 7
+      reputation: -1
+  - id: fisioterapeuta_y_perifericos_deducibles
+    label: "Ir al fisio hoy y renovar a ratón vertical y teclado ergonómico (350 €)"
+    requirements:
+      stats:
+        money:
+          min: 500
+    result_text: "Al tercer día desaparece el hormigueo nocturno, rindes sin dolor y deduces los periféricos nuevos con factura limpia."
+    effects:
+      cash_delta: -110
+      deductible_expense: 240
+      stress: -9
+      moral: 7
+      personal_life: 5
+      add_modifier:
+        id: mod_espalda_cuidada
+        label: "Ergonomía y espalda al día"
+        remaining_months: 5
+        monthly_billed_delta: 110
+        monthly_stress_delta: -2
+  - id: munequera_farmacia_y_seguir
+    label: "Comprar muñequera de farmacia y seguir tecleando apretando dientes (28 €)"
+    result_text: "Sacas todo el trabajo adelante con el brazo vendado como un tenista lesionado, sumando tensión a cada clic."
+    effects:
+      cash_delta: -28
+      billed_income: 590
+      stress: 10
+      moral: -5
+      personal_life: -6

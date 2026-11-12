@@ -1,0 +1,62 @@
+schema_version: 1
+id: empleados_laura_ponencia_congreso_sector
+category: empleados
+title: "Invitan a Laura como ponente en un congreso nacional"
+body: "La organización de un encuentro profesional puntero invita a Laura a dar una ponencia un viernes entero. Ver el nombre de tu estudio en el cartel da prestigio real, aunque el vestíbulo estará lleno de reclutadores."
+tags:
+  - laura
+  - congreso
+  - reputacion
+  - talento_senior
+character_id: empleada_senior_laura
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 40
+  has_employee: true
+  required_flags:
+    - empleada_laura_activa
+weight: 12
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: autorizar_viernes_sin_exponer_casos
+    label: "Darle el viernes pagado pactando antes qué métricas internas reserva"
+    result_text: "Respetas su proyección profesional protegiendo secretos comerciales del estudio y cierras tu viernes con calma."
+    effects:
+      billed_income: 420
+      stress: -2
+      moral: 6
+      personal_life: 4
+      reputation: 4
+      employee_satisfaction: 8
+  - id: patrocinar_viaje_e_ir_juntos_orgulloso
+    label: "Cubrir viaje y hotel como estudio (290 €) y aplaudirla desde primera fila"
+    requirements:
+      stats:
+        money:
+          min: 1400
+        reputation:
+          min: 52
+    result_text: "Laura borda la charla, dos empresas serias piden reunión contigo al bajar del escenario y ella valora tu respaldo sin complejos."
+    effects:
+      deductible_expense: 290
+      billed_income: 860
+      stress: -4
+      moral: 10
+      reputation: 6
+      employee_satisfaction: 14
+      clear_flags:
+        - desgaste_plantilla
+  - id: vetar_asistencia_por_carga_viernes
+    label: "Pedirle que rechace la charla porque hay entregas comprometidas ese viernes"
+    result_text: "Facturas toda la jornada del viernes a cambio de un gesto seco que a un perfil sénior no se le olvida fácil."
+    effects:
+      billed_income: 560
+      stress: 6
+      moral: -6
+      reputation: -2
+      employee_satisfaction: -15
+      set_flags:
+        - desgaste_plantilla

@@ -1,0 +1,47 @@
+schema_version: 1
+id: clientes_clausula_cesion_propiedad_intelectual
+category: clientes
+title: "Anexo de cesión total: quieren comprarte hasta tus plantillas base"
+body: El departamento jurídico de Marta cuela un anexo en un contrato de 2.400 € exigiendo la cesión exclusiva mundial de tus ficheros editables, librerías propias y metodología interna.
+tags:
+  - juridico
+  - propiedad_intelectual
+  - corporativo
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 38
+weight: 8
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: licenciar_resultado_final_sin_editables
+    label: "Tachar la cláusula: entregas resultado final por 2.400 €, no tu cocina"
+    result_text: Jurídico refunfuña por deporte, pero acepta conservar tu autoría sobre las herramientas previas y firmas sin regalar tu oficio.
+    effects:
+      billed_income: 2400
+      moral: 6
+      stress: 6
+      reputation: 5
+  - id: firmar_sin_leer_por_cobrar_rapido
+    label: Firmar su anexo estándar sin discutir y cobrar 2.700 € esta semana
+    result_text: Cobras 2.700 € al vuelo sin pelearte con abogados, aunque luego te toca rehacer tus propias plantillas para no pisar su exclusividad.
+    effects:
+      billed_income: 2700
+      moral: -5
+      stress: 1
+      personal_life: 2
+      reputation: -2
+  - id: tarifar_buyout_exclusivo_al_doble
+    label: Exigir 4.100 € si quieren comprar también editables y exclusividad
+    result_text: "Ponerle precio real a la exclusividad surte efecto: dirección prefiere pagarte el recargo completo para que su equipo pueda editarlo todo."
+    effects:
+      billed_income: 4100
+      moral: 7
+      stress: 5
+      reputation: 6
+    requirements:
+      stats:
+        reputation:
+          min: 58

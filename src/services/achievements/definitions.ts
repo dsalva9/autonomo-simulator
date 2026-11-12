@@ -3,6 +3,7 @@ import {
   ACHIEVEMENT_CATALOG,
   type AchievementDefinition,
   type AchievementId,
+  evaluateUnlockedAchievements,
 } from "../storage/index.ts";
 
 const ACHIEVEMENT_TRANSLATIONS_EN: Readonly<
@@ -10,7 +11,7 @@ const ACHIEVEMENT_TRANSLATIONS_EN: Readonly<
 > = {
   primer_trimestre: {
     title: "Quarterly Baptism",
-    description: "Reach month 3 and survive your very first quarterly VAT and income tax filing.",
+    description: "Settle and survive your very first quarterly VAT and income tax filing.",
   },
   primer_ano: {
     title: "First-Year Survivor",
@@ -111,4 +112,9 @@ export function getLocalizedAchievementCatalog(
   });
 }
 
-export { ACHIEVEMENT_CATALOG, type AchievementDefinition, type AchievementId };
+export {
+  ACHIEVEMENT_CATALOG,
+  evaluateUnlockedAchievements,
+  type AchievementDefinition,
+  type AchievementId,
+};

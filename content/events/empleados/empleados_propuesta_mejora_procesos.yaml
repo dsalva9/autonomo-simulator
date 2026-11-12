@@ -1,0 +1,46 @@
+schema_version: 1
+id: empleados_propuesta_mejora_procesos
+category: empleados
+title: "Manual interno que ahorra diez horas por semana"
+body: "Cuando el equipo trabaja a gusto le sobra cabeza para mejorar la casa: tu persona en plantilla ha diseñado un sistema de plantillas y listas de control que recorta tiempos muertos en cada arranque."
+tags:
+  - plantilla
+  - procesos
+  - productividad
+  - calidad
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 36
+  has_employee: true
+  employee_satisfaction:
+    min: 78
+weight: 12
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: aplicar_mejoras_poco_a_poco
+    label: "Adoptar las plantillas gradualmente entre entrega y entrega sin parar"
+    result_text: "Aprovechas buena parte del orden nuevo sin frenar la facturación inmediata de la semana."
+    effects:
+      billed_income: 420
+      stress: -3
+      moral: 5
+      reputation: 2
+      employee_satisfaction: 5
+  - id: bloquear_dos_tardes_e_implantar_todo
+    label: "Reservar dos tardes sin llamadas e incentivar la implantación (180 €)"
+    result_text: "El nuevo método encaja como un reloj suizo: menos errores tontos, entregas más limpias y orgullo de autoría compartido."
+    effects:
+      deductible_expense: 180
+      stress: -7
+      moral: 9
+      reputation: 3
+      employee_satisfaction: 10
+      add_modifier:
+        id: mod_procesos_estudio_fluidos
+        label: "Procesos internos afinados en equipo"
+        remaining_months: 5
+        monthly_billed_delta: 290
+        monthly_stress_delta: -2

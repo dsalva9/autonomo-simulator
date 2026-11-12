@@ -10,6 +10,7 @@ tags:
   - plantilla
 character_id: empleado_junior_dani
 character_expression: neutral
+illustration_id: illus_hito_primer_empleado
 requirements:
   min_month: 14
   has_employee: false
@@ -19,7 +20,7 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: incorporar_dani_con_colchon
-    label: "Dar el paso y sumarlo en plantilla ahora (1.400 €/mes, ×1,35)"
+    label: "Dar el paso y sumarlo en plantilla ahora (1.350 €/mes, ×1,58)"
     requirements:
       has_employee: false
       stats:

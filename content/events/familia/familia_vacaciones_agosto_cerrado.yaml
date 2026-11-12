@@ -12,24 +12,16 @@ character_id: pareja_alex
 character_expression: pleased
 requirements:
   min_month: 11
+  months_of_year:
+    - 8
   family_statuses:
     - dating
     - cohabiting
 weight: 11
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 11
+max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: diez_dias_de_playa_sin_portatil
-    label: "Reservar, activar respuesta automática y pisar arena diez días (460 €)"
-    result_text: "Los tres primeros días miras el móvil por inercia; al quinto descubres que nadie ha muerto y vuelves con las pilas llenas."
-    effects:
-      cash_delta: -460
-      stress: -16
-      moral: 12
-      personal_life: 16
-      clear_flags:
-        - crisis_pareja_latente
   - id: escapada_corta_de_cinco_dias
     label: "Pactar cinco días de costa y aprovechar la quincena tranquila (240 €)"
     result_text: "Combinas chiringuito moderado con media quincena sin llamadas que te cunde el doble para adelantar trabajo limpio."
@@ -48,3 +40,13 @@ choices:
       moral: -6
       personal_life: -11
       reputation: 2
+  - id: diez_dias_de_playa_sin_portatil
+    label: "Reservar, activar respuesta automática y pisar arena diez días (460 €)"
+    result_text: "Los tres primeros días miras el móvil por inercia; al quinto descubres que nadie ha muerto y vuelves con las pilas llenas."
+    effects:
+      cash_delta: -460
+      stress: -16
+      moral: 12
+      personal_life: 16
+      clear_flags:
+        - crisis_pareja_latente

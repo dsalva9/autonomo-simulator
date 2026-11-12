@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_crisis_portatil_vacaciones
 category: familia
 title: "La cena fría y el brillo del portátil"
-body: "Habíais bloqueado cuatro días sagrados de descanso familiar y logística doméstica tras meses de locura. En la primera noche, un cliente importante te cose a llamadas exigiendo rehacer una entrega mientras los platos se enfrían en la mesa. Álex mira el resplandor azul del portátil en el pasillo y suspira al límite: «Si hoy también eliges la pantalla, tenemos un problema serio»."
+body: "Habíais bloqueado cuatro días sagrados de descanso tras meses de locura. En la primera cena un cliente importante te cose a llamadas exigiendo cambios ya. Álex mira el brillo del portátil y suspira: «Esta noche la pantalla no»."
 tags:
   - pareja
   - crisis_familiar
@@ -52,7 +52,7 @@ choices:
           clear_flags:
             - crisis_pareja_latente
   - id: negociar_dos_horas_de_madrugada
-    label: "Pactar dos horas cronometradas al amanecer para apagar el fuego y cumplir en casa"
+    label: "Pactar dos horas al amanecer para apagar el fuego y cumplir en casa"
     outcomes:
       - id: equilibrio_agotador
         weight: 60
@@ -91,6 +91,8 @@ choices:
             partner_character_id: pareja_alex
           clear_flags:
             - convivencia_estable
+            - relacion_con_alex
+            - crisis_pareja_latente
       - id: ultimatum_helado
         weight: 45
         result_text: "Facturas el encargo urgente y Álex se queda por los pelos, dejándote claro con voz tranquila que no habrá una próxima vez."

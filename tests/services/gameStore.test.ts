@@ -6,6 +6,7 @@ import {
   createStorageAdapter,
 } from "../../src/services/storage/index.ts";
 import {
+  canRetireHonorably,
   getVisibleGameState,
   setGameStoreStoragePort,
   useGameStore,
@@ -89,9 +90,10 @@ describe("useGameStore & useUIStore Integration", () => {
 
     expect(useGameStore.getState().activeRun?.month).toBe(3);
     expect(useGameStore.getState().activeRun?.phase).toBe("quarterly_tax");
-    expect(useGameStore.getState().profile.achievements.primer_trimestre).toBeDefined();
+    expect(useGameStore.getState().profile.achievements.primer_trimestre).toBeUndefined();
 
     await useGameStore.getState().settleQuarterlyTax("defer");
+    expect(useGameStore.getState().profile.achievements.primer_trimestre).toBeDefined();
     const m4 = useGameStore.getState().activeRun!;
     expect(m4.month).toBe(4);
     expect(m4.finances.deferred_tax).not.toBeNull();
@@ -162,12 +164,29 @@ describe("useGameStore & useUIStore Integration", () => {
 
       await useGameStore.getState().startRun("FASE2-FAST-PACING");
       const view = getActiveEvent(useGameStore.getState().activeRun!, compiledCatalog)!;
-      const eligible = view.choices.find((c) => c.eligible)!;
+      const weighted = view.choices.find(
+        (c) => c.eligible && c.choice.outcomes && c.choice.outcomes.length > 1,
+      );
+      if (weighted) {
+        // Modo ágil 2.0 NEVER skips weighted RNG (Dices) gambles
+        await useGameStore.getState().chooseOption(weighted.choice.id);
+        expect(useGameStore.getState().pendingOutcome).not.toBeNull();
+        useGameStore.getState().acknowledgeOutcome();
+        expect(useGameStore.getState().pendingOutcome).toBeNull();
+        expect(getVisibleGameState(useGameStore.getState())?.month).toBe(2);
+      }
 
-      await useGameStore.getState().chooseOption(eligible.choice.id);
+      // Deterministic eligible choices auto-acknowledge in Modo ágil 2.0
+      const nextView = getActiveEvent(useGameStore.getState().activeRun!, compiledCatalog)!;
+      const deterministic = nextView.choices.find(
+        (c) => c.eligible && (!c.choice.outcomes || c.choice.outcomes.length <= 1),
+      );
+      expect(deterministic).toBeDefined();
+      const monthBeforeDet = useGameStore.getState().activeRun!.month;
+      await useGameStore.getState().chooseOption(deterministic!.choice.id);
       expect(useGameStore.getState().pendingOutcome).toBeNull();
       expect(useGameStore.getState().outcomePreviewState).toBeNull();
-      expect(getVisibleGameState(useGameStore.getState())?.month).toBe(2);
+      expect(getVisibleGameState(useGameStore.getState())?.month).toBe(monthBeforeDet + 1);
 
       useUIStore.getState().setFastPacing(false);
       expect(useUIStore.getState().fastPacing).toBe(false);
@@ -179,5 +198,156 @@ describe("useGameStore & useUIStore Integration", () => {
         Reflect.deleteProperty(globalThis, "localStorage");
       }
     }
+  });
+
+  it("auto-settles safe quarterly tax in Modo ágil 2.0, preserves fatal outcome saves across reload, and supports honorable retirement", async () => {
+    const sharedStorage = createStorageAdapter(createMemoryStorageDriver());
+    setGameStoreStoragePort(sharedStorage);
+    useUIStore.getState().setFastPacing(true);
+
+    await useGameStore.getState().startRun("FASE35-AUTO-QUARTER");
+    // Boost cash so Month 3 Q1 has comfortable >= 1,200 € post-tax buffer
+    useGameStore.setState((curr) => ({
+      activeRun: curr.activeRun
+        ? {
+            ...curr.activeRun,
+            indicators: { ...curr.activeRun.indicators, money: 9500 },
+            fiscal_risk: 0,
+          }
+        : null,
+    }));
+
+    for (let guard = 0; guard < 8; guard += 1) {
+      const run = useGameStore.getState().activeRun!;
+      if (run.month >= 4) {
+        break;
+      }
+      const view = getActiveEvent(run, compiledCatalog)!;
+      const detChoice =
+        view.choices.find(
+          (c) => c.eligible && (!c.choice.outcomes || c.choice.outcomes.length <= 1),
+        ) ?? view.choices.find((c) => c.eligible)!;
+      await useGameStore.getState().chooseOption(detChoice.choice.id);
+      if (useGameStore.getState().pendingOutcome) {
+        useGameStore.getState().acknowledgeOutcome();
+      }
+    }
+
+    expect(useGameStore.getState().activeRun?.month).toBe(4);
+    expect(useGameStore.getState().lastAutoSettledQuarter?.quarter).toBe(1);
+    expect(useGameStore.getState().lastAutoSettledQuarter?.month).toBe(3);
+
+    // Pre-M120 run without victory seals cannot retire honorably
+    expect(canRetireHonorably(useGameStore.getState().activeRun)).toBe(false);
+
+    // Endless / M120+ run CAN retire honorably
+    useGameStore.setState((curr) => ({
+      activeRun: curr.activeRun
+        ? {
+            ...curr.activeRun,
+            month: 124,
+            endless_mode: true,
+            earned_victories: ["hero_120m"],
+          }
+        : null,
+    }));
+    expect(canRetireHonorably(useGameStore.getState().activeRun)).toBe(true);
+    await useGameStore.getState().retireActiveRun();
+    expect(useGameStore.getState().activeRun?.phase).toBe("game_over");
+    expect(useGameStore.getState().activeRun?.ending?.id).toBe("retired_hero");
+    expect(useGameStore.getState().profile.hall_of_fame).toHaveLength(1);
+
+    // Fatal outcome-panel persistence before acknowledgeOutcome, reload hydration -> continueRun -> acknowledgeOutcome -> EndRunScreen
+    useUIStore.getState().setFastPacing(false);
+    await useGameStore.getState().startRun("FASE35-FATAL-SAVE");
+    useGameStore.setState((curr) => ({
+      activeRun: curr.activeRun
+        ? {
+            ...curr.activeRun,
+            indicators: { ...curr.activeRun.indicators, stress: 98 },
+            current_turn_events: ["clientes_encargo_urgente"],
+          }
+        : null,
+    }));
+    const fatalRunId = useGameStore.getState().activeRun!.run_id;
+    await useGameStore.getState().chooseOption("entrega_express_contado");
+
+    const fatalBeforeReload = useGameStore.getState();
+    expect(fatalBeforeReload.pendingOutcome).not.toBeNull();
+    expect(fatalBeforeReload.pendingOutcome?.choiceId).toBe("entrega_express_contado");
+    const expectedResultText = fatalBeforeReload.pendingOutcome?.outcome.result_text;
+    expect(expectedResultText).toBeTruthy();
+
+    // Visible GameScreen state reflects Month 1 fatal preview so outcome-continue-btn shows "Ver certificado final",
+    // while activeRun stays resumable (phase !== 'game_over' && ending === null) for TitleScreen continue-run-btn!
+    expect(getVisibleGameState(fatalBeforeReload)?.month).toBe(1);
+    expect(getVisibleGameState(fatalBeforeReload)?.ending?.id).toBe("defeat_burnout_stress");
+    expect(fatalBeforeReload.activeRun?.month).toBe(1);
+    expect(fatalBeforeReload.activeRun?.phase).toBe("event_resolution");
+    expect(fatalBeforeReload.activeRun?.ending).toBeNull();
+    expect(
+      fatalBeforeReload.profile.hall_of_fame.filter((h) => h.run_id === fatalRunId),
+    ).toHaveLength(0);
+
+    // Active run + pending_turn MUST still be persisted in IndexedDB BEFORE user clicks "Ver certificado final"
+    const savedBeforeAck = await sharedStorage.loadActiveRun();
+    expect(savedBeforeAck.envelope).not.toBeNull();
+    expect(savedBeforeAck.envelope?.state.ending).toBeNull();
+    expect(savedBeforeAck.envelope?.pending_turn?.pending_outcome.choiceId).toBe(
+      "entrega_express_contado",
+    );
+    expect(savedBeforeAck.envelope?.pending_turn?.queued_final_state?.ending?.id).toBe(
+      "defeat_burnout_stress",
+    );
+
+    // Returning to TitleScreen and clicking continueRun preserves the exact fatal outcome-panel
+    useGameStore.getState().returnToTitle();
+    expect(useUIStore.getState().screenView).toBe("title");
+    expect(useGameStore.getState().pendingOutcome).not.toBeNull();
+    useGameStore.getState().continueRun();
+    expect(useUIStore.getState().screenView).toBe("game");
+    expect(useGameStore.getState().pendingOutcome?.outcome.result_text).toBe(expectedResultText);
+
+    // Simulate browser page.reload() during fatal outcome-panel -> TitleScreen -> continue-run-btn
+    useGameStore.setState({
+      activeRun: null,
+      outcomePreviewState: null,
+      queuedFinalState: null,
+      pendingOutcome: null,
+      hydrated: false,
+    });
+    useUIStore.setState({ screenView: "title" });
+    await useGameStore.getState().hydrate();
+
+    const afterHydrate = useGameStore.getState();
+    expect(useUIStore.getState().screenView).toBe("title");
+    expect(afterHydrate.activeRun?.month).toBe(1);
+    expect(afterHydrate.activeRun?.phase).toBe("event_resolution");
+    expect(afterHydrate.activeRun?.ending).toBeNull();
+    expect(afterHydrate.pendingOutcome?.choiceId).toBe("entrega_express_contado");
+    expect(afterHydrate.pendingOutcome?.outcome.result_text).toBe(expectedResultText);
+
+    // Clicking continue-run-btn restores the exact pending fatal outcome-panel at Month 1
+    useGameStore.getState().continueRun();
+    expect(useUIStore.getState().screenView).toBe("game");
+    expect(useGameStore.getState().pendingOutcome).not.toBeNull();
+    expect(getVisibleGameState(useGameStore.getState())?.month).toBe(1);
+    expect(getVisibleGameState(useGameStore.getState())?.ending?.id).toBe("defeat_burnout_stress");
+
+    // Clicking outcome-continue-btn (acknowledgeOutcome) finalizes to EndRunScreen, clears active_run & archives once
+    useGameStore.getState().acknowledgeOutcome();
+    expect(useGameStore.getState().pendingOutcome).toBeNull();
+    expect(useGameStore.getState().outcomePreviewState).toBeNull();
+    expect(useGameStore.getState().queuedFinalState).toBeNull();
+    expect(useGameStore.getState().activeRun?.phase).toBe("game_over");
+    expect(useGameStore.getState().activeRun?.ending?.id).toBe("defeat_burnout_stress");
+
+    // Flush queued async storage write by awaiting a serialized hydrate-safe storage check
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    const savedAfterAck = await sharedStorage.loadActiveRun();
+    expect(savedAfterAck.envelope).toBeNull();
+    expect(
+      useGameStore.getState().profile.hall_of_fame.filter((h) => h.run_id === fatalRunId),
+    ).toHaveLength(1);
   });
 });

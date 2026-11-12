@@ -1,5 +1,5 @@
 import { BookOpen, Briefcase, History, Users } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { type KeyboardEvent as ReactKeyboardEvent, useEffect, useRef } from "react";
 import { EventStage } from "../components/event/EventStage.tsx";
 import { IndicatorBar } from "../components/hud/IndicatorBar.tsx";
 import { AbandonRunModal } from "../components/modals/AbandonRunModal.tsx";
@@ -61,6 +61,10 @@ export function GameScreen({ state }: GameScreenProps) {
   const toggleSfxMuted = useUIStore((s) => s.toggleSfxMuted);
   const toggleFastPacing = useUIStore((s) => s.toggleFastPacing);
 
+  const gameScreenRef = useRef<HTMLDivElement | null>(null);
+  const hudHeaderRef = useRef<HTMLElement | null>(null);
+  const mobileTabRefs = useRef<Partial<Record<MobileWorkspaceTab, HTMLButtonElement | null>>>({});
+
   const locale = profile.settings.locale;
   const ui = getUiStrings(locale);
 
@@ -72,6 +76,36 @@ export function GameScreen({ state }: GameScreenProps) {
   const showAnnualModal = pendingOutcome === null && state.phase === "annual_summary";
   const anyModalOpen =
     showQuarterlyModal || showVictoryModal || showAnnualModal || abandonModalOpen;
+
+  // Dynamically measure IndicatorBar height into --hud-height so sticky sidebars & mobile toasts
+  // never overflow 100dvh or overlap expanded delta/overdraft strips.
+  useEffect(() => {
+    const headerEl = hudHeaderRef.current;
+    const screenEl = gameScreenRef.current;
+    if (!headerEl || !screenEl) {
+      return;
+    }
+
+    const syncHudHeight = () => {
+      const measured = Math.ceil(headerEl.getBoundingClientRect().height);
+      if (measured > 0) {
+        screenEl.style.setProperty("--hud-height", `${measured}px`);
+        document.documentElement.style.setProperty("--hud-height", `${measured}px`);
+      }
+    };
+
+    syncHudHeight();
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      syncHudHeight();
+    });
+    observer.observe(headerEl);
+    return () => observer.disconnect();
+  }, []);
 
   const deskHotkeysRef = useRef({
     sfxMuted,
@@ -100,7 +134,7 @@ export function GameScreen({ state }: GameScreenProps) {
     }
 
     const handleDeskKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) {
         return;
       }
       const target = event.target as HTMLElement | null;
@@ -230,10 +264,43 @@ export function GameScreen({ state }: GameScreenProps) {
     void closeAnnualSummary();
   };
 
+  const handleMobileTabKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (
+      event.key !== "ArrowLeft" &&
+      event.key !== "ArrowRight" &&
+      event.key !== "Home" &&
+      event.key !== "End"
+    ) {
+      return;
+    }
+    event.preventDefault();
+    const order = MOBILE_TAB_ICONS.map((t) => t.id);
+    const currentIdx = order.indexOf(activeMobileTab);
+    let nextIdx = 0;
+    if (event.key === "Home") {
+      nextIdx = 0;
+    } else if (event.key === "End") {
+      nextIdx = order.length - 1;
+    } else if (event.key === "ArrowRight") {
+      nextIdx = (currentIdx + 1) % order.length;
+    } else {
+      nextIdx = (currentIdx - 1 + order.length) % order.length;
+    }
+    const nextTab = order[nextIdx] ?? "despacho";
+    setActiveMobileTab(nextTab);
+    mobileTabRefs.current[nextTab]?.focus({ preventScroll: true });
+  };
+
   return (
-    <div data-testid="game-screen" className="min-h-screen flex flex-col">
+    <div
+      ref={gameScreenRef}
+      data-testid="game-screen"
+      data-mobile-tab={activeMobileTab}
+      className="min-h-screen flex flex-col"
+    >
       {/* Top Sticky Command Bar */}
       <IndicatorBar
+        headerRef={hudHeaderRef}
         state={state}
         lastDeltas={lastDeltas}
         locale={locale}
@@ -241,30 +308,34 @@ export function GameScreen({ state }: GameScreenProps) {
         onOpenAbandon={() => setAbandonModalOpen(true)}
       />
 
-      {/* Adaptive Workspace: Tabbed on Mobile (<1024px), Aligned 3-Column Desk on Desktop (>=1024px) */}
-      <main className="flex-1 w-full max-w-[1400px] mx-auto px-3 sm:px-5 pt-2 pb-[calc(5.25rem+env(safe-area-inset-bottom))] lg:pb-2.5">
-        <div className="lg:grid lg:grid-cols-[296px_minmax(0,1fr)_312px] xl:grid-cols-[324px_minmax(0,1fr)_344px] lg:gap-4 xl:gap-5 lg:items-start">
+      {/* Adaptive Workspace: Centered Tabbed Workspace (<1280px) | Aligned 3-Column Desk (>=1280px) */}
+      <main className="game-main flex-1 w-full max-w-3xl xl:max-w-[1420px] mx-auto px-3 sm:px-5 pt-2 pb-[calc(4.75rem+env(safe-area-inset-bottom))] xl:pb-2.5">
+        <div className="xl:grid xl:grid-cols-[316px_minmax(0,1fr)_336px] 2xl:grid-cols-[332px_minmax(0,1fr)_352px] xl:gap-4 2xl:gap-5 xl:items-start">
           {/* Left Column: Live Office Scene + Entorno Support Cards */}
-          <aside className="space-y-2.5 lg:space-y-2.5 lg:sticky lg:top-[88px] lg:max-h-[calc(100vh-98px)] lg:overflow-y-auto lg:pr-1 lg:pb-1 dossier-scroll">
+          <aside className="space-y-2.5 xl:sticky xl:top-[calc(var(--hud-height,88px)+8px)] xl:max-h-[calc(100dvh-var(--hud-height,88px)-18px)] xl:overflow-y-auto xl:pr-1 xl:pb-1 dossier-scroll">
             <div
               className={
                 activeMobileTab === "despacho" || activeMobileTab === "entorno"
                   ? "block"
-                  : "hidden lg:block"
+                  : "hidden xl:block"
               }
             >
               <SceneRenderer state={state} activeEvent={sceneEvent} locale={locale} />
             </div>
 
-            <div className={activeMobileTab === "entorno" ? "block" : "hidden lg:block"}>
+            <div
+              id="mobile-tabpanel-entorno"
+              className={activeMobileTab === "entorno" ? "block" : "hidden xl:block"}
+            >
               <EntornoPanel state={state} locale={locale} />
             </div>
           </aside>
 
           {/* Center Stage: Monthly Economy Strip, Event Card, Choices & Outcome Resolution */}
           <section
+            id="mobile-tabpanel-despacho"
             aria-label={ui.game.decisionDeskAria}
-            className={activeMobileTab === "despacho" ? "block mt-2 lg:mt-0" : "hidden lg:block"}
+            className={activeMobileTab === "despacho" ? "block mt-2 xl:mt-0" : "hidden xl:block"}
           >
             <EventStage
               state={state}
@@ -279,12 +350,18 @@ export function GameScreen({ state }: GameScreenProps) {
           </section>
 
           {/* Right Column: Cuaderno de Cuentas & Historial */}
-          <aside className="space-y-2.5 lg:space-y-2.5 lg:sticky lg:top-[88px] lg:max-h-[calc(100vh-98px)] lg:overflow-y-auto lg:pr-1 lg:pb-1 dossier-scroll">
-            <div className={activeMobileTab === "cuentas" ? "block" : "hidden lg:block"}>
+          <aside className="space-y-2.5 xl:sticky xl:top-[calc(var(--hud-height,88px)+8px)] xl:max-h-[calc(100dvh-var(--hud-height,88px)-18px)] xl:overflow-y-auto xl:pr-1 xl:pb-1 dossier-scroll">
+            <div
+              id="mobile-tabpanel-cuentas"
+              className={activeMobileTab === "cuentas" ? "block" : "hidden xl:block"}
+            >
               <CuentasPanel state={state} locale={locale} />
             </div>
 
-            <div className={activeMobileTab === "historial" ? "block" : "hidden lg:block"}>
+            <div
+              id="mobile-tabpanel-historial"
+              className={activeMobileTab === "historial" ? "block" : "hidden xl:block"}
+            >
               <HistorialPanel
                 state={state}
                 unlockedAchievements={profile.achievements}
@@ -295,27 +372,33 @@ export function GameScreen({ state }: GameScreenProps) {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation Bar (< 1024px) */}
+      {/* Mobile & Tablet Bottom Navigation Bar (< 1280px) */}
       <nav
         aria-label={ui.game.mobileNavAria}
-        className="lg:hidden fixed bottom-0 inset-x-0 z-30 border-t-2 border-[#1f2421] bg-[#fffdf8]/98 backdrop-blur-xs pb-[env(safe-area-inset-bottom)]"
+        className="xl:hidden fixed bottom-0 inset-x-0 z-30 border-t-2 border-[#1f2421] bg-[#fffdf8]/98 backdrop-blur-xs pb-[env(safe-area-inset-bottom)]"
       >
-        <div role="tablist" className="grid grid-cols-4">
+        <div role="tablist" onKeyDown={handleMobileTabKeyDown} className="grid grid-cols-4">
           {MOBILE_TAB_ICONS.map(({ id, Icon }) => {
             const isActive = activeMobileTab === id;
             const label = ui.game.tabs[id];
             return (
               <button
                 key={id}
+                ref={(el) => {
+                  mobileTabRefs.current[id] = el;
+                }}
+                id={`mobile-tab-btn-${id}`}
                 type="button"
                 role="tab"
+                tabIndex={isActive ? 0 : -1}
                 aria-selected={isActive}
+                aria-controls={`mobile-tabpanel-${id}`}
                 data-testid={`mobile-tab-${id}`}
                 onClick={() => setActiveMobileTab(id)}
-                className={`min-h-14 py-1.5 px-1 flex flex-col items-center justify-center gap-0.5 text-xs font-bold transition-colors cursor-pointer ${
+                className={`min-h-12 sm:min-h-13 py-1 px-1 flex flex-col items-center justify-center gap-0.5 text-xs font-bold transition-colors cursor-pointer ${
                   isActive
-                    ? "bg-[#fcf4df] text-[#8f510d] border-t-2 border-[#8f510d]"
-                    : "text-[#4a524e] hover:bg-[#f6efe0]"
+                    ? "bg-[#fcf4df] text-[#7a4308] border-t-2 border-[#7a4308]"
+                    : "text-[#373f3a] hover:bg-[#f6efe0]"
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />

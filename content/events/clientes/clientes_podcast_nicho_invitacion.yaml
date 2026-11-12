@@ -1,0 +1,47 @@
+schema_version: 1
+id: clientes_podcast_nicho_invitacion
+category: clientes
+title: Invitación al pódcast que escuchan todos los directores del sector
+body: Un pódcast profesional con audiencia fiel pero cero caché te invita a destripar un caso real durante una hora. No pagan por asistir, pero lo escuchan quienes aprueban presupuestos de 3.000 €.
+tags:
+  - visibilidad
+  - marca_personal
+  - captacion
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 26
+weight: 8
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: declinar_y_priorizar_horas_facturables
+    label: Agradecer la invitación y dedicar esa mañana a trabajo facturable
+    result_text: Cero nervios de micrófono y una mañana productiva sacando adelante entregas pagadas.
+    effects:
+      billed_income: 750
+      stress: -2
+      personal_life: 2
+  - id: acudir_improvisando_anecdotas
+    label: Aceptar la charla tirando de oficio y anécdotas reales sin guion
+    result_text: Quedas cercano y solvente; aunque no tenías página específica preparada, un oyente te escribe por privado y encarga fase inicial.
+    effects:
+      billed_income: 1250
+      moral: 4
+      stress: 2
+      reputation: 5
+      set_flags:
+        - portfolio_actualizado
+  - id: ir_con_embudo_web_y_casos_listos
+    label: Preparar un caso brillante dirigiendo oyentes a tu web y portfolio
+    requirements:
+      required_flags:
+        - web_corporativa_activa
+        - portfolio_actualizado
+    result_text: "La charla engancha y tu web convierte de maravilla: esa misma semana cierras dos diagnósticos sénior sin regateos."
+    effects:
+      billed_income: 2450
+      moral: 7
+      stress: 3
+      reputation: 8

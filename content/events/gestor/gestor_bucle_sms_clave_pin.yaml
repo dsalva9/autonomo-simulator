@@ -12,9 +12,10 @@ requirements:
   gestor_tiers:
     - self
 weight: 12
-cooldown_months: 8
-max_occurrences: 4
-exclusive_with: []
+cooldown_months: 10
+max_occurrences: 3
+exclusive_with:
+  - hacienda_bucle_clave_pin_sede
 choices:
   - id: insistir_pegado_a_la_ventana
     label: "Sacar medio cuerpo por la ventana y reintentar hasta que entre"

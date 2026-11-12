@@ -26,6 +26,7 @@ choices:
       stress: -8
       personal_life: 5
       reputation: 4
+      employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
   - id: delegar_con_revision_quincenal
@@ -37,6 +38,7 @@ choices:
       stress: -5
       personal_life: 3
       reputation: 2
+      employee_satisfaction: 8
   - id: seguir_supervisando_cada_correo
     label: "Seguir pasando cada respuesta por tu filtro personal por si acaso"
     result_text: "Nada sale sin tu sello, pero acabas agotado revisando borradores ajenos a última hora y frenas el techo del estudio."
@@ -44,5 +46,6 @@ choices:
       moral: -4
       stress: 7
       personal_life: -4
+      employee_satisfaction: -12
       set_flags:
         - desgaste_plantilla

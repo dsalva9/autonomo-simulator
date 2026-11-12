@@ -2,7 +2,7 @@ schema_version: 1
 id: hacienda_paralela_retenciones_irpf
 category: hacienda
 title: "Propuesta de paralela: las retenciones fantasma del IRPF"
-body: "Un cliente declaró tarde su resumen anual y el ordenador de Hacienda asume que te inventaste las retenciones de tres facturas. Gómez te da diez días hábiles antes de girarte la diferencia con intereses."
+body: Un cliente declaró tarde su resumen anual y el ordenador de Hacienda asume que te inventaste las retenciones de tres facturas. Gómez te da diez días hábiles antes de girarte la diferencia con intereses.
 tags:
   - irpf
   - retenciones
@@ -16,9 +16,17 @@ cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: ingresar_diferencia_cautelar
+    label: Ingresar la diferencia reclamada ya para cortar intereses (340 €)
+    result_text: Pagas tú el descuido ajeno refunfuñando entre dientes, pero cierras la paralela en el acto sin más papeleo.
+    effects:
+      cash_delta: -340
+      stress: 4
+      moral: -5
+      fiscal_risk: -8
   - id: alegar_con_extractos_bancarios
-    label: "Abrir trámite de alegaciones adjuntando facturas y abonos bancarios"
-    result_text: "Subes el lote de extractos demostrando que cobraste el neto retenido y quedas pendiente de que crucen datos con el cliente."
+    label: Abrir trámite de alegaciones adjuntando facturas y abonos bancarios
+    result_text: Subes el lote de extractos demostrando que cobraste el neto retenido y quedas pendiente de que crucen datos con el cliente.
     effects:
       deductible_expense: 60
       stress: 6
@@ -28,12 +36,12 @@ choices:
           delay_months: 2
           probability: 1
   - id: reclamar_certificados_con_gestor
-    label: "Encargar a tu gestoría exigir el certificado al cliente y contestar"
+    label: Encargar a tu gestoría exigir el certificado al cliente y contestar
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu asesoría arranca el certificado firmado a contabilidad del cliente y presenta unas alegaciones blindadas."
+    result_text: Tu asesoría arranca el certificado firmado a contabilidad del cliente y presenta unas alegaciones blindadas.
     effects:
       deductible_expense: 150
       stress: 2
@@ -43,11 +51,3 @@ choices:
         - event_id: hacienda_fallo_alegaciones_paralela
           delay_months: 1
           probability: 0.75
-  - id: ingresar_diferencia_cautelar
-    label: "Ingresar la diferencia reclamada ya para cortar intereses (340 €)"
-    result_text: "Pagas tú el descuido ajeno refunfuñando entre dientes, pero cierras la paralela en el acto sin más papeleo."
-    effects:
-      cash_delta: -340
-      stress: 4
-      moral: -5
-      fiscal_risk: -8

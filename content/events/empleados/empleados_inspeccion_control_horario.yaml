@@ -1,0 +1,65 @@
+schema_version: 1
+id: empleados_inspeccion_control_horario
+category: empleados
+title: "Oficio de Inspección pidiendo el registro de jornada"
+body: "Llega requerimiento laboral electrónico: diez días hábiles para aportar los registros diarios de inicio, pausa y salida de tu plantilla en el último cuatrimestre. Hora de abrir la carpeta de fichajes."
+tags:
+  - plantilla
+  - inspeccion_trabajo
+  - registro_horario
+  - normativa
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 22
+  has_employee: true
+weight: 11
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: pagar_laboralista_y_ordenar_partes
+    label: "Pagar asesoría laboral exprés para subsanar lagunas formales (310 €)"
+    result_text: "El especialista ordena anexos reales, implantas por fin el sistema correcto y salvas el trámite sin sanción."
+    effects:
+      deductible_expense: 310
+      stress: 5
+      moral: 1
+      employee_satisfaction: 2
+      set_flags:
+        - registro_horario_al_dia
+  - id: improvisar_hojas_a_ultima_hora
+    label: "Intentar cuadrar hojas atrasadas a contrarreloj antes del vencimiento"
+    outcomes:
+      - id: apercibimiento_leve_sin_multa
+        weight: 48
+        result_text: "Sales vivo con un requerimiento formal de subsanación inmediata y el susto metido en el cuerpo para todo el mes."
+        effects:
+          stress: 10
+          moral: -5
+          employee_satisfaction: -6
+          set_flags:
+            - registro_horario_al_dia
+      - id: sancion_leve_por_defectos_forma
+        weight: 52
+        result_text: "Las incoherencias cantan a leguas: multa administrativa al canto y obligación de implantar registro serio ya."
+        effects:
+          cash_delta: -750
+          stress: 15
+          moral: -8
+          reputation: -2
+          employee_satisfaction: -9
+          set_flags:
+            - registro_horario_al_dia
+  - id: aportar_historico_digital_impecable
+    label: "Exportar al instante el historial digital firmado al día y remitirlo"
+    requirements:
+      required_flags:
+        - registro_horario_al_dia
+    result_text: "Bendito el día en que implantaste fichaje serio: el expediente se archiva sin tacha en cuarenta y ocho horas."
+    effects:
+      stress: -7
+      moral: 9
+      reputation: 2
+      fiscal_risk: -5
+      employee_satisfaction: 6

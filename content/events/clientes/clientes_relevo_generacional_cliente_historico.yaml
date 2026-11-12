@@ -1,0 +1,59 @@
+schema_version: 1
+id: clientes_relevo_generacional_cliente_historico
+category: clientes
+title: Se jubila quien te contrató y entra su heredero con un Excel nuevo
+body: El fundador de una empresa familiar que lleva seis años pagándote puntual el día 1 se jubila. Su relevo aterriza con máster reciente cuestionando todos los proveedores históricos.
+tags:
+  - veterano
+  - fidelizacion
+  - negociacion
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 82
+weight: 9
+cooldown_months: 16
+max_occurrences: null
+choices:
+  - id: ofrecer_descuento_defensivo_por_miedo
+    label: Ofrecer 15 % de descuento si abona el trimestre por adelantado (2.550 €)
+    result_text: Aseguras 2.550 € hoy mismo en cuenta, aunque el nuevo director huele tu cesión y empieza a pedir informes semanales.
+    effects:
+      billed_income: 2550
+      moral: -4
+      stress: 6
+      reputation: -1
+  - id: presentar_retorno_historico_y_plan_modernizacion
+    label: Anticiparte con un informe de impacto real y nueva hoja de ruta de 3.100 €
+    outcomes:
+      - id: le_haces_brillar_ante_el_consejo
+        weight: 70
+        result_text: "Le das exactamente los indicadores que necesitaba para lucirse ante su familia: renueva ampliando alcance."
+        effects:
+          billed_income: 3100
+          moral: 7
+          stress: 3
+          reputation: 6
+          add_modifier:
+            id: mod_cliente_directivo_fiel
+            label: Acuerdo con nueva dirección
+            remaining_months: 5
+            monthly_billed_delta: 420
+      - id: divide_cuenta_con_agencia_amiga
+        weight: 30
+        result_text: Reparte la mitad del pastel con una consultora de su escuela de negocios, pero retienes el núcleo crítico por 1.800 €.
+        effects:
+          billed_income: 1800
+          moral: 1
+          stress: 4
+          reputation: 2
+  - id: pactar_salida_elegante_y_formacion_relevo
+    label: Facturar 2.150 € por formar a su nuevo equipo y cerrar etapa con honores
+    result_text: Te despides por la puerta grande antes de aguantar microgestión ajena, cobrando bien el traspaso de conocimiento.
+    effects:
+      billed_income: 2150
+      moral: 6
+      stress: -5
+      personal_life: 4
+      reputation: 5

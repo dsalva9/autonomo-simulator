@@ -1,0 +1,39 @@
+schema_version: 1
+id: clientes_cumbre_presencial_europa
+category: clientes
+title: "Cumbre anual en Zúrich: dos días de pizarra y tarifas centroeuropeas"
+body: Tu cliente europeo organiza su retiro estratégico anual y quiere que vueles dos días para cerrar la hoja de ruta del próximo año junto a dirección.
+tags:
+  - internacional
+  - veterano
+  - viaje
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 76
+  required_flags:
+    - cliente_internacional_activo
+weight: 9
+cooldown_months: 15
+max_occurrences: null
+choices:
+  - id: volar_facturando_jornadas_y_dietas
+    label: Viajar facturando 3.400 € por las jornadas presenciales más 380 € de gastos
+    result_text: Vuelves del lago con la renovación anual blindada, trato de socio estratégico y gastos deducibles impecables.
+    effects:
+      billed_income: 3400
+      deductible_expense: 380
+      moral: 8
+      stress: 4
+      personal_life: -2
+      reputation: 7
+  - id: intervenir_por_videollamada_en_bloque_clave
+    label: Declinar el avión y liderar tu bloque estratégico en remoto por 2.100 €
+    result_text: Te ahorras aeropuertos y madrugones, clavas tu sesión de dos horas en pantalla gigante y cenas en tu sofá.
+    effects:
+      billed_income: 2100
+      moral: 5
+      stress: -3
+      personal_life: 4
+      reputation: 4

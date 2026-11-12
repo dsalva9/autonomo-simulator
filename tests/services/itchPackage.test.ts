@@ -1,8 +1,10 @@
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
+import { inflateRawSync } from "node:zlib";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  listZipEntries,
   packageItchRelease,
   shouldIncludeInItchArchive,
   stagePortableItchBundle,
@@ -15,6 +17,24 @@ function createTempRoot(): string {
   const dir = mkdtempSync(resolve(tmpdir(), "autonomo-itch-test-"));
   tempDirs.push(dir);
   return dir;
+}
+
+function extractZipEntryUtf8(zipBuffer: Buffer, targetName: string): string {
+  let offset = 0;
+  while (offset + 30 <= zipBuffer.length && zipBuffer.readUInt32LE(offset) === 0x04034b50) {
+    const method = zipBuffer.readUInt16LE(offset + 8);
+    const compSize = zipBuffer.readUInt32LE(offset + 18);
+    const nameLen = zipBuffer.readUInt16LE(offset + 26);
+    const extraLen = zipBuffer.readUInt16LE(offset + 28);
+    const name = zipBuffer.subarray(offset + 30, offset + 30 + nameLen).toString("utf8");
+    const dataStart = offset + 30 + nameLen + extraLen;
+    const payload = zipBuffer.subarray(dataStart, dataStart + compSize);
+    if (name === targetName) {
+      return (method === 8 ? inflateRawSync(payload) : payload).toString("utf8");
+    }
+    offset = dataStart + compSize;
+  }
+  throw new Error(`Entry '${targetName}' not found in local ZIP headers.`);
 }
 
 function writeMinimalPortableDist(rootDir: string, indexHtmlOverride?: string): string {
@@ -88,7 +108,7 @@ describe("itch.io portable packager (scripts/package-itch.ts)", () => {
     expect(() => verifyPortableDistBundle(badAssetsDist)).toThrow(/root-anchored/);
   });
 
-  it("stages lean files and builds release/autonomo-simulator-web.zip in an isolated workspace", () => {
+  it("stages lean files and builds POSIX '/' release/autonomo-simulator-web.zip with root index.html", () => {
     const rootDir = createTempRoot();
     const distDir = writeMinimalPortableDist(rootDir);
     const stageDir = resolve(rootDir, "stage-check");
@@ -106,5 +126,26 @@ describe("itch.io portable packager (scripts/package-itch.ts)", () => {
     expect(result.sizeBytes).toBeGreaterThan(100);
     expect(result.includedFiles).not.toContain("og-preview.png");
     expect(result.includedFiles).not.toContain("_bundle/index-abc123.js.map");
+
+    // Inspect raw ZIP Central Directory headers for strict PKWARE POSIX '/' compliance
+    const zipBuffer = readFileSync(result.zipPath);
+    const entries = listZipEntries(zipBuffer);
+    expect(entries.length).toBe(result.includedFiles.length);
+    expect(entries).toContain("index.html");
+    expect(entries).toContain("_bundle/index-abc123.js");
+    expect(entries).toContain("_bundle/index-abc123.css");
+    expect(entries).toContain("assets/manifest.json");
+    for (const entry of entries) {
+      expect(entry.includes("\\")).toBe(false);
+      expect(entry.startsWith("./")).toBe(false);
+      expect(entry.startsWith("/")).toBe(false);
+    }
+
+    // Verify lossless round-trip decompression of root and nested entries
+    expect(extractZipEntryUtf8(zipBuffer, "index.html")).toContain("./_bundle/index-abc123.js");
+    expect(extractZipEntryUtf8(zipBuffer, "_bundle/index-abc123.js")).toBe("console.log('ok');");
+    expect(extractZipEntryUtf8(zipBuffer, "assets/manifest.json")).toBe(
+      '{"version":1,"assets":{}}',
+    );
   });
 });

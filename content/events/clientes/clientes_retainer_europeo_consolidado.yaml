@@ -12,20 +12,6 @@ cooldown_months: 0
 max_occurrences: null
 exclusive_with: []
 choices:
-  - id: firmar_iguala_europea_completa
-    label: Firmar la iguala europea completa de cinco meses
-    result_text: Aseguras cinco meses de facturación centroeuropea puntualísima. Tus colegas del gremio te preguntan si adoptan en Berlín.
-    effects:
-      billed_income: 375
-      add_modifier:
-        id: mod_iguala_berlin_completa
-        label: Iguala remota con Berlín
-        remaining_months: 5
-        monthly_billed_delta: 480
-        monthly_stress_delta: 4
-      moral: 6
-      reputation: 4
-      stress: 1
   - id: firmar_asesoria_europea_ligera
     label: Pactar media dedicación mensual para no saturar el estudio
     result_text: Cierras un bloque estable y manejable que cubre buena parte de tus gastos fijos sin comerte la semana entera.
@@ -40,6 +26,24 @@ choices:
       moral: 6
       personal_life: 2
       reputation: 2
+      set_flags:
+        - cliente_internacional_activo
+  - id: firmar_iguala_europea_completa
+    label: Firmar la iguala europea completa de cinco meses
+    result_text: Aseguras cinco meses de facturación centroeuropea puntualísima. Tus colegas del gremio te preguntan si adoptan en Berlín.
+    effects:
+      billed_income: 375
+      add_modifier:
+        id: mod_iguala_berlin_completa
+        label: Iguala remota con Berlín
+        remaining_months: 5
+        monthly_billed_delta: 480
+        monthly_stress_delta: 4
+      moral: 6
+      reputation: 4
+      stress: 1
+      set_flags:
+        - cliente_internacional_activo
   - id: declinar_fijo_y_quedar_disponible
     label: Agradecer la oferta y trabajar solo por proyectos sueltos
     result_text: Mantienes la puerta abierta sin atarte a compromisos fijos mensuales y te tomas un respiro merecido.

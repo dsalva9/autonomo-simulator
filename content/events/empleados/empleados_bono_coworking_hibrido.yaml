@@ -1,0 +1,56 @@
+schema_version: 1
+id: empleados_bono_coworking_hibrido
+category: empleados
+title: "Martillo percutor arriba y petición de coworking"
+body: "Sin local propio a pie de calle, el teletrabajo choca con el ladrillo patrio: han empezado reforma integral encima del piso de tu persona en plantilla y pide un pase de espacio compartido cerca de su casa."
+tags:
+  - plantilla
+  - teletrabajo
+  - coworking
+  - bienestar
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 18
+  has_employee: true
+  forbidden_flags:
+    - estudio_calle_alquilado
+weight: 11
+cooldown_months: 15
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: enviar_auriculares_cancelacion_ruido
+    label: "Comprar auriculares profesionales con cancelación activa (145 €)"
+    result_text: "Atenúan bastante el taladro del vecino sin añadir una cuota fija nueva a tu estructura mensual."
+    effects:
+      deductible_expense: 145
+      stress: -3
+      moral: 5
+      employee_satisfaction: 7
+  - id: pagar_pase_coworking_deducible
+    label: "Cubrir un bono mensual deducible con cabina de llamadas (185 €)"
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: "Recupera concentración inmediata, las videollamadas vuelven a sonar limpias y sumas gasto deducible sin atarte a un alquiler largo."
+    effects:
+      deductible_expense: 185
+      stress: -5
+      moral: 7
+      employee_satisfaction: 13
+      add_modifier:
+        id: mod_pase_coworking_plantilla
+        label: "Pase de coworking para plantilla"
+        remaining_months: 4
+        monthly_billed_delta: 210
+        monthly_expense_delta: 95
+        monthly_stress_delta: -1
+  - id: decirle_que_tire_de_biblioteca_o_cafe
+    label: "Sugerirle tirar de biblioteca municipal mientras duren los escombros"
+    result_text: "Te ahorras la factura, pero trabajar susurrando entre opositores frena el ritmo y enfría los ánimos."
+    effects:
+      stress: 4
+      moral: -4
+      employee_satisfaction: -11

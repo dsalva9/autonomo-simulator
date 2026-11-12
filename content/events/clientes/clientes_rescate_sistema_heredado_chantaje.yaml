@@ -1,0 +1,47 @@
+schema_version: 1
+id: clientes_rescate_sistema_heredado_chantaje
+category: clientes
+title: "Proyecto de hace cuatro años roto: «Es garantía tuya, arréglalo gratis»"
+body: Un antiguo cliente que lleva cuarenta meses sin pagar mantenimiento contrató a un becario que ha destrozado tu entrega original. Ahora exige que lo reconstruyas gratis hoy o amenaza con difamarte en redes.
+tags:
+  - veterano
+  - legado
+  - limites
+character_id: cliente_regateador
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 60
+weight: 9
+cooldown_months: 15
+max_occurrences: null
+choices:
+  - id: remitir_a_clausula_fin_garantia_y_bloquear
+    label: Responder con el contrato vencido en copia a su socio y cerrar el hilo
+    result_text: Su socio lee el historial, le frena los pies al instante y te pide disculpas en privado. No cobras un euro, pero duermes como un rey.
+    effects:
+      moral: 6
+      stress: -4
+      personal_life: 3
+      reputation: 2
+  - id: hacer_parche_minimo_pagado_por_horas
+    label: Restaurar solo tu copia antigua por 1.150 € al contado y desvincularte
+    result_text: Subes el respaldo intacto en una tarde tras ver el ingreso en cuenta y firmas renuncia expresa a futuras consultas.
+    effects:
+      billed_income: 1150
+      moral: 3
+      stress: 2
+      reputation: 3
+  - id: presupuestar_rescate_forense_y_custodia
+    label: Enviar acta de entrega firmada hace 4 años y tarifa de rescate de 2.600 €
+    result_text: Ante las pruebas por escrito y su urgencia real, traga saliva, abona el rescate completo y contrata custodia mensual.
+    effects:
+      billed_income: 2600
+      moral: 7
+      stress: 4
+      reputation: 5
+      add_modifier:
+        id: mod_soporte_custodia
+        label: Mantenimiento y custodia
+        remaining_months: 5
+        monthly_billed_delta: 320

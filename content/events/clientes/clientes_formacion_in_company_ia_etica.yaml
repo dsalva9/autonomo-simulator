@@ -1,0 +1,52 @@
+schema_version: 1
+id: clientes_formacion_in_company_ia_etica
+category: clientes
+title: "Formación ejecutiva: «Enséñanos a usar IA sin hacer el ridículo»"
+body: Tras tres años acumulando desastres generados sin revisión, Marta contrata dos jornadas intensivas de 3.600 € para poner orden, criterio y controles de calidad en un departamento de veinticinco personas.
+tags:
+  - endless
+  - formacion
+  - ia
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 92
+weight: 10
+cooldown_months: 15
+max_occurrences: null
+choices:
+  - id: entregar_manual_interno_y_sesion_corta
+    label: Acotar a una mañana ejecutiva y guía práctica cerrada por 2.300 €
+    result_text: Máxima rentabilidad por hora invertida sin quedarte afónico corrigiendo ejercicios básicos.
+    effects:
+      billed_income: 2300
+      moral: 5
+      stress: -2
+      personal_life: 3
+      reputation: 4
+  - id: impartir_taller_y_vender_supervision_mensual
+    label: Impartir las dos jornadas (3.600 €) y cerrar supervisión mensual posterior
+    result_text: Sales aplaudido de la sala de juntas y además dejas firmada una iguala ligera para auditar sus flujos cada mes.
+    effects:
+      billed_income: 3600
+      moral: 7
+      stress: 4
+      reputation: 7
+      add_modifier:
+        id: mod_supervision_flujo_ia
+        label: Supervisión mensual de flujos
+        remaining_months: 5
+        monthly_billed_delta: 450
+  - id: codirigir_taller_practico_con_tu_empleado
+    label: Llevar a tu persona en plantilla como coformadora con prima de 350 €
+    requirements:
+      has_employee: true
+    result_text: El formato a dúo dinamiza los ejercicios prácticos, cobras el paquete sénior de 4.100 € y tu equipo vuelve con la moral por las nubes.
+    effects:
+      billed_income: 4100
+      deductible_expense: 350
+      moral: 8
+      stress: 1
+      reputation: 7
+      employee_satisfaction: 6

@@ -1,0 +1,49 @@
+schema_version: 1
+id: gestor_retencion_mal_aplicada_factura_solo
+category: gestor
+title: Retenciones de IRPF al revés en tus facturas
+body: "Repasando tu hoja de cálculo descubres un clásico de la autogestión: emitiste dos facturas a empresas españolas sin retención de IRPF y otra a un particular aplicándole retención."
+tags:
+  - autogestion
+  - irpf
+  - retenciones
+  - facturacion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 6
+  gestor_tiers:
+    - self
+weight: 12
+cooldown_months: 10
+max_occurrences: 3
+choices:
+  - id: dejarlo_correr_hasta_la_renta
+    label: No tocar nada y esperar a que se compense en la Renta anual
+    result_text: Evitas la conversación incómoda con tus clientes hoy, pero sus Modelos 111 chocarán de frente con tus libros.
+    effects:
+      cash_delta: 135
+      stress: 2
+      moral: -2
+      fiscal_risk: 13
+  - id: emitir_rectificativas_y_dar_la_cara
+    label: Emitir facturas rectificativas y cuadrar saldos uno por uno
+    result_text: Pasas un par de tardes pidiendo disculpas a administración y devolviendo diferencias, pero dejas la trazabilidad limpia.
+    effects:
+      stress: 6
+      moral: 3
+      reputation: -2
+      fiscal_risk: -6
+  - id: regularizar_pago_fraccionado_con_plantilla
+    label: Adquirir plantilla profesional y ajustar el pago fraccionado
+    requirements:
+      stats:
+        money:
+          min: 180
+    result_text: Corriges las series con numeración rectificativa limpia e ingresas la retención pendiente sin levantar alertas.
+    effects:
+      deductible_expense: 75
+      cash_delta: -120
+      stress: -3
+      moral: 4
+      fiscal_risk: -8

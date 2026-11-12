@@ -1,0 +1,46 @@
+schema_version: 1
+id: gestor_paco_deduccion_boda_cliente
+category: gestor
+title: Paco convierte una boda en congreso sectorial
+body: "Viendo en tu extracto el hotel y la tintorería de una boda fuera de casa, Paco se frota las manos: «Dime que en el cóctel hablaste de trabajo con alguien y metemos el viaje entero»."
+tags:
+  - gestoria
+  - paco
+  - gastos_dudosos
+  - hosteleria
+character_id: gestor_barato_paco
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 22
+  gestor_tiers:
+    - cheap
+weight: 11
+cooldown_months: 12
+max_occurrences: 2
+choices:
+  - id: separar_boda_como_gasto_personal
+    label: Frenar a Paco y dejar toda la boda fuera de la contabilidad
+    result_text: Paco suspira decepcionado por tu falta de espíritu creativo, pero tu libro de gastos sigue defendible.
+    effects:
+      stress: -3
+      moral: 4
+      fiscal_risk: -4
+  - id: colar_hotel_y_traje_como_evento_comercial
+    label: Dejar que Paco meta hotel y tintorería como prospección
+    result_text: Rascas un buen pellizco en el trimestre, rezando para que nadie pregunte qué congreso se celebra un sábado en ermita.
+    effects:
+      cash_delta: 235
+      stress: 5
+      moral: -4
+      fiscal_risk: 17
+      set_flags:
+        - susto_con_paco
+  - id: deducir_solo_almuerzo_viernes_con_cliente
+    label: Deducir únicamente el café y comida real del viernes laboral
+    result_text: Guardas la factura nominativa de la reunión verdadera del viernes y descartas el resto sin tentar a la suerte.
+    effects:
+      cash_delta: 75
+      stress: -1
+      moral: 3
+      fiscal_risk: -1

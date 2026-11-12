@@ -1,0 +1,54 @@
+schema_version: 1
+id: clientes_campana_black_friday_urgente
+category: clientes
+title: «El Black Friday es el viernes y aún no tenemos nada»
+body: Borja descubre en el calendario que el Black Friday cae esta misma semana y exige creatividades, textos y campaña lista para mañana por 600 €, jurando que si arrasa te dará el mantenimiento anual.
+tags:
+  - estacional
+  - urgencia
+  - black_friday
+character_id: cliente_regateador
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 9
+  months_of_year:
+    - 10
+    - 11
+weight: 10
+cooldown_months: 9
+max_occurrences: 4
+choices:
+  - id: cobrar_tarifa_expres_por_adelantado
+    label: Exigir 1.450 € con recargo exprés pagados hoy por transferencia
+    outcomes:
+      - id: paga_con_prisas_y_sale_a_tiempo
+        weight: 60
+        result_text: "El pánico a perder las rebajas obra milagros: Borja transfiere al minuto y entregas un paquete impecable sin regalar tu noche."
+        effects:
+          billed_income: 1450
+          moral: 4
+          stress: 7
+          reputation: 4
+      - id: se_asusta_y_compra_plantilla_rota
+        weight: 40
+        result_text: Le parece carísimo y descarga una plantilla chillona por su cuenta. Te ahorras un infarto y duermes ocho horas.
+        effects:
+          moral: 2
+          stress: -3
+          personal_life: 3
+  - id: vender_kit_cerrado_sin_cambios
+    label: Ofrecer un kit básico de 780 € cerrado y sin rondas de cambios
+    result_text: Acotas el alcance al milímetro, cobras por delante y cierras el correo a las siete de la tarde con la conciencia tranquila.
+    effects:
+      billed_income: 780
+      stress: 3
+      reputation: 2
+  - id: declinar_emergencias_comerciales
+    label: Rechazar urgencias de última hora y proteger tu agenda actual
+    result_text: Dejas pasar el frenesí de descuentos improvisados y cumples sin agobios con tus clientes ordenados.
+    effects:
+      billed_income: 420
+      moral: 3
+      stress: -4
+      personal_life: 4

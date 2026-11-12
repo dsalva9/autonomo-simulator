@@ -1,0 +1,43 @@
+schema_version: 1
+id: clientes_liquidacion_earn_out_cartera
+category: clientes
+title: "Liquidación del segundo tramo: «Dos cuentas se han dado de baja»"
+body: Vence el plazo de 90 días por la venta de cartera y la consultora alega que dos clientes se marcharon tras su subida agresiva de precios, intentando recortar tu pago pendiente de 2.400 € a 1.100 €.
+tags:
+  - veterano
+  - cartera
+  - cadena
+character_id: null
+character_expression: null
+illustration_id: null
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: 2
+choices:
+  - id: cerrar_acuerdo_rapido_y_recuperar_exclientes
+    label: Cobrar los 1.100 € sin pleitos y reabrir la puerta a los dos huidos
+    result_text: Cobras el mínimo hoy y, como no hay no-competencia sobre bajas provocadas por ellos, una de las cuentas vuelve encantada a tu tarifa sénior.
+    effects:
+      billed_income: 2150
+      moral: 6
+      stress: -2
+      reputation: 5
+  - id: invocar_clausula_no_alteracion_tarifas
+    label: Exhibir la cláusula que prohibía subir precios durante el traspaso
+    outcomes:
+      - id: pagan_integros_los_dos_mil_cuatrocientos
+        weight: 70
+        result_text: "Pillas su maniobra documentada por correo: abonan los 2.400 € completos en 48 horas para evitar demanda mercantil."
+        effects:
+          billed_income: 2400
+          moral: 8
+          stress: 2
+          reputation: 4
+      - id: acuerdan_punto_intermedio_sin_juicio
+        weight: 30
+        result_text: Regatean hasta el último minuto pero cerráis transacción en 1.850 € pagados esa misma tarde.
+        effects:
+          billed_income: 1850
+          moral: 3
+          stress: 4

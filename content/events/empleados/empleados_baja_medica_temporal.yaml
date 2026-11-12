@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_baja_medica_temporal
 category: empleados
 title: "Parte de baja médica en lunes de entregas"
-body: "Ocho y media del lunes: recibes el parte de baja temporal de tu persona en plantilla por una contractura dorsal aguda que exige varias semanas de reposo absoluto. Deseas de corazón que se recupere pronto y, acto seguido, miras el calendario del estudio recordando que las cotizaciones siguen girándose puntualmente."
+body: "Ocho y media del lunes: llega el parte de baja de tu persona en plantilla por contractura dorsal aguda con semanas de reposo. Le deseas pronta mejora mientras miras el calendario y recuerdas que las cuotas siguen girándose."
 tags:
   - plantilla
   - baja_medica
@@ -18,16 +18,6 @@ cooldown_months: 12
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: contratar_refuerzo_externo_deducible
-    label: "Pagar apoyo externo deducible este mes y respetar su descanso al cien por cien (680 €)"
-    result_text: "Cubres el hueco con colaboración profesional sin molestar ni una sola vez durante la baja. Tu bolsillo lo nota, pero salvas clientes y cuidas al equipo."
-    effects:
-      deductible_expense: 680
-      stress: 2
-      moral: 6
-      reputation: 3
-      clear_flags:
-        - desgaste_plantilla
   - id: absorber_toda_la_carga_de_noche
     label: "Asumir tú en solitario el trabajo de dos personas empalmando noches"
     result_text: "Sacas adelante la cartera sin subcontratar a nadie, gastando en cafetería y fisioterapia mientras cuentas los días para que vuelva al escritorio."
@@ -37,6 +27,7 @@ choices:
       moral: -4
       personal_life: -9
       reputation: 1
+      employee_satisfaction: 3
   - id: aplazar_entregas_y_reducir_ritmo
     label: "Renegociar plazos con los clientes asumiendo un frenazo temporal de actividad"
     result_text: "Explicas la situación con transparencia: algunos encargos se posponen y pierdes tracción comercial unos meses, pero evitas quemarte vivo."
@@ -45,8 +36,20 @@ choices:
       stress: 5
       moral: 2
       reputation: -4
+      employee_satisfaction: 4
       add_modifier:
         id: mod_ritmo_baja_estudio
         label: "Capacidad reducida por baja médica"
         remaining_months: 3
         monthly_billed_delta: -260
+  - id: contratar_refuerzo_externo_deducible
+    label: "Pagar refuerzo externo deducible (680 €) y respetar su baja al cien"
+    result_text: "Cubres el hueco con colaboración profesional sin molestar ni una sola vez durante la baja. Tu bolsillo lo nota, pero salvas clientes y cuidas al equipo."
+    effects:
+      deductible_expense: 680
+      stress: 2
+      moral: 6
+      reputation: 3
+      employee_satisfaction: 14
+      clear_flags:
+        - desgaste_plantilla

@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_arranque_septiembre_avalancha
+category: clientes
+title: "Septiembre: todo lo que era «para después del verano» es para hoy"
+body: "El primer lunes hábil de septiembre entran cuatro correos marcados «URGENTE»: los mismos clientes que desaparecieron en julio exigen arrancar hoy mismo presupuestos de hasta 2.600 € a la vez."
+tags:
+  - estacional
+  - septiembre
+  - planificacion
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 8
+  months_of_year:
+    - 9
+weight: 10
+cooldown_months: 11
+max_occurrences: 4
+choices:
+  - id: decir_si_a_los_cuatro_y_trasnochar
+    label: Aceptar los cuatro encargos de golpe para resarcirte de agosto
+    result_text: Facturas una barbaridad en tres semanas a cambio de desayunar café recalentado y confundir los nombres en las reuniones.
+    effects:
+      billed_income: 2750
+      moral: -2
+      stress: 13
+      personal_life: -8
+      reputation: 2
+  - id: ordenar_cola_por_anticipo_pagado
+    label: Asignar turno estricto según quién ingrese antes el 50 % de señal
+    result_text: "La regla del anticipo separa el humo de la solvencia en dos horas: dos cuentas pagan hoy y el resto acepta esperar a octubre."
+    effects:
+      billed_income: 1950
+      moral: 5
+      stress: 4
+      reputation: 4
+  - id: derivar_excedente_a_red_colaboradores
+    label: Quedarte la cuenta principal y repartir el resto con tu red externa
+    requirements:
+      required_flags:
+        - acuerdo_colaboradores_firmado
+    result_text: "Coordinas la avalancha como estudio sénior: ningún cliente se queda tirado, cobras margen de dirección y cenas de día."
+    effects:
+      billed_income: 2350
+      deductible_expense: 350
+      moral: 6
+      stress: 2
+      reputation: 6

@@ -1,7 +1,7 @@
 schema_version: 1
 id: hacienda_regularizacion_reta
 category: hacienda
-title: "Cruce de datos y regularización de tramo de cuota"
+title: Cruce de datos y regularización de tramo de cuota
 body: "Llega la comunicación anual tras cruzar tus rendimientos netos declarados con los tramos de cotización de autónomos: según sus tablas, cotizaste por debajo del tramo definitivo y toca regularizar diferencias."
 tags:
   - cuota_autonomos
@@ -11,40 +11,45 @@ character_id: null
 illustration_id: null
 requirements:
   min_month: 9
+  months_of_year:
+    - 3
+    - 4
+    - 10
+    - 11
 weight: 9
-cooldown_months: 12
+cooldown_months: 9
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: abonar_diferencia_de_una_vez
-    label: "Pagar la regularización de golpe y olvidar el asunto hasta el año que viene"
-    result_text: "Liquidar el cargo escuece hoy, pero te quitas recargos futuros y dejas tu base actualizada al día."
-    effects:
-      cash_delta: -460
-      stress: 5
-      moral: -3
-      fiscal_risk: -4
   - id: repartir_ajuste_en_cuatro_meses
-    label: "Asumir el recálculo escalonado durante los próximos cuatro meses"
-    result_text: "Suavizas el golpe de tesorería repartiéndolo en recibos mensuales un poco más pesados."
+    label: Asumir el recálculo escalonado durante los próximos cuatro meses
+    result_text: Suavizas el golpe de tesorería repartiéndolo en recibos mensuales un poco más pesados.
     effects:
       add_modifier:
         id: mod_regularizacion_reta
-        label: "Regularización tramo cuota"
+        label: Regularización tramo cuota
         remaining_months: 4
         monthly_expense_delta: 130
         monthly_stress_delta: 1
       moral: -1
   - id: recalcular_con_gastos_dificil_justificacion
-    label: "Encargar a tu gestoría revisar el cálculo aplicando todas las deducciones de tramo"
+    label: Encargar a tu gestoría revisar el cálculo aplicando todas las deducciones de tramo
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tras depurar rendimientos netos y gastos de difícil justificación, la diferencia real baja a menos de la mitad."
+    result_text: Tras depurar rendimientos netos y gastos de difícil justificación, la diferencia real baja a menos de la mitad.
     effects:
       deductible_expense: 85
       cash_delta: -160
       stress: -2
       moral: 4
       fiscal_risk: -3
+  - id: abonar_diferencia_de_una_vez
+    label: Pagar la regularización de golpe y olvidar el asunto hasta el año que viene
+    result_text: Liquidar el cargo escuece hoy, pero te quitas recargos futuros y dejas tu base actualizada al día.
+    effects:
+      cash_delta: -460
+      stress: 5
+      moral: -3
+      fiscal_risk: -4

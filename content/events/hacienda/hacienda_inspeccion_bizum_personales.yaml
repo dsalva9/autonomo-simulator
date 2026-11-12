@@ -1,0 +1,68 @@
+schema_version: 1
+id: hacienda_inspeccion_bizum_personales
+category: hacienda
+title: Lupa del Inspector Gómez sobre tus Bizum
+body: El cruce bancario suma 2.400 € recibidos por Bizum entre pistas de pádel, cenas a escote y un monitor usado. El Inspector Gómez sospecha que esconden microencargos sin factura.
+tags:
+  - inspeccion
+  - bizum
+  - bancos
+  - requerimiento
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 6
+  stats:
+    fiscal_risk:
+      min: 15
+weight: 15
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: recopilar_capturas_tickets_y_chats_grupo
+    label: Aportar tickets de cenas y capturas de grupos de amigos
+    outcomes:
+      - id: gastos_compartidos_acreditados
+        weight: 60
+        result_text: Tras leer tres conversaciones sobre pizzas y regalos de cumpleaños, Gómez archiva las partidas domésticas.
+        effects:
+          stress: 8
+          moral: 5
+          personal_life: -3
+          fiscal_risk: -14
+      - id: abonos_sueltos_recalificados
+        weight: 40
+        result_text: Cuatro envíos con conceptos bromistas no cuelan como cena y Gómez abre propuesta sobre ingresos no declarados.
+        effects:
+          cash_delta: -340
+          stress: 13
+          moral: -6
+          fiscal_risk: -8
+          set_flags:
+            - expediente_inspeccion_abierto
+          schedule_events:
+            - event_id: hacienda_acta_inspeccion
+              delay_months: 2
+              probability: 0.45
+  - id: conciliar_cuenta_personal_con_gestoria
+    label: Encargar a tu gestoría un cuadro conciliado de movimientos
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría separa reembolsos privados de cobros profesionales y cierra el requerimiento con un ajuste mínimo.
+    effects:
+      deductible_expense: 140
+      cash_delta: -70
+      stress: 2
+      moral: 4
+      fiscal_risk: -16
+  - id: regularizar_apuntes_dudosos_sin_litigar
+    label: Asumir una complementaria rápida por los apuntes sin recibo
+    result_text: Pagas por un par de cobros imposibles de documentar y prometes abrir cuenta bancaria separada mañana mismo.
+    effects:
+      cash_delta: -310
+      stress: 5
+      moral: -3
+      fiscal_risk: -18

@@ -1,0 +1,51 @@
+schema_version: 1
+id: gestor_elena_blindaje_operaciones_internacionales
+category: gestor
+title: Convenio de doble imposición con clientes exteriores
+body: Dos clientes fuera de la Unión Europea quieren aplicar retención fiscal en su país antes de pagarte. Elena Montes ofrece tramitar certificados de residencia fiscal para evitar tributar dos veces.
+tags:
+  - gestoria
+  - elena
+  - internacional
+  - retenciones
+character_id: gestor_premium_elena
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 40
+  gestor_tiers:
+    - premium
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: tramitar_certificados_convenio_con_elena
+    label: Tramitar certificados oficiales de convenio y cobrar íntegro
+    requirements:
+      stats:
+        money:
+          min: 280
+    result_text: Elena apostilla los certificados a tiempo, el cliente extranjero libera el cien por cien y evitas doble peaje.
+    effects:
+      deductible_expense: 165
+      cash_delta: 580
+      stress: -6
+      moral: 6
+      reputation: 4
+      fiscal_risk: -9
+  - id: deducir_retencion_extranjera_en_renta
+    label: Dejar que retengan allí y compensar el tramo en tu Renta
+    result_text: Adelantas liquidez unos meses, pero Elena guarda los justificantes traducidos para recuperar buena parte al cierre.
+    effects:
+      cash_delta: 290
+      stress: -3
+      moral: 3
+      fiscal_risk: -5
+  - id: subir_tarifa_bruta_y_facturar_rapido
+    label: Inflar un poco el presupuesto para compensar y cobrar ya
+    result_text: El cliente acepta el recargo por urgencia y cobras rápido, aunque asumes tú el desgaste de la negociación.
+    effects:
+      billed_income: 440
+      stress: 4
+      moral: 2
+      fiscal_risk: -2

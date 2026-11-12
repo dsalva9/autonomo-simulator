@@ -1,0 +1,58 @@
+schema_version: 1
+id: gestor_elena_pacto_sucesion_decada
+category: gestor
+title: Protocolo de continuidad y licencias tras casi una década
+body: Con tu estudio consolidado en el tramo veterano, Elena propone separar y registrar tus licencias, plantillas y contratos marco para generar ingresos recurrentes sin depender solo de tus horas.
+tags:
+  - gestoria
+  - elena
+  - propiedad_intelectual
+  - veterania
+  - largo_plazo
+character_id: gestor_premium_elena
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 96
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 18
+max_occurrences: 2
+choices:
+  - id: protocolizar_licencias_y_cartera_b2b
+    label: Protocolizar licencias de uso y contratos marco con Elena
+    requirements:
+      stats:
+        money:
+          min: 1100
+    result_text: Tus activos intangibles quedan blindados y generan cánones recurrentes con tratamiento fiscal impecable.
+    effects:
+      deductible_expense: 640
+      stress: -9
+      moral: 8
+      reputation: 6
+      fiscal_risk: -10
+      add_modifier:
+        id: mod_estructura_mercantil_b2b
+        label: Estructura mercantil B2B
+        remaining_months: 6
+        monthly_billed_delta: 320
+        monthly_expense_delta: 75
+  - id: registrar_solo_propiedad_intelectual_clave
+    label: Registrar únicamente las piezas clave sin gastos notariales
+    result_text: Proteges la autoría de tus metodologías principales manteniendo una estructura administrativa ligera.
+    effects:
+      deductible_expense: 210
+      stress: -5
+      moral: 5
+      reputation: 3
+      fiscal_risk: -6
+  - id: seguir_facturando_proyectos_a_pulso
+    label: Posponer papeleos societarios y cerrar un encargo directo
+    result_text: Prefieres la facturación directa inmediata antes que sentarte a redactar cláusulas de cesión.
+    effects:
+      billed_income: 680
+      stress: 3
+      moral: 2
+      personal_life: -2

@@ -1,0 +1,66 @@
+schema_version: 1
+id: clientes_consorcio_transatlantico_endless
+category: clientes
+title: Consorcio Madrid-Múnich-Nueva York busca coordinador veterano
+body: Tres estudios independientes al otro lado del Atlántico y en Europa buscan una figura curtida en España para coordinar entregas cruzadas de un cliente global de 4.600 € por hito.
+tags:
+  - endless
+  - internacional
+  - consorcio
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 106
+weight: 10
+cooldown_months: 16
+max_occurrences: null
+choices:
+  - id: asumir_solo_bloque_europeo_asincrono
+    label: Aceptar únicamente el tramo europeo por 3.250 € sin llamadas nocturnas
+    result_text: Dejas que Nueva York se entienda por escrito con tus informes impecables y cobras en euros sin trasnochar.
+    effects:
+      billed_income: 3250
+      moral: 6
+      stress: 2
+      personal_life: 3
+      reputation: 6
+      set_flags:
+        - cliente_internacional_activo
+  - id: coordinar_con_equipo_propio_y_ventana_fija
+    label: Liderar el nodo ibérico apoyándote en tu plantilla con prima de 400 €
+    requirements:
+      has_employee: true
+    result_text: Repartes husos horarios con cabeza, pagas incentivo generoso en el estudio y facturas tarifa internacional de primer nivel.
+    effects:
+      billed_income: 4600
+      deductible_expense: 400
+      moral: 8
+      stress: 3
+      reputation: 8
+      employee_satisfaction: 8
+      set_flags:
+        - cliente_internacional_activo
+  - id: pilotar_los_tres_husos_en_solitario
+    label: Llevar tú solo la coordinación transatlántica completa de 4.600 €
+    outcomes:
+      - id: ejecucion_brillante_y_bonus
+        weight: 60
+        result_text: Clavas el calendario entre tres zonas horarias y cobras el hito íntegro, aunque sueñas en dos idiomas.
+        effects:
+          billed_income: 4600
+          moral: 5
+          stress: 9
+          personal_life: -4
+          reputation: 7
+          set_flags:
+            - cliente_internacional_activo
+      - id: desfase_horario_pasa_factura
+        weight: 40
+        result_text: Sacas adelante la entrega y los 4.200 € pactados, pero acabas el mes jurando no mirar otro reloj mundial.
+        effects:
+          billed_income: 4200
+          moral: 1
+          stress: 12
+          personal_life: -6
+          reputation: 5

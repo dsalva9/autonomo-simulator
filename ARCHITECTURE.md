@@ -35,8 +35,8 @@ Autónomo Simulator is a **mobile-first, offline-capable, single-codebase satiri
 ```mermaid
 flowchart TB
     subgraph BuildTime["Build & Validation Pipeline (Node / Scripts)"]
-        YAML["content/**/*.yaml\n(200 Events, 8 Characters, Balance)"]
-        LOC["content/locales/en/*.yaml\n(English Event Copy Overlays)"]
+        YAML["content/**/*.yaml\n(300 Events, 8 Characters, Balance)"]
+        LOC["content/locales/en/*.yaml\n(2,502 English Event Copy Keys)"]
         MAN["assets/manifest.json\n(60 Logical IDs & Fallbacks)"]
         ZOD["src/engine/schemas/\n(Authoritative Zod Schemas)"]
         JSONS["schemas/*.schema.json\n(Emitted JSON Schemas)"]
@@ -93,12 +93,12 @@ autonomo-simulator/
 │   ├── characters/                  # Recurring NPC definitions (gestores, partners, employees)
 │   ├── locales/
 │   │   └── en/                      # Category-sharded English ('en') event copy overlays (*.yaml)
-│   └── events/                      # 200 Spanish ('es-ES') narrative events across 5 categories
-│       ├── clientes/                # 60 events
-│       ├── hacienda/                # 38 events
-│       ├── familia/                 # 40 events
-│       ├── empleados/               # 31 events
-│       └── gestor/                  # 31 events
+│   └── events/                      # 300 Spanish ('es-ES') narrative events across 5 categories
+│       ├── clientes/                # 90 events
+│       ├── hacienda/                # 56 events
+│       ├── familia/                 # 57 events
+│       ├── empleados/               # 48 events
+│       └── gestor/                  # 49 events
 ├── assets/
 │   ├── manifest.json                # Logical asset registry (60 assets, status: placeholder | ready)
 │   ├── characters/
@@ -226,9 +226,9 @@ export interface FamilyState {
 export interface EmployeeState {
   character_id: string;
   role_label: string;
-  monthly_cost: number;                // Salary + Seguridad Social simplified lump cost
-  billing_multiplier: number;          // e.g. 1.35x on baseline monthly billing
-  satisfaction: number;                // 0..100; drives employee event eligibility
+  monthly_cost: number;                // Salary + Seguridad Social simplified lump cost (tax-deductible)
+  billing_multiplier: number;          // e.g. 1.58x / 2.05x base boost, modulated by satisfaction
+  satisfaction: number;                // 0..100; modulates billing boost & employee event eligibility
   months_employed: number;
 }
 
@@ -237,6 +237,7 @@ export interface ScheduledEvent {
   event_id: string;
   trigger_month: number;
   source_event_id: string;
+  deferred_months?: number;            // Defers up to 6 months if temporarily ineligible on trigger_month
 }
 
 export interface TemporalModifier {
@@ -277,7 +278,7 @@ export interface GameState {
 
 ### 3.2 Initial Run State (Month 1 Defaults — Parameterized in `content/config/balance.yaml`)
 - Starts at `month: 1`, `family.status: "single"`, `family.children_count: 0`, `employee: null`, `gestor.tier: "self"`.
-- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)): `money: 2600` (`~3,216 €` after Month 1 recurring step, `~2,596 €` net after accrued tax reserve), `moral: 75`, `stress: 20`, `personal_life: 65`, `reputation: 35`, `fiscal_risk: 0`.
+- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md) and [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md)): `money: 2600` (`~2,981 €` after Month 1 recurring step, `~2,481 €` net after deductible-adjusted tax reserve), `moral: 75`, `stress: 20`, `personal_life: 65`, `reputation: 35`, `fiscal_risk: 0`.
 
 ---
 
@@ -308,31 +309,33 @@ stateDiagram-v2
 
 1. **`MonthStart` (Recurring Economy & Timers)**:
    - Collect maturing `pending_invoices` where `due_month === month`: roll `default_prob` against `prng`. Paid invoices add to `money` (tax was accrued on issuance or on collection per `balance.yaml` standard—default: **cash-basis tax accrual on collection** so unpaid invoices hurt liquidity without double-taxing uncollected money, unless flagged otherwise). Unpaid invoices emit a notice and unlock client-chase flags.
-   - Compute **Baseline Monthly Billing**:
+   - Compute **Baseline Monthly Billing** (with employee boost modulated by `satScale = 0.4 + 0.8 * (satisfaction / 100)` when `state.employee !== null`):
      $$\text{grossBilling} = \text{round}\Big(\text{baseRate} \times f_{\text{rep}}(\text{reputation}) \times f_{\text{moral}}(\text{moral}) \times \text{employeeMultiplier} + \Delta_{\text{modifiers}}\Big)$$
-   - Apply official billing:
+   - Compute **Tax-Deductible Business Overhead** via `computeMonthlyDeductibleExpenses(state, catalog)` (`autonomo_quota + gestor.monthly_fee + (employee?.monthly_cost ?? 0) + max(0, modifierExpenseDelta)`) and apply official billing + tax shield (see [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md)):
      - `indicators.money += grossBilling`
      - `finances.lifetime_billed += grossBilling`
      - `finances.current_quarter_billed += grossBilling`
-     - `finances.accrued_tax_liability += round(grossBilling * balance.effective_quarterly_tax_rate)`
-   - Deduct **Recurring Monthly Obligations**:
-     - `totalExpenses = baseLivingCost + autonomoQuota + gestor.monthly_fee + family.monthly_cost + (employee?.monthly_cost ?? 0) + modifierExpenses`
+     - `rawTax = round(grossBilling * balance.effective_quarterly_tax_rate) - round(deductibleExpenses * balance.deductible_tax_fraction)`
+     - `finances.accrued_tax_liability = max(0, finances.accrued_tax_liability + rawTax)`
+   - Deduct **Recurring Monthly Obligations** (including annual cost-of-living creep `floor((month - 1) / 12) * (balance.annual_living_cost_growth ?? 0)`):
+     - `totalExpenses = baseLivingCost + livingCostCreep + autonomoQuota + gestor.monthly_fee + family.monthly_cost + (employee?.monthly_cost ?? 0) + modifierExpenses`
      - `indicators.money -= totalExpenses`
-   - Tick `TemporalModifier`s (`remaining_months -= 1`, apply monthly stat deltas, prune expired).
+   - Tick `TemporalModifier`s (`remaining_months -= 1`, apply monthly stat deltas, prune expired), apply passive stress relief (`1` at `personal_life >= personal_life_recovery_threshold`, `2` at `personal_life >= 82`, plus `family.support_modifier`), and apply gentle late-game stat maintenance drift above `balance.high_stat_decay_threshold`.
 
 2. **`EventDraw` & `EventResolution` (Pacing Cap: Max 2 Cards/Month)**:
-   - **Slot 1 (Scheduled Chain Follow-Up)**: Inspect `scheduled_queue` for entries with `trigger_month <= month` whose `event_id` still meets hard state invariants. Pop **at most 1** (FIFO). Any remaining due entries stay at the front of `scheduled_queue` and automatically resolve next month.
-   - **Slot 2 (Weighted Random Event)**: Filter the compiled catalog by `requirements`, `cooldowns`, `max_occurrences`, and `exclusive_with` (excluding Slot 1's event). Select **1** event via weighted PRNG draw. A small fallback pool of evergreen low-cooldown events ensures Slot 2 never starves.
-   - **Choice Resolution**: When the player selects `choice_id`:
+   - **Slot 1 (Scheduled Chain Follow-Up)**: Inspect `scheduled_queue` for entries with `trigger_month <= month`. Pop **at most 1** (FIFO) whose `event_id` meets `isEventHardEligible`. Temporarily ineligible due entries defer by 1 month (`trigger_month: month + 1`, `deferred_months + 1`) up to 6 times before expiring; excess due entries stay queued for next month.
+   - **Slot 2 (Novelty-Weighted Random Event)**: Filter the compiled catalog by `requirements` (including `months_of_year` and `employee_satisfaction`), `cooldowns`, `max_occurrences`, and `exclusive_with` (excluding Slot 1's event). Weight each candidate by `event.weight / (1 + (balance.event_novelty_decay_k ?? 0.85) * occurrences[event.id]) ** 1.35` and select **1** event via seeded PRNG draw. A fallback pool of hard-eligible events relaxes cooldowns if needed so Slot 2 never starves.
+   - **Choice Resolution & Intra-Month Slot 2 Revalidation**: When the player selects `choice_id`:
      - Validate choice is eligible in current state.
      - If `choice.outcomes` is present, roll one `Outcome` by `weight` using `prng`; otherwise apply `choice.effects` directly.
-     - Apply all deltas, clamp stats to `[0, 100]`, enqueue `schedule_events`, and record a `HistoryEntry`.
-     - Snapshot `TurnResolution.postChoiceState` at `month = N` immediately after `resolveChoiceEffects` (before `transitionAfterTurnEvents` / `advanceToNextMonth`) so the UI can display exact Month `N` outcome deltas prior to applying Month `N+1` recurring cashflow (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)). Pure helpers `computeReservedTaxObligation(state)` and `computeNetCashAfterTaxReserve(state)` expose accrued + deferred Hacienda obligations alongside raw `indicators.money`.
+     - Apply all deltas, clamp stats to `[0, 100]`, enqueue `schedule_events`, and record a `HistoryEntry` (surfacing `tax_accrued_delta` and `employee_satisfaction_delta` on `ChoiceOutcomeSummary`).
+     - If `Slot 2` remains in `current_turn_events`, re-verify `isEventHardEligible` against the post-`Slot 1` state; if `Slot 1` invalidated `Slot 2`, redraw a fresh eligible non-cooldown random event (excluding `Slot 1` and `exclusive_with`) using `prng`.
+     - Snapshot `TurnResolution.postChoiceState` at `month = N` immediately after `resolveChoiceEffects` (before `transitionAfterTurnEvents` / `advanceToNextMonth`) so the UI can display exact Month `N` outcome deltas prior to applying Month `N+1` recurring cashflow (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)). Pure helpers `computeReservedTaxObligation(state)`, `computeNetCashAfterTaxReserve(state)`, and `computeMonthlyDeductibleExpenses(state, catalog)` expose tax reserves and deductible overhead alongside raw `indicators.money`.
 
 3. **`QuarterlyTax` (*"El Trimestre"* — Months 3, 6, 9, 12, ...)**:
    - **Gestor & Hacienda Check**:
-     - If `gestor.tier === "self"` or `"cheap"`, roll against `gestor` error rate for minor filing surcharges or missed deductions.
-     - Roll `fiscal_risk` against `balance.inspection_curve` (mitigated by `gestor.inspection_shield`). If triggered, queue an immediate or next-month Hacienda inspection chain and decay `fiscal_risk`.
+     - Roll `gestor_tiers[gestor.tier].quarterly_error_prob` when `accrued_tax_liability > 0` for filing surcharges and stress penalties.
+     - Roll `fiscal_risk` against `balance.inspection_curve` (mitigated by `gestor.inspection_shield`). If triggered, select an eligible `weight > 0` Hacienda audit/comprobación/requerimiento event via seeded `selectInspectableHaciendaEvent` (excluding `weight: 0` chain finales and portal/certificate glitches) for `month + 1`—or apply `fallback_fine_base + fallback_fine_per_risk * fiscal_risk` if none are eligible—and decay `fiscal_risk`.
    - **Maturing Deferral First**: If `finances.deferred_tax` is due this month (`due_month === month`), its `principal + surcharge` is mandatory—if `money - mandatoryDue < balance.hard_debt_floor` or cannot be settled per deferral rules, **Bancarrota** triggers (no chaining a second deferral onto a defaulted deferral).
    - **Current Quarter Bill (`accrued_tax_liability`)**:
      - **Option A — Pay in Full**: `money -= accrued_tax_liability`; `accrued_tax_liability = 0`.
@@ -346,9 +349,10 @@ stateDiagram-v2
    - **Psychological Defeat**:
      - If `indicators.stress >= 100`: trigger `defeat_burnout_stress` (*"Baja por ansiedad"*).
      - Else if `indicators.moral <= 0`: trigger `defeat_resignation_moral` (*"A preparar oposiciones / volver a oficina"*).
-   - **Victories (One-Time Prompts)**:
+   - **Victories (One-Time Prompts & Voluntary Endless Retirement)**:
      - If `month >= 120` and `"hero_120m"` not in `earned_victories`: award `"hero_120m"`, prompt **Retire (`retired_hero`)** vs **Continue (`endless_mode = true`)**.
      - If `indicators.money >= 150000` and `"rich_150k"` not in `earned_victories`: award `"rich_150k"`, prompt **Retire (`retired_rich`)** vs **Continue (`endless_mode = true`)**.
+     - At any non-`game_over` phase once `endless_mode`, `month >= victory_month`, or `earned_victories.length > 0` holds, pure `retireFromRun(state, catalog)` settles voluntary retirement into `"retired_rich"` (when `money >= victory_money` or `"rich_150k"` earned) else `"retired_hero"`.
    - **Annual Summary (`month % 12 === 0`)**: Emit `AnnualSummary` (yearly billed, taxes paid, net cash change, family/employee milestones, highlight events) and reset `annual_snapshot`.
 
 ---
@@ -376,8 +380,10 @@ illustration_id: null                   # Optional: if set, must exist in assets
 requirements:
   min_month: 3
   max_month: null
+  months_of_year: null                  # Optional: 1..12 array (e.g. [4, 7, 10] or [8])
   stats:
     reputation: { min: 15 }
+  employee_satisfaction: null           # Optional: { min?, max? } (false when employee === null)
   required_flags: []
   forbidden_flags: [inspeccion_en_curso]
   gestor_tiers: [self, cheap, premium]  # Optional filter
@@ -448,10 +454,11 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
 | `schedule_events` | `{ event_id, delay_months, probability? }[]` | Rolls `probability` (default `1.0`) via `prng`; if hit, inserts into `scheduled_queue` for `month + delay_months`. |
 | `add_modifier` | `TemporalModifierSpec` | Attaches a multi-month recurring billing/expense/stat modifier. |
 | `set_gestor` | `{ tier, character_id? }` | Switches Gestor tier and updates `monthly_fee` & `inspection_shield` from config/character. |
-| `set_family_status` | `{ status, partner_character_id? }` | Updates relationship state and recurring family parameters. |
+| `set_family_status` | `{ status, partner_character_id? }` | Updates relationship state and recurring family parameters (`dating`/`cohabiting` sets `historia_con_alex`; `separated` sets `ex_pareja_alex` and clears `partner_character_id = null`). |
 | `add_child` | `number` (default `1`) | Increments `family.children_count` and adjusts `family.monthly_cost`. |
 | `hire_employee` | `{ character_id }` | Populates `state.employee` from `content/characters/<id>.yaml` (rejected by validator if choice lacks `has_employee: false` guard when needed). |
 | `dismiss_employee` | `{ severance_cost }` | Deducts `severance_cost` from `money` and sets `state.employee = null`. |
+| `employee_satisfaction` | `number` (`+/-`) | Adds rounded delta clamped `[0, 100]` to `state.employee.satisfaction` when `state.employee !== null` (no-op when `null`). |
 | `trigger_ending` | `EndingId` | Immediately ends the run with a narrative abandonment ending (`abandon_oposiciones`, `abandon_salaried`, `abandon_subsidies`). |
 
 ### 5.4 Three-Layer Content Verification
@@ -468,7 +475,7 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
 
 ### 5.5 Bilingual Localization (`es-ES` & `en`)
 - YAML events store Spanish (`es-ES`) copy inline for minimal Narrative authoring friction, while category-sharded English overlays in `content/locales/en/*.yaml` map deterministic keys (`<event_id>.title`, `<event_id>.body`, `<event_id>.choices.<choice_id>.label`, `<event_id>.choices.<choice_id>.result_text`, `<event_id>.choices.<choice_id>.outcomes.<outcome_id>.result_text`).
-- `pnpm validate:locales` enforces 100% key parity across all 200 events with zero missing or orphan keys, and `pnpm compile:content` emits `src/content/compiled-locales.json`.
+- `pnpm validate:locales` enforces 100% key parity across all 300 events (2,502 keys) with zero missing or orphan keys, and `pnpm compile:content` emits `src/content/compiled-locales.json`.
 - At runtime, `resolveEventText(locale, eventId, fieldPath, fallbackText)` resolves event copy, `getUiStrings(locale)` (`src/services/i18n/uiStrings.ts`) translates all screens/HUD/modals/achievements/endings/share cards, and `translateModifierLabel(modifier, locale)` / `translateCharacterName` / `formatFlagLabel` translate every `add_modifier`, NPC nameplate, and narrative flag. Users switch instantly via `[data-testid="locale-toggle-btn"]` (`ES | EN`) or the `L` hotkey on `TitleScreen` and `IndicatorBar`, persisted to `profile.settings.locale` in IndexedDB and synced to `<html lang="es|en">`.
 
 ---
@@ -476,16 +483,16 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
 ## 6. State Management, Persistence & Share Pipeline
 
 ### 6.1 Zustand Store Split (`src/store/`)
-- **`useGameStore`**: Holds canonical persisted `activeRun: GameState | null`, two-step outcome snapshot `outcomePreviewState: GameState | null` (`getVisibleGameState(store)`), `queuedPostOutcomeDeltas`, `queuedMonthStart`, and `profile: ProfileEnvelope`. Exposes pure action dispatchers (`startRun(seed?)`, `chooseOption(choiceId)`, `acknowledgeOutcome()`, `settleQuarterlyTax(mode)`, `decideVictory(decision)`, `closeAnnualSummary()`, `abandonActiveRun()`). Every mutating action delegates synchronously to `src/engine/`, stages Month `N` choice deltas before Month `N+1` recurring cashflow (unless `fastPacing` auto-acknowledges non-lethal outcomes), and triggers asynchronous persistence through `StoragePort` (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)).
+- **`useGameStore`**: Holds canonical persisted `activeRun: GameState | null`, two-step outcome snapshot `outcomePreviewState: GameState | null` (`getVisibleGameState(store)`), `queuedFinalState: GameState | null`, `queuedPostOutcomeDeltas`, `queuedMonthStart`, and `profile: ProfileEnvelope`. Exposes pure action dispatchers (`startRun(seed?)`, `chooseOption(choiceId)`, `acknowledgeOutcome()`, `settleQuarterlyTax(mode)`, `decideVictory(decision)`, `closeAnnualSummary()`, `abandonActiveRun()`, `retireRun()`). Every mutating action delegates synchronously to `src/engine/`, stages Month `N` choice deltas before Month `N+1` recurring cashflow (unless `fastPacing` auto-acknowledges deterministic non-lethal outcomes), and triggers asynchronous persistence through `StoragePort` (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)).
 - **`useUIStore`**: Holds presentation state and lightweight client preferences (`screenView`, `activeMobileTab`, `activeTitleTab`, `abandonModalOpen`, `reducedMotionOverride`, `sfxMuted` persisted to `"autonomo:sfx_muted"`, `fastPacing` persisted to `"autonomo:fast_pacing"`, and `toast`). Never persisted inside `GameState`.
 
 ### 6.2 Roguelite Persistence & Save Migrations (`src/services/storage/`)
 Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:
 1. **`autonomo:active_run` (`SaveEnvelope`)**:
    - Single active autosave slot (roguelite model—no manual save-scumming slots).
-   - Written automatically after every choice, quarterly resolution, and month advance.
-   - Deleted (and archived into `hall_of_fame`) as soon as `ending !== null`.
-   - Envelope shape: `{ save_version: 1, engine_build: string, updated_at: string, state: GameState }`.
+   - Written automatically after every choice (including unacknowledged `pending_turn` outcomes), quarterly resolution, and month advance.
+   - Deleted (and archived into `hall_of_fame`) once a fatal `pending_turn` outcome is acknowledged (`acknowledgeOutcome()`) or a direct ending (`retireRun()` / `abandonActiveRun()` / `decideVictory("retire")`) sets `ending !== null`.
+   - Envelope shape: `{ save_version: 1, engine_build: string, updated_at: string, state: GameState, pending_turn?: PersistedPendingTurn }`.
 2. **`autonomo:profile` (`ProfileEnvelope`)**:
    - Persistent across runs: unlocked `achievements: Record<string, string>`, `hall_of_fame: PastRunSummary[]` (capped at e.g. top/last 50 runs), and user accessibility/audio preferences.
 3. **Migration Runner**: On boot, `migrateSaveEnvelope(raw)` runs sequential pure functions (`v1 -> v2 -> ...`). If a save is irreparably corrupted, the app backs up the raw blob to `autonomo:corrupt_backup`, notifies the player gracefully without crashing, and preserves `autonomo:profile`.
@@ -502,13 +509,13 @@ Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:
 
 ## 7. UI/UX, Style-Agnostic Scene Renderer & Accessibility
 
-### 7.1 Responsive Layout Architecture (Mobile-First, Single-Screen Desktop)
-- **Mobile (`< 1024px` — `360×780` & `390×844`)**:
-  - Sticky compact top HUD (`<= 140px`): Month/Year (`Año 3 · Mes 2 · Trimestre en 1 mes`), `Money` + tax-adjusted `Libre` strip, and 4 aligned micro-gauges (`Moral`, `Stress`, `Personal Life`, `Reputation`).
-  - Main viewport: Compact Office Header Strip + prominent **Event Card** with thumb-friendly (`min-height: 48px`, `>= 6px` gap) choice buttons and bottom padding clearing the fixed bottom bar. Automatic `window.scrollTo({ top: 0 })` runs on turn-state transitions (`event -> outcome -> next event`) whenever `scrollY > 0` so players never have to manually scroll back up to read outcomes.
-  - Bottom Navigation Bar: `Despacho` (Play), `Cuentas` (Trimestre accrual, fixed costs, invoices), `Entorno` (Gestor, Family, Employee), `Historial` (Log & Achievements).
-- **Desktop (`>= 1024px` — `1366×768` laptop & `1440×900`+ desktop)**:
-  - Dedicated 3-column workspace engineered to fit **100% within a single screen (`scrollY === 0`, `scrollHeight <= innerHeight + 2`)** so players never yo-yo scroll down for choices and back up for outcomes:
+### 7.1 Responsive Layout Architecture (Mobile-First, Spacious Tablet, Single-Screen Desktop)
+- **Mobile & Tablet (`< 1280px` — `360×640`, `360×780`, `390×844`, `667×375` landscape & `1024×768` tablet)**:
+  - Sticky compact top HUD (`<= 140px`, ultra-compact `<= 96px` on short phone landscape): Month/Year (`Año 3 · Mes 2 · Trimestre en 1 mes`), `Money` + tax-adjusted `Libre` strip, and 4 aligned micro-gauges (`Moral`, `Stress`, `Personal Life`, `Reputation`).
+  - Main viewport: Centered spacious workspace (`max-w-3xl`, `>= 500px` card width on `1024×768` tablets with zero `344px` column squeeze) + prominent **Event Card** with thumb-friendly (`min-height: 48px`, `>= 6px` gap) choice buttons, inline stake hints (`choice-stakes-*`), and bottom padding clearing the fixed bottom bar. Automatic `window.scrollTo({ top: 0 })` runs on turn-state transitions (`event -> outcome -> next event`) whenever `scrollY > 0` so players never have to manually scroll back up to read outcomes.
+  - Bottom Navigation Bar: `Despacho` (Play), `Cuentas` (Trimestre accrual, deductible tax shield, fixed costs, invoices), `Entorno` (Gestor, Family, Employee satisfaction), `Historial` (Log & Achievements).
+- **Desktop (`>= 1280px` — `1280×600` 150% DPI, `1366×650` real laptop, `1366×768` & `1440×900`+ desktop)**:
+  - Dedicated 3-column workspace engineered to fit **100% within a single screen (`scrollY === 0`, `scrollHeight <= innerHeight + 2`)** across both standard (`768px`–`900px`) and compact Chrome+taskbar (`600px`–`650px`) heights (including `2×2` grid compaction on 4-choice cards) so players never yo-yo scroll down for choices and back up for outcomes:
     - **Left Panel**: Live **Office Scene** (viewport-proportioned height, reactive desk props, character portrait) + compact `Entorno` status cards.
     - **Center Stage**: 1-line horizontal monthly cashflow ticker, height-capped (`98px–148px`) comic banner with non-overlapping NPC Polaroid, event narrative card, all choice buttons (`1`–`4`), and immediate above-the-fold outcome panel.
     - **Right Panel**: Compact Financial Ledger (*"Cuaderno de Cuentas"*), quarterly tax reserve tracker, active temporal modifiers, and internally scrollable `Diario de Expediente` + `Sellos de carrera` panels.
@@ -575,14 +582,14 @@ Every completed task or milestone runs a full verification + QA + delivery seque
 1. **Automated Static, Unit, Build & CI Gate (`pnpm verify` + `.github/workflows/verify.yml`)**:
    - `pnpm schema:check` — Ensures `schemas/*.schema.json` matches `src/engine/schemas/`.
    - `pnpm validate:assets` — Verifies every entry in `assets/manifest.json` (60 assets) exists on disk, matches declared format/dimensions, and stays within the `<= 3.50 MB` payload cap.
-   - `pnpm validate:content` — Validates `balance.yaml`, 8 characters, and all 200 YAML events against Zod + semantic graph + manifest references.
-   - `pnpm validate:locales` — Verifies 100% English (`en`) translation key parity (1,676 keys across 200 events) with zero orphan keys.
+   - `pnpm validate:content` — Validates `balance.yaml`, 8 characters, and all 300 YAML events against Zod + semantic graph + manifest references.
+   - `pnpm validate:locales` — Verifies 100% English (`en`) translation key parity (2,502 keys across 300 events) with zero orphan keys.
    - `pnpm compile:content` — Emits `src/generated/content-bundle.json` and `src/content/compiled-locales.json`.
    - `pnpm typecheck` — `tsc --noEmit`.
    - `pnpm lint` — `biome check .`.
-   - `pnpm test` — `vitest run` (engine, schema, service, i18n, content, itch packager, and 200-event Monte Carlo simulation suites).
+   - `pnpm test` — `vitest run` (engine, schema, service, i18n, content, itch packager, and 300-event Monte Carlo simulation suites).
    - `pnpm build` — Production Vite bundle (`dist/`) verifying zero bundling or asset-resolution errors.
-   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-26`) against `dist/`.
+   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-30`) against `dist/`.
    - **GitHub Actions CI (`.github/workflows/verify.yml`)**: Runs the full `pnpm verify` + `pnpm build:itch` pipeline on pushes and pull requests targeting `main` and uploads `release/autonomo-simulator-web.zip` as a workflow artifact.
 2. **Structured Manual Test Plan, Usability Audit & Playwright Execution (Local -> Live Vercel Production)**:
    - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, narrow mobile `360×780`, mobile `390×844`, compact laptop `1366×768`, and desktop `1440×900` multi-panel layout).

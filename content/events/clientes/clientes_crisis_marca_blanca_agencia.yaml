@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_crisis_marca_blanca_agencia
+category: clientes
+title: "Crisis en la agencia: dimite su director y quedas tú frente al cliente"
+body: "La agencia que te subcontrata en marca blanca implosiona a mitad de una entrega de 2.800 €: su director de cuentas se ha marchado hoy y te suplican que entres en la videollamada fingiendo ser «director interno»."
+tags:
+  - agencia
+  - marca_blanca
+  - cadena
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 30
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: salvar_reunion_con_identidad_real_y_recargo
+    label: Entrar como especialista externo independiente y facturar 1.950 € hoy
+    result_text: Te niegas a mentir en tu firma de correo, salvas la presentación técnica con solvencia y el cliente final toma buena nota de tu nombre.
+    effects:
+      billed_income: 1950
+      moral: 6
+      stress: 5
+      reputation: 6
+      schedule_events:
+        - event_id: clientes_absorcion_cuenta_huerfana
+          delay_months: 2
+  - id: ponerse_su_camiseta_por_sobreprecio
+    label: Usar su correo corporativo prestado a cambio de 2.400 € al contado
+    result_text: Apagas el incendio disfrazado de plantilla ajena. Cobras bien, aunque terminas la semana agotado de sostener el teatro de otros.
+    effects:
+      billed_income: 2400
+      moral: -4
+      stress: 10
+      reputation: 1
+      schedule_events:
+        - event_id: clientes_absorcion_cuenta_huerfana
+          delay_months: 2
+          probability: 0.7
+  - id: entregar_archivos_a_agencia_y_bajarse
+    label: Facturar tus 1.100 € devengados hasta hoy y no entrar al barro
+    result_text: Envías el paquete limpio hasta tu hito firmado, cobras tu parte y dejas que la agencia gestione su propio naufragio.
+    effects:
+      billed_income: 1100
+      moral: 3
+      stress: -3
+      personal_life: 3

@@ -1,0 +1,51 @@
+schema_version: 1
+id: hacienda_cruce_pasarelas_stripe_paypal
+category: hacienda
+title: Descuadre entre cobros brutos y netos de pasarela
+body: Declaraste lo que llegaba neto al banco desde tus pasarelas de cobro online en lugar del importe bruto antes de comisiones. Gómez detecta un seis por ciento de facturación fantasma.
+tags:
+  - cruce
+  - comprobacion
+  - bancos
+  - facturacion
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: null
+requirements:
+  min_month: 24
+  stats:
+    fiscal_risk:
+      min: 15
+weight: 13
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: reconstruir_brutos_y_deducir_comisiones
+    label: Exportar históricos CSV y cuadrar bruto frente a comisión
+    result_text: Demuestras que la diferencia eran comisiones bancarias deducibles, quedando el efecto fiscal casi neutro.
+    effects:
+      deductible_expense: 140
+      cash_delta: -115
+      stress: 7
+      moral: 3
+      fiscal_risk: -14
+  - id: conciliar_pasarelas_con_gestoria
+    label: Entregar informes anuales de pasarela a tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría cuadra devengos, comisiones financieras y cambios de divisa dejando a Gómez sin reproches.
+    effects:
+      deductible_expense: 175
+      stress: -2
+      moral: 5
+      fiscal_risk: -16
+  - id: pagar_liquidacion_por_diferencia_neta
+    label: Abonar la propuesta sobre la diferencia para no abrir libros
+    result_text: Pagas de más por no pelear hojas de cálculo de mil filas, pero cierras la comprobación en cuarenta y ocho horas.
+    effects:
+      cash_delta: -370
+      stress: 4
+      moral: -4
+      fiscal_risk: -15

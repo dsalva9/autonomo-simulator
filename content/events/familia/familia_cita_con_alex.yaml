@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_cita_con_alex
 category: familia
 title: "Cañas que se alargan con Álex"
-body: "En el cumpleaños de una amistad común terminas charlando tres horas seguidas con Álex, alguien con contrato indefinido y horario humano a quien le parece exótico que sepas qué es un cierre trimestral. Antes de despediros, te propone cenar esta semana con una condición: prohibido hablar de facturas."
+body: "En el cumpleaños de una amistad común charlas tres horas seguidas con Álex, alguien con horario humano a quien le fascina qué sea un cierre trimestral. Al despediros te propone cenar esta semana sin hablar de facturas."
 tags:
   - pareja
   - citas
@@ -15,9 +15,12 @@ requirements:
   min_month: 2
   family_statuses:
     - single
+  forbidden_flags:
+    - historia_con_alex
+    - ex_pareja_alex
 weight: 14
 cooldown_months: 10
-max_occurrences: 2
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: apostar_por_citas_con_alex

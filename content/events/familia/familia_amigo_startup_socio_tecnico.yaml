@@ -1,0 +1,68 @@
+schema_version: 1
+id: familia_amigo_startup_socio_tecnico
+category: familia
+title: "Cañas artesanas y el «quince por ciento de nada»"
+body: "Un antiguo compañero de facultad te cita con libreta nueva: busca «socio clave» para su aplicación revolucionaria a cambio de un 15 % futuro y cero euros hoy, porque «tú como eres autónomo manejas tus ratos»."
+tags:
+  - amistades
+  - startup
+  - limites
+  - tarifas
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 20
+weight: 11
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: pactar_prototipo_pagado_pequeno
+    label: "Proponerle validar primero un prototipo mínimo cobrando fase corta"
+    outcomes:
+      - id: valida_y_paga_fase_uno
+        weight: 60
+        result_text: "Entiende la diferencia entre amistad y oficio: cobras una primera entrega acotada y le salvas de quemar sus ahorros a lo loco."
+        effects:
+          billed_income: 780
+          stress: 3
+          moral: 6
+          personal_life: 3
+          reputation: 3
+      - id: se_ofende_por_hablar_de_dinero
+        weight: 40
+        result_text: "Arruga el morro diciendo que «te falta visión emprendedora», pero te libras a tiempo de seis meses de llamadas dominicales gratis."
+        effects:
+          cash_delta: -16
+          stress: 2
+          moral: 3
+          personal_life: -3
+  - id: declinar_socios_y_pasar_tarifa
+    label: "Pagar la ronda, desearle éxito y ofrecerle solo presupuesto formal (16 €)"
+    result_text: "Conservas la amistad y tus fines de semana intactos; cuando descubre lo que cuesta desarrollar de verdad, encima te recomienda a un contacto."
+    effects:
+      cash_delta: -16
+      billed_income: 440
+      stress: -5
+      moral: 7
+      personal_life: 5
+      reputation: 2
+  - id: trabajar_noches_por_participacion
+    label: "Creerte el sueño millonario y meter noches gratis por participación"
+    outcomes:
+      - id: consigue_inversor_modesto
+        weight: 28
+        result_text: "Contra todo pronóstico levanta capital semilla y te liquida tu parte inicial con factura decente, aunque acabas fundido."
+        effects:
+          billed_income: 2200
+          stress: 11
+          moral: 8
+          personal_life: -8
+          reputation: 4
+      - id: humo_y_ojeras_gratis
+        weight: 72
+        result_text: "Tres meses después se aburre del proyecto y vuelve a su oficina; tú te quedas con cuarenta noches perdidas y cara de primo."
+        effects:
+          stress: 14
+          moral: -9
+          personal_life: -10

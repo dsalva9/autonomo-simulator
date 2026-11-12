@@ -12,9 +12,9 @@ character_id: cliente_corporativo_marta
 character_expression: neutral
 requirements:
   min_month: 48
-weight: 11
-cooldown_months: 12
-max_occurrences: null
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: aceptar_silla_consejero_seis_meses

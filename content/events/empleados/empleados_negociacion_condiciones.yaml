@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_negociacion_condiciones
 category: empleados
 title: "Revisión de sueldo o viernes libres"
-body: "Tu persona en plantilla te pide veinte minutos a puerta cerrada con una libreta llena de puntos muy razonables: el coste de la vida ha subido, otras empresas tantean perfiles por internet y quiere revisar su sueldo o, como alternativa, implantar teletrabajo y jornada intensiva de cuatro días."
+body: "Tu persona en plantilla pide veinte minutos a puerta cerrada con puntos muy razonables: la vida ha subido, llegan ofertas externas y quiere revisar sueldo o pasar a formato híbrido con viernes libres."
 tags:
   - plantilla
   - negociacion
@@ -24,6 +24,7 @@ choices:
     effects:
       moral: 5
       stress: -4
+      employee_satisfaction: 15
       clear_flags:
         - desgaste_plantilla
       add_modifier:
@@ -41,6 +42,7 @@ choices:
       moral: 4
       stress: -5
       personal_life: 4
+      employee_satisfaction: 13
       clear_flags:
         - desgaste_plantilla
       add_modifier:
@@ -59,6 +61,7 @@ choices:
         effects:
           moral: -4
           stress: 6
+          employee_satisfaction: -15
           set_flags:
             - desgaste_plantilla
           add_modifier:

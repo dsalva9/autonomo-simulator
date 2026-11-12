@@ -7,7 +7,14 @@ import {
 } from "./economy.ts";
 import { resolveChoiceEffects } from "./effects.ts";
 import type { CharacterDef, EventDef } from "./schemas/index.ts";
-import { drawTurnEvents, findInspectableHaciendaEventId, isChoiceEligible } from "./selector.ts";
+import {
+  drawTurnEvents,
+  isChoiceEligible,
+  isEventHardEligible,
+  isEventOnCooldown,
+  pickNoveltyWeightedEvent,
+  selectInspectableHaciendaEvent,
+} from "./selector.ts";
 import {
   type CreateGameStateOptions,
   appendHistory,
@@ -78,10 +85,15 @@ export function stepMonthStart(
     month: state.month,
     gross_billing: recurring.grossBilling,
     tax_accrued_on_billing: recurring.taxAccruedOnBilling,
+    deductible_expenses: recurring.deductibleExpenses,
+    tax_shield_on_expenses: recurring.taxShieldOnExpenses,
+    net_tax_accrued: recurring.netTaxAccrued,
     total_expenses: recurring.totalExpenses,
     net_recurring_cash: recurring.grossBilling - recurring.totalExpenses,
     invoices_settled: recurring.invoicesSettled,
     passive_stress_delta: recurring.passiveStressDelta,
+    modifier_moral_delta: recurring.modifierMoralDelta,
+    modifier_stress_delta: recurring.modifierStressDelta,
     drawn_events: drawn.drawnEventIds,
     cooldown_relaxed: drawn.cooldownRelaxed,
   };
@@ -153,15 +165,77 @@ export function applyPlayerChoice(
   }
 
   if (remainingEvents.length > 0) {
-    const postChoiceState: GameState = {
+    const excludedIds = new Set<string>([event.id, ...(event.exclusive_with ?? [])]);
+    const nextEvent = getEventById(catalog, remainingEvents[0]);
+
+    if (nextEvent && isEventHardEligible(stateWithRemaining, nextEvent, excludedIds)) {
+      const postChoiceState: GameState = {
+        ...stateWithRemaining,
+        phase: "event_resolution",
+      };
+      return {
+        state: postChoiceState,
+        resolution: {
+          choiceOutcome: applied.summary,
+          postChoiceState,
+        },
+      };
+    }
+
+    const readyReplacements = catalog.events.filter(
+      (candidate) =>
+        candidate.weight > 0 &&
+        !isEventOnCooldown(stateWithRemaining, candidate.id) &&
+        isEventHardEligible(stateWithRemaining, candidate, excludedIds),
+    );
+
+    if (readyReplacements.length > 0) {
+      const picked = pickNoveltyWeightedEvent(
+        stateWithRemaining.prng,
+        readyReplacements,
+        stateWithRemaining,
+        catalog,
+      );
+      const postChoiceState: GameState = {
+        ...stateWithRemaining,
+        prng: picked.prng,
+        phase: "event_resolution",
+        current_turn_events: [picked.item.id, ...remainingEvents.slice(1)],
+      };
+      return {
+        state: postChoiceState,
+        resolution: {
+          choiceOutcome: applied.summary,
+          postChoiceState,
+        },
+      };
+    }
+
+    const strippedState: GameState = {
       ...stateWithRemaining,
-      phase: "event_resolution",
+      current_turn_events: remainingEvents.slice(1),
     };
+    if (strippedState.current_turn_events.length > 0) {
+      const postChoiceState: GameState = {
+        ...strippedState,
+        phase: "event_resolution",
+      };
+      return {
+        state: postChoiceState,
+        resolution: {
+          choiceOutcome: applied.summary,
+          postChoiceState,
+        },
+      };
+    }
+
+    const nextStep = transitionAfterTurnEvents(strippedState, catalog);
     return {
-      state: postChoiceState,
+      state: nextStep.state,
       resolution: {
         choiceOutcome: applied.summary,
-        postChoiceState,
+        postChoiceState: strippedState,
+        ...nextStep.resolution,
       },
     };
   }
@@ -254,6 +328,94 @@ export function resolveVictoryPrompt(
   return advanceToNextMonth(continuedState, catalog);
 }
 
+export function retireFromRun(
+  state: GameState,
+  catalog: ContentCatalog,
+): { state: GameState; resolution: TurnResolution } {
+  const canRetire =
+    state.phase !== "game_over" &&
+    (state.endless_mode ||
+      state.month >= catalog.balance.victory_month ||
+      state.earned_victories.length > 0);
+
+  if (!canRetire) {
+    throw new Error(
+      `Cannot retire from run during phase '${state.phase}' at month ${state.month} without victory eligibility.`,
+    );
+  }
+
+  const unlockedVictories: VictoryBadge[] = [];
+  if (
+    state.month >= catalog.balance.victory_month &&
+    !state.earned_victories.includes("hero_120m")
+  ) {
+    unlockedVictories.push("hero_120m");
+  }
+  if (
+    state.indicators.money >= catalog.balance.victory_money &&
+    !state.earned_victories.includes("rich_150k")
+  ) {
+    unlockedVictories.push("rich_150k");
+  }
+
+  const earnedVictories =
+    unlockedVictories.length > 0
+      ? [...state.earned_victories, ...unlockedVictories]
+      : state.earned_victories;
+
+  const endingId: EndingId =
+    state.indicators.money >= catalog.balance.victory_money || earnedVictories.includes("rich_150k")
+      ? "retired_rich"
+      : "retired_hero";
+
+  const quote = resolveEndingQuote(catalog, endingId);
+  const ending = {
+    id: endingId,
+    month: state.month,
+    summary_quote: quote,
+  };
+
+  let history = state.history;
+  for (const badge of unlockedVictories) {
+    history = appendHistory(
+      history,
+      {
+        id: `hist_victory_${state.month}_${badge}`,
+        month: state.month,
+        kind: "victory_unlocked",
+        summary: badge,
+      },
+      catalog.balance.max_history_entries,
+    );
+  }
+  history = appendHistory(
+    history,
+    {
+      id: `hist_retire_${state.month}_${endingId}`,
+      month: state.month,
+      kind: "game_over",
+      summary: quote,
+    },
+    catalog.balance.max_history_entries,
+  );
+
+  return {
+    state: {
+      ...state,
+      phase: "game_over",
+      earned_victories: earnedVictories,
+      pending_victory_badge: null,
+      quarterly_report: null,
+      ending,
+      history,
+    },
+    resolution: {
+      endedRun: ending,
+      unlockedVictories,
+    },
+  };
+}
+
 export function dismissAnnualSummary(
   state: GameState,
   catalog: ContentCatalog,
@@ -276,7 +438,7 @@ function transitionAfterTurnEvents(
   catalog: ContentCatalog,
 ): { state: GameState; resolution: TurnResolution } {
   if (state.month % 3 === 0) {
-    const prepared = prepareQuarterlyTax(state, catalog, findInspectableHaciendaEventId);
+    const prepared = prepareQuarterlyTax(state, catalog, selectInspectableHaciendaEvent);
     return {
       state: prepared.state,
       resolution: {

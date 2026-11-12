@@ -25,7 +25,7 @@ import {
   translateModifierLabel,
 } from "../../src/services/i18n/resolveEventText.ts";
 
-describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML content catalog contracts", () => {
+describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML content catalog contracts", () => {
   it("validates assets/manifest.json with 60 entries (51 WebP + 9 SVG, 55 ready + 5 fallbacks)", () => {
     const result = validateAssets(process.cwd());
     expect(result.errors).toEqual([]);
@@ -63,7 +63,7 @@ describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML co
     expect(byCategory.ui).toHaveLength(9);
   });
 
-  it("validates all 8 multi-expression characters and 200 Phase 3B events with exact category distribution", () => {
+  it("validates all 8 multi-expression characters and 300 Phase 3.5 events with exact category distribution", () => {
     const result = loadAndValidateContent(process.cwd());
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
@@ -80,7 +80,7 @@ describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML co
       expect(char.expressions?.neutral).toBe(char.portrait_asset_id);
     }
 
-    expect(result.events).toHaveLength(200);
+    expect(result.events).toHaveLength(300);
     const countsByCategory: Record<EventCategory, number> = {
       clientes: 0,
       hacienda: 0,
@@ -92,11 +92,11 @@ describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML co
       countsByCategory[event.category] += 1;
     }
     expect(countsByCategory).toEqual({
-      clientes: 60,
-      hacienda: 38,
-      familia: 40,
-      empleados: 31,
-      gestor: 31,
+      clientes: 90,
+      hacienda: 56,
+      familia: 57,
+      empleados: 48,
+      gestor: 49,
     });
   });
 
@@ -158,12 +158,12 @@ describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML co
     ).toBe("banner_gestor_urgencia");
   });
 
-  it("enforces 100% English ('en') event copy parity and 100% add_modifier ID & label translation coverage across all 200 events", () => {
+  it("enforces 100% English ('en') event copy parity and 100% add_modifier ID & label translation coverage across all 300 events", () => {
     const localeResult = validateLocales(process.cwd(), "en");
     expect(localeResult.errors).toEqual([]);
     expect(localeResult.ok).toBe(true);
-    expect(localeResult.eventCount).toBe(200);
-    expect(localeResult.keyCount).toBeGreaterThanOrEqual(1676);
+    expect(localeResult.eventCount).toBe(300);
+    expect(localeResult.keyCount).toBeGreaterThanOrEqual(2502);
 
     let modifierCount = 0;
     for (const event of compiledCatalog.events) {
@@ -223,10 +223,10 @@ describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML co
         }
       }
     }
-    expect(modifierCount).toBeGreaterThanOrEqual(70);
+    expect(modifierCount).toBeGreaterThanOrEqual(100);
   });
 
-  it("enforces anti-softlock, NPC expression resolution, illustration refs, zero orphan chains, and late-game repeatable events across all 200 events", () => {
+  it("enforces anti-softlock, NPC expression resolution, illustration refs, zero orphan chains, and late-game repeatable events across all 300 events", () => {
     const result = loadAndValidateContent(process.cwd());
     expect(result.ok).toBe(true);
     const manifest = result.manifest!;
@@ -323,21 +323,21 @@ describe("Phase 3B repository assets, manifest, English i18n & 200-event YAML co
         event.max_occurrences == null &&
         event.weight > 0,
     );
-    expect(lateGameRepeatableEvents.length).toBeGreaterThanOrEqual(20);
+    expect(lateGameRepeatableEvents.length).toBeGreaterThanOrEqual(25);
     const lateGameIds = new Set(lateGameRepeatableEvents.map((e) => e.id));
     expect(lateGameIds.has("clientes_renovacion_cartera_veterana")).toBe(true);
-    expect(lateGameIds.has("hacienda_prescripcion_cinco_anos_limpios")).toBe(true);
-    expect(lateGameIds.has("gestor_inversion_amortizable_diciembre")).toBe(true);
+    expect(lateGameIds.has("clientes_acuerdo_marco_multianual_ibex")).toBe(true);
+    expect(lateGameIds.has("familia_sabatico_largo_veterano")).toBe(true);
     expect(lateGameIds.has("empleados_paga_aniversario_estudio")).toBe(true);
 
     // Compiled bundle parity check
     expect(Object.keys(compiledCatalog.characters)).toHaveLength(8);
-    expect(compiledCatalog.events).toHaveLength(200);
+    expect(compiledCatalog.events).toHaveLength(300);
     expect(Object.keys(compiledCatalog.manifest.assets)).toHaveLength(60);
     expect(compiledCatalog.balance).toEqual(result.balance);
   });
 
-  it("plays a multi-year seeded run on the compiled 200-event catalog without errors", () => {
+  it("plays a multi-year seeded run on the compiled 300-event catalog without errors", () => {
     let { state } = startNewRun(compiledCatalog, { seed: "LIVE-CONTENT-SMOKE-P3B" });
     let steps = 0;
 

@@ -111,8 +111,8 @@ async function assertZeroSilentTextTruncation(locator: Locator, label: string): 
 }
 
 /**
- * Verifies WCAG foreground-vs-background contrast (>= minRatio) by walking ancestor backgrounds,
- * catching CSS cascade / layer bugs like white text rendered over a white card.
+ * Verifies WCAG foreground-vs-background contrast (>= minRatio) by walking ancestor backgrounds
+ * AND multiplying ancestor CSS opacity, catching both CSS cascade bugs and washed-out opacity wrappers.
  */
 async function assertReadableTextContrast(
   locator: Locator,
@@ -120,10 +120,50 @@ async function assertReadableTextContrast(
   minRatio = 4.5,
 ): Promise<void> {
   await expect(locator, `Expected ${label} to be visible for contrast check`).toBeVisible();
-  const ratio = await locator.evaluate((el) => {
-    const parseRgba = (raw: string): [number, number, number, number] => {
-      const nums = raw.match(/[\d.]+/g)?.map(Number) ?? [0, 0, 0, 1];
-      return [nums[0] ?? 0, nums[1] ?? 0, nums[2] ?? 0, nums.length >= 4 ? (nums[3] ?? 1) : 1];
+  const ratio = await locator.evaluate(async (el) => {
+    const chain: HTMLElement[] = [];
+    let cur: HTMLElement | null = el as HTMLElement;
+    while (cur) {
+      chain.push(cur);
+      cur = cur.parentElement;
+    }
+
+    // Wait for finite entrance animations (e.g., 170ms animate-dossier fade-in) so steady-state contrast is measured
+    const finiteAnims = chain.flatMap((node) =>
+      node
+        .getAnimations()
+        .filter((anim) => anim.effect?.getComputedTiming().iterations !== Number.POSITIVE_INFINITY),
+    );
+    if (finiteAnims.length > 0) {
+      await Promise.all(finiteAnims.map((anim) => anim.finished.catch(() => undefined)));
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const parseCssColor = (raw: string): [number, number, number, number] => {
+      if (!raw || raw === "transparent" || raw === "rgba(0, 0, 0, 0)" || !ctx) {
+        return [0, 0, 0, 0];
+      }
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = raw;
+      ctx.fillRect(0, 0, 1, 1);
+      const d = ctx.getImageData(0, 0, 1, 1).data;
+      return [d[0] ?? 0, d[1] ?? 0, d[2] ?? 0, (d[3] ?? 0) / 255];
+    };
+
+    const blendOver = (
+      fgRgb: [number, number, number],
+      alpha: number,
+      bgRgb: [number, number, number],
+    ): [number, number, number] => {
+      const a = Math.min(1, Math.max(0, alpha));
+      return [
+        fgRgb[0] * a + bgRgb[0] * (1 - a),
+        fgRgb[1] * a + bgRgb[1] * (1 - a),
+        fgRgb[2] * a + bgRgb[2] * (1 - a),
+      ];
     };
     const srgbChannel = (c: number) => {
       const v = c / 255;
@@ -132,19 +172,26 @@ async function assertReadableTextContrast(
     const luminance = (rgb: [number, number, number]) =>
       0.2126 * srgbChannel(rgb[0]) + 0.7152 * srgbChannel(rgb[1]) + 0.0722 * srgbChannel(rgb[2]);
 
-    const fg = parseRgba(window.getComputedStyle(el).color);
+    // Composite backgrounds from outermost ancestor inward, honoring static element opacity
     let bg: [number, number, number] = [233, 222, 203]; // desk fallback
-    let cur: HTMLElement | null = el as HTMLElement;
-    while (cur) {
-      const c = parseRgba(window.getComputedStyle(cur).backgroundColor);
-      if (c[3] >= 0.85) {
-        bg = [c[0], c[1], c[2]];
-        break;
+    let effectiveOpacity = 1;
+    for (let i = chain.length - 1; i >= 0; i -= 1) {
+      const node = chain[i]!;
+      const style = window.getComputedStyle(node);
+      const nodeOpacity = Number.parseFloat(style.opacity || "1");
+      if (Number.isFinite(nodeOpacity)) {
+        effectiveOpacity *= nodeOpacity;
       }
-      cur = cur.parentElement;
+      const c = parseCssColor(style.backgroundColor);
+      if (c[3] > 0) {
+        bg = blendOver([c[0], c[1], c[2]], c[3] * effectiveOpacity, bg);
+      }
     }
 
-    const l1 = luminance([fg[0], fg[1], fg[2]]);
+    const rawFg = parseCssColor(window.getComputedStyle(el).color);
+    const effectiveFg = blendOver([rawFg[0], rawFg[1], rawFg[2]], rawFg[3] * effectiveOpacity, bg);
+
+    const l1 = luminance(effectiveFg);
     const l2 = luminance(bg);
     const lighter = Math.max(l1, l2);
     const darker = Math.min(l1, l2);
@@ -153,7 +200,7 @@ async function assertReadableTextContrast(
 
   expect(
     ratio,
-    `UX Regression: ${label} has illegible contrast ratio (${ratio.toFixed(2)}:1 < ${minRatio}:1)`,
+    `UX Regression: ${label} has illegible effective contrast ratio (${ratio.toFixed(2)}:1 < ${minRatio}:1)`,
   ).toBeGreaterThanOrEqual(minRatio);
 }
 
@@ -199,7 +246,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
-      await page.getByTestId("seed-input").fill("FASE3-BURNOUT-8928");
+      await page.getByTestId("seed-input").fill("P35-M4-HITO-72");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -291,17 +338,14 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       // Play Months 1..3 + Trimestre + Month 4 (16:9 milestone illustration + Inspector Polaroid)
       await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
-        "quedarse_adelantando_entregas",
+        "cambiar_de_tema_con_elegancia",
         `${vp.label} M1`,
       );
       await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
-        "entrega_express_contado",
+        "aceptar_mitad_efectivo_y_cajas",
         `${vp.label} M2`,
       );
-      await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
-        "coger_los_billetes_en_la_terraza",
-        `${vp.label} M3`,
-      );
+      await clickChoiceAndVerifyOutcomeFitsWithoutScroll("seguir_autogestion", `${vp.label} M3`);
 
       await expect(page.getByTestId("trimestre-modal")).toBeVisible();
       await page.getByTestId("trimestre-defer-btn").click();
@@ -443,7 +487,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
-      await page.getByTestId("seed-input").fill("FASE1-BANNER-1");
+      await page.getByTestId("seed-input").fill("P35-BANNER-139");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -510,7 +554,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       isMobile ? { width: 390, height: 844 } : { width: 1366, height: 768 },
     );
     await page.goto("./");
-    await page.getByTestId("seed-input").fill("FASE1-BANNER-1");
+    await page.getByTestId("seed-input").fill("P35-BANNER-139");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -952,16 +996,16 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     const titleScrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(titleScrollWidth).toBeLessThanOrEqual(vp.width);
 
-    // 2. Start deterministic English run (FASE3-EN-LOCALE-5)
-    await page.getByTestId("seed-input").fill("FASE3-EN-LOCALE-5");
+    // 2. Start deterministic English run (P35-EN-LOCALE-134)
+    await page.getByTestId("seed-input").fill("P35-EN-LOCALE-134");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
     // Verify English HUD, comma thousands formatting, and IndicatorBar ES<->EN hotkey + button
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 1");
-    await expect(page.getByTestId("indicator-money-value")).toHaveText("3,216 €");
+    await expect(page.getByTestId("indicator-money-value")).toHaveText("2,981 €");
     await expect(page.getByTestId("indicator-net-cash")).toContainText("Net:");
-    await expect(page.getByTestId("indicator-net-cash")).toContainText("2,596 €");
+    await expect(page.getByTestId("indicator-net-cash")).toContainText("2,481 €");
 
     const hudLocaleBtn = page.getByTestId("locale-toggle-btn");
     await assertCenterHitTargetUnoccluded(hudLocaleBtn, "IndicatorBar locale-toggle-btn");
@@ -1111,7 +1155,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 2");
 
     // 4. Advance Month 2 -> Month 3, add temporal modifier, settle English QuarterlyTaxModal, and verify translated modifier in Account Ledger
-    const m2Btn = page.locator('[data-choice-id="parar_a_tomar_cafe_y_comer_juntos"]');
+    const m2Btn = page.locator('[data-choice-id="comprar_lector_dnie_profesional"]');
     if (isMobile) {
       await m2Btn.scrollIntoViewIfNeeded();
     }
@@ -1120,9 +1164,9 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     await expect(page.getByTestId("event-card")).toHaveAttribute(
       "data-event-id",
-      "clientes_averia_equipo_trabajo",
+      "familia_cuota_gimnasio_fantasma",
     );
-    const m3Btn = page.locator('[data-choice-id="renting_equipo_sustitucion"]');
+    const m3Btn = page.locator('[data-choice-id="bloquear_tres_mananas_y_entrenar"]');
     if (isMobile) {
       await m3Btn.scrollIntoViewIfNeeded();
     } else {
@@ -1143,7 +1187,425 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     }
     const cuentasPanel = page.getByTestId("panel-cuentas");
     await expect(cuentasPanel).toBeVisible();
-    await expect(cuentasPanel).toContainText("Work equipment lease");
-    await expect(cuentasPanel).not.toContainText("Renting equipo de trabajo");
+    await expect(cuentasPanel).toContainText("Consistent workout routine");
+    await expect(cuentasPanel).not.toContainText("Rutina deportiva cumplida");
+  });
+
+  for (const compactVp of [
+    { label: "real-windows-laptop-1366x650", width: 1366, height: 650 },
+    { label: "dpi-150pct-1280x600", width: 1280, height: 600 },
+  ] as const) {
+    test(`QA-27 (${compactVp.label}): Real non-fullscreen laptop & 150% DPI zero-scroll active turn loop (including 4-choice 2x2 grid & WCAG opacity contrast)`, async ({
+      page,
+    }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== "desktop-chromium",
+        "Compact desktop height audit executes in desktop-chromium",
+      );
+
+      await page.setViewportSize({ width: compactVp.width, height: compactVp.height });
+      await page.goto("./");
+      await page.getByTestId("seed-input").fill("P35-M4-HITO-72");
+      await page.getByTestId("start-run-btn").click();
+      await expect(page.getByTestId("game-screen")).toBeVisible();
+
+      const assertCompactDesktopFit = async (stepLabel: string) => {
+        const scrollState = await page.evaluate(() => ({
+          scrollY: window.scrollY,
+          scrollHeight: document.documentElement.scrollHeight,
+          innerHeight: window.innerHeight,
+        }));
+        expect(scrollState.scrollY, `Expected scrollY === 0 on ${stepLabel}`).toBe(0);
+        expect(
+          scrollState.scrollHeight,
+          `UX Regression: ${stepLabel} overflows ${compactVp.label} (scrollHeight=${scrollState.scrollHeight} > ${scrollState.innerHeight + 2})`,
+        ).toBeLessThanOrEqual(scrollState.innerHeight + 2);
+
+        const headerBox = await page.locator("header").first().boundingBox();
+        expect(headerBox).not.toBeNull();
+        const bounds = {
+          minTop: headerBox!.y + headerBox!.height,
+          maxBottom: compactVp.height,
+          viewportWidth: compactVp.width,
+        };
+
+        await assertVisibleInViewportWithoutScroll(
+          page.getByTestId("month-economy-strip"),
+          bounds,
+          `${stepLabel} month-economy-strip`,
+        );
+        await assertVisibleInViewportWithoutScroll(
+          page.getByTestId("event-title"),
+          bounds,
+          `${stepLabel} event-title`,
+        );
+        await assertVisibleInViewportWithoutScroll(
+          page.getByTestId("event-body"),
+          bounds,
+          `${stepLabel} event-body`,
+        );
+        await assertReadableTextContrast(page.getByTestId("event-title"), `${stepLabel} title`);
+        await assertReadableTextContrast(page.getByTestId("event-body"), `${stepLabel} body`);
+        await assertReadableTextContrast(
+          page.getByTestId("indicator-net-cash"),
+          `${stepLabel} indicator-net-cash`,
+        );
+
+        const choiceBtns = page.locator('[data-testid^="choice-btn-"]');
+        const count = await choiceBtns.count();
+        expect(count).toBeGreaterThanOrEqual(2);
+        for (let i = 0; i < count; i += 1) {
+          await assertVisibleInViewportWithoutScroll(
+            choiceBtns.nth(i),
+            bounds,
+            `${stepLabel} choice-btn-${i}`,
+          );
+          await assertCenterHitTargetUnoccluded(choiceBtns.nth(i), `${stepLabel} choice-btn-${i}`);
+        }
+      };
+
+      await assertCompactDesktopFit(`${compactVp.label} M1`);
+
+      // Click directly WITHOUT scrollIntoViewIfNeeded() and verify outcome fits 100% above the fold
+      await page.locator('[data-choice-id="cambiar_de_tema_con_elegancia"]').click();
+      await expect(page.getByTestId("outcome-panel")).toBeVisible();
+      expect(await page.evaluate(() => window.scrollY)).toBe(0);
+      expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+        compactVp.height + 2,
+      );
+
+      const headerBox = await page.locator("header").first().boundingBox();
+      const bounds = {
+        minTop: headerBox!.y + headerBox!.height,
+        maxBottom: compactVp.height,
+        viewportWidth: compactVp.width,
+      };
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("outcome-continue-btn"),
+        bounds,
+        `${compactVp.label} outcome-continue-btn`,
+      );
+      await assertCenterHitTargetUnoccluded(
+        page.getByTestId("outcome-continue-btn"),
+        `${compactVp.label} outcome-continue-btn`,
+      );
+      await page.getByTestId("outcome-continue-btn").click();
+
+      // Stage a 4-choice event (familia_encrucijada_agotamiento) with 1 locked choice to test 2x2 grid + locked contrast at 600px/650px!
+      await page.evaluate(async () => {
+        await new Promise<void>((resolvePromise, rejectPromise) => {
+          const openReq = indexedDB.open("keyval-store");
+          openReq.onerror = () => rejectPromise(openReq.error);
+          openReq.onsuccess = () => {
+            const db = openReq.result;
+            const tx = db.transaction("keyval", "readwrite");
+            const store = tx.objectStore("keyval");
+            const getReq = store.get("autonomo:active_run");
+            getReq.onerror = () => rejectPromise(getReq.error);
+            getReq.onsuccess = () => {
+              const envelope = getReq.result;
+              envelope.state.month = 24;
+              envelope.state.indicators.stress = 82;
+              envelope.state.indicators.money = 400; // locks expensive sabbatical choice -> tests choice-lock-reason contrast!
+              envelope.state.current_turn_events = ["familia_encrucijada_agotamiento"];
+              store.put(envelope, "autonomo:active_run");
+            };
+            tx.oncomplete = () => {
+              db.close();
+              resolvePromise();
+            };
+            tx.onerror = () => rejectPromise(tx.error);
+          };
+        });
+      });
+
+      await page.reload();
+      await page.getByTestId("continue-run-btn").click();
+      await expect(page.getByTestId("event-card")).toHaveAttribute(
+        "data-event-id",
+        "familia_encrucijada_agotamiento",
+      );
+      await expect(page.locator('[data-testid^="choice-btn-"]')).toHaveCount(4);
+
+      const fourChoiceScroll = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+      }));
+      expect(fourChoiceScroll.scrollY).toBe(0);
+      expect(
+        fourChoiceScroll.scrollHeight,
+        `Expected 4-choice 2x2 event card to fit ${compactVp.label} with zero vertical scroll`,
+      ).toBeLessThanOrEqual(fourChoiceScroll.innerHeight + 2);
+
+      const lockReasons = page.locator('[data-testid^="choice-lock-reason-"]');
+      if ((await lockReasons.count()) > 0) {
+        await assertReadableTextContrast(
+          lockReasons.first(),
+          `${compactVp.label} choice-lock-reason`,
+        );
+      }
+    });
+  }
+
+  test("QA-28: Multi-resolution responsive ergonomics — 1024x768 spacious tablet workspace (>=500px), 360x640 compact phone & 667x375 phone landscape", async ({
+    page,
+  }) => {
+    // 1. Tablet 1024x768: spacious centered workspace (event-card >= 500px, zero 344px 3-col squeeze)
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("./");
+    await page.getByTestId("seed-input").fill("P35-BANNER-139");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      1024,
+    );
+    await expect(page.getByTestId("mobile-tab-despacho")).toBeVisible();
+    const tabletCardBox = await page.getByTestId("event-card").boundingBox();
+    expect(tabletCardBox).not.toBeNull();
+    expect(
+      tabletCardBox!.width,
+      `Expected spacious centered event-card >= 500px at 1024x768 (got ${tabletCardBox!.width}px)`,
+    ).toBeGreaterThanOrEqual(500);
+
+    // 2. Compact phone 360x640 & Phone landscape 667x375
+    for (const phoneVp of [
+      { label: "compact-phone-360x640", width: 360, height: 640 },
+      { label: "phone-landscape-667x375", width: 667, height: 375 },
+    ] as const) {
+      await page.setViewportSize({ width: phoneVp.width, height: phoneVp.height });
+      await page.evaluate(() => window.scrollTo(0, 0));
+
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+        `Expected zero horizontal overflow on ${phoneVp.label}`,
+      ).toBeLessThanOrEqual(phoneVp.width);
+
+      const headerBox = await page.locator("header").first().boundingBox();
+      const navBox = await page.locator('nav[aria-label="Secciones del despacho"]').boundingBox();
+      expect(headerBox).not.toBeNull();
+      expect(navBox).not.toBeNull();
+
+      if (phoneVp.height <= 420) {
+        expect(
+          headerBox!.height,
+          "Expected ultra-compact HUD <= 96px on short phone landscape",
+        ).toBeLessThanOrEqual(96);
+      }
+
+      // Event title must be immediately visible between sticky HUD and bottom nav at scrollY === 0
+      const titleBox = await page.getByTestId("event-title").boundingBox();
+      expect(titleBox).not.toBeNull();
+      expect(titleBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1);
+      expect(titleBox!.y + titleBox!.height).toBeLessThanOrEqual(navBox!.y + 1);
+
+      for (const tabId of [
+        "mobile-tab-despacho",
+        "mobile-tab-cuentas",
+        "mobile-tab-entorno",
+        "mobile-tab-historial",
+      ] as const) {
+        await assertCenterHitTargetUnoccluded(page.getByTestId(tabId), `${phoneVp.label} ${tabId}`);
+      }
+    }
+  });
+
+  test("QA-29: Modo Ágil 2.0 — stake hints, mandatory pause on multi-outcome Dices choice & auto-settled affordable Trimestre receipt", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.goto("./");
+    await page.getByTestId("seed-input").fill("P35-AGIL-1");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    // Verify Choice Stake Hints are rendered and legible on Month 1
+    const stakes0 = page.getByTestId("choice-stakes-0");
+    await expect(stakes0).toBeVisible();
+    await assertReadableTextContrast(stakes0.locator("span").first(), "choice-stakes-0 chip");
+
+    // Enable Modo Ágil 2.0
+    const fastBtn = page.getByTestId("toggle-fast-pacing-btn");
+    await fastBtn.click();
+    await expect(fastBtn).toHaveAttribute("aria-pressed", "true");
+
+    // 1. Clicking a multi-outcome Dices choice MUST pause on outcome-panel even in Modo Ágil 2.0!
+    await page.locator('[data-choice-id="meter_dinero_por_probar"]').click();
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+    await page.getByTestId("outcome-continue-btn").click();
+
+    // 2. Restart P35-AGIL-1 via TitleScreen overwrite guard and play deterministic safe choices through Q1
+    await page.getByTestId("return-title-btn").click();
+    await page.getByTestId("seed-input").fill("P35-AGIL-1");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("confirm-overwrite-run-modal")).toBeVisible();
+    await page.getByTestId("confirm-overwrite-run-btn").click();
+
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
+    await page.locator('[data-choice-id="desmontar_su_plan_con_numeros"]').click();
+    await expect(page.getByTestId("outcome-panel")).toHaveCount(0);
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
+
+    await page.locator('[data-choice-id="mirar_al_techo_de_madrugada"]').click();
+    await expect(page.getByTestId("outcome-panel")).toHaveCount(0);
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 3");
+
+    // Resolving Month 3 with healthy buffer (money - totalDue >= 1,200 €) and zero inspection auto-settles Q1!
+    await page.locator('[data-choice-id="contratar_software_homologado"]').click();
+    await expect(page.getByTestId("trimestre-modal")).toHaveCount(0);
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
+
+    const receipt = page.getByTestId("auto-settled-quarter-receipt");
+    await expect(receipt).toBeVisible();
+    await expect(receipt).toContainText("Trimestre T1 liquidado");
+    await assertReadableTextContrast(receipt, "auto-settled-quarter-receipt");
+  });
+
+  test("QA-30: TitleScreen overwrite guard, Endless honorable retirement ('Jubilarse con honores') & fatal outcome-panel reload persistence", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.goto("./");
+
+    // 1. Start active run, verify TitleScreen <kbd> WCAG contrast, humanized flag pill, and overwrite guard
+    await assertReadableTextContrast(
+      page.getByTestId("start-run-btn").locator("kbd"),
+      "start-run-btn kbd",
+    );
+    await page.getByTestId("seed-input").fill("P35-CASH-158");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    await page.locator('[data-choice-id="empezar_relacion_alex"]').click();
+    await expect(page.getByTestId("outcome-panel")).toContainText("Expediente:");
+
+    await page.getByTestId("return-title-btn").click();
+    await expect(page.getByTestId("continue-run-card")).toContainText("P35-CASH-158");
+
+    await page.getByTestId("seed-input").fill("P35-BANNER-139");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("confirm-overwrite-run-modal")).toBeVisible();
+    await assertReadableTextContrast(
+      page.getByTestId("confirm-overwrite-run-btn").locator("kbd"),
+      "confirm-overwrite-run-btn kbd",
+    );
+
+    await page.getByTestId("cancel-overwrite-run-btn").click();
+    await expect(page.getByTestId("confirm-overwrite-run-modal")).toBeHidden();
+    await expect(page.getByTestId("continue-run-card")).toContainText("P35-CASH-158");
+
+    await page.getByTestId("start-run-btn").click();
+    await page.getByTestId("confirm-overwrite-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await expect(page.getByTestId("event-card")).toHaveAttribute(
+      "data-event-id",
+      "gestor_oferta_servicios",
+    );
+
+    // 2. Stage an Endless post-120m run in IndexedDB and verify Year 11 CuentasPanel living-cost creep + honorable retirement
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.month = 128;
+            envelope.state.endless_mode = true;
+            envelope.state.earned_victories = ["hero_120m"];
+            envelope.state.indicators.money = 158000;
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await page.getByTestId("continue-run-btn").click();
+    // Month 128 (Year 11): effectiveLivingCost = 1,405 + 10 * 64 = 2,045 €/mo
+    await expect(page.getByTestId("panel-cuentas")).toContainText(/2\.?045\s*€/);
+
+    await page.getByTestId("abandon-run-btn").click();
+    await expect(page.getByTestId("abandon-modal")).toBeVisible();
+    await expect(page.getByTestId("abandon-oposiciones-btn")).toHaveCount(0);
+
+    const retireBtn = page.getByTestId("retire-honorable-confirm-btn");
+    await expect(retireBtn).toBeVisible();
+    await assertCenterHitTargetUnoccluded(retireBtn, "retire-honorable-confirm-btn");
+    await retireBtn.click();
+
+    await expect(page.getByTestId("end-run-screen")).toBeVisible();
+    await assertReadableTextContrast(
+      page.getByTestId("end-new-run-btn").locator("kbd"),
+      "end-new-run-btn kbd",
+    );
+    await expect(page.getByTestId("end-run-victory-badges")).toBeVisible();
+    await expect(page.getByTestId("end-run-duration")).toContainText("10 años y 8 meses");
+
+    // 3. Fatal outcome-panel reload persistence: trigger fatal stress choice, reload BEFORE clicking outcome-continue-btn
+    await page.getByTestId("end-new-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.indicators.stress = 98;
+            envelope.state.current_turn_events = ["clientes_encargo_urgente"];
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await page.getByTestId("continue-run-btn").click();
+    await page.locator('[data-choice-id="entrega_express_contado"]').click();
+
+    // Fatal outcome-panel opens first; reload BEFORE clicking outcome-continue-btn!
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+    await expect(page.getByTestId("outcome-continue-btn")).toContainText("Ver certificado final");
+    await page.waitForTimeout(120);
+    await page.reload();
+
+    // Resuming after reload restores the exact pending fatal outcome-panel first, then opens EndRunScreen on acknowledge
+    await expect(page.getByTestId("continue-run-card")).toContainText("Año 1 · Mes 1");
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+    await expect(page.getByTestId("outcome-continue-btn")).toContainText("Ver certificado final");
+    await page.getByTestId("outcome-continue-btn").click();
+
+    await expect(page.getByTestId("end-run-screen")).toBeVisible();
+    await expect(page.getByTestId("end-run-illustration")).toHaveAttribute(
+      "data-asset-id",
+      "illus_final_ansiedad",
+    );
+    await page.getByTestId("end-return-title-btn").click();
+    await expect(page.getByTestId("continue-run-card")).toHaveCount(0);
+    await expect(page.getByTestId("hall-of-fame-list").locator("li")).toHaveCount(2);
   });
 });

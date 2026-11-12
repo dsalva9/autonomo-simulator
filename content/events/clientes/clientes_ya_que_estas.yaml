@@ -1,7 +1,7 @@
 schema_version: 1
 id: clientes_ya_que_estas
 category: clientes
-title: "«Ya que estás, es solo tocar un botón»"
+title: «Ya que estás, es solo tocar un botón»
 body: "Envías el entregable final clavado al presupuesto y Borja contesta en treinta segundos: «¡Brutal! Oye, ya que estás con las manos en la masa, ¿me rehaces también toda la parte antigua y tres versiones para mi socio? En diez minutos lo ventilas»."
 tags:
   - alcance
@@ -10,17 +10,29 @@ tags:
 character_id: cliente_regateador
 character_expression: pleased
 illustration_id: null
-weight: 13
-cooldown_months: 6
-max_occurrences: null
+weight: 8
+cooldown_months: 10
+max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: remitir_a_clausula_contrato
+    label: Señalar con frialdad quirúrgica la cláusula de revisiones firmada
+    requirements:
+      stats:
+        reputation:
+          min: 45
+    result_text: Le citas el punto cuarto del contrato sin despeinarte. Hay un silencio respetuoso al otro lado y te liquida el hito pendiente sin volver a pedir regalos.
+    effects:
+      billed_income: 400
+      stress: -3
+      moral: 6
+      reputation: 3
   - id: enviar_anexo_presupuestado
-    label: "Sonreír y adjuntar presupuesto aparte por los extras"
+    label: Sonreír y adjuntar presupuesto aparte por los extras
     outcomes:
       - id: firma_refunfunando
         weight: 60
-        result_text: "Borja suelta un discurso sobre «lo peseteros que os habéis vuelto», pero acaba aceptando el anexo porque nadie más le coge el teléfono."
+        result_text: Borja suelta un discurso sobre «lo peseteros que os habéis vuelto», pero acaba aceptando el anexo porque nadie más le coge el teléfono.
         effects:
           billed_income: 750
           stress: 4
@@ -28,30 +40,18 @@ choices:
           reputation: 2
       - id: recula_al_ver_euros
         weight: 40
-        result_text: "En cuanto ve cifras con símbolo de euro, descubre de golpe que la versión actual «ya estaba perfecta así». Te ahorras veinte horas gratis."
+        result_text: En cuanto ve cifras con símbolo de euro, descubre de golpe que la versión actual «ya estaba perfecta así». Te ahorras veinte horas gratis.
         effects:
           billed_income: 200
           stress: -2
           moral: 4
           reputation: -1
   - id: tragar_para_no_discutir
-    label: "Ceder «por esta vez» y pringar tres noches gratis"
-    result_text: "Ese «diez minutos» se convierte en dieciocho horas no facturadas y cuatro rondas de cambios absurdos. Borja queda encantado; tu dignidad, en cuidados intensivos."
+    label: Ceder «por esta vez» y pringar tres noches gratis
+    result_text: Ese «diez minutos» se convierte en dieciocho horas no facturadas y cuatro rondas de cambios absurdos. Borja queda encantado; tu dignidad, en cuidados intensivos.
     effects:
       billed_income: 150
       stress: 12
       moral: -8
       personal_life: -5
       reputation: 2
-  - id: remitir_a_clausula_contrato
-    label: "Señalar con frialdad quirúrgica la cláusula de revisiones firmada"
-    requirements:
-      stats:
-        reputation:
-          min: 45
-    result_text: "Le citas el punto cuarto del contrato sin despeinarte. Hay un silencio respetuoso al otro lado y te liquida el hito pendiente sin volver a pedir regalos."
-    effects:
-      billed_income: 400
-      stress: -3
-      moral: 6
-      reputation: 3

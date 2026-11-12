@@ -2,7 +2,7 @@ schema_version: 1
 id: gestor_revision_estrategia_anual
 category: gestor
 title: "Revisión de estrategia antes del cierre anual"
-body: "Se acerca el cierre del ejercicio fiscal y todavía estás a tiempo de ordenar amortizaciones, ajustar retenciones y planificar gastos antes de que el año quede tallado en piedra."
+body: "Se acerca el cierre del ejercicio fiscal y Elena Montes convoca reunión estratégica: aún estás a tiempo de ordenar amortizaciones, calibrar retenciones y planificar gastos deducibles antes de que diciembre selle el año."
 tags:
   - planificacion
   - cierre_anual
@@ -11,19 +11,40 @@ character_id: gestor_premium_elena
 character_expression: neutral
 illustration_id: null
 requirements:
-  min_month: 8
-weight: 10
-cooldown_months: 12
-max_occurrences: 5
+  min_month: 10
+  months_of_year:
+    - 10
+    - 11
+    - 12
+  gestor_tiers:
+    - premium
+weight: 11
+cooldown_months: 9
+max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: cerrar_ejercicio_sin_cambios
+    label: "Dejar el ejercicio tal cual está y no tocar lo que funciona"
+    result_text: "Cierras carpetas sin gastar un euro extra hoy, confiando en que la liquidación anual venga mansa."
+    effects:
+      stress: -3
+      moral: 1
+      fiscal_risk: 4
+  - id: ajustar_retenciones_cierre_elena
+    label: "Reordenar vencimientos y amortizaciones pendientes sin gastar caja (75 €)"
+    result_text: "Elena ajusta las tablas de amortización y el calendario de facturas de diciembre con precisión quirúrgica."
+    effects:
+      deductible_expense: 75
+      stress: -5
+      moral: 4
+      fiscal_risk: -8
   - id: ejecutar_plan_cierre_con_gestoria
-    label: "Ejecutar el plan completo de optimización anual con tu gestoría"
+    label: "Ejecutar el plan completo de optimización anual con Elena (180 €)"
     requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "Reordenáis vencimientos y gastos deducibles al milímetro, reduciendo tus costes operativos durante todo el arranque del próximo tramo."
+      stats:
+        money:
+          min: 350
+    result_text: "Reordenáis vencimientos y gastos deducibles al milímetro, reduciendo tus costes operativos durante todo el arranque del próximo año."
     effects:
       deductible_expense: 180
       add_modifier:
@@ -33,29 +54,4 @@ choices:
         monthly_expense_delta: -90
         monthly_stress_delta: -1
       moral: 5
-      fiscal_risk: -10
-  - id: fichar_a_elena_para_el_cierre
-    label: "Aprovechar para contratar de forma estable a Elena Montes (180 €/mes)"
-    requirements:
-      gestor_tiers:
-        - self
-        - cheap
-      stats:
-        money:
-          min: 300
-    result_text: "Estrenas asesoría integral justo a tiempo para blindar el cierre anual y empezar la siguiente etapa con red de seguridad."
-    effects:
-      set_gestor:
-        tier: premium
-        character_id: gestor_premium_elena
-      deductible_expense: 160
-      stress: -8
-      moral: 5
-      fiscal_risk: -12
-  - id: cerrar_ejercicio_sin_cambios
-    label: "Dejar el ejercicio tal cual está y no tocar lo que funciona"
-    result_text: "Cierras carpetas sin gastar un euro extra hoy, confiando en que el próximo trimestre venga manso."
-    effects:
-      stress: -3
-      moral: 1
-      fiscal_risk: 4
+      fiscal_risk: -11

@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_plan_fin_de_semana
 category: familia
 title: "Operación desconexión con Álex"
-body: "Viernes por la tarde. Álex aparece con un plan de escapada sencilla fuera de la ciudad y una única norma innegociable: el ordenador se queda apagado en casa, lejos de cualquier enchufe y de cualquier cliente con «una cosita de cinco minutos»."
+body: "Viernes tarde. Tras un par de citas con mucha química, Álex te propone una escapada fuera de la ciudad con una única norma: el portátil se queda apagado en casa, lejos de enchufes y de clientes de última hora."
 tags:
   - pareja
   - conciliacion
@@ -13,18 +13,16 @@ illustration_id: null
 requirements:
   family_statuses:
     - single
-    - dating
-    - cohabiting
+  forbidden_flags:
+    - historia_con_alex
+    - ex_pareja_alex
 weight: 10
-cooldown_months: 8
-max_occurrences: null
+cooldown_months: 12
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: empezar_relacion_alex
     label: "Apagar el portátil y apostar en serio por lo vuestro"
-    requirements:
-      family_statuses:
-        - single
     result_text: "Entre caminatas, sobremesas largas y cero notificaciones, volvéis el domingo con algo mucho más estable que cualquier calendario de entregas: oficialmente salís juntos."
     effects:
       set_family_status:

@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_subida_alquiler_hipoteca
 category: familia
 title: "Revisión anual de techo y recibos"
-body: "Abres el buzón rezando para que sea publicidad y te encuentras la carta anual de actualización de vivienda acompañada del recibo del seguro del hogar. Mantener cuatro paredes donde dormir y trabajar vuelve a encarecerse sin preguntar cómo llevas el trimestre."
+body: "Abres el buzón rezando para que sea publicidad y hallas la subida anual de vivienda junto al recibo del seguro del hogar. Mantener cuatro paredes donde dormir y trabajar vuelve a encarecerse sin mirar tu trimestre."
 tags:
   - vivienda
   - alquiler
@@ -17,19 +17,6 @@ cooldown_months: 14
 max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: asumir_revision_sin_mudanza
-    label: "Tragar con la subida para ahorrarte el infierno logístico de una mudanza"
-    result_text: "Abonas la póliza anual y aceptas el nuevo recibo mensual resignado: mudarse ahora mismo te costaría todavía más salud y dinero."
-    effects:
-      cash_delta: -260
-      add_modifier:
-        id: mod_subida_vivienda
-        label: "Revisión al alza de vivienda"
-        remaining_months: 6
-        monthly_expense_delta: 145
-        monthly_stress_delta: 2
-      moral: -4
-      stress: 5
   - id: negociar_con_historial_buen_pagador
     label: "Plantarte con tus justificantes puntuales para negociar una rebaja razonable"
     outcomes:
@@ -49,13 +36,13 @@ choices:
           add_modifier:
             id: mod_subida_vivienda
             label: "Revisión al alza de vivienda"
-            remaining_months: 5
-            monthly_expense_delta: 135
+            remaining_months: 6
+            monthly_expense_delta: 145
             monthly_stress_delta: 2
           stress: 9
           moral: -6
   - id: adelantar_colchon_para_rebajar_cuota
-    label: "Soltar 1.200 € de ahorro ahora para amortizar condiciones y bajar el gasto mensual"
+    label: "Adelantar 1.200 € de ahorro ahora para rebajar la cuota mensual media"
     requirements:
       stats:
         money:
@@ -72,3 +59,16 @@ choices:
         remaining_months: 6
         monthly_expense_delta: -80
         monthly_stress_delta: -1
+  - id: asumir_revision_sin_mudanza
+    label: "Tragar con la subida para ahorrarte el infierno logístico de una mudanza"
+    result_text: "Abonas la póliza anual y aceptas el nuevo recibo mensual resignado: mudarse ahora mismo te costaría todavía más salud y dinero."
+    effects:
+      cash_delta: -260
+      add_modifier:
+        id: mod_subida_vivienda
+        label: "Revisión al alza de vivienda"
+        remaining_months: 6
+        monthly_expense_delta: 145
+        monthly_stress_delta: 2
+      moral: -4
+      stress: 5

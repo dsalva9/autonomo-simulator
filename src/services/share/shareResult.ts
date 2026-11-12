@@ -22,6 +22,7 @@ export interface EndRunShareSummary {
   lifetimeBilled: number;
   endingId: EndingId;
   summaryQuote: string;
+  localizedQuoteEn?: string;
   earnedVictories: VictoryBadge[];
   seed: string;
   endlessMode: boolean;
@@ -69,6 +70,7 @@ export function createShareSummaryFromState(
     lifetimeBilled: state.finances.lifetime_billed,
     endingId,
     summaryQuote,
+    localizedQuoteEn: resolveLocalizedEndingQuote(endingId, summaryQuote, "en", state),
     earnedVictories: [...state.earned_victories],
     seed: state.prng.seed,
     endlessMode: state.endless_mode,
@@ -83,7 +85,10 @@ export function buildShareText(
   const isEn = normalizeLocale(locale) === "en";
   const meta = getEndingMetadata(summary.endingId, locale);
   const duration = formatDurationMonthsEs(summary.monthsSurvived, locale);
-  const quote = resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale);
+  const quote =
+    isEn && summary.localizedQuoteEn
+      ? summary.localizedQuoteEn
+      : resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale);
 
   if (isEn) {
     const lines: string[] = [
@@ -241,11 +246,10 @@ export function renderShareCardToCanvas(
   const hasIllustration = illustration !== null;
 
   const meta = getEndingMetadata(summary.endingId, locale);
-  const localizedQuote = resolveLocalizedEndingQuote(
-    summary.endingId,
-    summary.summaryQuote,
-    locale,
-  );
+  const localizedQuote =
+    isEn && summary.localizedQuoteEn
+      ? summary.localizedQuoteEn
+      : resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale);
   const stampPrimary =
     meta.tone === "victory" ? "#1F5C53" : meta.tone === "abandon" ? "#264E7A" : "#B42B24";
   const stampFill =
@@ -484,17 +488,37 @@ export function renderShareCardToCanvas(
     ctx.fillText(box.code, x + 18, y + (hasIllustration ? 24 : 30), boxW - 36);
 
     ctx.fillStyle = box.accent;
-    ctx.font = hasIllustration
-      ? "700 29px 'Courier New', monospace"
-      : "700 34px 'Courier New', monospace";
-    const fittedVal = wrapCanvasParagraph(ctx, box.value, boxW - 36);
-    ctx.fillText(fittedVal[0] ?? box.value, x + 18, y + (hasIllustration ? 73 : 108), boxW - 36);
-    if (fittedVal[1]) {
-      ctx.font = hasIllustration
-        ? "700 20px 'Courier New', monospace"
-        : "700 24px 'Courier New', monospace";
-      ctx.fillText(fittedVal[1], x + 18, y + (hasIllustration ? 98 : 138), boxW - 36);
+    const maxValWidth = boxW - 36;
+    const baseValFontPx = hasIllustration ? 29 : 34;
+    const minValFontPx = 18;
+    let displayVal = box.value;
+    let fittedFontPx = baseValFontPx;
+    ctx.font = `700 ${fittedFontPx}px 'Courier New', monospace`;
+
+    while (fittedFontPx > minValFontPx && ctx.measureText(displayVal).width > maxValWidth) {
+      fittedFontPx -= 1;
+      ctx.font = `700 ${fittedFontPx}px 'Courier New', monospace`;
     }
+
+    if (idx === 0 && ctx.measureText(displayVal).width > maxValWidth) {
+      const years = Math.floor(summary.monthsSurvived / 12);
+      const remMonths = summary.monthsSurvived % 12;
+      displayVal =
+        years > 0
+          ? isEn
+            ? `${years}y ${remMonths}m (${summary.monthsSurvived} mos)`
+            : `${years}a ${remMonths}m (${summary.monthsSurvived} meses)`
+          : displayVal;
+      fittedFontPx = baseValFontPx;
+      ctx.font = `700 ${fittedFontPx}px 'Courier New', monospace`;
+      while (fittedFontPx > minValFontPx && ctx.measureText(displayVal).width > maxValWidth) {
+        fittedFontPx -= 1;
+        ctx.font = `700 ${fittedFontPx}px 'Courier New', monospace`;
+      }
+    }
+
+    const valBaselineY = y + (hasIllustration ? 75 : 108);
+    ctx.fillText(displayVal, x + 18, valBaselineY, maxValWidth);
   });
 
   // 7. Satirical Quote / Epitaph Box

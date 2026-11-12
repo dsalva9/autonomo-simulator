@@ -8,12 +8,8 @@ tags:
   - guarderia
   - conciliacion
   - salud
-character_id: pareja_alex
-character_expression: stressed
+character_id: null
 requirements:
-  family_statuses:
-    - dating
-    - cohabiting
   required_flags:
     - criatura_en_casa
 weight: 0
@@ -32,6 +28,10 @@ choices:
       personal_life: 7
   - id: turnarse_con_alex_en_casa
     label: "Repartir mañanas y noches con Álex a base de café cargado"
+    requirements:
+      family_statuses:
+        - dating
+        - cohabiting
     outcomes:
       - id: relevo_sincronizado
         weight: 60

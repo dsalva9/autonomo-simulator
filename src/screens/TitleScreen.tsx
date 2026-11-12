@@ -1,5 +1,6 @@
 import {
   AlertCircle,
+  AlertTriangle,
   Award,
   CheckCircle2,
   FilePlus2,
@@ -9,6 +10,7 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
+  X,
   Zap,
 } from "lucide-react";
 import {
@@ -54,26 +56,54 @@ export function TitleScreen() {
   const toggleFastPacing = useUIStore((s) => s.toggleFastPacing);
 
   const [seedInput, setSeedInput] = useState("");
+  const [confirmOverwriteOpen, setConfirmOverwriteOpen] = useState(false);
+
   const seedInputRef = useRef<HTMLInputElement | null>(null);
   const hallTabRef = useRef<HTMLButtonElement | null>(null);
   const achievementsTabRef = useRef<HTMLButtonElement | null>(null);
+  const confirmOverwriteBtnRef = useRef<HTMLButtonElement | null>(null);
+  const cancelOverwriteBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const locale = normalizeLocale(profile.settings.locale);
   const isEn = locale === "en";
   const ui = getUiStrings(locale);
   const localizedAchievements = getLocalizedAchievementCatalog(locale);
 
-  const hasResumableRun = activeRun !== null && activeRun.ending === null;
-  const resumableCalendar = hasResumableRun ? formatCalendarBadgeEs(activeRun.month, locale) : null;
+  const hasResumableRun =
+    activeRun !== null && activeRun.phase !== "game_over" && activeRun.ending === null;
+  const resumableCalendar =
+    hasResumableRun && activeRun ? formatCalendarBadgeEs(activeRun.month, locale) : null;
 
-  const handleStartNewRun = () => {
+  useEffect(() => {
+    if (!hasResumableRun && confirmOverwriteOpen) {
+      setConfirmOverwriteOpen(false);
+    }
+  }, [hasResumableRun, confirmOverwriteOpen]);
+
+  useEffect(() => {
+    if (confirmOverwriteOpen) {
+      confirmOverwriteBtnRef.current?.focus({ preventScroll: true });
+    }
+  }, [confirmOverwriteOpen]);
+
+  const executeStartNewRun = () => {
+    setConfirmOverwriteOpen(false);
     playUiSound("stamp_thud", { muted: sfxMuted });
     void startRun(seedInput);
   };
 
+  const handleRequestStartNewRun = () => {
+    if (hasResumableRun) {
+      playUiSound("paper_choice", { muted: sfxMuted });
+      setConfirmOverwriteOpen(true);
+      return;
+    }
+    executeStartNewRun();
+  };
+
   const handleStartFormSubmit = (event: FormEvent) => {
     event.preventDefault();
-    handleStartNewRun();
+    handleRequestStartNewRun();
   };
 
   const handleContinueRun = () => {
@@ -131,9 +161,12 @@ export function TitleScreen() {
 
   const keyboardActionsRef = useRef({
     hasResumableRun,
+    confirmOverwriteOpen,
     corruptedSaveNotice,
     handleContinueRun,
-    handleStartNewRun,
+    handleRequestStartNewRun,
+    executeStartNewRun,
+    closeOverwriteModal: () => setConfirmOverwriteOpen(false),
     handleToggleReducedMotion,
     handleToggleSfx,
     handleToggleFastPacing,
@@ -143,9 +176,12 @@ export function TitleScreen() {
   });
   keyboardActionsRef.current = {
     hasResumableRun,
+    confirmOverwriteOpen,
     corruptedSaveNotice,
     handleContinueRun,
-    handleStartNewRun,
+    handleRequestStartNewRun,
+    executeStartNewRun,
+    closeOverwriteModal: () => setConfirmOverwriteOpen(false),
     handleToggleReducedMotion,
     handleToggleSfx,
     handleToggleFastPacing,
@@ -156,7 +192,52 @@ export function TitleScreen() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+
+      const actions = keyboardActionsRef.current;
+
+      if (actions.confirmOverwriteOpen) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          actions.closeOverwriteModal();
+          return;
+        }
+        if (event.key === "1") {
+          event.preventDefault();
+          actions.executeStartNewRun();
+          return;
+        }
+        if (event.key === "2") {
+          event.preventDefault();
+          actions.closeOverwriteModal();
+          return;
+        }
+        if (
+          event.key === "ArrowLeft" ||
+          event.key === "ArrowRight" ||
+          event.key === "ArrowUp" ||
+          event.key === "ArrowDown"
+        ) {
+          event.preventDefault();
+          if (document.activeElement === confirmOverwriteBtnRef.current) {
+            cancelOverwriteBtnRef.current?.focus({ preventScroll: true });
+          } else {
+            confirmOverwriteBtnRef.current?.focus({ preventScroll: true });
+          }
+          return;
+        }
+        if (event.key === "Tab") {
+          const btns = [confirmOverwriteBtnRef.current, cancelOverwriteBtnRef.current].filter(
+            (b): b is HTMLButtonElement => Boolean(b),
+          );
+          if (btns.length === 2) {
+            event.preventDefault();
+            const nextBtn = document.activeElement === btns[0] ? btns[1] : btns[0];
+            nextBtn?.focus({ preventScroll: true });
+          }
+        }
         return;
       }
 
@@ -175,8 +256,6 @@ export function TitleScreen() {
         return;
       }
 
-      const actions = keyboardActionsRef.current;
-
       if (event.key === "Enter") {
         if (target && (target.tagName === "BUTTON" || target.tagName === "A")) {
           return;
@@ -185,7 +264,7 @@ export function TitleScreen() {
         if (actions.hasResumableRun) {
           actions.handleContinueRun();
         } else {
-          actions.handleStartNewRun();
+          actions.handleRequestStartNewRun();
         }
         return;
       }
@@ -206,7 +285,7 @@ export function TitleScreen() {
         actions.handleContinueRun();
       } else if (key === "n") {
         event.preventDefault();
-        actions.handleStartNewRun();
+        actions.handleRequestStartNewRun();
       } else if (key === "s" || event.key === "/") {
         event.preventDefault();
         seedInputRef.current?.focus({ preventScroll: true });
@@ -243,19 +322,19 @@ export function TitleScreen() {
   return (
     <main
       data-testid="title-screen"
-      className="min-h-screen px-3.5 sm:px-5 py-4 sm:py-5 max-w-6xl mx-auto space-y-3.5 sm:space-y-4"
+      className="title-screen-shell min-h-screen px-3.5 sm:px-5 py-3.5 sm:py-4 max-w-6xl mx-auto space-y-3 sm:space-y-3.5"
     >
       {/* Corrupt Save Recovery Banner */}
       {corruptedSaveNotice && (
         <div
           data-testid="corrupt-save-alert"
           role="alert"
-          className="paper-dossier rounded-xl border-2 border-[#b42b24] bg-[#fdf0ef] p-4 flex items-start justify-between gap-3"
+          className="paper-dossier rounded-xl border-2 border-[#9e221b] bg-[#fdf0ef] p-4 flex items-start justify-between gap-3"
         >
           <div className="flex items-start gap-2.5 text-sm text-[#1f2421]">
-            <AlertCircle className="w-5 h-5 text-[#b42b24] shrink-0 mt-0.5" aria-hidden="true" />
+            <AlertCircle className="w-5 h-5 text-[#9e221b] shrink-0 mt-0.5" aria-hidden="true" />
             <div>
-              <p className="font-bold text-[#b42b24]">{ui.title.corruptTitle}</p>
+              <p className="font-bold text-[#9e221b]">{ui.title.corruptTitle}</p>
               <p className="text-xs text-[#373f3a] mt-0.5">
                 {ui.title.corruptBody(corruptedSaveNotice)}
               </p>
@@ -289,22 +368,26 @@ export function TitleScreen() {
               onClick={handleToggleLocale}
               className="h-7 px-2 rounded-md border border-[#fce592]/60 bg-[#2d3430] hover:bg-[#3a433e] text-[#fffdf8] font-bureau text-[11px] font-bold inline-flex items-center justify-center shrink-0 cursor-pointer transition-colors"
             >
-              <span className={isEn ? "opacity-60" : "text-[#fce592] underline underline-offset-2"}>
+              <span
+                className={isEn ? "text-[#d8cbb5]" : "text-[#fce592] underline underline-offset-2"}
+              >
                 ES
               </span>
-              <span className="opacity-45 mx-1" aria-hidden="true">
+              <span className="text-[#b5a790] mx-1" aria-hidden="true">
                 |
               </span>
-              <span className={isEn ? "text-[#fce592] underline underline-offset-2" : "opacity-60"}>
+              <span
+                className={isEn ? "text-[#fce592] underline underline-offset-2" : "text-[#d8cbb5]"}
+              >
                 EN
               </span>
             </button>
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 bg-gradient-to-br from-[#fffdf8] via-[#fffdf8] to-[#f6efe0] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="space-y-1.5 max-w-2xl">
-            <h1 className="font-editorial text-2xl sm:text-4xl font-bold text-[#1f2421] tracking-tight">
+        <div className="title-hero-body p-4 sm:p-5 bg-gradient-to-br from-[#fffdf8] via-[#fffdf8] to-[#f6efe0] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
+          <div className="space-y-1 max-w-2xl">
+            <h1 className="title-hero-title font-editorial text-2xl sm:text-4xl font-bold text-[#1f2421] tracking-tight">
               Autónomo Simulator
             </h1>
             <blockquote className="border-l-4 border-[#b42b24] pl-3 py-0.5 font-editorial italic text-sm sm:text-lg text-[#373f3a]">
@@ -320,11 +403,11 @@ export function TitleScreen() {
           </div>
 
           {/* Official Tilted Rubber Stamp — safe margin prevents clipping on narrow 360px phones */}
-          <div className="self-start lg:self-center shrink-0 mx-1.5 my-0.5 rotate-[-2.5deg] rounded-xl border-4 border-[#b42b24] bg-[#fdf0ef] px-4 py-2.5 text-center shadow-xs">
-            <p className="stamp-badge text-[10px] sm:text-[11px] text-[#b42b24]">
+          <div className="self-start lg:self-center shrink-0 mx-1.5 my-0.5 rotate-[-2.5deg] rounded-xl border-4 border-[#9e221b] bg-[#fdf0ef] px-4 py-2 text-center shadow-xs">
+            <p className="stamp-badge text-[10px] sm:text-[11px] text-[#9e221b]">
               {ui.title.stampTop}
             </p>
-            <p className="font-bureau text-base sm:text-lg font-black text-[#b42b24] tabular-nums">
+            <p className="font-bureau text-base sm:text-lg font-black text-[#9e221b] tabular-nums">
               {ui.title.stampMain}
             </p>
             <p className="font-bureau text-[10px] sm:text-[11px] font-bold text-[#373f3a]">
@@ -337,8 +420,8 @@ export function TitleScreen() {
       {/* Main Action Grid: Play & Settings (Left) + Archive (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* Left Column: Play Actions & Desk Preferences */}
-        <div className="lg:col-span-5 space-y-3">
-          {hasResumableRun && resumableCalendar && (
+        <div className="title-left-stack lg:col-span-5 space-y-3">
+          {hasResumableRun && activeRun && resumableCalendar && (
             <section
               data-testid="continue-run-card"
               className="paper-dossier rounded-xl overflow-hidden bg-[#e8f5f1]"
@@ -352,7 +435,7 @@ export function TitleScreen() {
                 </span>
               </div>
 
-              <div className="p-3.5 space-y-2.5">
+              <div className="title-card-body p-3.5 space-y-2.5">
                 <div className="grid grid-cols-2 divide-x divide-[#1f2421]/14 rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] text-xs">
                   <div className="p-2">
                     <span className="text-[#4a524e] block text-[11px]">
@@ -372,7 +455,7 @@ export function TitleScreen() {
                     <strong
                       data-testid="continue-run-money"
                       className={`font-bureau text-sm tabular-nums whitespace-nowrap ${
-                        activeRun.indicators.money < 0 ? "text-[#b42b24]" : "text-[#1f5c53]"
+                        activeRun.indicators.money < 0 ? "text-[#9e221b]" : "text-[#1f5c53]"
                       }`}
                     >
                       {formatEuros(activeRun.indicators.money, locale)}
@@ -385,7 +468,7 @@ export function TitleScreen() {
                   data-testid="continue-run-btn"
                   title={ui.title.continueTitle}
                   onClick={handleContinueRun}
-                  className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                  className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Play className="w-5 h-5 fill-current shrink-0" aria-hidden="true" />
                   <span>{ui.title.continueBtn}</span>
@@ -404,15 +487,15 @@ export function TitleScreen() {
           >
             <div className="dossier-header">
               <h2 className="font-editorial text-base font-bold text-[#1f2421] flex items-center gap-2">
-                <FilePlus2 className="w-4 h-4 text-[#b42b24] shrink-0" aria-hidden="true" />
+                <FilePlus2 className="w-4 h-4 text-[#9e221b] shrink-0" aria-hidden="true" />
                 {ui.title.newRunHeading}
               </h2>
-              <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#8f510d]">
+              <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#7a4308]">
                 {ui.title.box01Badge}
               </span>
             </div>
 
-            <div className="p-3.5 space-y-2.5">
+            <div className="title-card-body p-3.5 space-y-2.5">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between gap-2">
                   <label
@@ -434,7 +517,7 @@ export function TitleScreen() {
                   onChange={(e) => setSeedInput(e.target.value)}
                   placeholder={ui.title.seedPlaceholder}
                   maxLength={40}
-                  className="w-full min-h-11 rounded-lg border-2 border-[#1f2421]/55 bg-[#f6efe0] px-3.5 py-2 font-bureau text-sm text-[#1f2421] placeholder:text-[#4a524e]/70"
+                  className="w-full min-h-11 rounded-lg border-2 border-[#1f2421]/60 bg-[#f6efe0] px-3.5 py-2 font-bureau text-sm text-[#1f2421] placeholder:text-[#4a524e]"
                 />
               </div>
 
@@ -442,17 +525,17 @@ export function TitleScreen() {
                 type="submit"
                 data-testid="start-run-btn"
                 title={ui.title.startRunTitle}
-                className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-base px-4 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-xs"
+                className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-base px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-xs"
               >
                 <Sparkles className="w-5 h-5 shrink-0" aria-hidden="true" />
                 <span>{ui.title.startRunBtn}</span>
-                <kbd className="hidden xl:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
+                <kbd className="hidden xl:inline-block ml-1 font-bureau text-xs px-1.5 py-0.5 rounded bg-[#1f2421]/25">
                   N
                 </kbd>
               </button>
 
               {hasResumableRun && (
-                <p className="text-xs text-[#8f510d] text-center">{ui.title.replaceActiveNote}</p>
+                <p className="text-xs text-[#7a4308] text-center">{ui.title.replaceActiveNote}</p>
               )}
             </div>
           </form>
@@ -470,7 +553,7 @@ export function TitleScreen() {
             </div>
 
             <div className="divide-y divide-[#1f2421]/14 text-xs">
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
+              <div className="px-4 py-2 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-bold text-[#1f2421]">{ui.title.reducedMotionTitle}</p>
                   <p className="text-[11px] text-[#4a524e]">{ui.title.reducedMotionDesc}</p>
@@ -484,7 +567,7 @@ export function TitleScreen() {
                   className={`min-h-9 px-3 py-1.5 rounded-lg border font-bureau font-bold shrink-0 cursor-pointer ${
                     reducedMotionOverride === true
                       ? "border-[#1f5c53] bg-[#e8f5f1] text-[#1f5c53]"
-                      : "border-[#1f2421]/45 bg-[#f6efe0] text-[#1f2421]"
+                      : "border-[#1f2421]/50 bg-[#f6efe0] text-[#1f2421]"
                   }`}
                 >
                   {reducedMotionOverride === true
@@ -493,7 +576,7 @@ export function TitleScreen() {
                 </button>
               </div>
 
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
+              <div className="px-4 py-2 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-bold text-[#1f2421]">{ui.title.sfxTitle}</p>
                   <p className="text-[11px] text-[#4a524e]">{ui.title.sfxDesc}</p>
@@ -507,7 +590,7 @@ export function TitleScreen() {
                   className={`min-h-9 px-3 py-1.5 rounded-lg border font-bureau font-bold inline-flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     !sfxMuted
                       ? "border-[#1f5c53] bg-[#e8f5f1] text-[#1f5c53]"
-                      : "border-[#1f2421]/45 bg-[#f6efe0] text-[#4a524e]"
+                      : "border-[#1f2421]/50 bg-[#f6efe0] text-[#373f3a]"
                   }`}
                 >
                   {sfxMuted ? (
@@ -519,7 +602,7 @@ export function TitleScreen() {
                 </button>
               </div>
 
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
+              <div className="px-4 py-2 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-bold text-[#1f2421]">{ui.title.fastPacingTitle}</p>
                   <p className="text-[11px] text-[#4a524e]">{ui.title.fastPacingDesc}</p>
@@ -532,8 +615,8 @@ export function TitleScreen() {
                   onClick={handleToggleFastPacing}
                   className={`min-h-9 px-3 py-1.5 rounded-lg border font-bureau font-bold inline-flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     fastPacing
-                      ? "border-[#8f510d] bg-[#fcf4df] text-[#8f510d]"
-                      : "border-[#1f2421]/45 bg-[#f6efe0] text-[#1f2421]"
+                      ? "border-[#7a4308] bg-[#fcf4df] text-[#7a4308]"
+                      : "border-[#1f2421]/50 bg-[#f6efe0] text-[#1f2421]"
                   }`}
                 >
                   <Zap className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
@@ -563,13 +646,13 @@ export function TitleScreen() {
               data-testid="title-tab-hall-of-fame"
               title={ui.title.hallTabTitle}
               onClick={() => setActiveTitleTab("hall_of_fame")}
-              className={`min-h-12 px-3 sm:px-4 py-3 font-editorial font-bold text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer ${
+              className={`min-h-12 px-3 sm:px-4 py-2.5 font-editorial font-bold text-sm sm:text-base flex items-center justify-center gap-2 cursor-pointer ${
                 activeTitleTab === "hall_of_fame"
                   ? "bg-[#fffdf8] text-[#1f2421] shadow-[inset_0_-3px_0_0_#b42b24]"
-                  : "text-[#4a524e] hover:bg-[#f6efe0]"
+                  : "text-[#373f3a] hover:bg-[#f6efe0]"
               }`}
             >
-              <FolderArchive className="w-4 h-4 text-[#b42b24] shrink-0" aria-hidden="true" />
+              <FolderArchive className="w-4 h-4 text-[#9e221b] shrink-0" aria-hidden="true" />
               <span className="truncate">{ui.title.hallTabLabel(profile.hall_of_fame.length)}</span>
             </button>
             <button
@@ -583,10 +666,10 @@ export function TitleScreen() {
               data-testid="title-tab-achievements"
               title={ui.title.achievementsTabTitle}
               onClick={() => setActiveTitleTab("achievements")}
-              className={`min-h-12 px-3 sm:px-4 py-3 font-editorial font-bold text-sm sm:text-base flex items-center justify-center gap-2 border-l-2 border-[#1f2421]/25 cursor-pointer ${
+              className={`min-h-12 px-3 sm:px-4 py-2.5 font-editorial font-bold text-sm sm:text-base flex items-center justify-center gap-2 border-l-2 border-[#1f2421]/25 cursor-pointer ${
                 activeTitleTab === "achievements"
                   ? "bg-[#fffdf8] text-[#1f2421] shadow-[inset_0_-3px_0_0_#1f5c53]"
-                  : "text-[#4a524e] hover:bg-[#f6efe0]"
+                  : "text-[#373f3a] hover:bg-[#f6efe0]"
               }`}
             >
               <Award className="w-4 h-4 text-[#1f5c53] shrink-0" aria-hidden="true" />
@@ -607,7 +690,7 @@ export function TitleScreen() {
                 : "title-tab-achievements"
             }
             data-testid="title-archive-panel"
-            className="p-4 max-h-[480px] overflow-y-auto dossier-scroll"
+            className="title-archive-body p-4 max-h-[460px] overflow-y-auto dossier-scroll"
           >
             {activeTitleTab === "hall_of_fame" ? (
               <div data-testid="hall-of-fame-list" className="space-y-2.5">
@@ -629,6 +712,7 @@ export function TitleScreen() {
                         run.summary_quote,
                         locale,
                       );
+                      const runSeed = (run as { seed?: string }).seed;
                       return (
                         <li
                           key={run.run_id}
@@ -644,7 +728,7 @@ export function TitleScreen() {
                                   ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40"
                                   : meta.tone === "abandon"
                                     ? "bg-[#ebf2fa] text-[#264e7a] border-[#264e7a]/40"
-                                    : "bg-[#fdf0ef] text-[#b42b24] border-[#b42b24]/40"
+                                    : "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/40"
                               }`}
                             >
                               {meta.stampText}
@@ -659,6 +743,11 @@ export function TitleScreen() {
                               🧾 {ui.title.hallBilledPrefix}:{" "}
                               {formatEuros(run.lifetime_billed, locale)}
                             </span>
+                            {runSeed && (
+                              <span className="text-[#4a524e]">
+                                {ui.title.seedPrefix}: {runSeed}
+                              </span>
+                            )}
                           </div>
                           {run.earned_victories.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -692,7 +781,7 @@ export function TitleScreen() {
                       className={`rounded-lg border p-3 flex items-start justify-between gap-3 ${
                         unlockedAt
                           ? "border-[#1f5c53] bg-[#e8f5f1]"
-                          : "border-[#1f2421]/20 bg-[#f6efe0] opacity-85"
+                          : "border-[#1f2421]/25 bg-[#f6efe0]"
                       }`}
                     >
                       <div className="min-w-0 space-y-0.5">
@@ -708,7 +797,7 @@ export function TitleScreen() {
                       </div>
                       <span
                         className={`shrink-0 inline-flex items-center gap-1 stamp-badge text-[10px] px-2 py-1 rounded ${
-                          unlockedAt ? "bg-[#1f5c53] text-[#fffdf8]" : "bg-[#efe4ce] text-[#4a524e]"
+                          unlockedAt ? "bg-[#1f5c53] text-[#fffdf8]" : "bg-[#efe4ce] text-[#373f3a]"
                         }`}
                       >
                         {unlockedAt ? (
@@ -728,6 +817,78 @@ export function TitleScreen() {
           </div>
         </section>
       </div>
+
+      {/* Overwrite Active Run Confirmation Modal */}
+      {confirmOverwriteOpen && hasResumableRun && activeRun && resumableCalendar && (
+        <dialog
+          open
+          aria-modal="true"
+          aria-labelledby="confirm-overwrite-title"
+          data-testid="confirm-overwrite-run-modal"
+          className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4"
+        >
+          <div className="paper-dossier animate-dossier w-full max-w-md rounded-xl overflow-hidden bg-[#fffdf8]">
+            <div className="bg-[#9e221b] text-[#fffdf8] px-4 py-3 border-b-2 border-[#1f2421] flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <AlertTriangle className="w-5 h-5 shrink-0 text-[#fce592]" aria-hidden="true" />
+                <h2
+                  id="confirm-overwrite-title"
+                  className="font-editorial text-base sm:text-lg font-bold"
+                >
+                  {isEn ? "Replace active dossier?" : "¿Reemplazar expediente en curso?"}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setConfirmOverwriteOpen(false)}
+                aria-label={isEn ? "Cancel" : "Cancelar"}
+                className="inline-flex items-center gap-1 rounded px-1.5 py-1 hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
+              >
+                <span className="hidden sm:inline font-bureau text-[10px] font-bold text-[#fce592]">
+                  Esc
+                </span>
+                <X className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3 text-sm text-[#1f2421]">
+              <p className="text-[#373f3a] leading-snug">
+                {isEn
+                  ? `Starting a new registration will overwrite your active run (${resumableCalendar.label}, ${formatEuros(activeRun.indicators.money, locale)} in cash).`
+                  : `Tramitar una nueva alta reemplazará la partida activa (${resumableCalendar.label}, ${formatEuros(activeRun.indicators.money, locale)} en caja).`}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <button
+                  ref={confirmOverwriteBtnRef}
+                  type="button"
+                  data-testid="confirm-overwrite-run-btn"
+                  onClick={executeStartNewRun}
+                  className="min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <span>{isEn ? "Overwrite & start" : "Sí, nueva alta"}</span>
+                  <kbd className="hidden sm:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/25">
+                    1
+                  </kbd>
+                </button>
+
+                <button
+                  ref={cancelOverwriteBtnRef}
+                  type="button"
+                  data-testid="cancel-overwrite-run-btn"
+                  onClick={() => setConfirmOverwriteOpen(false)}
+                  className="min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#efe4ce] hover:bg-[#e5d6ba] text-[#1f2421] font-bold text-sm px-4 py-2.5 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <span>{isEn ? "Keep active run" : "Conservar partida"}</span>
+                  <kbd className="hidden sm:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/15">
+                    Esc
+                  </kbd>
+                </button>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      )}
     </main>
   );
 }

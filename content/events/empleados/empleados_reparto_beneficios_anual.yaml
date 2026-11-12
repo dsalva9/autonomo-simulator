@@ -1,0 +1,60 @@
+schema_version: 1
+id: empleados_reparto_beneficios_anual
+category: empleados
+title: "Cierre veterano en verde y reparto del pastel"
+body: "Con más de cinco años a las espaldas el estudio cierra un ejercicio sólido. Tu persona en plantilla conoce el pulso de la facturación y asoma la decisión clásica: compartir prima de resultados o blindar toda la caja."
+tags:
+  - plantilla
+  - veterania
+  - beneficios
+  - retencion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 72
+  months_of_year:
+    - 12
+    - 1
+  has_employee: true
+weight: 11
+cooldown_months: 10
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: dar_gratificacion_moderada_y_dias_libres
+    label: "Pagar una gratificación prudente (280 €) más tres días puente libres"
+    result_text: "Equilibras prudencia financiera con descanso real y todo el mundo arranca el curso con buen sabor de boca."
+    effects:
+      deductible_expense: 280
+      stress: -5
+      moral: 7
+      employee_satisfaction: 10
+  - id: repartir_prima_variable_transparente
+    label: "Abonar prima anual de resultados y fijar objetivos claros (690 €)"
+    requirements:
+      stats:
+        money:
+          min: 2500
+    result_text: "Compartir los años buenos consolida un compromiso difícil de comprar con simples discursos motivacionales."
+    effects:
+      deductible_expense: 690
+      stress: -8
+      moral: 11
+      reputation: 3
+      employee_satisfaction: 16
+      clear_flags:
+        - desgaste_plantilla
+      add_modifier:
+        id: mod_incentivo_beneficios_anual
+        label: "Participación anual en beneficios"
+        remaining_months: 5
+        monthly_billed_delta: 340
+        monthly_stress_delta: -2
+  - id: guardar_todo_el_colchon_en_caja
+    label: "Destinar todo el excedente a reservas del estudio por lo que pueda venir"
+    result_text: "Tu colchón bancario duerme calentito, aunque cuesta pedir esfuerzos extra cuando los años buenos no se notan en nómina."
+    effects:
+      billed_income: 320
+      stress: 4
+      moral: -4
+      employee_satisfaction: -11

@@ -1,0 +1,58 @@
+schema_version: 1
+id: gestor_elena_plan_prevision_autonomo
+category: gestor
+title: El tope deducible del plan simplificado de autónomos
+body: "Recta final del año: Elena calcula al euro cuánto puedes aportar a un plan de pensiones de empleo simplificado para autónomos y recortar tu tipo marginal de IRPF sin secar tu tesorería."
+tags:
+  - gestoria
+  - elena
+  - irpf
+  - cierre_anual
+  - veterania
+character_id: gestor_premium_elena
+character_expression: pleased
+illustration_id: null
+requirements:
+  min_month: 52
+  months_of_year:
+    - 10
+    - 11
+    - 12
+  gestor_tiers:
+    - premium
+weight: 12
+cooldown_months: 9
+max_occurrences: 3
+choices:
+  - id: mantener_toda_la_liquidez_en_caja
+    label: No inmovilizar ahorros y priorizar liquidez inmediata
+    result_text: Pagas el tramo completo sin reducciones extra, pero conservas todo tu colchón disponible en el banco.
+    effects:
+      stress: -2
+      moral: 1
+      fiscal_risk: -2
+  - id: aportar_tramo_optimo_plan_autonomos
+    label: Aportar el tramo óptimo calculado por Elena antes del 31
+    requirements:
+      stats:
+        money:
+          min: 1400
+    result_text: Rebajas de un plumazo tu escalón marginal del año y sientes por primera vez que tienes red de futuro.
+    effects:
+      deductible_expense: 950
+      stress: -8
+      moral: 8
+      personal_life: 4
+      fiscal_risk: -8
+  - id: hacer_aportacion_prudente_mitad_tramo
+    label: Hacer una aportación moderada que equilibre caja y ahorro
+    requirements:
+      stats:
+        money:
+          min: 550
+    result_text: Suavizas la factura anual de IRPF sin desproteger la cuenta operativa para el arranque de enero.
+    effects:
+      deductible_expense: 380
+      stress: -5
+      moral: 5
+      fiscal_risk: -5

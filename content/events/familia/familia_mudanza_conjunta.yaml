@@ -2,7 +2,7 @@ schema_version: 1
 id: familia_mudanza_conjunta
 category: familia
 title: "Cajas de mudanza y gastos a medias"
-body: "Los caseros de ambos amagan con subir el alquiler el mismo mes y Álex pone los números encima de la mesa: si os vais a vivir juntos compartiréis suministros, compra y techo, a cambio de negociar cuántas carpetas caben en el salón sin parecer una gestoría."
+body: "Los caseros de ambos amagan con subir el alquiler el mismo mes y Álex echa cuentas: viviendo juntos compartiréis techo y recibos, a cambio de pactar cuántas carpetas caben en el salón sin parecer una gestoría."
 tags:
   - pareja
   - convivencia
@@ -15,6 +15,8 @@ requirements:
   min_month: 6
   family_statuses:
     - dating
+  forbidden_flags:
+    - convivencia_estable
 weight: 11
 cooldown_months: 12
 max_occurrences: 2

@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_reestructuracion_despido
 category: empleados
 title: "Tijera o reinvención en el despacho"
-body: "Encadenas un par de meses en los que mantener una nómina fija todos los días 28 empieza a quitarte el sueño frente al extracto bancario. Toca decidir en frío si reorganizas la actividad comercial para sostener el puesto o si reduces estructura asumiendo el coste de salida."
+body: "Encadenas dos meses en los que sostener nómina fija cada día 28 te quita el sueño frente al banco. Toca decidir en frío si sales a captar ventas para salvar el puesto o reduces estructura indemnizando."
 tags:
   - plantilla
   - reestructuracion
@@ -27,6 +27,9 @@ choices:
       moral: 3
       stress: 5
       reputation: 2
+      employee_satisfaction: 9
+      clear_flags:
+        - desgaste_plantilla
   - id: acordar_salida_pactada
     label: "Pactar una salida amistosa con indemnización íntegra y carta de recomendación"
     result_text: "Es una conversación dura, pero cerráis la etapa con respeto mutuo y cuentas claras (1.450 € de liquidación). El estudio vuelve a ser silencioso y tus costes fijos caen de golpe."

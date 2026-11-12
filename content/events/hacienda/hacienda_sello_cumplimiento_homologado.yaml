@@ -2,7 +2,7 @@ schema_version: 1
 id: hacienda_sello_cumplimiento_homologado
 category: hacienda
 title: "Dividendo veterano: homologación fiscal para grandes cuentas"
-body: "Un portal de compras corporativas renueva su censo de proveedores veteranos y exige doble certificado limpio de Hacienda y Seguridad Social en menos de veinticuatro horas. Gómez valida tu expediente."
+body: Un portal de compras corporativas renueva su censo de proveedores veteranos y exige doble certificado limpio de Hacienda y Seguridad Social en menos de veinticuatro horas. Gómez valida tu expediente.
 tags:
   - homologacion
   - solvencia
@@ -15,14 +15,24 @@ requirements:
   stats:
     fiscal_risk:
       max: 40
+  forbidden_flags:
+    - expediente_inspeccion_abierto
 weight: 12
 cooldown_months: 14
-max_occurrences: null
+max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: celebrar_expediente_sin_mas_carga
+    label: Guardar los certificados limpios y tomarte la semana sin más carga
+    result_text: Saboreas el raro placer de ver «SIN DEUDAS» en pantalla grande y dedicas la tarde a descansar de verdad.
+    effects:
+      stress: -10
+      moral: 5
+      personal_life: 6
+      fiscal_risk: -4
   - id: descargar_certificados_y_facturar
-    label: "Emitir ambos certificados limpios al instante y cerrar el contrato"
-    result_text: "Mientras otros candidatos sudan regularizando picos, tú entregas papeles impolutos y te llevas el encargo."
+    label: Emitir ambos certificados limpios al instante y cerrar el contrato
+    result_text: Mientras otros candidatos sudan regularizando picos, tú entregas papeles impolutos y te llevas el encargo.
     effects:
       billed_income: 1150
       deductible_expense: 110
@@ -31,12 +41,12 @@ choices:
       reputation: 5
       fiscal_risk: -6
   - id: activar_dosier_trimestral_gestoria
-    label: "Encargar a tu gestoría mantener tu carpeta de solvencia al día"
+    label: Encargar a tu gestoría mantener tu carpeta de solvencia al día
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu asesoría automatiza tus certificados trimestrales y te abre de par en par los departamentos de compras."
+    result_text: Tu asesoría automatiza tus certificados trimestrales y te abre de par en par los departamentos de compras.
     effects:
       billed_income: 900
       deductible_expense: 150
@@ -44,11 +54,3 @@ choices:
       moral: 7
       reputation: 4
       fiscal_risk: -10
-  - id: celebrar_expediente_sin_mas_carga
-    label: "Guardar los certificados limpios y tomarte la semana sin más carga"
-    result_text: "Saboreas el raro placer de ver «SIN DEUDAS» en pantalla grande y dedicas la tarde a descansar de verdad."
-    effects:
-      stress: -10
-      moral: 5
-      personal_life: 6
-      fiscal_risk: -4

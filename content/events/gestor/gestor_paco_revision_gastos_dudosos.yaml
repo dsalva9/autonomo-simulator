@@ -2,30 +2,23 @@ schema_version: 1
 id: gestor_paco_revision_gastos_dudosos
 category: gestor
 title: "Cruce informático por gastos de mobiliario"
-body: "Dos meses después del debate sobre el mobiliario, salta un aviso preventivo de contraste censal: el epígrafe de tu actividad choca con partidas de decoración comercial registradas en la gestoría de Paco y piden aclaración."
+body: "Dos meses después de colar el sofá en el trimestre, salta un aviso de contraste censal: el epígrafe de tu actividad choca con partidas de decoración registradas por la gestoría de Paco y exigen aclaración."
 tags:
   - gestoria
   - contraste_censal
   - mobiliario
+character_id: gestor_barato_paco
+character_expression: stressed
+requirements:
+  gestor_tiers:
+    - cheap
+  required_flags:
+    - sofa_oficina_paco
 weight: 0
 cooldown_months: 0
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: presentar_complementaria_preventiva
-    label: "Encargar una declaración complementaria limpia y zanjar el tema (130 €)"
-    requirements:
-      stats:
-        money:
-          min: 200
-    result_text: "Limpias cualquier rastro dudoso antes de que escale a expediente sancionador y recuperas la paz mental de golpe."
-    effects:
-      deductible_expense: 130
-      stress: -5
-      moral: 3
-      fiscal_risk: -12
-      clear_flags:
-        - sofa_oficina_paco
   - id: preparar_dossier_fotografico_despacho
     label: "Montar un rincón de trabajo impecable y enviar memoria fotográfica"
     outcomes:
@@ -40,14 +33,30 @@ choices:
             - sofa_oficina_paco
       - id: ajuste_parcial_de_cuota
         weight: 40
-        result_text: "Aceptan la silla pero tumban el resto del asiento por uso mixto, tocando ingresar la diferencia con un pequeño recargo."
+        result_text: "Aceptan la silla pero tumban el sofá por uso doméstico, tocando ingresar la diferencia con un pequeño recargo."
         effects:
           cash_delta: -210
           stress: 9
           moral: -4
           fiscal_risk: 6
+          set_flags:
+            - susto_con_paco
           clear_flags:
             - sofa_oficina_paco
+  - id: presentar_complementaria_preventiva
+    label: "Encargar una declaración complementaria limpia y zanjar el tema (130 €)"
+    requirements:
+      stats:
+        money:
+          min: 200
+    result_text: "Limpias cualquier rastro dudoso antes de que escale a expediente sancionador y recuperas la paz mental de golpe."
+    effects:
+      deductible_expense: 130
+      stress: -5
+      moral: 3
+      fiscal_risk: -12
+      clear_flags:
+        - sofa_oficina_paco
   - id: mantener_asiento_sin_tocar_nada
     label: "Responder con una alegación genérica de Paco y no tocar ni un euro"
     result_text: "Evitas soltar liquidez este mes, pero tu expediente queda marcado con un pósit amarillo fosforescente para futuros cruces."
@@ -55,3 +64,5 @@ choices:
       stress: 4
       moral: -2
       fiscal_risk: 13
+      clear_flags:
+        - sofa_oficina_paco

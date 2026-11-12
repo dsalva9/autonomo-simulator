@@ -1,0 +1,59 @@
+schema_version: 1
+id: familia_cena_nochebuena_clientes
+category: familia
+title: "Langostinos en la mesa y «cambio urgente» el 24"
+body: "Son las seis de la tarde de Nochebuena, huele a caldo casero y alguien que no miró tu entrega en tres semanas exige un ajuste urgente «antes de cerrar el año». En el salón ya están sacando el turrón."
+tags:
+  - navidad
+  - familia
+  - limites
+  - conciliacion
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 12
+  months_of_year:
+    - 12
+weight: 12
+cooldown_months: 11
+max_occurrences: 4
+exclusive_with: []
+choices:
+  - id: cobrar_recargo_festivo_una_hora
+    label: "Aceptar solo si firma tarifa exprés festiva y resolverlo en una hora"
+    outcomes:
+      - id: aprueba_recargo_navideno
+        weight: 55
+        result_text: "Para tu sorpresa acepta el suplemento sin rechistar: despachas el archivo antes de los entrantes y te financias todos los regalos."
+        effects:
+          billed_income: 680
+          stress: 5
+          moral: 4
+          personal_life: -2
+          reputation: 2
+      - id: regateo_y_cena_tardia
+        weight: 45
+        result_text: "Se alarga entre correcciones absurdas y te sientas a cenar cuando ya están recogiendo los platos de los langostinos."
+        effects:
+          billed_income: 420
+          stress: 11
+          moral: -5
+          personal_life: -9
+  - id: activar_respuesta_festiva_y_brindar
+    label: "Activar respuesta automática hasta el día 27 y salir a brindar (90 €)"
+    result_text: "Compras buen vino de camino, apagas el móvil de verdad y descubres el día 27 que la supuesta emergencia podía esperar perfectamente."
+    effects:
+      cash_delta: -90
+      stress: -13
+      moral: 10
+      personal_life: 14
+      reputation: -1
+  - id: tragar_gratis_por_no_discutir
+    label: "Hacer el ajuste rápido sin cobrar extra para cerrar el año en paz"
+    result_text: "El cliente te manda un árbol con purpurina por mensaje y tú cenas con cara de acelga jurando no repetir el año que viene."
+    effects:
+      billed_income: 220
+      stress: 8
+      moral: -6
+      personal_life: -7
+      reputation: 1

@@ -12,11 +12,19 @@ character_id: cliente_regateador
 character_expression: angry
 requirements:
   min_month: 72
-weight: 11
-cooldown_months: 14
+weight: 9
+cooldown_months: 16
 max_occurrences: null
 exclusive_with: []
 choices:
+  - id: agrupar_menudeo_en_bono_prepago
+    label: Obligar a comprar bonos cerrados de diez horas por adelantado
+    result_text: "Se acabó emitir facturas ridículas: quien quiera encargos sueltos paga el bono completo hoy mismo antes de empezar."
+    effects:
+      billed_income: 1250
+      stress: -1
+      moral: 5
+      reputation: 2
   - id: implantar_ticket_minimo_alto
     label: Implantar importe mínimo de proyecto y soltar el menudeo
     outcomes:
@@ -43,14 +51,6 @@ choices:
           moral: 4
           personal_life: 5
           reputation: 2
-  - id: agrupar_menudeo_en_bono_prepago
-    label: Obligar a comprar bonos cerrados de diez horas por adelantado
-    result_text: "Se acabó emitir facturas ridículas: quien quiera encargos sueltos paga el bono completo hoy mismo antes de empezar."
-    effects:
-      billed_income: 1250
-      stress: -1
-      moral: 5
-      reputation: 2
   - id: dejar_pasar_menudeo_y_descansar
     label: Rechazar los microencargos de Borja y tomarte un respiro
     result_text: Dejas pasar la calderilla sin remordimientos y dedicas la semana a recuperar sueño atrasado.

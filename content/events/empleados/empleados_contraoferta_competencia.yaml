@@ -29,6 +29,7 @@ choices:
       moral: 7
       stress: 2
       reputation: 4
+      employee_satisfaction: 15
       clear_flags:
         - desgaste_plantilla
       add_modifier:
@@ -44,6 +45,7 @@ choices:
     effects:
       moral: -6
       stress: 10
+      employee_satisfaction: -18
       set_flags:
         - desgaste_plantilla
       schedule_events:

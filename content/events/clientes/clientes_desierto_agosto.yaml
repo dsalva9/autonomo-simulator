@@ -2,7 +2,7 @@ schema_version: 1
 id: clientes_desierto_agosto
 category: clientes
 title: "Agosto: cerrado por vacaciones (menos tu cuota)"
-body: "Media España está en el chiringuito y tu bandeja de entrada devuelve respuestas automáticas hasta septiembre. En tu despacho solo se oye el ventilador removiendo aire caliente mientras el banco prepara puntualmente el cargo de los gastos fijos."
+body: Media España está en el chiringuito y tu bandeja de entrada devuelve respuestas automáticas hasta septiembre. En tu despacho solo se oye el ventilador removiendo aire caliente mientras el banco prepara puntualmente el cargo de los gastos fijos.
 tags:
   - estacionalidad
   - descanso
@@ -11,17 +11,39 @@ character_id: null
 illustration_id: null
 requirements:
   min_month: 6
-weight: 9
-cooldown_months: 12
-max_occurrences: 5
+  months_of_year:
+    - 8
+weight: 11
+cooldown_months: 11
+max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: bajar_persiana_quince_dias
+    label: Bajar la persiana de verdad y desconectar quince días
+    result_text: Asumes el bajón de ingresos y te vas lejos del portátil. Por primera vez en meses recuerdas qué sabor tiene una sobremesa sin mirar el correo.
+    effects:
+      cash_delta: -320
+      stress: -14
+      moral: 8
+      personal_life: 10
+  - id: ordenar_procesos_y_facturas
+    label: Aprovechar la calma para actualizar tarifas, plantillas y archivo fiscal
+    result_text: Renuevas licencias, dejas las carpetas relucientes y preparas el terreno comercial para septiembre con la mente despejada.
+    effects:
+      deductible_expense: 120
+      stress: -5
+      moral: 3
+      reputation: 2
+      fiscal_risk: -4
+      set_flags:
+        - web_corporativa_activa
+        - portfolio_actualizado
   - id: campana_caza_clientes_verano
-    label: "Invertir en promoción para pescar urgencias huérfanas de agosto"
+    label: Invertir en promoción para pescar urgencias huérfanas de agosto
     outcomes:
       - id: rescate_veraniego
         weight: 60
-        result_text: "Das con una empresa extranjera desesperada porque en Madrid no les contesta ni el apuntador. Salvas el mes facturando a gusto."
+        result_text: Das con una empresa extranjera desesperada porque en Madrid no les contesta ni el apuntador. Salvas el mes facturando a gusto.
         effects:
           deductible_expense: 180
           billed_income: 1150
@@ -30,25 +52,8 @@ choices:
           reputation: 3
       - id: silencio_solar
         weight: 40
-        result_text: "Tus anuncios solo reciben clics de bots madrugadores y un primo preguntando si arreglas impresoras."
+        result_text: Tus anuncios solo reciben clics de bots madrugadores y un primo preguntando si arreglas impresoras.
         effects:
           deductible_expense: 180
           stress: 6
           moral: -5
-  - id: bajar_persiana_quince_dias
-    label: "Bajar la persiana de verdad y desconectar quince días"
-    result_text: "Asumes el bajón de ingresos y te vas lejos del portátil. Por primera vez en meses recuerdas qué sabor tiene una sobremesa sin mirar el correo."
-    effects:
-      cash_delta: -320
-      stress: -14
-      moral: 8
-      personal_life: 10
-  - id: ordenar_procesos_y_facturas
-    label: "Aprovechar la calma para actualizar tarifas, plantillas y archivo fiscal"
-    result_text: "Renuevas licencias, dejas las carpetas relucientes y preparas el terreno comercial para septiembre con la mente despejada."
-    effects:
-      deductible_expense: 120
-      stress: -5
-      moral: 3
-      reputation: 2
-      fiscal_risk: -4

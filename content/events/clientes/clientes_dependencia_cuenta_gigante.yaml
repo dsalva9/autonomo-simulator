@@ -12,20 +12,11 @@ character_id: cliente_corporativo_marta
 character_expression: angry
 requirements:
   min_month: 54
-weight: 11
-cooldown_months: 10
-max_occurrences: null
+weight: 9
+cooldown_months: 14
+max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: abrazar_monocultivo_millonario
-    label: Aceptar la ampliación total aunque dependas de una sola firma
-    result_text: La transferencia mensual impresiona, pero duermes sabiendo que un estornudo en su departamento tumbando el contrato te dejaría temblando.
-    effects:
-      billed_income: 2200
-      stress: 13
-      moral: -4
-      personal_life: -5
-      reputation: 2
   - id: fijar_techo_y_diversificar_cartera
     label: Poner tope del 35 % de tu tiempo y captar dos cuentas medianas
     result_text: Marta arruga el gesto al principio, pero respeta tu independencia y equilibras el riesgo comercial con clientes nuevos.
@@ -35,6 +26,15 @@ choices:
       stress: 4
       moral: 6
       reputation: 4
+  - id: abrazar_monocultivo_millonario
+    label: Aceptar la ampliación total aunque dependas de una sola firma
+    result_text: La transferencia mensual impresiona, pero duermes sabiendo que un estornudo en su departamento tumbando el contrato te dejaría temblando.
+    effects:
+      billed_income: 2200
+      stress: 13
+      moral: -4
+      personal_life: -5
+      reputation: 2
   - id: recortar_exposicion_y_respirar
     label: Rechazar el bloque extra y recuperar margen mental este mes
     result_text: Frenas la inercia antes de convertirte en empleado encubierto de una sola multinacional y bajas pulsaciones.

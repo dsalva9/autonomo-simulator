@@ -20,16 +20,6 @@ cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: improvisar_cena_y_confesar_con_humor
-    label: "Cerrar a las seis, comprar detalle y reservar cena especial (135 €)"
-    result_text: "Confiesas el despiste antes del aperitivo sin poner excusas baratas. Álex se ríe de tu cabeza fiscal y salváis una gran noche."
-    effects:
-      cash_delta: -135
-      stress: -8
-      moral: 8
-      personal_life: 12
-      clear_flags:
-        - crisis_pareja_latente
   - id: cocinar_en_casa_con_velas
     label: "Bajar al mercado a la carrera y montar una cena casera cuidada (55 €)"
     outcomes:
@@ -49,6 +39,16 @@ choices:
           stress: 5
           moral: -3
           personal_life: -4
+  - id: improvisar_cena_y_confesar_con_humor
+    label: "Cerrar a las seis, comprar detalle y reservar cena especial (135 €)"
+    result_text: "Confiesas el despiste antes del aperitivo sin poner excusas baratas. Álex se ríe de tu cabeza fiscal y salváis una gran noche."
+    effects:
+      cash_delta: -135
+      stress: -8
+      moral: 8
+      personal_life: 12
+      clear_flags:
+        - crisis_pareja_latente
   - id: pedir_celebrarlo_el_fin_de_semana
     label: "Admitir que hoy no llegas y prometer compensarlo el sábado sin falta"
     result_text: "Terminas tus entregas puntualmente, pero cenas frente al brillo frío de la pantalla con un silencio denso al otro lado."

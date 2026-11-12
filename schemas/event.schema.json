@@ -107,6 +107,22 @@
                 }
               ]
             },
+            "months_of_year": {
+              "anyOf": [
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 12
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "stats": {
               "anyOf": [
                 {
@@ -219,6 +235,31 @@
                         }
                       },
                       "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "employee_satisfaction": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "min": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "max": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
                     }
                   },
                   "additionalProperties": false
@@ -380,6 +421,22 @@
                       }
                     ]
                   },
+                  "months_of_year": {
+                    "anyOf": [
+                      {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 12
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "stats": {
                     "anyOf": [
                       {
@@ -492,6 +549,31 @@
                               }
                             },
                             "additionalProperties": false
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "employee_satisfaction": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "min": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "max": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -645,6 +727,9 @@
                     "type": "number"
                   },
                   "fiscal_risk": {
+                    "type": "number"
+                  },
+                  "employee_satisfaction": {
                     "type": "number"
                   },
                   "set_flags": {
@@ -905,6 +990,9 @@
                           "type": "number"
                         },
                         "fiscal_risk": {
+                          "type": "number"
+                        },
+                        "employee_satisfaction": {
                           "type": "number"
                         },
                         "set_flags": {

@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_web_corporativa_propia
+category: clientes
+title: En casa de herrero, web en «Próximamente» desde hace dos años
+body: Un potencial cliente pide ver tu web antes de aprobar 2.100 € y descubre un cartel de «En construcción» de cuando te diste de alta. Toca decidir si sigues viviendo del boca a boca o montas un escaparate serio.
+tags:
+  - captacion
+  - marca_personal
+  - inversion
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 4
+  forbidden_flags:
+    - web_corporativa_activa
+weight: 10
+cooldown_months: 12
+max_occurrences: 2
+choices:
+  - id: enviar_pdf_provisional_por_correo
+    label: Mandar un PDF apañado por correo y dejar la web para otro trimestre
+    result_text: Salvas el presupuesto al vuelo con muestras sueltas, aunque sigues invisible para quien busque fuera de tu agenda.
+    effects:
+      billed_income: 950
+      stress: 3
+      reputation: 1
+  - id: invertir_en_web_y_casos_estudio
+    label: Dedicar 320 € y tres tardes a publicar web propia y casos reales
+    result_text: Estrenas dominio limpio, tarifas orientativas y formulario con filtro. El cliente firma al instante sin regatear un euro.
+    effects:
+      billed_income: 2100
+      deductible_expense: 320
+      moral: 5
+      stress: 6
+      reputation: 6
+      set_flags:
+        - web_corporativa_activa
+        - portfolio_actualizado
+  - id: encerrarse_finde_plantilla_gratuita
+    label: Sacrificar el fin de semana maquetando una página mínima sin gastar
+    result_text: Llegas al lunes con ojeras y una web digna que cumple el expediente y desbloquea la mitad del encargo.
+    effects:
+      billed_income: 1550
+      stress: 9
+      personal_life: -5
+      reputation: 4
+      set_flags:
+        - web_corporativa_activa

@@ -9,5 +9,5 @@ expressions:
   stressed: char_empleada_senior_laura_saturada
 employee_params:
   role_label: "Especialista sénior"
-  monthly_cost: 2150
-  billing_multiplier: 1.65
+  monthly_cost: 2100
+  billing_multiplier: 2.05

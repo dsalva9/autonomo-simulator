@@ -16,18 +16,6 @@ cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: exigir_euros_aunque_sea_en_dos_plazos
-    label: "Rechazar el vino: en el banco no admiten botellas para la cuota"
-    result_text: Le plantas un calendario de dos pagos en euros reales. Cobras la mitad hoy y el resto queda documentado.
-    effects:
-      billed_income: 600
-      deferred_invoice:
-        amount: 600
-        delay_months: 1
-        default_prob: 0.15
-      stress: 12
-      moral: 1
-      reputation: 2
   - id: aceptar_mitad_efectivo_y_cajas
     label: Aceptar el apaño fuera de libros y llenarte la despensa
     result_text: Cobras un pellizco limpio y cenas vino decente dos meses, aunque el pago en especie sin declarar tiene mal despertar fiscal.
@@ -39,6 +27,18 @@ choices:
       fiscal_risk: 22
       set_flags:
         - cobro_en_b_reciente
+  - id: exigir_euros_aunque_sea_en_dos_plazos
+    label: "Rechazar el vino: en el banco no admiten botellas para la cuota"
+    result_text: Le plantas un calendario de dos pagos en euros reales. Cobras la mitad hoy y el resto queda documentado.
+    effects:
+      billed_income: 600
+      deferred_invoice:
+        amount: 600
+        delay_months: 1
+        default_prob: 0.15
+      stress: 6
+      moral: 1
+      reputation: 2
   - id: perdonar_resto_y_bloquear_numero
     label: Dar el pico pendiente por perdido y bloquear su número
     result_text: Renuncias al saldo restante a cambio de no volver a escuchar propuestas de pago en botellas jamás.

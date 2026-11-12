@@ -97,7 +97,9 @@ export function resolveCategoryFallbackAsset(
 
 export function resolveDeskBackgroundAsset(
   manifest: AssetManifest,
-  state: Pick<GameState, "indicators" | "employee">,
+  state: Pick<GameState, "indicators" | "employee"> & {
+    flags?: GameState["flags"];
+  },
 ): ResolvedAsset | null {
   let targetId = "bg_despacho_base";
 
@@ -107,6 +109,8 @@ export function resolveDeskBackgroundAsset(
     targetId = "bg_despacho_numeros_rojos";
   } else if (
     state.employee !== null ||
+    Boolean(state.flags?.estudio_propio_activo) ||
+    (state.indicators.reputation >= 75 && state.indicators.money >= 18_000) ||
     (state.indicators.money >= 25_000 && state.indicators.reputation >= 65)
   ) {
     targetId = "bg_despacho_estudio";

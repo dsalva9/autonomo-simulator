@@ -12,26 +12,11 @@ character_id: cliente_corporativo_marta
 character_expression: angry
 requirements:
   min_month: 66
-weight: 11
-cooldown_months: 12
+weight: 9
+cooldown_months: 15
 max_occurrences: null
 exclusive_with: []
 choices:
-  - id: tragar_esposas_oro_cinco_meses
-    label: Firmar el contrato VIP asumiendo disponibilidad casi perpetua
-    result_text: La caja se dispara cada mes como un cohete, mientras el zumbido del móvil en la mesilla erosiona tus nervios noche tras noche.
-    effects:
-      billed_income: 700
-      add_modifier:
-        id: mod_esposas_oro_vip
-        label: Iguala VIP 24/7
-        remaining_months: 5
-        monthly_billed_delta: 560
-        monthly_stress_delta: 7
-        monthly_moral_delta: -2
-      stress: 10
-      personal_life: -7
-      reputation: 3
   - id: imponer_clausula_desconexion_digital
     label: Renovar solo con cláusula escrita de desconexión de viernes a lunes
     requirements:
@@ -58,3 +43,18 @@ choices:
       moral: 1
       personal_life: 8
       reputation: -3
+  - id: tragar_esposas_oro_cinco_meses
+    label: Firmar el contrato VIP asumiendo disponibilidad casi perpetua
+    result_text: La caja se dispara cada mes como un cohete, mientras el zumbido del móvil en la mesilla erosiona tus nervios noche tras noche.
+    effects:
+      billed_income: 700
+      add_modifier:
+        id: mod_esposas_oro_vip
+        label: Iguala VIP 24/7
+        remaining_months: 5
+        monthly_billed_delta: 560
+        monthly_stress_delta: 7
+        monthly_moral_delta: -2
+      stress: 10
+      personal_life: -7
+      reputation: 3

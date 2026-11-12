@@ -1,0 +1,66 @@
+schema_version: 1
+id: gestor_casilla_equivocada_modelo_303
+category: gestor
+title: Baile de casillas en el Modelo 303
+body: Son las once de la noche del día veinte y, con el justificante recién firmado, descubres que metiste todo tu IVA deducible en la casilla de adquisiciones intracomunitarias.
+tags:
+  - autogestion
+  - modelo_303
+  - trimestre
+  - iva
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 4
+  months_of_year:
+    - 1
+    - 4
+    - 7
+    - 10
+  gestor_tiers:
+    - self
+weight: 12
+cooldown_months: 9
+max_occurrences: 3
+choices:
+  - id: cruzar_dedos_hasta_resumen_anual
+    label: Cruzar los dedos pensando que el saldo final es idéntico
+    outcomes:
+      - id: cruce_interno_pasa_de_largo
+        weight: 55
+        result_text: Como la cuota ingresada cuadra al céntimo, el ordenador no levanta liebre este trimestre, aunque duermes regular.
+        effects:
+          stress: 3
+          moral: 1
+          fiscal_risk: 7
+      - id: discrepancia_automatica_casillas
+        weight: 45
+        result_text: Al no existir Modelo 349 asociado, salta alerta informática y acabas pagando sanción formal por datos inexactos.
+        effects:
+          cash_delta: -195
+          stress: 10
+          moral: -4
+          fiscal_risk: 9
+  - id: presentar_rectificativa_esa_misma_noche
+    label: Preparar un café cargado y presentar rectificativa en el acto
+    result_text: Peleas una hora con el localizador del justificante previo, pero dejas las casillas impecables antes de medianoche.
+    effects:
+      stress: 7
+      moral: 4
+      personal_life: -3
+      fiscal_risk: -5
+  - id: delegar_desaguisado_en_paco
+    label: Rendirte y contratar a Paco para que enderece el entuerto
+    requirements:
+      stats:
+        money:
+          min: 140
+    result_text: Paco presenta un escrito aclaratorio a primera hora y asume tus carpetas mensuales por una cuota modesta.
+    effects:
+      set_gestor:
+        tier: cheap
+        character_id: gestor_barato_paco
+      deductible_expense: 65
+      stress: -5
+      moral: 2
+      fiscal_risk: -4

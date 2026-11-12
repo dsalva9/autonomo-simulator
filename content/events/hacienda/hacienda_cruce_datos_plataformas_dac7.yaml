@@ -1,0 +1,47 @@
+schema_version: 1
+id: hacienda_cruce_datos_plataformas_dac7
+category: hacienda
+title: Cruce europeo DAC7 de plataformas digitales
+body: Por la directiva europea DAC7, dos portales internacionales han comunicado tus cobros usando tipos de cambio distintos a los de tus facturas. Gómez pide aclarar mil cien euros de baile.
+tags:
+  - cruce
+  - dac7
+  - requerimiento
+  - intracomunitario
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 30
+weight: 12
+cooldown_months: 15
+max_occurrences: 3
+choices:
+  - id: ingresar_diferencia_cambio_sin_alegar
+    label: Aceptar la cifra comunicada por la plataforma y pagar
+    result_text: Abonas el ajuste cambiario sin gastar tardes traduciendo extractos y archivas el aviso europeo.
+    effects:
+      cash_delta: -290
+      stress: 3
+      moral: -3
+      fiscal_risk: -12
+  - id: aportar_tipos_oficiales_bce_y_abonos
+    label: Justificar cada conversión con el cambio oficial del día
+    result_text: Cruzas fechas de cobro real con tablas del Banco Central Europeo y desmontas casi toda la discrepancia.
+    effects:
+      deductible_expense: 60
+      stress: 6
+      moral: 5
+      fiscal_risk: -11
+  - id: presentar_conciliacion_multidivisa_gestor
+    label: Encargar informe de diferencias de cambio a tu gestoría
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu gestoría cuadra retenciones y comisiones de plataforma con precisión contable y archiva el expediente.
+    effects:
+      deductible_expense: 145
+      stress: -3
+      moral: 5
+      fiscal_risk: -14

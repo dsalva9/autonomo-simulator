@@ -9,12 +9,23 @@ tags:
   - veterania
   - largo_plazo
 requirements:
-  min_month: 72
+  min_month: 36
+  months_of_year:
+    - 3
+    - 9
+    - 10
 weight: 12
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 9
+max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: apurar_tramo_minimo_provisional
+    label: "Dejar la base mínima provisional y ya regularizarán más adelante"
+    result_text: "Conservas toda tu liquidez intacta este trimestre, sabiendo que el cruce definitivo acabará llamando a tu puerta bancaria."
+    effects:
+      stress: -2
+      moral: -1
+      fiscal_risk: 9
   - id: calibrar_tramo_exacto_con_estudio
     label: "Calcular tu rendimiento neto exacto y clavar el tramo oficial (220 €)"
     requirements:
@@ -50,10 +61,3 @@ choices:
         remaining_months: 5
         monthly_expense_delta: 50
         monthly_moral_delta: 2
-  - id: apurar_tramo_minimo_provisional
-    label: "Dejar la base mínima provisional y ya regularizarán más adelante"
-    result_text: "Conservas toda tu liquidez intacta este trimestre, sabiendo que el cruce definitivo acabará llamando a tu puerta bancaria."
-    effects:
-      stress: 5
-      moral: -2
-      fiscal_risk: 8

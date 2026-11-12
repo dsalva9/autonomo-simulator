@@ -1,0 +1,52 @@
+schema_version: 1
+id: clientes_propuesta_compra_cartera
+category: clientes
+title: Oferta de compra por tu cola de pequeños mantenimientos históricos
+body: Una consultora mediana quiere crecer rápido y te ofrece hasta 5.200 € en dos tramos por traspasarle seis cuentas pequeñas de mantenimiento que te quitan horas sueltas cada mes.
+tags:
+  - veterano
+  - cartera
+  - cadena
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 74
+weight: 8
+cooldown_months: 18
+max_occurrences: 2
+choices:
+  - id: vender_con_anticipo_firme_y_earn_out
+    label: Firmar traspaso cobrando 2.800 € hoy y el segundo tramo a los 90 días
+    result_text: Haces limpieza de micro-interrupciones de golpe, ingresas el primer cheque y dejas pactada la liquidación trimestral.
+    effects:
+      billed_income: 2800
+      moral: 6
+      stress: -5
+      personal_life: 4
+      reputation: 3
+      schedule_events:
+        - event_id: clientes_liquidacion_earn_out_cartera
+          delay_months: 3
+  - id: cobrar_precio_cerrado_menor_al_contado
+    label: Exigir 3.600 € íntegros hoy mismo sin tramos variables futuros
+    result_text: Renuncias al pico teórico a cambio de dinero contante hoy y cero discusiones dentro de tres meses.
+    effects:
+      billed_income: 3600
+      moral: 7
+      stress: -6
+      personal_life: 5
+      reputation: 4
+  - id: conservar_cuentas_fieles_y_subirles_cuota
+    label: Rechazar la venta y actualizar tú mismo esas cuotas veteranas
+    result_text: Decides no mercadear con clientes que confiaron en ti al principio; ajustas tarifas con cariño y todos siguen contigo.
+    effects:
+      billed_income: 1900
+      moral: 5
+      stress: 1
+      reputation: 5
+      add_modifier:
+        id: mod_cartera_curada_senior
+        label: Cartera veterana seleccionada
+        remaining_months: 5
+        monthly_billed_delta: 340

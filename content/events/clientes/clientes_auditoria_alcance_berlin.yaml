@@ -24,6 +24,14 @@ choices:
       schedule_events:
         - event_id: clientes_retainer_europeo_consolidado
           delay_months: 2
+  - id: cerrar_proyecto_en_fase_uno
+    label: Cobrar un traspaso limpio y no embarcarse en la ampliación
+    result_text: Documentas todo con elegancia, cobras una sesión de cierre y conservas tus mañanas tranquilas.
+    effects:
+      billed_income: 475
+      stress: -4
+      moral: 3
+      personal_life: 4
   - id: pactar_entregas_asincronas
     label: Negociar trabajo asíncrono por informes escritos sin madrugones
     requirements:
@@ -40,11 +48,3 @@ choices:
       schedule_events:
         - event_id: clientes_retainer_europeo_consolidado
           delay_months: 2
-  - id: cerrar_proyecto_en_fase_uno
-    label: Cobrar un traspaso limpio y no embarcarse en la ampliación
-    result_text: Documentas todo con elegancia, cobras una sesión de cierre y conservas tus mañanas tranquilas.
-    effects:
-      billed_income: 475
-      stress: -4
-      moral: 3
-      personal_life: 4

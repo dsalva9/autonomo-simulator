@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_auditoria_ciberseguridad_proveedor
+category: clientes
+title: "Cuestionario de ciberseguridad: 140 preguntas como si fueras un banco"
+body: Para renovar un contrato anual de 3.500 €, seguridad informática del cliente te manda una hoja de cálculo de 140 controles pensada para multinacionales de quinientos empleados.
+tags:
+  - corporativo
+  - seguridad
+  - veterano
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 64
+weight: 9
+cooldown_months: 16
+max_occurrences: null
+choices:
+  - id: operar_solo_en_equipos_del_cliente
+    label: Exigir trabajar dentro de su propio entorno remoto sin guardar datos locales
+    result_text: Al no almacenar un solo archivo suyo en tu estudio, 120 preguntas dejan de aplicar de golpe y renuevas por 2.900 €.
+    effects:
+      billed_income: 2900
+      moral: 5
+      stress: 1
+      reputation: 4
+  - id: implantar_cifrado_copias_y_pasar_auditoria
+    label: Invertir 290 € en cifrado y auditoría externa para superar el filtro
+    outcomes:
+      - id: aprobado_con_nota_y_renovacion
+        weight: 75
+        result_text: Sales con sello verde del comité de seguridad, cobras los 3.500 € y te queda un protocolo reutilizable para grandes cuentas.
+        effects:
+          billed_income: 3500
+          deductible_expense: 290
+          moral: 5
+          stress: 5
+          reputation: 6
+          set_flags:
+            - proveedor_corporativo_activo
+      - id: piden_segunda_ronda_de_evidencias
+        weight: 25
+        result_text: Un auditor puntilloso pide capturas hasta del salvapantallas. Apruebas y cobras, pero tras una semana soporífera.
+        effects:
+          billed_income: 3500
+          deductible_expense: 290
+          moral: 1
+          stress: 10
+          reputation: 4
+  - id: reutilizar_dossier_homologado_y_cobrar_anexo
+    label: Aportar tu homologación previa y facturar 3.500 € con recargo documental
+    requirements:
+      required_flags:
+        - proveedor_corporativo_activo
+    result_text: "Tener la homologación corporativa al día te ahorra media vida: seguridad valida tu expediente en 24 horas y renuevas íntegro."
+    effects:
+      billed_income: 3500
+      moral: 6
+      stress: -2
+      reputation: 6

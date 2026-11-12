@@ -1,7 +1,7 @@
 schema_version: 1
 id: clientes_encargo_urgente
 category: clientes
-title: "«Era para ayer, pero es muy facilito»"
+title: «Era para ayer, pero es muy facilito»
 body: "Borja te escribe con mayúsculas y tres signos de exclamación: necesita un entregable urgente porque se le ha caído su proveedor habitual. Jura que está todo clarísimo en un documento de media página sin puntuación."
 tags:
   - urgencia
@@ -10,14 +10,14 @@ tags:
 character_id: cliente_regateador
 character_expression: angry
 illustration_id: null
-weight: 15
-cooldown_months: 0
-max_occurrences: null
+weight: 8
+cooldown_months: 9
+max_occurrences: 4
 exclusive_with: []
 choices:
   - id: entrega_express_contado
-    label: "Echar horas extra y cobrar por adelantado con recargo de urgencia"
-    result_text: "Sobrevives a base de termos de café y entregas a tiempo. La transferencia entra al instante, aunque el tic del párpado izquierdo vuelve a saludarte."
+    label: Echar horas extra y cobrar por adelantado con recargo de urgencia
+    result_text: Sobrevives a base de termos de café y entregas a tiempo. La transferencia entra al instante, aunque el tic del párpado izquierdo vuelve a saludarte.
     effects:
       billed_income: 950
       stress: 9
@@ -25,8 +25,8 @@ choices:
       personal_life: -4
       reputation: 3
   - id: presupuesto_estandar_60_dias
-    label: "Aceptar a ritmo razonable emitiendo factura a 60 días"
-    result_text: "Pactas una entrega civilizada y mandas una factura mayor «a sesenta días», esa tradición nacional donde trabajas hoy y cobras cuando se alineen los planetas."
+    label: Aceptar a ritmo razonable emitiendo factura a 60 días
+    result_text: Pactas una entrega civilizada y mandas una factura mayor «a sesenta días», esa tradición nacional donde trabajas hoy y cobras cuando se alineen los planetas.
     effects:
       deferred_invoice:
         amount: 1350
@@ -36,8 +36,8 @@ choices:
       moral: 1
       reputation: 2
   - id: rechazar_y_descansar
-    label: "Decir que tienes la agenda completa y descansar esta semana"
-    result_text: "Pronuncias la palabra sagrada «no» sin pedir perdón tres veces. El mundo sigue girando, tu espalda se destensa y duermes ocho horas seguidas."
+    label: Decir que tienes la agenda completa y descansar esta semana
+    result_text: Pronuncias la palabra sagrada «no» sin pedir perdón tres veces. El mundo sigue girando, tu espalda se destensa y duermes ocho horas seguidas.
     effects:
       stress: -8
       moral: 4

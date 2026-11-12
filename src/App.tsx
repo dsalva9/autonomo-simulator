@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AchievementToast } from "./components/hud/AchievementToast.tsx";
 import { EndRunScreen } from "./screens/EndRunScreen.tsx";
 import { GameScreen } from "./screens/GameScreen.tsx";
@@ -22,6 +22,10 @@ export function App() {
   const normalizedLocale = normalizeLocale(locale);
   const ui = getUiStrings(normalizedLocale);
 
+  const visibleState = getVisibleGameState({ activeRun, outcomePreviewState });
+  const inGameView = hydrated && screenView === "game" && visibleState !== null;
+  const handlingPopStateRef = useRef(false);
+
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
@@ -32,7 +36,64 @@ export function App() {
     }
   }, [normalizedLocale]);
 
-  const visibleState = getVisibleGameState({ activeRun, outcomePreviewState });
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.history) {
+      return;
+    }
+
+    if (handlingPopStateRef.current) {
+      handlingPopStateRef.current = false;
+      return;
+    }
+
+    try {
+      const currentHistState =
+        typeof window.history.state === "object" && window.history.state !== null
+          ? (window.history.state as Record<string, unknown>)
+          : {};
+
+      if (inGameView) {
+        if (currentHistState.autonomoView !== "game") {
+          window.history.pushState({ ...currentHistState, autonomoView: "game" }, "");
+        }
+      } else if (hydrated && currentHistState.autonomoView === "game") {
+        window.history.replaceState({ ...currentHistState, autonomoView: "title" }, "");
+      }
+    } catch {
+      // Ignore history API restrictions in restricted frames/environments
+    }
+  }, [hydrated, inGameView]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handlePopState = () => {
+      const uiState = useUIStore.getState();
+      if (uiState.abandonModalOpen) {
+        uiState.setAbandonModalOpen(false);
+        try {
+          const currentHistState =
+            typeof window.history.state === "object" && window.history.state !== null
+              ? (window.history.state as Record<string, unknown>)
+              : {};
+          window.history.pushState({ ...currentHistState, autonomoView: "game" }, "");
+        } catch {
+          // Ignore
+        }
+        return;
+      }
+
+      if (uiState.screenView === "game") {
+        handlingPopStateRef.current = true;
+        useGameStore.getState().returnToTitle();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   return (
     <div

@@ -1,0 +1,57 @@
+schema_version: 1
+id: gestor_elena_alerta_holding_patrimonio
+category: gestor
+title: El canto de sirena de la sociedad patrimonial
+body: Un gurú en un evento asegura que facturar a través de una sociedad pantalla sin medios permite deducir hasta el barco. Elena te pone delante tres sentencias recientes sobre sociedades interpuestas.
+tags:
+  - gestoria
+  - elena
+  - patrimonio
+  - veterania
+  - largo_plazo
+character_id: gestor_premium_elena
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 74
+  gestor_tiers:
+    - premium
+weight: 11
+cooldown_months: 16
+max_occurrences: 2
+choices:
+  - id: hacer_caso_a_elena_y_blindar_sustancia
+    label: Seguir el criterio de Elena y blindar tu actividad real
+    result_text: Descartas atajos de salón de hotel y refuerzas la defensa documental de tu patrimonio profesional limpio.
+    effects:
+      deductible_expense: 190
+      stress: -8
+      moral: 7
+      fiscal_risk: -12
+      add_modifier:
+        id: mod_anexo_defensa_elena
+        label: Cobertura jurídica tributaria
+        remaining_months: 4
+        monthly_expense_delta: 30
+        monthly_stress_delta: -2
+  - id: probar_esquema_agresivo_del_ponencia
+    label: Forzar deducciones patrimoniales siguiendo los trucos del gurú
+    result_text: Recortas cuota a corto plazo, pero Elena deja constancia por escrito de su advertencia ante el riesgo evidente.
+    effects:
+      cash_delta: 620
+      stress: 7
+      moral: -5
+      fiscal_risk: 24
+  - id: canalizar_excedente_a_activos_productivos
+    label: Invertir el excedente en equipamiento productivo real
+    requirements:
+      stats:
+        money:
+          min: 1300
+    result_text: Transformas liquidez ociosa en medios reales afectos al estudio con deducción limpia e indiscutible.
+    effects:
+      deductible_expense: 920
+      stress: -5
+      moral: 6
+      reputation: 4
+      fiscal_risk: -9

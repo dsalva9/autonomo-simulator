@@ -1,7 +1,7 @@
 schema_version: 1
 id: clientes_app_millonaria_primo
 category: clientes
-title: "«Yo pongo la idea millonaria y tú solo la programas»"
+title: «Yo pongo la idea millonaria y tú solo la programas»
 body: "Un primo lejano aparece escoltado por Borja frente a dos cortados: han tenido una idea «que es como mezclar Uber con las juntas de vecinos». No hay dinero hoy, pero te ofrecen un generoso 8 % de una sociedad que aún no existe."
 tags:
   - humo
@@ -18,11 +18,11 @@ max_occurrences: 2
 exclusive_with: []
 choices:
   - id: entrar_a_riesgo_por_participaciones
-    label: "Tirarse a la piscina dedicando noches a cambio de participaciones"
+    label: Tirarse a la piscina dedicando noches a cambio de participaciones
     outcomes:
       - id: compra_sorpresa_prototipo
         weight: 25
-        result_text: "Contra toda ley de la termodinámica, una empresa de administración de fincas os compra el prototipo funcional y pillas un pellizco glorioso."
+        result_text: Contra toda ley de la termodinámica, una empresa de administración de fincas os compra el prototipo funcional y pillas un pellizco glorioso.
         effects:
           billed_income: 2750
           stress: 11
@@ -31,24 +31,24 @@ choices:
           reputation: 5
       - id: pivote_a_kombucha
         weight: 75
-        result_text: "Tras dos meses de notas de voz eternas, tu primo se aburre y decide que el futuro real está en criar setas gourmet."
+        result_text: Tras dos meses de notas de voz eternas, tu primo se aburre y decide que el futuro real está en criar setas gourmet.
         effects:
           stress: 12
           moral: -7
           personal_life: -6
-  - id: cobrar_prototipo_cerrado
-    label: "Ofrecer una fase inicial pequeñita pero cobrada con factura real"
-    result_text: "En cuanto hay que poner 800 € de verdad sobre la mesa, filtran la paja mental, pagan entre los dos un boceto serio y tú cobras tu tiempo."
-    effects:
-      billed_income: 800
-      stress: 3
-      moral: 4
-      reputation: 2
   - id: pagar_los_cortados_y_huir
-    label: "Invitar a los cafés y salir corriendo antes de firmar una servilleta"
-    result_text: "Los tres euros mejor invertidos del trimestre. Vuelves a tu despacho sano, salvo y dueño de tus tardes."
+    label: Invitar a los cafés y salir corriendo antes de firmar una servilleta
+    result_text: Los tres euros mejor invertidos del trimestre. Vuelves a tu despacho sano, salvo y dueño de tus tardes.
     effects:
       cash_delta: -3
       stress: -5
       moral: 3
       personal_life: 3
+  - id: cobrar_prototipo_cerrado
+    label: Ofrecer una fase inicial pequeñita pero cobrada con factura real
+    result_text: En cuanto hay que poner 800 € de verdad sobre la mesa, filtran la paja mental, pagan entre los dos un boceto serio y tú cobras tu tiempo.
+    effects:
+      billed_income: 800
+      stress: 3
+      moral: 4
+      reputation: 2

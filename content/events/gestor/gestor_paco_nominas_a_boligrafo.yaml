@@ -1,0 +1,54 @@
+schema_version: 1
+id: gestor_paco_nominas_a_boligrafo
+category: gestor
+title: Las nóminas jurásicas de la gestoría de Paco
+body: Desde que tienes plantilla, Paco genera las nóminas con un programa de 2009 que descuadra las bases de contingencias comunes y pone nervioso a tu equipo cada fin de mes.
+tags:
+  - gestoria
+  - paco
+  - laboral
+  - nominas
+character_id: gestor_barato_paco
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 16
+  gestor_tiers:
+    - cheap
+  has_employee: true
+weight: 12
+cooldown_months: 11
+max_occurrences: 3
+choices:
+  - id: aguantar_con_recibos_chapuceros_paco
+    label: Seguir tirando con las nóminas de Paco para no gastar más
+    result_text: Te ahorras el suplemento laboral hoy, pero el malestar en el estudio crece y los seguros sociales chirrían.
+    effects:
+      stress: 4
+      moral: -2
+      fiscal_risk: 10
+      employee_satisfaction: -9
+      set_flags:
+        - susto_con_paco
+  - id: contratar_modulo_laboral_especializado
+    label: Pagar una gestoría laboral externa solo para las nóminas
+    requirements:
+      stats:
+        money:
+          min: 220
+    result_text: Los boletines de cotización salen cuadrados al céntimo y tu plantilla cobra con recibos claros y puntuales.
+    effects:
+      deductible_expense: 145
+      stress: -5
+      moral: 4
+      fiscal_risk: -7
+      employee_satisfaction: 7
+  - id: repasar_tablas_cotizacion_cada_mes
+    label: Revisar tú cada base de cotización antes de firmar el pago
+    result_text: Cazas dos errores de retención antes de transferir la nómina a costa de comerte otra tarde de burocracia.
+    effects:
+      stress: 7
+      moral: 3
+      personal_life: -3
+      fiscal_risk: -4
+      employee_satisfaction: 4

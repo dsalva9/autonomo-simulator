@@ -49,7 +49,9 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
     shareSummary.endingId,
     shareSummary.summaryQuote,
     locale,
+    state,
   );
+
   const endingIllustration = useMemo(
     () => resolveEndingIllustrationAsset(compiledCatalog.manifest, shareSummary.endingId),
     [shareSummary.endingId],
@@ -113,7 +115,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) {
         return;
       }
 
@@ -202,17 +204,17 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
       ? "bg-[#1f5c53]"
       : endingMeta.tone === "abandon"
         ? "bg-[#264e7a]"
-        : "bg-[#b42b24]";
+        : "bg-[#9e221b]";
 
   return (
     <main
       ref={screenRef}
       data-testid="end-run-screen"
-      className="min-h-screen px-3.5 sm:px-5 py-3.5 sm:py-5 max-w-6xl mx-auto"
+      className="end-run-shell min-h-screen px-3.5 sm:px-5 py-3 sm:py-4 max-w-6xl mx-auto"
     >
       <section className="paper-dossier rounded-2xl overflow-hidden">
         <div
-          className={`${bannerHeaderBg} text-[#fffdf8] px-4 sm:px-6 py-2.5 border-b-2 border-[#1f2421] flex flex-wrap items-center justify-between gap-2`}
+          className={`end-run-header ${bannerHeaderBg} text-[#fffdf8] px-4 sm:px-6 py-2 border-b-2 border-[#1f2421] flex flex-wrap items-center justify-between gap-2`}
         >
           <span className="stamp-badge text-[11px] sm:text-xs text-[#fce592]">
             {endingMeta.code}
@@ -229,22 +231,26 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
               onClick={handleToggleLocale}
               className="h-7 px-2 rounded-md border border-[#fce592]/65 bg-[#1f2421] hover:bg-[#2d3430] text-[#fffdf8] font-bureau text-[11px] font-bold inline-flex items-center justify-center shrink-0 cursor-pointer transition-colors"
             >
-              <span className={isEn ? "opacity-60" : "text-[#fce592] underline underline-offset-2"}>
+              <span
+                className={isEn ? "text-[#d8cbb5]" : "text-[#fce592] underline underline-offset-2"}
+              >
                 ES
               </span>
-              <span className="opacity-45 mx-1" aria-hidden="true">
+              <span className="text-[#b5a790] mx-1" aria-hidden="true">
                 |
               </span>
-              <span className={isEn ? "text-[#fce592] underline underline-offset-2" : "opacity-60"}>
+              <span
+                className={isEn ? "text-[#fce592] underline underline-offset-2" : "text-[#d8cbb5]"}
+              >
                 EN
               </span>
             </button>
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
+        <div className="end-run-body p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
           {/* Left: Epitaph Narrative, Illustration, Stats & Actions */}
-          <div className="lg:col-span-7 space-y-3">
+          <div className="end-run-left-stack lg:col-span-7 space-y-2.5">
             <div className="space-y-1">
               <h1
                 data-testid="end-run-title"
@@ -266,7 +272,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 width={endingIllustration.width}
                 height={endingIllustration.height}
                 decoding="async"
-                className={`w-full aspect-video sm:aspect-auto sm:h-44 lg:h-40 xl:h-48 object-cover rounded-xl border-2 border-[#1f2421] bg-[#f6efe0] shadow-[3px_3px_0px_0px_rgba(31,36,33,0.88)] ${
+                className={`end-run-illustration w-full aspect-video sm:aspect-auto sm:h-40 lg:h-36 xl:h-44 object-cover rounded-xl border-2 border-[#1f2421] bg-[#f6efe0] shadow-[3px_3px_0px_0px_rgba(31,36,33,0.88)] ${
                   endingIllustration.render_mode === "pixel_art"
                     ? "render-pixel-art"
                     : "render-vector-hd"
@@ -276,38 +282,38 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
 
             <blockquote
               data-testid="end-run-quote"
-              className="rounded-xl border border-[#1f2421]/35 bg-[#f6efe0] px-3.5 py-2.5 font-editorial italic text-sm sm:text-base text-[#1f2421] leading-snug"
+              className="end-run-quote rounded-xl border border-[#1f2421]/35 bg-[#f6efe0] px-3.5 py-2 font-editorial italic text-sm sm:text-base text-[#1f2421] leading-snug"
             >
               {isEn ? `"${localizedQuote}"` : `«${localizedQuote}»`}
             </blockquote>
 
-            {/* Aligned Responsive Tabular Stats Grid (2x2 on mobile, 4-col strip on sm+) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
+            {/* Aligned Responsive Tabular Stats Grid (2x2 on mobile, non-truncating 4-col strip on sm+) */}
+            <div className="grid grid-cols-2 sm:grid-cols-[1.3fr_1fr_1fr_0.9fr] gap-2 text-xs">
+              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2 sm:p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
                   {ui.endRun.timeSurvivedLabel}
                 </span>
                 <strong
                   data-testid="end-run-duration"
-                  className="font-bureau text-xs sm:text-sm text-[#1f2421] tabular-nums block truncate"
+                  className="font-bureau text-xs sm:text-[13px] leading-tight text-[#1f2421] tabular-nums block break-words"
                 >
                   {formatDurationMonthsEs(shareSummary.monthsSurvived, locale)}
                 </strong>
               </div>
-              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
+              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2 sm:p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
                   {ui.endRun.finalCashLabel}
                 </span>
                 <strong
                   data-testid="end-run-money"
                   className={`font-bureau text-xs sm:text-sm tabular-nums whitespace-nowrap block truncate ${
-                    shareSummary.finalMoney < 0 ? "text-[#b42b24]" : "text-[#1f5c53]"
+                    shareSummary.finalMoney < 0 ? "text-[#9e221b]" : "text-[#1f5c53]"
                   }`}
                 >
                   {formatEuros(shareSummary.finalMoney, locale)}
                 </strong>
               </div>
-              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
+              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2 sm:p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
                   {ui.endRun.officialBillingLabel}
                 </span>
@@ -318,7 +324,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   {formatEuros(shareSummary.lifetimeBilled, locale)}
                 </strong>
               </div>
-              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2.5 min-w-0">
+              <div className="rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] p-2 sm:p-2.5 min-w-0">
                 <span className="text-[#4a524e] block text-[10px] sm:text-[11px] truncate">
                   {ui.endRun.seedLabel}
                 </span>
@@ -335,7 +341,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
             {shareSummary.earnedVictories.length > 0 && (
               <div
                 data-testid="end-run-victory-badges"
-                className="rounded-xl border border-[#1f5c53] bg-[#e8f5f1] p-2.5 space-y-1.5"
+                className="rounded-xl border border-[#1f5c53] bg-[#e8f5f1] p-2.5 space-y-1"
               >
                 <div className="flex items-center gap-1.5 stamp-badge text-[10px] text-[#1f5c53]">
                   <Award className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
@@ -363,7 +369,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   data-end-action="true"
                   title={ui.endRun.shareTitle}
                   onClick={() => void handleNativeShare()}
-                  className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
+                  className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
                   <Share2 className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{ui.endRun.shareBtn}</span>
@@ -375,7 +381,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   data-end-action="true"
                   title={ui.endRun.copyTitle}
                   onClick={() => void handleCopyText()}
-                  className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
+                  className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
                   <Copy className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{ui.endRun.copyBtn}</span>
@@ -387,7 +393,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   data-end-action="true"
                   title={ui.endRun.downloadTitle}
                   onClick={() => void handleDownloadPng()}
-                  className="min-h-11 sm:min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
+                  className="min-h-11 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] font-bold text-xs sm:text-sm px-3 py-2 flex items-center justify-center gap-1.5 cursor-pointer transition-colors whitespace-nowrap"
                 >
                   <Download className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{ui.endRun.downloadBtn}</span>
@@ -415,7 +421,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 >
                   <RotateCcw className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{ui.endRun.newRunBtn}</span>
-                  <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#fffdf8]/20">
+                  <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/25">
                     N
                   </kbd>
                 </button>
@@ -430,7 +436,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 >
                   <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
                   <span>{ui.endRun.returnTitleBtn}</span>
-                  <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/12 text-[#1f2421]">
+                  <kbd className="hidden xl:inline-block font-bureau text-[11px] px-1.5 py-0.5 rounded bg-[#1f2421]/15 text-[#1f2421]">
                     Esc
                   </kbd>
                 </button>
@@ -455,7 +461,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 width={1080}
                 height={1350}
                 aria-label={ui.endRun.canvasAria}
-                className="w-full max-w-xs xl:max-w-sm lg:max-h-[420px] xl:max-h-[470px] lg:w-auto aspect-[4/5] rounded-lg border-2 border-[#1f2421] shadow-sm bg-[#f6efe0]"
+                className="end-run-canvas w-full max-w-xs xl:max-w-sm lg:max-h-[400px] xl:max-h-[455px] lg:w-auto aspect-[4/5] rounded-lg border-2 border-[#1f2421] shadow-sm bg-[#f6efe0]"
               />
             </div>
           </aside>

@@ -2,7 +2,7 @@ schema_version: 1
 id: hacienda_devolucion_ingresos_indebidos
 category: hacienda
 title: "Hallazgo arqueológico: pagaste de más hace dos trimestres"
-body: "Repasando carpetas descubres que olvidaste restar gastos deducibles claros y abonaste un recibo duplicado por error. Tienes derecho legal a pedir devolución de ingresos indebidos con intereses."
+body: Repasando carpetas descubres que olvidaste restar gastos deducibles claros y abonaste un recibo duplicado por error. Tienes derecho legal a pedir devolución de ingresos indebidos con intereses.
 tags:
   - devolucion
   - ingresos_indebidos
@@ -19,12 +19,19 @@ cooldown_months: 15
 max_occurrences: 3
 exclusive_with: []
 choices:
+  - id: no_remover_aguas_por_prudencia
+    label: Dejarlo correr bajo el lema gremial de no despertar al león dormido
+    result_text: Renuncias al dinero por pura superstición administrativa, pero duermes sabiendo que nadie abrirá tu carpeta.
+    effects:
+      stress: -3
+      moral: -2
+      fiscal_risk: -4
   - id: solicitar_rectificacion_telematica
-    label: "Presentar solicitud de rectificación de autoliquidación por tu cuenta"
+    label: Presentar solicitud de rectificación de autoliquidación por tu cuenta
     outcomes:
       - id: abono_integro_con_intereses
         weight: 75
-        result_text: "¡Fumata blanca! Estimada tu solicitud, te transfieren el exceso íntegro más unos eurillos de intereses de demora."
+        result_text: ¡Fumata blanca! Estimada tu solicitud, te transfieren el exceso íntegro más unos eurillos de intereses de demora.
         effects:
           cash_delta: 640
           stress: -7
@@ -32,28 +39,21 @@ choices:
           fiscal_risk: -4
       - id: devolucion_parcial_revisada
         weight: 25
-        result_text: "Tras mirar con lupa dos tickets sueltos, te devuelven la mayor parte del importe sin abrir mayores líos."
+        result_text: Tras mirar con lupa dos tickets sueltos, te devuelven la mayor parte del importe sin abrir mayores líos.
         effects:
           cash_delta: 380
           stress: 2
           moral: 4
   - id: tramitar_escrito_con_gestoria
-    label: "Encargar a tu gestoría un escrito milimétrico con todos los recibos"
+    label: Encargar a tu gestoría un escrito milimétrico con todos los recibos
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Con el desglose técnico impecable de tu asesoría, el acuerdo de devolución entra limpio en tiempo récord."
+    result_text: Con el desglose técnico impecable de tu asesoría, el acuerdo de devolución entra limpio en tiempo récord.
     effects:
       deductible_expense: 95
       cash_delta: 690
       stress: -8
       moral: 8
       fiscal_risk: -6
-  - id: no_remover_aguas_por_prudencia
-    label: "Dejarlo correr bajo el lema gremial de no despertar al león dormido"
-    result_text: "Renuncias al dinero por pura superstición administrativa, pero duermes sabiendo que nadie abrirá tu carpeta."
-    effects:
-      stress: -3
-      moral: -2
-      fiscal_risk: -4

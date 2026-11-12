@@ -1,10 +1,11 @@
 schema_version: 1
 id: hacienda_deduccion_vehiculo_cuestionada
 category: hacienda
-title: "El eterno espejismo del coche afecto a la actividad"
+title: El eterno espejismo del coche afecto a la actividad
 body: "El Inspector Gómez revisa tus facturas de taller y gasolina con una ceja arqueada: te recuerda que salvo que seas taxista o repartidor, demostrar uso exclusivo de lunes a domingo roza el milagro teológico."
 tags:
   - vehiculo
+  - comprobacion
   - gasolina
   - deducciones
 character_id: hacienda_inspector_gomez
@@ -13,26 +14,18 @@ requirements:
   min_month: 10
   stats:
     fiscal_risk:
-      min: 25
+      min: 18
 weight: 13
 cooldown_months: 15
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: renunciar_irpf_salvar_mitad_iva
-    label: "Retirar el gasto en IRPF salvando solo la mitad legal del IVA (340 €)"
-    result_text: "Aplicas la salomónica partición tributaria española: pagas la diferencia de renta y salvas medio IVA sin sanción mayor."
-    effects:
-      cash_delta: -340
-      stress: 6
-      moral: -3
-      fiscal_risk: -14
   - id: aportar_partes_visita_y_peajes
-    label: "Defender desplazamientos profesionales adjuntando agendas y peajes"
+    label: Defender desplazamientos profesionales adjuntando agendas y peajes
     outcomes:
       - id: desplazamientos_parciales_validados
         weight: 55
-        result_text: "Tus hojas de ruta casan con presupuestos firmados fuera de plaza y Gómez deja el recorte en un rasguño asumible."
+        result_text: Tus hojas de ruta casan con presupuestos firmados fuera de plaza y Gómez deja el recorte en un rasguño asumible.
         effects:
           cash_delta: -150
           stress: 8
@@ -40,21 +33,29 @@ choices:
           fiscal_risk: -12
       - id: peaje_playero_delator
         weight: 45
-        result_text: "Un ticket de autopista hacia la costa en pleno puente desmonta tu defensa y te comes la regularización completa."
+        result_text: Un ticket de autopista hacia la costa en pleno puente desmonta tu defensa y te comes la regularización completa.
         effects:
           cash_delta: -520
           stress: 13
           moral: -7
           fiscal_risk: -10
   - id: blindaje_consultas_dgt_premium
-    label: "Dejar que Elena separe IVA e IRPF con doctrina de Tributos en mano"
+    label: Dejar que Elena separe IVA e IRPF con doctrina de Tributos en mano
     requirements:
       gestor_tiers:
         - premium
-    result_text: "Elena cita tres consultas vinculantes incontestables y cierra la comprobación salvando la deducción indirecta íntegra."
+    result_text: Elena cita tres consultas vinculantes incontestables y cierra la comprobación salvando la deducción indirecta íntegra.
     effects:
       deductible_expense: 170
       cash_delta: -80
       stress: 2
       moral: 5
       fiscal_risk: -18
+  - id: renunciar_irpf_salvar_mitad_iva
+    label: Retirar el gasto en IRPF salvando solo la mitad legal del IVA (340 €)
+    result_text: "Aplicas la salomónica partición tributaria española: pagas la diferencia de renta y salvas medio IVA sin sanción mayor."
+    effects:
+      cash_delta: -340
+      stress: 6
+      moral: -3
+      fiscal_risk: -14

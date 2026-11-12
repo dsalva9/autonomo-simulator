@@ -2,7 +2,7 @@ schema_version: 1
 id: empleados_mudanza_local_calle
 category: empleados
 title: "Salir del cuarto de la plancha"
-body: "Trabajar en zapatillas junto al tendedero ahorra dinero, pero ya no distingues dónde acaba el salón y dónde empieza la oficina. Queda libre un pequeño local compartido a pie de calle y también una mesa fija en un coworking del barrio."
+body: "Trabajar en zapatillas junto al tendedero ahorra dinero, pero ya no distingues salón de oficina. Queda libre un pequeño local compartido a pie de calle y también una mesa flexible en el coworking del barrio."
 tags:
   - estudio
   - coworking

@@ -1,0 +1,62 @@
+schema_version: 1
+id: gestor_elena_deduccion_id_software
+category: gestor
+title: Deducción por innovación tecnológica en el estudio
+body: "Elena analiza las herramientas propias y flujos automatizados que has creado para clientes: encajan como innovación tecnológica deducible, aunque sin informe técnico externo Hacienda suele arquear la ceja."
+tags:
+  - gestoria
+  - elena
+  - innovacion
+  - deducciones
+character_id: gestor_premium_elena
+character_expression: neutral
+illustration_id: null
+requirements:
+  min_month: 32
+  gestor_tiers:
+    - premium
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+choices:
+  - id: aplicar_solo_gasto_ordinario_prudente
+    label: Deducir los costes como gasto ordinario sin tentar a Gómez
+    result_text: Renuncias a la bonificación extra, pero duermes sabiendo que tu declaración no activará filtros especiales.
+    effects:
+      deductible_expense: 190
+      stress: -5
+      moral: 3
+      fiscal_risk: -7
+  - id: encargar_memoria_tecnica_certificada
+    label: Pagar memoria técnica certificada y aplicar la deducción
+    requirements:
+      stats:
+        money:
+          min: 550
+    result_text: Con el dictamen pericial adjunto al expediente, capturas un ahorro fiscal jugoso y refuerzas tu imagen técnica.
+    effects:
+      deductible_expense: 340
+      cash_delta: 690
+      stress: -4
+      moral: 6
+      reputation: 5
+      fiscal_risk: -6
+  - id: marcar_casilla_innovacion_sin_peritaje
+    label: Aplicar la deducción íntegra ahorrándote la certificación
+    outcomes:
+      - id: memoria_interna_supera_filtro
+        weight: 45
+        result_text: El dosier interno preparado con Elena basta este ejercicio y te embolsas la minoración completa.
+        effects:
+          cash_delta: 640
+          stress: 4
+          moral: 5
+          fiscal_risk: 6
+      - id: criterio_restringido_en_revision
+        weight: 55
+        result_text: Gestión Tributaria exige certificación externa que no tienes y te obliga a devolver la ventaja con intereses.
+        effects:
+          cash_delta: -290
+          stress: 9
+          moral: -4
+          fiscal_risk: 9

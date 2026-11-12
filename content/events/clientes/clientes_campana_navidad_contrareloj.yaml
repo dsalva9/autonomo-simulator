@@ -11,20 +11,21 @@ character_id: cliente_regateador
 character_expression: angry
 requirements:
   min_month: 11
+  months_of_year:
+    - 12
 weight: 10
-cooldown_months: 12
-max_occurrences: 5
+cooldown_months: 11
+max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: facturar_urgencia_navidena_legal
-    label: Salvarle la campaña con factura legal y recargo de urgencia
-    result_text: Dos días de cafeína intensa producen el milagro navideño y entra una transferencia limpia para empezar enero con colchón.
+  - id: mandarle_villancico_y_cerrar
+    label: Desearle felices fiestas y recordarle el calendario gregoriano
+    result_text: "La Navidad cae el 25 de diciembre todos los años: no es culpa tuya que se entere el día dieciséis."
     effects:
-      billed_income: 1025
-      stress: 10
-      moral: 3
-      personal_life: -4
-      reputation: 2
+      stress: -2
+      moral: 1
+      personal_life: 5
+      reputation: -3
   - id: aceptar_aguinaldo_en_sobre
     label: Aceptar el sobre navideño sin factura y entregar en 48 horas
     result_text: Sales con efectivo para todos los regalos y un jamón mediocre bajo el brazo, sumando papeletas para el sorteo de Hacienda.
@@ -36,11 +37,12 @@ choices:
       fiscal_risk: 27
       set_flags:
         - cobro_en_b_reciente
-  - id: mandarle_villancico_y_cerrar
-    label: Desearle felices fiestas y recordarle el calendario gregoriano
-    result_text: "La Navidad cae el 25 de diciembre todos los años: no es culpa tuya que se entere el día dieciséis."
+  - id: facturar_urgencia_navidena_legal
+    label: Salvarle la campaña con factura legal y recargo de urgencia
+    result_text: Dos días de cafeína intensa producen el milagro navideño y entra una transferencia limpia para empezar enero con colchón.
     effects:
-      stress: -2
-      moral: 1
-      personal_life: 5
-      reputation: -3
+      billed_income: 1025
+      stress: 10
+      moral: 3
+      personal_life: -4
+      reputation: 2

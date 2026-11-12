@@ -1,0 +1,64 @@
+schema_version: 1
+id: empleados_cliente_intenta_fichar_directo
+category: empleados
+title: "Mensaje privado de un cliente para puentear tu estudio"
+body: "Tu persona en plantilla te enseña el móvil con media sonrisa incrédula: un cliente habitual le acaba de escribir en privado ofreciéndole incorporarse en interno para ahorrarse tus facturas mensuales."
+tags:
+  - plantilla
+  - clientes
+  - lealtad
+  - limites
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 30
+  has_employee: true
+weight: 11
+cooldown_months: 14
+max_occurrences: 3
+exclusive_with: []
+choices:
+  - id: subir_tarifa_y_blindar_clausula
+    label: "Añadir cláusula de no captación al renovar presupuesto sin hacer sangre"
+    requirements:
+      stats:
+        reputation:
+          min: 48
+    result_text: "Blindas el contrato con elegancia jurídica y dejas claro cuánto cuesta intentar pescar en tu pecera."
+    effects:
+      billed_income: 620
+      stress: 2
+      moral: 5
+      reputation: 2
+      employee_satisfaction: 6
+  - id: agradecer_lealtad_y_cortar_al_cliente
+    label: "Premiar su transparencia (220 €) y exigir respeto formal al cliente"
+    outcomes:
+      - id: cliente_se_disculpa_y_renueva
+        weight: 62
+        result_text: "El cliente recula avergonzado al verse descubierto, firma renovación sin chistar y tu equipo cierra filas contigo."
+        effects:
+          billed_income: 840
+          deductible_expense: 220
+          stress: -3
+          moral: 10
+          reputation: 4
+          employee_satisfaction: 14
+      - id: rompes_con_cliente_desleal
+        weight: 38
+        result_text: "El cliente se pone digno y canceláis relación, pero ganas una lealtad interna a prueba de bombas."
+        effects:
+          deductible_expense: 220
+          stress: 3
+          moral: 11
+          reputation: 2
+          employee_satisfaction: 15
+  - id: hacer_como_que_no_has_visto_nada
+    label: "Callar por miedo a perder la facturación de esa cuenta este trimestre"
+    result_text: "Mantienes la factura mensual íntegra a costa de quedar tibio ante quien vino de frente a avisarte."
+    effects:
+      billed_income: 740
+      stress: 8
+      moral: -7
+      reputation: -3
+      employee_satisfaction: -10

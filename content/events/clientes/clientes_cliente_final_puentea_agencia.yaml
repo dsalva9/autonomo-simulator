@@ -15,14 +15,6 @@ cooldown_months: 0
 max_occurrences: null
 exclusive_with: []
 choices:
-  - id: firmar_contrato_directo_sin_peaje
-    label: Firmar directamente con la empresa cobrando tarifa íntegra
-    result_text: Sin intermediarios ni futbolines de por medio, cobras el cien por cien del presupuesto y salvas el lanzamiento con solvencia.
-    effects:
-      billed_income: 1925
-      stress: 9
-      moral: 8
-      reputation: 5
   - id: revisar_no_competencia_con_gestor
     label: Revisar antes con tu gestoría que no haya cláusula trampa (90 €)
     requirements:
@@ -37,6 +29,18 @@ choices:
       moral: 7
       reputation: 5
       fiscal_risk: -2
+      set_flags:
+        - proveedor_corporativo_activo
+  - id: firmar_contrato_directo_sin_peaje
+    label: Firmar directamente con la empresa cobrando tarifa íntegra
+    result_text: Sin intermediarios ni futbolines de por medio, cobras el cien por cien del presupuesto y salvas el lanzamiento con solvencia.
+    effects:
+      billed_income: 1925
+      stress: 9
+      moral: 8
+      reputation: 5
+      set_flags:
+        - proveedor_corporativo_activo
   - id: declinar_para_evitar_lios_cruzados
     label: No meterte en fuegos cruzados y seguir con tu cartera actual
     result_text: Prefieres ahorrarte llamadas airadas de Borja y disfrutas desde la barrera del espectáculo kármico.

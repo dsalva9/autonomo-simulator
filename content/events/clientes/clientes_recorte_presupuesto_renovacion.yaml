@@ -16,6 +16,14 @@ cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: no_renovar_bajo_coste
+    label: Rechazar trabajar a pérdida y liberar espacio para cuentas sanas
+    result_text: Te despides con elegancia profesional antes de sentar el precedente de que tus precios son de plastilina.
+    effects:
+      stress: -2
+      moral: 1
+      personal_life: 3
+      reputation: -3
   - id: recortar_alcance_en_misma_proporcion
     label: Aceptar un 20 % menos de precio quitando un 20 % de entregables
     result_text: "Aplicas simetría matemática con una sonrisa amable: pagan menos, reciben menos y tu margen por hora queda intacto."
@@ -36,11 +44,3 @@ choices:
       stress: 5
       moral: 8
       reputation: 4
-  - id: no_renovar_bajo_coste
-    label: Rechazar trabajar a pérdida y liberar espacio para cuentas sanas
-    result_text: Te despides con elegancia profesional antes de sentar el precedente de que tus precios son de plastilina.
-    effects:
-      stress: -2
-      moral: 1
-      personal_life: 3
-      reputation: -3

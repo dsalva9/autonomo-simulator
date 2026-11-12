@@ -10,8 +10,8 @@ tags:
   - largo_plazo
 requirements:
   min_month: 78
-weight: 11
-cooldown_months: 12
+weight: 9
+cooldown_months: 15
 max_occurrences: null
 exclusive_with: []
 choices:
@@ -19,11 +19,14 @@ choices:
     label: Asumir la coordinación completa y facturar tarifa internacional
     result_text: Malabareas tres husos horarios y cien correos en inglés, pero entra una de las facturas más redondas de tu carrera.
     effects:
-      billed_income: 2875
-      stress: 13
+      billed_income: 3150
+      stress: 9
       moral: 6
       personal_life: -5
       reputation: 5
+    requirements:
+      required_flags:
+        - cliente_internacional_activo
   - id: subcontratar_apoyo_tecnico_puntual
     label: Aceptar apoyándote en un colaborador externo deducible (550 €)
     result_text: Repartes la carga pesada con un colega de confianza, cumples como un reloj suizo y salvas tus tardes.

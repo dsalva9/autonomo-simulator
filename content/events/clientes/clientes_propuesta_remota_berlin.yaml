@@ -15,30 +15,34 @@ cooldown_months: 14
 max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: tramitar_alta_europea_y_firmar
-    label: Tramitar el alta intracomunitaria y lanzarse en inglés
-    result_text: Sobrevives al papeleo censal y a dos videollamadas puntuales al minuto. Pagan el día acordado sin regatear ni media coma.
-    effects:
-      billed_income: 1325
-      stress: 14
-      moral: 3
-      reputation: 2
-      schedule_events:
-        - event_id: clientes_auditoria_alcance_berlin
-          delay_months: 2
   - id: delegar_revision_fiscal_y_traduccion
     label: Pagar apoyo de traducción y gestoría para blindar el contrato
     result_text: Inviertes en presentar un contrato bilingüe y fiscalmente impoluto. Los alemanes quedan impresionados por tu rigor.
     effects:
       billed_income: 1450
       deductible_expense: 210
-      stress: 11
+      stress: 5
       moral: 3
       reputation: 3
       fiscal_risk: -3
       schedule_events:
         - event_id: clientes_auditoria_alcance_berlin
           delay_months: 2
+      set_flags:
+        - cliente_internacional_activo
+  - id: tramitar_alta_europea_y_firmar
+    label: Tramitar el alta intracomunitaria y lanzarse en inglés
+    result_text: Sobrevives al papeleo censal y a dos videollamadas puntuales al minuto. Pagan el día acordado sin regatear ni media coma.
+    effects:
+      billed_income: 1325
+      stress: 8
+      moral: 3
+      reputation: 2
+      schedule_events:
+        - event_id: clientes_auditoria_alcance_berlin
+          delay_months: 2
+      set_flags:
+        - cliente_internacional_activo
   - id: quedarse_en_mercado_nacional
     label: "Declinar educadamente: bastante tienes con el BOE en castellano"
     result_text: Agradeces el interés sin complicarte con modelos intracomunitarios ni reuniones en otro idioma.

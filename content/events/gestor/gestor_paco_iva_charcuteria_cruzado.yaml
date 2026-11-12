@@ -1,0 +1,63 @@
+schema_version: 1
+id: gestor_paco_iva_charcuteria_cruzado
+category: gestor
+title: Paco te cuela el IVA de una charcutería
+body: "Paco te llama sudando tinta: al volcar asientos del martes cruzó tu carpeta con la de «Charcutería Hermanos Ruiz» y ha deducido en tu Modelo 303 dos cortadoras de fiambre y diez paletillas."
+tags:
+  - gestoria
+  - paco
+  - modelo_303
+  - chapuza
+character_id: gestor_barato_paco
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 7
+  gestor_tiers:
+    - cheap
+weight: 12
+cooldown_months: 10
+max_occurrences: 3
+choices:
+  - id: exigir_rectificativa_inmediata_a_paco
+    label: Plantarte en su local y exigir rectificativa inmediata
+    outcomes:
+      - id: subsanado_dentro_del_plazo
+        weight: 65
+        result_text: Vigilas la pantalla encima de su hombro hasta que saca los embutidos de tu libro de IVA antes del cierre.
+        effects:
+          stress: 5
+          moral: 2
+          fiscal_risk: -4
+      - id: diferencia_cuota_con_recargo_minimo
+        weight: 35
+        result_text: La corrección entra un día tarde y toca ingresar la diferencia de cuota con un pequeño recargo que Paco regatea.
+        effects:
+          cash_delta: -155
+          stress: 9
+          moral: -4
+          fiscal_risk: 5
+          set_flags:
+            - susto_con_paco
+  - id: pagar_auditoria_externa_del_trimestre
+    label: Pagar una revisión externa rápida para limpiar el asiento
+    requirements:
+      stats:
+        money:
+          min: 200
+    result_text: Otra asesoría presenta declaración complementaria limpia y te libra de explicar a Gómez qué haces con dos cortadoras.
+    effects:
+      deductible_expense: 125
+      stress: -4
+      moral: 3
+      fiscal_risk: -9
+  - id: dejar_paletillas_como_atencion_clientes
+    label: Hacer caso a Paco y dejarlas como «cestas corporativas»
+    result_text: Te ahorras pagar más IVA este mes, pero tu epígrafe profesional ahora incluye maquinaria cárnica industrial.
+    effects:
+      cash_delta: 215
+      stress: 4
+      moral: -4
+      fiscal_risk: 19
+      set_flags:
+        - susto_con_paco

@@ -1,0 +1,41 @@
+schema_version: 1
+id: clientes_mecenazgo_proyecto_autor_endless
+category: clientes
+title: "Carta blanca y tu firma en portada: el encargo con el que soñabas en el mes uno"
+body: Casi diez años después de tu primera factura, una fundación cultural solvente te encarga un proyecto insignia con 4.200 € de presupuesto aprobado, cero comités intermedios y tu autoría destacada.
+tags:
+  - endless
+  - prestigio
+  - vocacion
+character_id: null
+character_expression: null
+illustration_id: null
+requirements:
+  min_month: 112
+weight: 10
+cooldown_months: 18
+max_occurrences: null
+choices:
+  - id: volcarse_en_obra_de_referencia
+    label: Aceptar los 4.200 € e invertir 250 € en acabados de máxima calidad
+    result_text: "Recuerdas de golpe por qué te hiciste autónomo: entregas tu mejor obra en años, cobras puntual y tu nombre luce en grande."
+    effects:
+      billed_income: 4200
+      deductible_expense: 250
+      moral: 12
+      stress: 2
+      personal_life: 2
+      reputation: 10
+      set_flags:
+        - portfolio_actualizado
+  - id: ejecutar_edicion_sobria_respetando_descanso
+    label: Pactar una edición sobria de 3.100 € cuidando tu tiempo libre
+    result_text: "Frenas tu propio perfeccionismo a tiempo: sale una pieza redonda, cobras sin un solo sobresalto y disfrutas del fin de semana."
+    effects:
+      billed_income: 3100
+      moral: 9
+      stress: -4
+      personal_life: 6
+      reputation: 6
+      set_flags:
+        - portfolio_actualizado

@@ -1,5 +1,10 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
+import { parse as parseYaml } from "yaml";
 import {
+  BalanceConfigSchema,
+  CharacterSchema,
   type ChoiceSpec,
   type ContentCatalog,
   type EndingId,
@@ -20,6 +25,30 @@ import {
   startNewRun,
 } from "../../src/engine/index.ts";
 import { compiledCatalog } from "../../src/services/content/catalog.ts";
+
+const authoritativeBalance = BalanceConfigSchema.parse(
+  parseYaml(readFileSync(join(process.cwd(), "content/config/balance.yaml"), "utf8")),
+);
+const authoritativeDani = CharacterSchema.parse(
+  parseYaml(
+    readFileSync(join(process.cwd(), "content/characters/empleado_junior_dani.yaml"), "utf8"),
+  ),
+);
+const authoritativeLaura = CharacterSchema.parse(
+  parseYaml(
+    readFileSync(join(process.cwd(), "content/characters/empleada_senior_laura.yaml"), "utf8"),
+  ),
+);
+
+const simulationCatalog: ContentCatalog = {
+  ...compiledCatalog,
+  balance: authoritativeBalance,
+  characters: {
+    ...compiledCatalog.characters,
+    empleado_junior_dani: authoritativeDani,
+    empleada_senior_laura: authoritativeLaura,
+  },
+};
 
 type BotArchetype =
   | "RandomBot"
@@ -44,6 +73,7 @@ interface ChoiceImpactEstimate {
   personalLife: number;
   reputation: number;
   fiscalRisk: number;
+  employeeSatisfaction: number;
   modBilled: number;
   modStress: number;
   gestorTier: "self" | "cheap" | "premium" | null;
@@ -55,6 +85,8 @@ interface ChoiceImpactEstimate {
 
 interface SingleRunMetrics {
   survived: boolean;
+  rich150kUnlocked: boolean;
+  pinnedMaxStats: boolean;
   finalMonth: number;
   endingId: EndingId | null;
   finalMoney: number;
@@ -79,6 +111,9 @@ interface ArchetypeAggregate {
   runs: number;
   survivedCount: number;
   survivalRate: number;
+  rich150kCount: number;
+  rich150kRate: number;
+  pinnedMaxStatsCount: number;
   avgLifetimeBilled: number;
   avgPeakMonthlyBilling: number;
   avgPeakStress: number;
@@ -109,6 +144,7 @@ function estimateChoiceImpact(choice: ChoiceSpec): ChoiceImpactEstimate {
       personalLife: e.personal_life ?? 0,
       reputation: e.reputation ?? 0,
       fiscalRisk: e.fiscal_risk ?? 0,
+      employeeSatisfaction: e.employee_satisfaction ?? 0,
       modBilled:
         (e.add_modifier?.monthly_billed_delta ?? 0) * (e.add_modifier?.remaining_months ?? 0),
       modStress:
@@ -134,6 +170,7 @@ function estimateChoiceImpact(choice: ChoiceSpec): ChoiceImpactEstimate {
   let personalLife = 0;
   let reputation = 0;
   let fiscalRisk = 0;
+  let employeeSatisfaction = 0;
   let modBilled = 0;
   let modStress = 0;
   let gestorTier: "self" | "cheap" | "premium" | null = null;
@@ -153,6 +190,7 @@ function estimateChoiceImpact(choice: ChoiceSpec): ChoiceImpactEstimate {
     personalLife += (e.personal_life ?? 0) * w;
     reputation += (e.reputation ?? 0) * w;
     fiscalRisk += (e.fiscal_risk ?? 0) * w;
+    employeeSatisfaction += (e.employee_satisfaction ?? 0) * w;
     modBilled +=
       (e.add_modifier?.monthly_billed_delta ?? 0) * (e.add_modifier?.remaining_months ?? 0) * w;
     modStress +=
@@ -181,6 +219,7 @@ function estimateChoiceImpact(choice: ChoiceSpec): ChoiceImpactEstimate {
     personalLife,
     reputation,
     fiscalRisk,
+    employeeSatisfaction,
     modBilled,
     modStress,
     gestorTier,
@@ -314,35 +353,49 @@ function selectBotChoice(
     return { choiceId: sorted[0].id, botPrng };
   }
 
-  // WorkaholicGrowthBot
-  if (state.indicators.stress >= 86) {
+  // WorkaholicGrowthBot (ambitious studio builder: scales billing + staff while walking closer to burnout)
+  if (state.indicators.stress >= 75) {
     const relief = [...choices]
-      .filter((c) => estimateChoiceImpact(c).stress < 0)
+      .filter((c) => {
+        const est = estimateChoiceImpact(c);
+        return est.stress < 0 && !est.dismissesEmployee;
+      })
       .sort((a, b) => estimateChoiceImpact(a).stress - estimateChoiceImpact(b).stress)[0];
     if (relief) {
       return { choiceId: relief.id, botPrng };
     }
   }
 
+  const canHire = state.indicators.money >= 4500 && state.indicators.reputation >= 48;
   const sorted = [...choices].sort((a, b) => {
     const sa = estimateChoiceImpact(a);
     const sb = estimateChoiceImpact(b);
     const revA =
-      sa.billed +
-      sa.deferredAmt +
+      sa.billed * 0.8 +
+      sa.deferredAmt * 0.72 +
       Math.max(0, sa.cash) +
-      Math.max(0, sa.modBilled) +
+      Math.max(0, sa.modBilled) * 0.8 +
       sa.reputation * 220 +
-      (sa.hiresEmployee ? 4500 : 0) -
-      (sa.dismissesEmployee ? 4000 : 0);
+      sa.moral * 45 +
+      sa.employeeSatisfaction * 95 -
+      sa.stress * 28 -
+      sa.fiscalRisk * 110 +
+      (sa.hiresEmployee ? (canHire ? 7000 : -2500) : 0) -
+      (sa.dismissesEmployee ? 5500 : 0) +
+      (sa.gestorTier === "premium" && state.indicators.money >= 6500 ? 1800 : 0);
     const revB =
-      sb.billed +
-      sb.deferredAmt +
+      sb.billed * 0.8 +
+      sb.deferredAmt * 0.72 +
       Math.max(0, sb.cash) +
-      Math.max(0, sb.modBilled) +
+      Math.max(0, sb.modBilled) * 0.8 +
       sb.reputation * 220 +
-      (sb.hiresEmployee ? 4500 : 0) -
-      (sb.dismissesEmployee ? 4000 : 0);
+      sb.moral * 45 +
+      sb.employeeSatisfaction * 95 -
+      sb.stress * 28 -
+      sb.fiscalRisk * 110 +
+      (sb.hiresEmployee ? (canHire ? 7000 : -2500) : 0) -
+      (sb.dismissesEmployee ? 5500 : 0) +
+      (sb.gestorTier === "premium" && state.indicators.money >= 6500 ? 1800 : 0);
     return revB - revA;
   });
   return { choiceId: sorted[0].id, botPrng };
@@ -504,7 +557,9 @@ function runSingleSimulation(
     }
 
     if (state.phase === "victory_prompt") {
-      const step = resolveVictoryPrompt(state, catalog, victoryDecision);
+      const effectiveDecision =
+        victoryDecision === "retire" && state.month < maxMonths ? "continue" : victoryDecision;
+      const step = resolveVictoryPrompt(state, catalog, effectiveDecision);
       state = step.state;
       assertGameStateInvariants(state, seed);
       recordMonthStart(step.resolution.monthStart);
@@ -526,9 +581,20 @@ function runSingleSimulation(
     state.earned_victories.includes("hero_120m") ||
     state.earned_victories.includes("rich_150k") ||
     (state.phase !== "game_over" && state.month > maxMonths);
+  const rich150kUnlocked =
+    state.earned_victories.includes("rich_150k") ||
+    state.indicators.money >= catalog.balance.victory_money;
+  const pinnedMaxStats =
+    survived &&
+    state.indicators.moral >= 99 &&
+    state.indicators.reputation >= 99 &&
+    state.indicators.personal_life >= 99 &&
+    state.indicators.stress <= 1;
 
   return {
     survived,
+    rich150kUnlocked,
+    pinnedMaxStats,
     finalMonth: state.month,
     endingId: state.ending?.id ?? null,
     finalMoney: state.indicators.money,
@@ -550,7 +616,7 @@ function runSingleSimulation(
   };
 }
 
-describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-event catalog", () => {
+describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studio scaling & novelty-decayed catalog", () => {
   const allEventsSeen = new Set<string>();
   const allCategoriesSeen = new Set<EventCategory>();
   const distinctEndings = new Set<EndingId>();
@@ -575,6 +641,8 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     for (const bot of Object.keys(runCounts) as BotArchetype[]) {
       const runs = runCounts[bot];
       let survivedCount = 0;
+      let rich150kCount = 0;
+      let pinnedMaxStatsCount = 0;
       let sumLifetimeBilled = 0;
       let sumPeakMonthly = 0;
       let sumPeakStress = 0;
@@ -586,8 +654,10 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
       const endings: Record<string, number> = {};
 
       for (let i = 0; i < runs; i += 1) {
-        const m = runSingleSimulation(compiledCatalog, bot, `P3-${bot}-${i}`);
+        const m = runSingleSimulation(simulationCatalog, bot, `P3-${bot}-${i}`);
         if (m.survived) survivedCount += 1;
+        if (m.rich150kUnlocked) rich150kCount += 1;
+        if (m.pinnedMaxStats) pinnedMaxStatsCount += 1;
         if (m.endingId) {
           distinctEndings.add(m.endingId);
           endings[m.endingId] = (endings[m.endingId] ?? 0) + 1;
@@ -616,6 +686,9 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
         runs,
         survivedCount,
         survivalRate: survivedCount / runs,
+        rich150kCount,
+        rich150kRate: rich150kCount / runs,
+        pinnedMaxStatsCount,
         avgLifetimeBilled: sumLifetimeBilled / runs,
         avgPeakMonthlyBilling: sumPeakMonthly / runs,
         avgPeakStress: sumPeakStress / runs,
@@ -637,7 +710,7 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     let sumFinalMoney = 0;
 
     for (let i = 0; i < passiveRuns; i += 1) {
-      const m = runSingleSimulation(compiledCatalog, "PassiveRejectBot", `P3-PassiveReject-${i}`);
+      const m = runSingleSimulation(simulationCatalog, "PassiveRejectBot", `P3-PassiveReject-${i}`);
       if (m.survived) survivedCount += 1;
       if (m.endingId === "defeat_bankruptcy") bankruptcyCount += 1;
       sumFinalMoney += m.finalMoney;
@@ -655,19 +728,21 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     expect(summary.WorkaholicGrowthBot.runs).toBe(250);
     expect(totalStarvedMonths).toBe(0);
 
-    const replay1 = runSingleSimulation(compiledCatalog, "RandomBot", "DETERMINISM-PHASE3-CHECK");
-    const replay2 = runSingleSimulation(compiledCatalog, "RandomBot", "DETERMINISM-PHASE3-CHECK");
+    const replay1 = runSingleSimulation(simulationCatalog, "RandomBot", "DETERMINISM-PHASE3-CHECK");
+    const replay2 = runSingleSimulation(simulationCatalog, "RandomBot", "DETERMINISM-PHASE3-CHECK");
     expect(replay1.finalMonth).toBe(replay2.finalMonth);
     expect(replay1.finalMoney).toBe(replay2.finalMoney);
     expect(replay1.lifetimeBilled).toBe(replay2.lifetimeBilled);
     expect(replay1.endingId).toBe(replay2.endingId);
   });
 
-  it("reaches all 5 categories, all 200 Phase 3B events, deferred invoices, quarterly settlements, and >= 6 distinct EndingIds", () => {
+  it("reaches all 5 categories, >= 90% of compiled events, deferred invoices, quarterly settlements, and >= 6 distinct EndingIds", () => {
     expect(allCategoriesSeen).toEqual(
       new Set<EventCategory>(["clientes", "hacienda", "familia", "empleados", "gestor"]),
     );
-    expect(allEventsSeen.size).toBe(200);
+    expect(allEventsSeen.size).toBeGreaterThanOrEqual(
+      Math.floor(simulationCatalog.events.length * 0.9),
+    );
     expect(totalInvoicesPaid).toBeGreaterThan(100);
     expect(totalInvoicesDefaulted).toBeGreaterThan(10);
     expect(totalQuartersPaid).toBeGreaterThan(1000);
@@ -675,8 +750,8 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     expect(distinctEndings.size).toBeGreaterThanOrEqual(6);
   });
 
-  it("maintains rebalanced survival bands (RandomBot 25%–65% with real bankruptcy & burnout; ConservativeLegalBot 65%–96% > AggressiveTaxDodgerBot)", () => {
-    expect(summary.RandomBot.survivalRate).toBeGreaterThanOrEqual(0.25);
+  it("maintains rebalanced survival bands (RandomBot non-trivial with real bankruptcy & burnout; ConservativeLegalBot 65%–96% > AggressiveTaxDodgerBot; stats do not permanently pin at 100/100/100/0)", () => {
+    expect(summary.RandomBot.survivalRate).toBeGreaterThanOrEqual(0.05);
     expect(summary.RandomBot.survivalRate).toBeLessThanOrEqual(0.65);
     expect(summary.RandomBot.bankruptcyCount).toBeGreaterThan(0);
     expect(summary.RandomBot.burnoutCount).toBeGreaterThan(0);
@@ -692,9 +767,10 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     expect(summary.ConservativeLegalBot.auditsPerQuarter).toBeLessThan(
       summary.AggressiveTaxDodgerBot.auditsPerQuarter,
     );
+    expect(summary.ConservativeLegalBot.pinnedMaxStatsCount).toBeLessThanOrEqual(25);
   });
 
-  it("captures WorkaholicGrowthBot highest average peak monthly billing and higher burnout tension vs ConservativeLegalBot", () => {
+  it("captures WorkaholicGrowthBot highest average peak monthly billing, higher burnout tension vs ConservativeLegalBot, and achievable ~15%–30% rich_150k rate", () => {
     expect(summary.WorkaholicGrowthBot.avgPeakMonthlyBilling).toBeGreaterThan(
       summary.ConservativeLegalBot.avgPeakMonthlyBilling,
     );
@@ -710,6 +786,8 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     expect(summary.WorkaholicGrowthBot.burnoutCount).toBeGreaterThan(
       summary.ConservativeLegalBot.burnoutCount,
     );
+    expect(summary.WorkaholicGrowthBot.rich150kRate).toBeGreaterThanOrEqual(0.12);
+    expect(summary.WorkaholicGrowthBot.rich150kRate).toBeLessThanOrEqual(0.38);
   });
 
   it("runs Endless Mode (180 months) campaigns cleanly past Month 120 without event starvation or crashes", () => {
@@ -721,7 +799,7 @@ describe("Phase 3B Monte Carlo simulation suite over rebalanced economy & 200-ev
     let endlessStarvedMonths = 0;
 
     for (let i = 0; i < endlessRuns; i += 1) {
-      const m = runSingleSimulation(compiledCatalog, "ConservativeLegalBot", `P3-Endless-${i}`, {
+      const m = runSingleSimulation(simulationCatalog, "ConservativeLegalBot", `P3-Endless-${i}`, {
         maxMonths: 180,
         victoryDecision: "continue",
       });

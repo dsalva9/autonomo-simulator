@@ -11,19 +11,11 @@ character_id: cliente_regateador
 character_expression: pleased
 requirements:
   min_month: 2
-weight: 12
-cooldown_months: 8
-max_occurrences: 5
+weight: 9
+cooldown_months: 10
+max_occurrences: 4
 exclusive_with: []
 choices:
-  - id: salir_del_grupo_y_exigir_interlocutor_unico
-    label: Salir del grupo y exigir un único interlocutor por correo
-    result_text: "Impones orden quirúrgico: un solo portavoz y cambios agrupados por escrito. El ruido baja un ochenta por ciento y cobras limpio."
-    effects:
-      billed_income: 750
-      stress: 10
-      moral: 4
-      reputation: 1
   - id: tarificar_cada_ronda_extra
     label: Quedarte pero responder a cada ocurrencia con su suplemento en euros
     outcomes:
@@ -52,3 +44,11 @@ choices:
       moral: 1
       personal_life: 3
       reputation: -4
+  - id: salir_del_grupo_y_exigir_interlocutor_unico
+    label: Salir del grupo y exigir un único interlocutor por correo
+    result_text: "Impones orden quirúrgico: un solo portavoz y cambios agrupados por escrito. El ruido baja un ochenta por ciento y cobras limpio."
+    effects:
+      billed_income: 750
+      stress: 5
+      moral: 4
+      reputation: 1

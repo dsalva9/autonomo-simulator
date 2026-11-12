@@ -15,6 +15,15 @@ cooldown_months: 11
 max_occurrences: 4
 exclusive_with: []
 choices:
+  - id: seguir_pagando_autoengano
+    label: "Dejar el recibo vivo porque «el lunes que viene empiezo seguro»"
+    result_text: "Patrocinas generosamente las máquinas elípticas del barrio un mes más sin levantarte de la silla giratoria."
+    effects:
+      cash_delta: -49
+      billed_income: 310
+      stress: 4
+      moral: -3
+      personal_life: -3
   - id: bloquear_tres_mananas_y_entrenar
     label: "Bloquear tres huecos sagrados por semana en la agenda e ir de verdad"
     result_text: "Las agujetas del miércoles son criminales, pero a la segunda semana duermes de un tirón y rinde más la cabeza."
@@ -36,12 +45,3 @@ choices:
       stress: -4
       moral: 3
       personal_life: 4
-  - id: seguir_pagando_autoengano
-    label: "Dejar el recibo vivo porque «el lunes que viene empiezo seguro»"
-    result_text: "Patrocinas generosamente las máquinas elípticas del barrio un mes más sin levantarte de la silla giratoria."
-    effects:
-      cash_delta: -49
-      billed_income: 310
-      stress: 4
-      moral: -3
-      personal_life: -3

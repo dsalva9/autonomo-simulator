@@ -12,18 +12,11 @@ requirements:
   gestor_tiers:
     - self
 weight: 12
-cooldown_months: 9
+cooldown_months: 10
 max_occurrences: 3
-exclusive_with: []
+exclusive_with:
+  - hacienda_certificado_caducado
 choices:
-  - id: pagar_videoidentificacion_urgente
-    label: "Pagar la videoidentificación exprés homologada desde casa (45 €)"
-    result_text: "Enseñas el DNI a cámara con cara de náufrago, descargas el certificado nuevo por la tarde y firmas en plazo sin pisar la calle."
-    effects:
-      deductible_expense: 45
-      stress: -4
-      moral: 3
-      fiscal_risk: -5
   - id: peregrinar_ayuntamiento_comarcal
     label: "Conducir cuarenta kilómetros hasta un registro comarcal sin cita"
     outcomes:
@@ -45,6 +38,14 @@ choices:
           moral: -5
           personal_life: -4
           fiscal_risk: 2
+  - id: pagar_videoidentificacion_urgente
+    label: "Pagar la videoidentificación exprés homologada desde casa (45 €)"
+    result_text: "Enseñas el DNI a cámara con cara de náufrago, descargas el certificado nuevo por la tarde y firmas en plazo sin pisar la calle."
+    effects:
+      deductible_expense: 45
+      stress: -4
+      moral: 3
+      fiscal_risk: -5
   - id: autorizar_presentacion_colaborador
     label: "Pagar a un colaborador social para presentar este trimestre (95 €)"
     requirements:

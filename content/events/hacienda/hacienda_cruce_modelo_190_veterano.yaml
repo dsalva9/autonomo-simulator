@@ -2,7 +2,7 @@ schema_version: 1
 id: hacienda_cruce_modelo_190_veterano
 category: hacienda
 title: "Enero veterano: el rompecabezas de los resúmenes anuales"
-body: "Tras varios años acumulando cartera y colaboradores puntuales, cerrar los resúmenes anuales de retenciones e IVA se convierte en un sudoku gigante donde un solo NIF mal tecleado desata requerimientos."
+body: Tras varios años acumulando cartera y colaboradores puntuales, cerrar los resúmenes anuales de retenciones e IVA se convierte en un sudoku gigante donde un solo NIF mal tecleado desata requerimientos.
 tags:
   - modelo_190
   - resumen_anual
@@ -12,26 +12,17 @@ character_id: hacienda_inspector_gomez
 character_expression: neutral
 requirements:
   min_month: 52
+  months_of_year:
+    - 1
+    - 2
 weight: 12
-cooldown_months: 12
-max_occurrences: null
+cooldown_months: 10
+max_occurrences: 3
 exclusive_with: []
 choices:
-  - id: conciliacion_integral_asesoria
-    label: "Dejar que tu gestoría concilie certificados con cada contraparte"
-    requirements:
-      gestor_tiers:
-        - cheap
-        - premium
-    result_text: "Tu asesoría cruza decenas de certificados antes del día treinta y cierra enero con precisión de relojero."
-    effects:
-      deductible_expense: 160
-      stress: -5
-      moral: 5
-      fiscal_risk: -10
   - id: llamar_administraciones_una_por_una
-    label: "Llamar tú mismo a cada cliente veterano para clavar los importes"
-    result_text: "Echas dos mañanas enteras al teléfono cuadrando céntimos, pero presentas unos modelos anuales intachables."
+    label: Llamar tú mismo a cada cliente veterano para clavar los importes
+    result_text: Echas dos mañanas enteras al teléfono cuadrando céntimos, pero presentas unos modelos anuales intachables.
     effects:
       deductible_expense: 50
       stress: 6
@@ -39,10 +30,22 @@ choices:
       reputation: 2
       fiscal_risk: -7
   - id: presentar_sustitutiva_fuera_de_hora
-    label: "Cerrar con estimaciones y asumir después el recargo de sustitutiva"
-    result_text: "Salvas la semana de entregas urgentes pagando más tarde la tarifa plana administrativa por corregir casillas."
+    label: Cerrar con estimaciones y asumir después el recargo de sustitutiva
+    result_text: Salvas la semana de entregas urgentes pagando más tarde la tarifa plana administrativa por corregir casillas.
     effects:
       cash_delta: -280
       stress: -2
       moral: -2
       fiscal_risk: -6
+  - id: conciliacion_integral_asesoria
+    label: Dejar que tu gestoría concilie certificados con cada contraparte
+    requirements:
+      gestor_tiers:
+        - cheap
+        - premium
+    result_text: Tu asesoría cruza decenas de certificados antes del día treinta y cierra enero con precisión de relojero.
+    effects:
+      deductible_expense: 160
+      stress: -5
+      moral: 5
+      fiscal_risk: -10

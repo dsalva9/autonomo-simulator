@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  Award,
   Calendar,
   FileText,
   LogOut,
@@ -8,6 +9,7 @@ import {
   VolumeX,
   Zap,
 } from "lucide-react";
+import type { Ref } from "react";
 import {
   type GameState,
   computeNetCashAfterTaxReserve,
@@ -28,6 +30,7 @@ import { type IndicatorDeltas, useGameStore } from "../../store/gameStore.ts";
 import { useUIStore } from "../../store/uiStore.ts";
 
 export interface IndicatorBarProps {
+  headerRef?: Ref<HTMLElement>;
   state: GameState;
   lastDeltas: IndicatorDeltas;
   locale?: string;
@@ -39,6 +42,7 @@ interface GaugeItemProps {
   testId: string;
   label: string;
   shortLabel: string;
+  compactPhoneLabel: string;
   value: number;
   delta?: number;
   invertDanger?: boolean;
@@ -48,6 +52,7 @@ function GaugeItem({
   testId,
   label,
   shortLabel,
+  compactPhoneLabel,
   value,
   delta,
   invertDanger = false,
@@ -71,29 +76,30 @@ function GaugeItem({
   return (
     <div
       data-testid={testId}
-      className={`rounded-lg border px-2 py-1 lg:px-2.5 lg:py-1 flex flex-col justify-between bg-[#fffdf8] ${
+      className={`hud-gauge-card relative rounded-lg border px-1.5 sm:px-2 xl:px-2.5 py-0.5 sm:py-1 flex flex-col justify-between bg-[#fffdf8] ${
         isDanger ? "border-[#b42b24] bg-[#fdf0ef]" : "border-[#1f2421]/55"
       }`}
     >
-      <div className="flex items-center justify-between gap-0.5 min-h-[15px] leading-none">
-        <span className="font-semibold text-[11px] lg:text-xs text-[#1f2421] truncate">
+      <div className="flex items-center justify-between gap-1 min-h-[15px] leading-none">
+        <span className="font-semibold text-[11px] xl:text-xs text-[#1f2421] whitespace-nowrap">
           <span className="hidden sm:inline">{label}</span>
-          <span className="sm:hidden">{shortLabel}</span>
+          <span className="hidden min-[380px]:inline sm:hidden">{shortLabel}</span>
+          <span className="min-[380px]:hidden">{compactPhoneLabel}</span>
         </span>
         <div className="flex items-center gap-0.5 shrink-0 font-bureau font-bold tabular-nums">
           <span
             data-testid={`${testId}-value`}
-            className={`text-[11px] lg:text-xs ${isDanger ? "text-[#b42b24]" : "text-[#1f2421]"}`}
+            className={`text-[11px] xl:text-xs ${isDanger ? "text-[#9e221b]" : "text-[#1f2421]"}`}
           >
             {clamped}
           </span>
           {delta !== undefined && delta !== 0 && (
             <span
               data-testid={`${testId}-delta`}
-              className={`text-[10px] leading-none px-1 py-0.5 rounded border ${
+              className={`max-sm:absolute max-sm:-top-2 max-sm:right-1 max-sm:z-10 max-sm:shadow-2xs text-[9.5px] sm:text-[10px] leading-none px-1 py-0.5 rounded border ${
                 deltaPositiveGood
-                  ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40"
-                  : "bg-[#fdf0ef] text-[#b42b24] border-[#b42b24]/40"
+                  ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/50"
+                  : "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/50"
               }`}
             >
               {formatSignedInt(delta)}
@@ -106,7 +112,7 @@ function GaugeItem({
       </meter>
       <div
         aria-hidden="true"
-        className="mt-1 lg:mt-0.5 h-1.5 w-full rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/25"
+        className="hud-gauge-bar-track mt-0.5 sm:mt-1 xl:mt-0.5 h-1.5 w-full rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/25"
       >
         <div
           className={`h-full transition-all duration-200 ${barColor}`}
@@ -118,6 +124,7 @@ function GaugeItem({
 }
 
 export function IndicatorBar({
+  headerRef,
   state,
   lastDeltas,
   locale: localeProp,
@@ -143,6 +150,17 @@ export function IndicatorBar({
 
   const reservedTax = computeReservedTaxObligation(state);
   const netCashAfterTax = computeNetCashAfterTaxReserve(state);
+
+  const canRetireHonorably =
+    state.endless_mode ||
+    state.month >= compiledCatalog.balance.victory_month ||
+    state.earned_victories.length > 0;
+
+  const retireLongLabel = isEn ? "Retire with honors" : "Jubilarse con honores";
+  const retireShortLabel = isEn ? "Retire" : "Jubilarse";
+  const retireAriaLabel = isEn
+    ? "Retire with honors or close dossier (B)"
+    : "Jubilarse con honores o tramitar baja (B)";
 
   const handleToggleLocale = () => {
     playUiSound("paper_choice", { muted: sfxMuted });
@@ -186,8 +204,12 @@ export function IndicatorBar({
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b-2 border-[#1f2421] bg-[#f6efe0]/96 backdrop-blur-xs shadow-xs">
-      <div className="max-w-[1400px] mx-auto px-2.5 sm:px-5 py-1.5 space-y-1.5 lg:space-y-1">
+    <header
+      ref={headerRef}
+      data-hud-header="true"
+      className="hud-header-bar sticky top-0 z-30 border-b-2 border-[#1f2421] bg-[#f6efe0]/96 backdrop-blur-xs shadow-xs"
+    >
+      <div className="hud-shell-inner max-w-[1420px] mx-auto px-2.5 sm:px-5 py-1 sm:py-1.5 space-y-1 sm:space-y-1.5 xl:space-y-1">
         {/* Screen-reader live region for turn deltas */}
         <output className="sr-only" aria-live="polite">
           {liveAnnouncementParts.length > 0
@@ -196,38 +218,38 @@ export function IndicatorBar({
         </output>
 
         {/* Command Band 1:
-            - Mobile (<1024px): Row 1 = Calendar (left) + Toolbar (right); Row 2 = Full-width Treasury & Hacienda strip.
-            - Desktop (>=1024px): Single aligned horizontal row = Calendar | Treasury & Hacienda | Toolbar. */}
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] lg:flex lg:items-center lg:justify-between gap-1.5 lg:gap-3">
+            - Mobile & Tablet (<1280px): Flex-wrapping row 1 (Calendar + Toolbar) + full-width Treasury & Hacienda strip.
+            - Desktop (>=1280px): Single aligned horizontal row = Calendar | Treasury & Hacienda | Toolbar. */}
+        <div className="flex flex-wrap xl:flex-nowrap items-center justify-between gap-1.5 xl:gap-2.5">
           {/* 1. Calendar & Trimestre Pill */}
           <div
             data-testid="indicator-calendar"
-            className="order-1 lg:order-1 inline-flex items-center gap-1 sm:gap-1.5 self-center justify-self-start rounded-lg border border-[#1f2421]/80 bg-[#fffdf8] px-1.5 sm:px-2 py-1 min-w-0 max-w-full"
+            className="order-1 xl:order-1 inline-flex items-center gap-1 sm:gap-1.5 rounded-lg border border-[#1f2421]/80 bg-[#fffdf8] px-1.5 sm:px-2 py-1 min-w-0 shrink-0"
           >
             <Calendar
-              className="hidden min-[380px]:block w-3.5 h-3.5 text-[#8f510d] shrink-0"
+              className="hidden min-[390px]:block w-3.5 h-3.5 text-[#7a4308] shrink-0"
               aria-hidden="true"
             />
             <span className="font-editorial font-bold text-xs sm:text-sm text-[#1f2421] whitespace-nowrap">
               {calendar.label}
             </span>
-            <span className="font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] whitespace-nowrap tabular-nums">
+            <span className="hidden min-[360px]:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1 sm:px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] whitespace-nowrap tabular-nums">
               {state.endless_mode ? `M${state.month}·∞` : `M${state.month}/120`}
             </span>
             <span
-              className={`hidden min-[440px]:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap tabular-nums ${
+              className={`hidden min-[460px]:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap tabular-nums ${
                 calendar.monthsUntilTrimestre === 0
-                  ? "bg-[#fdf0ef] text-[#b42b24] border border-[#b42b24]/40"
-                  : "bg-[#fcf4df] text-[#8f510d]"
+                  ? "bg-[#fdf0ef] text-[#9e221b] border border-[#9e221b]/40"
+                  : "bg-[#fcf4df] text-[#7a4308]"
               }`}
             >
-              <span className="hidden xl:inline">{calendar.trimestreLabel}</span>
-              <span className="xl:hidden">{calendar.shortTrimestreBadge}</span>
+              <span className="hidden 2xl:inline">{calendar.trimestreLabel}</span>
+              <span className="2xl:hidden">{calendar.shortTrimestreBadge}</span>
             </span>
           </div>
 
-          {/* 2. Utility & Session Actions (Flush Right on Mobile Row 1 & Desktop Band 1) */}
-          <div className="order-2 lg:order-3 flex items-center gap-1 justify-self-end shrink-0">
+          {/* 2. Utility & Session Actions (>= 6px inter-button gap, high-contrast solid colors) */}
+          <div className="order-2 xl:order-3 flex items-center gap-1.5 ml-auto xl:ml-0 shrink-0">
             <button
               type="button"
               data-testid="locale-toggle-btn"
@@ -236,13 +258,17 @@ export function IndicatorBar({
               onClick={handleToggleLocale}
               className="h-7 px-1.5 inline-flex items-center justify-center rounded-md border border-[#1f2421]/80 bg-[#fffdf8] hover:bg-[#efe4ce] font-bureau text-[10px] font-bold text-[#1f2421] transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
-              <span className={isEn ? "opacity-55" : "text-[#1f5c53] underline underline-offset-2"}>
+              <span
+                className={isEn ? "text-[#4a524e]" : "text-[#1f5c53] underline underline-offset-2"}
+              >
                 ES
               </span>
-              <span className="opacity-35 mx-0.5" aria-hidden="true">
+              <span className="text-[#5c6661] mx-0.5" aria-hidden="true">
                 |
               </span>
-              <span className={isEn ? "text-[#1f5c53] underline underline-offset-2" : "opacity-55"}>
+              <span
+                className={isEn ? "text-[#1f5c53] underline underline-offset-2" : "text-[#4a524e]"}
+              >
                 EN
               </span>
             </button>
@@ -254,9 +280,9 @@ export function IndicatorBar({
               aria-pressed={!sfxMuted}
               title={sfxMuted ? ui.hud.sfxTitleMuted : ui.hud.sfxTitleActive}
               onClick={handleToggleSfx}
-              className={`h-7 min-w-7 px-1.5 xl:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer ${
+              className={`h-7 min-w-7 px-1.5 2xl:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer ${
                 sfxMuted
-                  ? "border-[#1f2421]/40 bg-[#efe4ce]/80 text-[#4a524e]"
+                  ? "border-[#1f2421]/50 bg-[#efe4ce] text-[#373f3a]"
                   : "border-[#1f2421]/75 bg-[#fffdf8] hover:bg-[#efe4ce] text-[#1f2421]"
               }`}
             >
@@ -265,7 +291,7 @@ export function IndicatorBar({
               ) : (
                 <Volume2 className="w-3.5 h-3.5 shrink-0 text-[#1f5c53]" aria-hidden="true" />
               )}
-              <span className="hidden xl:inline">{ui.hud.sfxLabel}</span>
+              <span className="hidden 2xl:inline">{ui.hud.sfxLabel}</span>
             </button>
 
             <button
@@ -275,14 +301,14 @@ export function IndicatorBar({
               aria-pressed={fastPacing}
               title={fastPacing ? ui.hud.fastTitleOn : ui.hud.fastTitleOff}
               onClick={handleToggleFastPacing}
-              className={`h-7 min-w-7 px-1.5 xl:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer ${
+              className={`h-7 min-w-7 px-1.5 2xl:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer ${
                 fastPacing
-                  ? "border-[#8f510d] bg-[#fcf4df] text-[#8f510d]"
+                  ? "border-[#7a4308] bg-[#fcf4df] text-[#7a4308]"
                   : "border-[#1f2421]/75 bg-[#fffdf8] hover:bg-[#efe4ce] text-[#1f2421]"
               }`}
             >
               <Zap className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-              <span className="hidden xl:inline">{ui.hud.fastLabel}</span>
+              <span className="hidden 2xl:inline">{ui.hud.fastLabel}</span>
             </button>
 
             <button
@@ -298,22 +324,36 @@ export function IndicatorBar({
             </button>
 
             <button
+              id="hud-abandon-btn"
               type="button"
               data-testid="abandon-run-btn"
-              aria-label={ui.hud.abandonAria}
-              title={ui.hud.abandonTitle}
+              data-can-retire={canRetireHonorably ? "true" : "false"}
+              aria-label={canRetireHonorably ? retireAriaLabel : ui.hud.abandonAria}
+              title={canRetireHonorably ? retireAriaLabel : ui.hud.abandonTitle}
               onClick={onOpenAbandon}
-              className="h-7 min-w-7 px-1.5 sm:px-2 inline-flex items-center justify-center gap-1 rounded-md border border-[#b42b24]/75 bg-[#fdf0ef] hover:bg-[#f9dcd9] text-[11px] font-bold text-[#b42b24] transition-colors cursor-pointer whitespace-nowrap"
+              className={`h-7 min-w-7 px-1.5 sm:px-2 inline-flex items-center justify-center gap-1 rounded-md border text-[11px] font-bold transition-colors cursor-pointer whitespace-nowrap ${
+                canRetireHonorably
+                  ? "border-[#1f5c53] bg-[#e8f5f1] hover:bg-[#d5ebe4] text-[#1f5c53]"
+                  : "border-[#9e221b]/80 bg-[#fdf0ef] hover:bg-[#f9dcd9] text-[#9e221b]"
+              }`}
             >
-              <LogOut className="w-3 h-3 shrink-0" aria-hidden="true" />
-              <span className="hidden min-[400px]:inline sm:hidden">{ui.hud.abandonShort}</span>
-              <span className="hidden sm:inline">{ui.hud.abandonLong}</span>
+              {canRetireHonorably ? (
+                <Award className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              ) : (
+                <LogOut className="w-3 h-3 shrink-0" aria-hidden="true" />
+              )}
+              <span className="hidden min-[410px]:inline sm:hidden">
+                {canRetireHonorably ? retireShortLabel : ui.hud.abandonShort}
+              </span>
+              <span className="hidden sm:inline">
+                {canRetireHonorably ? retireLongLabel : ui.hud.abandonLong}
+              </span>
             </button>
           </div>
 
           {/* 3. Treasury (Caja + Tax Reserve + Net Cash) & Hacienda Tension Strip */}
           <div
-            className={`col-span-2 order-3 lg:order-2 lg:flex-1 rounded-lg border px-2.5 py-1 flex items-center justify-between gap-2 min-w-0 ${
+            className={`hud-treasury-strip w-full xl:w-auto order-3 xl:order-2 xl:flex-1 rounded-lg border px-2.5 py-0.5 sm:py-1 flex flex-wrap items-center justify-between gap-x-2.5 gap-y-0.5 sm:gap-y-1 min-w-0 ${
               isNegativeCash ? "border-[#b42b24] bg-[#fdf0ef]" : "border-[#1f2421]/80 bg-[#fffdf8]"
             }`}
           >
@@ -328,7 +368,7 @@ export function IndicatorBar({
                 <span
                   data-testid="indicator-money-value"
                   className={`font-bureau font-bold text-xs sm:text-sm tabular-nums ${
-                    isNegativeCash ? "text-[#b42b24]" : "text-[#1f2421]"
+                    isNegativeCash ? "text-[#9e221b]" : "text-[#1f2421]"
                   }`}
                 >
                   {formatEuros(state.indicators.money, locale)}
@@ -338,8 +378,8 @@ export function IndicatorBar({
                     data-testid="indicator-money-delta"
                     className={`font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded border leading-none tabular-nums ${
                       lastDeltas.money > 0
-                        ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40"
-                        : "bg-[#fdf0ef] text-[#b42b24] border-[#b42b24]/40"
+                        ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/45"
+                        : "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/45"
                     }`}
                   >
                     {formatSignedEuros(lastDeltas.money, locale)}
@@ -348,7 +388,7 @@ export function IndicatorBar({
                 {isNegativeCash && (
                   <span
                     data-testid="numeros-rojos-alert"
-                    className="inline-flex items-center gap-1 stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#b42b24] text-[#fffdf8] leading-none"
+                    className="inline-flex items-center gap-1 stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#9e221b] text-[#fffdf8] leading-none"
                   >
                     <AlertTriangle className="w-3 h-3 shrink-0" aria-hidden="true" />
                     <span className="hidden sm:inline">
@@ -367,7 +407,7 @@ export function IndicatorBar({
                 )}
               </div>
 
-              <span className="hidden sm:inline text-[#1f2421]/25" aria-hidden="true">
+              <span className="hidden md:inline text-[#5c6661]" aria-hidden="true">
                 |
               </span>
 
@@ -377,18 +417,18 @@ export function IndicatorBar({
               >
                 <span className="hidden md:inline">{ui.hud.quarterReserveLong}</span>
                 <span className="md:hidden">{ui.hud.quarterReserveShort}</span>
-                <span className="font-bold text-[#8f510d]">
+                <span className="font-bold text-[#7a4308]">
                   {reservedTax > 0
                     ? `-${formatEuros(reservedTax, locale)}`
                     : formatEuros(0, locale)}
                 </span>
-                <span className="text-[#1f2421]/30" aria-hidden="true">
+                <span className="text-[#5c6661]" aria-hidden="true">
                   ·
                 </span>
                 <span>{ui.hud.netFreeCash}</span>
                 <strong
                   className={`font-bold ${
-                    netCashAfterTax < 0 ? "text-[#b42b24]" : "text-[#1f5c53]"
+                    netCashAfterTax < 0 ? "text-[#9e221b]" : "text-[#1f5c53]"
                   }`}
                 >
                   {formatEuros(netCashAfterTax, locale)}
@@ -401,14 +441,14 @@ export function IndicatorBar({
               data-testid="indicator-fiscal-risk"
               className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] sm:text-[11px] font-semibold shrink-0 whitespace-nowrap ${
                 fiscalTension.level === "critical"
-                  ? "border-[#b42b24]/60 bg-[#fdf0ef] text-[#b42b24]"
+                  ? "border-[#9e221b]/60 bg-[#fdf0ef] text-[#9e221b]"
                   : fiscalTension.level === "watched"
-                    ? "border-[#8f510d]/50 bg-[#fcf4df] text-[#8f510d]"
-                    : "border-[#1f2421]/20 bg-[#f6efe0] text-[#4a524e]"
+                    ? "border-[#7a4308]/50 bg-[#fcf4df] text-[#7a4308]"
+                    : "border-[#1f2421]/25 bg-[#f6efe0] text-[#373f3a]"
               }`}
             >
               <ShieldAlert className="w-3 h-3 shrink-0" aria-hidden="true" />
-              <span className="hidden xl:inline">{ui.hud.taxAgencyPrefix}</span>
+              <span className="hidden 2xl:inline">{ui.hud.taxAgencyPrefix}</span>
               <span>{fiscalTension.label}</span>
             </div>
           </div>
@@ -417,12 +457,13 @@ export function IndicatorBar({
         {/* Command Band 2: 4-Column Aligned Micro-Gauges (Mobile & Desktop) */}
         <section
           aria-label={ui.hud.indicatorsSectionAria}
-          className="grid grid-cols-4 gap-1.5 lg:gap-3"
+          className="hud-gauges-band grid grid-cols-4 gap-1.5 xl:gap-3"
         >
           <GaugeItem
             testId="indicator-moral"
             label={ui.hud.moralLabel}
             shortLabel={ui.hud.moralShort}
+            compactPhoneLabel={isEn ? "Mor." : "Mor."}
             value={state.indicators.moral}
             delta={lastDeltas.moral}
           />
@@ -430,6 +471,7 @@ export function IndicatorBar({
             testId="indicator-stress"
             label={ui.hud.stressLabel}
             shortLabel={ui.hud.stressShort}
+            compactPhoneLabel={isEn ? "Str." : "Est."}
             value={state.indicators.stress}
             delta={lastDeltas.stress}
             invertDanger={true}
@@ -438,6 +480,7 @@ export function IndicatorBar({
             testId="indicator-personal-life"
             label={ui.hud.personalLifeLabel}
             shortLabel={ui.hud.personalLifeShort}
+            compactPhoneLabel={isEn ? "Life" : "Vida"}
             value={state.indicators.personal_life}
             delta={lastDeltas.personal_life}
           />
@@ -445,6 +488,7 @@ export function IndicatorBar({
             testId="indicator-reputation"
             label={ui.hud.reputationLabel}
             shortLabel={ui.hud.reputationShort}
+            compactPhoneLabel="Rep."
             value={state.indicators.reputation}
             delta={lastDeltas.reputation}
           />

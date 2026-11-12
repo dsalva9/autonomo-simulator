@@ -1,0 +1,71 @@
+schema_version: 1
+id: gestor_paco_cliffhanger_modelo_303
+category: gestor
+title: 23:54 y Paco sigue «escribiendo…»
+body: Última noche del plazo trimestral del Modelo 303. No tienes justificante en el correo, el plazo de domiciliación venció hace días y el WhatsApp de Paco lleva seis minutos en «escribiendo…».
+tags:
+  - gestoria
+  - paco
+  - modelo_303
+  - plazos
+character_id: gestor_barato_paco
+character_expression: stressed
+illustration_id: null
+requirements:
+  min_month: 5
+  months_of_year:
+    - 1
+    - 4
+    - 7
+    - 10
+  gestor_tiers:
+    - cheap
+weight: 12
+cooldown_months: 9
+max_occurrences: 3
+choices:
+  - id: llamar_sin_parar_hasta_las_doce
+    label: Acribillarlo a llamadas con el NRC del banco en la mano
+    outcomes:
+      - id: presentado_a_las_23_59_en_punto
+        weight: 65
+        result_text: A las 23:59 entra el PDF firmado junto a un audio de Paco celebrándolo como un gol en la prórroga.
+        effects:
+          stress: 8
+          moral: 2
+          fiscal_risk: -2
+      - id: reloj_pasa_de_medianoche
+        weight: 35
+        result_text: "El servidor marca las 00:02: modelo extemporáneo y recargo automático por apurar hasta el último suspiro."
+        effects:
+          cash_delta: -185
+          stress: 12
+          moral: -6
+          fiscal_risk: 7
+          set_flags:
+            - susto_con_paco
+  - id: entrar_con_tu_certificado_y_presentar_directo
+    label: Entrar tú a la sede electrónica y presentarlo a pulmón
+    result_text: Picas tus totales temblando en cuatro minutos, generas el NRC bancario y evitas la multa por los pelos.
+    effects:
+      stress: 9
+      moral: 3
+      personal_life: -3
+      fiscal_risk: -4
+  - id: rescate_urgente_y_fichaje_de_elena
+    label: Cerrar el pago hoy y contratar mañana mismo a Elena Montes
+    requirements:
+      stats:
+        money:
+          min: 300
+    result_text: Salvas el trimestre con NRC bancario y firmas con Elena para no volver a vivir un infarto nocturno cada abril.
+    effects:
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      deductible_expense: 185
+      stress: -7
+      moral: 5
+      fiscal_risk: -12
+      clear_flags:
+        - susto_con_paco

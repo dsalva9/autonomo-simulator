@@ -1,0 +1,47 @@
+schema_version: 1
+id: familia_urgencia_hospital_padres
+category: familia
+title: "Llamada a las nueve: susto de tus padres en urgencias"
+body: "Con los años llegan los sustos que detienen el teclado en seco: te avisan un miércoles temprano de que han ingresado en observación a uno de tus padres por un mareo fuerte. Hoy tienes cierre de entrega."
+tags:
+  - padres
+  - salud
+  - urgencias
+  - veterania
+character_id: null
+illustration_id: null
+requirements:
+  min_month: 64
+weight: 11
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: coordinar_turnos_familia_y_entregar_noche
+    label: "Pasar la mañana en el hospital y rematar la entrega de noche en casa (45 €)"
+    result_text: "Cumples donde importa de verdad y salvas la factura a base de ojeras, agradeciendo que todo haya quedado en observación leve."
+    effects:
+      cash_delta: -45
+      billed_income: 520
+      stress: 9
+      moral: 6
+      personal_life: 7
+      reputation: 2
+  - id: trabajar_desde_sala_de_espera
+    label: "Llevarte el portátil al pasillo del hospital para no perder el hilo"
+    result_text: "Envías los archivos sobre las rodillas entre pitidos de megafonía: salvas el encargo, pero sales con la cabeza como un bombo."
+    effects:
+      cash_delta: -35
+      billed_income: 640
+      stress: 13
+      moral: -4
+      personal_life: 1
+  - id: cerrar_portatil_y_correr_al_hospital
+    label: "Apagar todo al instante, pedir un taxi e irte a su lado sin dudar (65 €)"
+    result_text: "Queda en un susto controlado con ajuste de medicación. Estar allí cogiéndole la mano cuando sale el médico borra cualquier prisa laboral."
+    effects:
+      cash_delta: -65
+      stress: -5
+      moral: 12
+      personal_life: 14
+      reputation: -2
