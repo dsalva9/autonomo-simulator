@@ -29,7 +29,7 @@ choices:
       moral: 7
       fiscal_risk: -12
       add_modifier:
-        id: mod_anexo_defensa_elena
+        id: mod_blindaje_sustancia_elena
         label: Cobertura jurídica tributaria
         remaining_months: 4
         monthly_expense_delta: 30

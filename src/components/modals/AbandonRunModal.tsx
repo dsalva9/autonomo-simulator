@@ -61,17 +61,17 @@ export function AbandonRunModal({
         data-testid="abandon-modal"
         className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
       >
-        <div className="paper-dossier animate-dossier w-full max-w-md max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl overflow-hidden">
-          <div className="bg-[#1f5c53] text-[#fffdf8] px-4 sm:px-5 py-2.5 sm:py-3 border-b-2 border-[#1f2421] flex items-center justify-between gap-2 shrink-0">
+        <div className="paper-dossier animate-dossier w-full max-w-md max-h-[calc(100dvh-1.5rem)] flex flex-col rounded-xl overflow-hidden">
+          <div className="bg-[#1f5c53] text-[#fffdf8] px-4 sm:px-5 py-2 sm:py-3 [@media(max-height:500px)]:py-1.5 border-b-2 border-[#1f2421] flex items-center justify-between gap-2 shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
               <Trophy className="w-5 h-5 shrink-0 text-[#fce592]" aria-hidden="true" />
               <div className="min-w-0">
-                <p className="stamp-badge text-[10px] text-[#fce592] truncate">
+                <p className="stamp-badge text-[10px] text-[#fce592] leading-tight break-words">
                   {ab.honorableBadge}
                 </p>
                 <h2
                   id="abandon-modal-title"
-                  className="font-editorial text-base sm:text-lg font-bold"
+                  className="font-editorial text-base sm:text-lg font-bold leading-snug"
                 >
                   {ab.honorableHeading}
                 </h2>
@@ -83,7 +83,7 @@ export function AbandonRunModal({
               onClick={onCancel}
               aria-label={ab.closeAria}
               title={ab.closeTitle}
-              className="inline-flex items-center gap-1 rounded px-1.5 py-1 hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
+              className="min-h-9 min-w-9 inline-flex items-center justify-center gap-1 rounded px-2 py-1 hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
             >
               <span className="hidden sm:inline font-bureau text-[10px] font-bold text-[#fce592]">
                 {ab.escKeyLabel}
@@ -107,7 +107,7 @@ export function AbandonRunModal({
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3.5 sm:px-4 py-2.5 space-y-2">
+          <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3.5 sm:px-4 py-2 [@media(max-height:500px)]:py-1.5 grid grid-cols-1 [@media(max-height:500px)]:grid-cols-2 gap-2">
             <button
               type="button"
               data-testid="retire-honorable-confirm-btn"
@@ -154,11 +154,14 @@ export function AbandonRunModal({
       data-testid="abandon-modal"
       className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
     >
-      <div className="paper-dossier animate-dossier w-full max-w-md max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl overflow-hidden">
-        <div className="bg-[#1f2421] text-[#fffdf8] px-4 sm:px-5 py-2.5 sm:py-3 border-b-2 border-[#1f2421] flex items-center justify-between gap-2 shrink-0">
+      <div className="paper-dossier animate-dossier w-full max-w-md max-h-[calc(100dvh-1.5rem)] flex flex-col rounded-xl overflow-hidden">
+        <div className="bg-[#1f2421] text-[#fffdf8] px-4 sm:px-5 py-2 sm:py-3 [@media(max-height:500px)]:py-1.5 border-b-2 border-[#1f2421] flex items-center justify-between gap-2 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <LogOut className="w-5 h-5 shrink-0 text-[#fce592]" aria-hidden="true" />
-            <h2 id="abandon-modal-title" className="font-editorial text-base sm:text-lg font-bold">
+            <h2
+              id="abandon-modal-title"
+              className="font-editorial text-base sm:text-lg font-bold leading-snug"
+            >
               {ab.heading}
             </h2>
           </div>
@@ -168,7 +171,7 @@ export function AbandonRunModal({
             onClick={onCancel}
             aria-label={ab.closeAria}
             title={ab.closeTitle}
-            className="inline-flex items-center gap-1 rounded px-1.5 py-1 hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
+            className="min-h-9 min-w-9 inline-flex items-center justify-center gap-1 rounded px-2 py-1 hover:bg-[#fffdf8]/15 shrink-0 cursor-pointer"
           >
             <span className="hidden sm:inline font-bureau text-[10px] font-bold text-[#fce592]">
               Esc

@@ -20,12 +20,12 @@ choices:
     label: "Ceder la gestión directa con prima de responsabilidad (500 €)"
     result_text: "Desaparecen seis reuniones semanales de tu calendario, entran ampliaciones de alcance mejor vendidas y por fin respiras como titular de estudio."
     effects:
-      billed_income: 1650
-      cash_delta: -500
+      billed_income: 1250
+      deductible_expense: 500
       moral: 7
       stress: -8
-      personal_life: 5
-      reputation: 4
+      personal_life: 6
+      reputation: 3
       employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
@@ -33,19 +33,21 @@ choices:
     label: "Delegar el día a día manteniendo un comité interno cada dos viernes"
     result_text: "Sueltas lastre operativo sin perder visibilidad comercial y el despacho gana agilidad sin sobresaltos."
     effects:
-      billed_income: 950
+      billed_income: 1100
       moral: 4
-      stress: -5
+      stress: -4
       personal_life: 3
       reputation: 2
       employee_satisfaction: 8
   - id: seguir_supervisando_cada_correo
     label: "Seguir pasando cada respuesta por tu filtro personal por si acaso"
-    result_text: "Nada sale sin tu sello, pero acabas agotado revisando borradores ajenos a última hora y frenas el techo del estudio."
+    result_text: "Cada entrega sale impecable con tu sello personal, pero acabas agotado revisando borradores ajenos y quemando al equipo."
     effects:
-      moral: -4
+      billed_income: 650
+      moral: -3
       stress: 7
       personal_life: -4
-      employee_satisfaction: -12
+      reputation: 5
+      employee_satisfaction: -10
       set_flags:
         - desgaste_plantilla

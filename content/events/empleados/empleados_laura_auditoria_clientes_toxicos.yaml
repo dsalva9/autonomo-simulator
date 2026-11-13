@@ -39,18 +39,18 @@ choices:
     label: "Dejar que Laura les envíe nuevas tarifas con alcance acotado"
     result_text: "Uno acepta la subida sin rechistar y el otro aprende de golpe a agrupar sus dudas en un solo correo semanal. Mano de santo."
     effects:
-      billed_income: 1950
+      billed_income: 1650
       moral: 6
-      stress: -6
+      stress: 2
       reputation: 4
       employee_satisfaction: 13
       clear_flags:
         - desgaste_plantilla
   - id: mantenerlos_por_miedo_al_vacio
     label: "Conservarlos igual por pánico supersticioso a perder ingresos"
-    result_text: "Entra el goteo habitual de euros, pero Laura suspira resignada cada vez que vuelven a escribir pidiendo cambios absurdos."
+    result_text: "Aseguras toda la facturación bruta del mes sin bajas, pero Laura suspira resignada ante cada cambio absurdo que entra."
     effects:
-      billed_income: 650
+      billed_income: 1950
       moral: -5
       stress: 7
       employee_satisfaction: -12

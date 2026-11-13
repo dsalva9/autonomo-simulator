@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle2, Dices, Lock, Receipt } from "lucide-react";
-import { type SyntheticEvent, useEffect, useRef } from "react";
+import { type SyntheticEvent, useEffect, useRef, useState } from "react";
 import type {
   ActiveEventView,
   ChoiceOutcomeSummary,
@@ -56,6 +56,12 @@ type ExtendedMonthStartSummary = MonthStartSummary & {
   tax_shield_on_expenses?: number;
   modifier_moral_delta?: number;
   modifier_stress_delta?: number;
+  overdraft_stress_delta?: number;
+  maintenance_moral_delta?: number;
+  maintenance_reputation_delta?: number;
+  maintenance_personal_life_delta?: number;
+  net_moral_delta?: number;
+  net_stress_delta?: number;
 };
 
 interface AutoSettledQuarterInfo {
@@ -95,10 +101,23 @@ function stakeChipClass(tone: StakeChip["tone"]): string {
   }
 }
 
+function formatShortPolaroidName(fullName: string): string {
+  const stripped = fullName
+    .replace(/\s*\([^)]*\)/g, "")
+    .replace(/\s*«[^»]*»/g, "")
+    .replace(/\s*“[^”]*”/g, "")
+    .replace(/\s*"[^"]*"/g, "")
+    .replace(/,.*$/, "")
+    .replace(/^Inspector\s+/i, "Insp. ")
+    .trim();
+  return stripped.length > 0 ? stripped : fullName.trim();
+}
+
 function buildDeterministicStakeChips(
   choice: ChoiceSpec,
   resolvedLabel: string,
   locale: string,
+  state: GameState,
 ): StakeChip[] {
   const effects = choice.effects;
   if (!effects || (choice.outcomes && choice.outcomes.length > 0)) {
@@ -209,17 +228,50 @@ function buildDeterministicStakeChips(
       text: `-${formatEuros(addedCost, locale)}/m`,
       tone: "info",
     });
+  } else if (effects.set_family_status) {
+    const partnerCost = balance.default_partner_monthly_cost;
+    const wasPartnered = state.family.status === "dating" || state.family.status === "cohabiting";
+    const nextStatus = effects.set_family_status.status;
+    const willBePartnered = nextStatus === "dating" || nextStatus === "cohabiting";
+    if (!wasPartnered && willBePartnered && partnerCost > 0) {
+      chips.push({
+        key: "partner",
+        text: `-${formatEuros(partnerCost, locale)}/m`,
+        tone: "info",
+      });
+    } else if (wasPartnered && !willBePartnered && partnerCost > 0) {
+      chips.push({
+        key: "partner",
+        text: `+${formatEuros(partnerCost, locale)}/m`,
+        tone: "neutral",
+      });
+    }
   }
 
-  // 4. High strain / hidden workload warning so players aren't ambushed by >= +10 Stress hits
+  // 4. Balanced workload, relief, and independent fiscal-risk cues
   const stressHit = effects.stress ?? 0;
+  const personalBoost = effects.personal_life ?? 0;
   if (stressHit >= 10) {
     chips.push({
       key: "strain",
       text: isEn ? `⚡ High strain (+${stressHit})` : `⚡ Carga alta (+${stressHit})`,
       tone: stressHit >= 14 ? "negative" : "warning",
     });
-  } else if ((effects.fiscal_risk ?? 0) >= 10) {
+  } else if (stressHit >= 7) {
+    chips.push({
+      key: "strain",
+      text: isEn ? `⚡ Strain (+${stressHit})` : `⚡ Carga (+${stressHit})`,
+      tone: "warning",
+    });
+  } else if (stressHit <= -6 || personalBoost >= 7) {
+    chips.push({
+      key: "relief",
+      text: isEn ? "🧘 Eases strain" : "🧘 Alivia carga",
+      tone: "positive",
+    });
+  }
+
+  if ((effects.fiscal_risk ?? 0) >= 10) {
     chips.push({
       key: "tax-risk",
       text: isEn ? "🏛️ Tax risk" : "🏛️ Riesgo fiscal",
@@ -227,13 +279,13 @@ function buildDeterministicStakeChips(
     });
   }
 
-  return chips.slice(0, 3);
+  return chips.slice(0, 4);
 }
 
 function DeltaPill({ label, formatted, favorable }: DeltaPillProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-bureau text-xs font-bold tabular-nums whitespace-nowrap ${
+      className={`inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5 max-w-full rounded-md border px-2.5 py-1 font-bureau text-xs font-bold tabular-nums break-words ${
         favorable
           ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/50"
           : "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/50"
@@ -257,8 +309,10 @@ export function EventStage({
 }: EventStageProps) {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const eventTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const [expandedEconomyMonth, setExpandedEconomyMonth] = useState<number | null>(null);
   const ui = getUiStrings(locale);
   const isEn = normalizeLocale(locale) === "en";
+  const mobileEconomyExpanded = expandedEconomyMonth === state.month;
 
   const lastAutoSettledQuarter = useGameStore(
     (s) =>
@@ -324,7 +378,13 @@ export function EventStage({
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) {
+      if (event.repeat) {
+        if (event.key === "Enter" || event.key === " " || event.key === "Tab") {
+          event.preventDefault();
+        }
+        return;
+      }
+      if (event.altKey || event.ctrlKey || event.metaKey) {
         return;
       }
       const target = event.target as HTMLElement | null;
@@ -351,7 +411,7 @@ export function EventStage({
           event.preventDefault();
           stageRef.current
             ?.querySelector<HTMLButtonElement>('[data-testid="outcome-continue-btn"]')
-            ?.focus({ preventScroll: window.innerWidth >= 1280 });
+            ?.focus({ preventScroll: window.innerWidth >= 1024 });
           return;
         }
         if (event.key === "1") {
@@ -403,7 +463,7 @@ export function EventStage({
             : currentIndex <= 0
               ? enabledButtons.length - 1
               : currentIndex - 1;
-          enabledButtons[nextIndex]?.focus({ preventScroll: window.innerWidth >= 1280 });
+          enabledButtons[nextIndex]?.focus({ preventScroll: window.innerWidth >= 1024 });
         }
         return;
       }
@@ -428,6 +488,7 @@ export function EventStage({
   const activeCharacterName = activeCharacter
     ? translateCharacterName(activeCharacter, locale)
     : "";
+  const shortCharacterName = activeCharacter ? formatShortPolaroidName(activeCharacterName) : "";
   const activeCharacterExpression = activeEventView?.event.character_expression ?? "neutral";
   const activeCharacterPortrait = activeEventView
     ? resolveCharacterPortraitAsset(
@@ -500,13 +561,177 @@ export function EventStage({
   const monthModMoral = extMonthStart?.modifier_moral_delta ?? 0;
   const monthModStress = extMonthStart?.modifier_stress_delta ?? 0;
   const monthTaxShield = extMonthStart?.tax_shield_on_expenses ?? 0;
-  const totalMonthStressTick = monthPassiveStress + monthModStress;
+  const netStressDelta =
+    extMonthStart?.net_stress_delta ??
+    monthPassiveStress + monthModStress + (extMonthStart?.overdraft_stress_delta ?? 0);
+  const netMoralDelta =
+    extMonthStart?.net_moral_delta ?? monthModMoral + (extMonthStart?.maintenance_moral_delta ?? 0);
 
-  const hasSecondaryEconomyTicker =
+  const showDockedEconomyStrip = Boolean(
+    extMonthStart && (extMonthStart.month === state.month || pendingOutcome !== null),
+  );
+  const hasHighSignalEconomyRow =
     Boolean(extMonthStart && extMonthStart.invoices_settled.length > 0) ||
     showAutoQuarterReceipt ||
-    monthModMoral !== 0 ||
-    totalMonthStressTick !== 0;
+    Math.abs(netMoralDelta) >= 4 ||
+    Math.abs(netStressDelta) >= 5;
+
+  const renderDockedEconomyStrip = () => {
+    if (!showDockedEconomyStrip || !extMonthStart) {
+      return null;
+    }
+
+    return (
+      <div
+        data-testid="month-economy-strip"
+        className="border-b border-[#1f2421]/15 bg-[#efe4ce]/65 text-xs"
+      >
+        <div className="month-economy-strip-row px-3 sm:px-3.5 py-1 flex items-center justify-between gap-2 min-h-[27px]">
+          <div className="flex items-center gap-1.5 font-semibold text-[#1f2421] shrink-0">
+            <Receipt className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
+            <span className="whitespace-nowrap">
+              <span className="hidden 2xl:inline">{ui.eventStage.recurringLongPrefix}</span>
+              <span className="2xl:hidden">{ui.eventStage.recurringShortPrefix}</span>
+              {ui.eventStage.monthLabel(extMonthStart.month)}
+            </span>
+          </div>
+
+          <div className="hidden md:flex lg:hidden xl:flex items-center gap-x-2 2xl:gap-x-3 font-bureau text-[11px] tabular-nums min-w-0 overflow-hidden">
+            <span className="whitespace-nowrap">
+              <span className="text-[#4a524e]">{ui.eventStage.billedShort}</span>
+              <strong className="font-bold text-[#1f5c53]">
+                +{formatEuros(extMonthStart.gross_billing, locale)}
+              </strong>
+            </span>
+            <span className="whitespace-nowrap">
+              <span className="text-[#4a524e]">{ui.eventStage.fixedCostsShort}</span>
+              <strong className="font-bold text-[#9e221b]">
+                -{formatEuros(extMonthStart.total_expenses, locale)}
+              </strong>
+            </span>
+            <span className="whitespace-nowrap">
+              <span className="text-[#4a524e]">{ui.eventStage.vatIrpfShort}</span>
+              <strong className="font-bold text-[#264e7a]">
+                +{formatEuros(extMonthStart.tax_accrued_on_billing, locale)}
+              </strong>
+              {monthTaxShield > 0 && (
+                <span className="hidden 2xl:inline text-[10px] text-[#1f5c53] ml-1">
+                  {ui.eventStage.deductibleInline(formatEuros(monthTaxShield, locale))}
+                </span>
+              )}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span
+              className={`font-bureau text-[11px] font-bold tabular-nums whitespace-nowrap ${
+                extMonthStart.net_recurring_cash >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
+              }`}
+            >
+              {ui.eventStage.fixedCashLabel}{" "}
+              {formatSignedEuros(extMonthStart.net_recurring_cash, locale)}
+            </span>
+
+            <button
+              type="button"
+              onClick={() =>
+                setExpandedEconomyMonth((prev) => (prev === state.month ? null : state.month))
+              }
+              aria-expanded={mobileEconomyExpanded}
+              aria-label={ui.eventStage.detailsToggleAria}
+              className="inline-flex md:hidden lg:inline-flex xl:hidden items-center gap-0.5 rounded border border-[#1f2421]/28 bg-[#fffdf8]/90 px-1.5 py-0.5 font-bureau text-[10px] font-bold text-[#1f2421] leading-none cursor-pointer"
+            >
+              <span>{ui.eventStage.detailsToggleBtn}</span>
+              <span aria-hidden="true">{mobileEconomyExpanded ? "▴" : "▾"}</span>
+            </button>
+          </div>
+        </div>
+
+        {mobileEconomyExpanded && (
+          <div className="flex md:hidden lg:flex xl:hidden px-3 py-1 border-t border-[#1f2421]/14 bg-[#fffdf8]/85 flex-wrap items-center justify-between gap-x-2.5 gap-y-0.5 font-bureau text-[11px] tabular-nums">
+            <span className="whitespace-nowrap">
+              <span className="text-[#4a524e]">{ui.eventStage.billedShort}</span>
+              <strong className="font-bold text-[#1f5c53]">
+                +{formatEuros(extMonthStart.gross_billing, locale)}
+              </strong>
+            </span>
+            <span className="whitespace-nowrap">
+              <span className="text-[#4a524e]">{ui.eventStage.fixedCostsShort}</span>
+              <strong className="font-bold text-[#9e221b]">
+                -{formatEuros(extMonthStart.total_expenses, locale)}
+              </strong>
+            </span>
+            <span className="whitespace-nowrap">
+              <span className="text-[#4a524e]">{ui.eventStage.vatIrpfShort}</span>
+              <strong className="font-bold text-[#264e7a]">
+                +{formatEuros(extMonthStart.tax_accrued_on_billing, locale)}
+              </strong>
+              {monthTaxShield > 0 && (
+                <span className="2xl:hidden text-[10px] text-[#1f5c53] ml-1">
+                  {ui.eventStage.deductibleInline(formatEuros(monthTaxShield, locale))}
+                </span>
+              )}
+            </span>
+            {netMoralDelta !== 0 && (
+              <span
+                className={`font-bold whitespace-nowrap ${
+                  netMoralDelta > 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
+                }`}
+              >
+                {ui.eventStage.deltaMoral}: {formatSignedInt(netMoralDelta)}
+              </span>
+            )}
+            {netStressDelta !== 0 && (
+              <span
+                className={`font-bold whitespace-nowrap ${
+                  netStressDelta < 0 ? "text-[#1f5c53]" : "text-[#7a4308]"
+                }`}
+              >
+                {ui.eventStage.deltaStress}: {formatSignedInt(netStressDelta)}
+              </span>
+            )}
+          </div>
+        )}
+
+        {hasHighSignalEconomyRow && (
+          <div className="px-3 sm:px-3.5 py-1 border-t border-[#1f2421]/14 bg-[#fffdf8]/90 flex flex-wrap items-center gap-x-3 gap-y-0.5 font-bureau text-[11px] font-bold tabular-nums">
+            {showAutoQuarterReceipt && lastAutoSettledQuarter && (
+              <span data-testid="auto-settled-quarter-receipt" className="text-[#1f5c53]">
+                {isEn
+                  ? `✓ Q${lastAutoSettledQuarter.quarter} tax auto-settled (${
+                      lastAutoSettledQuarter.paidAmount > 0
+                        ? `-${formatEuros(lastAutoSettledQuarter.paidAmount, locale)}`
+                        : formatEuros(0, locale)
+                    })`
+                  : `✓ Trimestre T${lastAutoSettledQuarter.quarter} liquidado (${
+                      lastAutoSettledQuarter.paidAmount > 0
+                        ? `-${formatEuros(lastAutoSettledQuarter.paidAmount, locale)}`
+                        : formatEuros(0, locale)
+                    })`}
+              </span>
+            )}
+            {extMonthStart.invoices_settled.map((inv) => (
+              <span key={inv.invoice_id} className={inv.paid ? "text-[#1f5c53]" : "text-[#9e221b]"}>
+                {inv.paid
+                  ? ui.eventStage.invoicePaid(formatEuros(inv.amount, locale))
+                  : ui.eventStage.invoiceDefaulted(formatEuros(inv.amount, locale))}
+              </span>
+            ))}
+            {Math.abs(netMoralDelta) >= 4 && (
+              <span className={netMoralDelta > 0 ? "text-[#1f5c53]" : "text-[#9e221b]"}>
+                {ui.eventStage.deltaMoral}: {formatSignedInt(netMoralDelta)}
+              </span>
+            )}
+            {Math.abs(netStressDelta) >= 5 && (
+              <span className={netStressDelta < 0 ? "text-[#1f5c53]" : "text-[#7a4308]"}>
+                {ui.eventStage.deltaStress}: {formatSignedInt(netStressDelta)}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const appliedSetFlags = appliedEffects?.set_flags ?? [];
   const appliedClearFlags = appliedEffects?.clear_flags ?? [];
@@ -539,104 +764,6 @@ export function EventStage({
       data-testid="event-stage"
       className="event-stage-stack flex flex-col gap-2.5"
     >
-      {/* Monthly Recurring Economy Strip: Single-Line Desktop Ticker / 2-Band Mobile Ledger */}
-      {extMonthStart && extMonthStart.month === state.month && !pendingOutcome && (
-        <div
-          data-testid="month-economy-strip"
-          className="paper-dossier-warm rounded-xl overflow-hidden text-xs"
-        >
-          <div className="month-economy-strip-row px-3 sm:px-3.5 py-1.5 bg-[#efe4ce]/65 flex flex-wrap items-center justify-between gap-x-2 xl:gap-x-3 gap-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#1f2421] min-w-0">
-              <Receipt className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
-              <span className="truncate">
-                <span className="hidden xl:inline">{ui.eventStage.recurringLongPrefix}</span>
-                <span className="xl:hidden">{ui.eventStage.recurringShortPrefix}</span>
-                {ui.eventStage.monthLabel(extMonthStart.month)}
-              </span>
-            </div>
-
-            <span
-              className={`font-bureau text-[11px] font-bold tabular-nums whitespace-nowrap shrink-0 sm:order-3 ${
-                extMonthStart.net_recurring_cash >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
-              }`}
-            >
-              {ui.eventStage.fixedCashLabel}{" "}
-              {formatSignedEuros(extMonthStart.net_recurring_cash, locale)}
-            </span>
-
-            <div className="w-full sm:w-auto sm:order-2 flex flex-wrap items-center justify-between sm:justify-start gap-x-2 xl:gap-x-3 gap-y-0.5 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#1f2421]/14 font-bureau text-[11px] tabular-nums">
-              <span>
-                <span className="text-[#4a524e]">{ui.eventStage.billedShort}</span>
-                <strong className="font-bold text-[#1f5c53] whitespace-nowrap">
-                  +{formatEuros(extMonthStart.gross_billing, locale)}
-                </strong>
-              </span>
-              <span>
-                <span className="text-[#4a524e]">{ui.eventStage.fixedCostsShort}</span>
-                <strong className="font-bold text-[#9e221b] whitespace-nowrap">
-                  -{formatEuros(extMonthStart.total_expenses, locale)}
-                </strong>
-              </span>
-              <span>
-                <span className="text-[#4a524e]">{ui.eventStage.vatIrpfShort}</span>
-                <strong className="font-bold text-[#264e7a] whitespace-nowrap">
-                  +{formatEuros(extMonthStart.tax_accrued_on_billing, locale)}
-                </strong>
-                {monthTaxShield > 0 && (
-                  <span className="hidden 2xl:inline text-[10px] text-[#1f5c53] ml-1">
-                    (
-                    {isEn
-                      ? `-${formatEuros(monthTaxShield, locale)} deduct.`
-                      : `-${formatEuros(monthTaxShield, locale)} deduc.`}
-                    )
-                  </span>
-                )}
-              </span>
-            </div>
-          </div>
-
-          {hasSecondaryEconomyTicker && (
-            <div className="px-3 sm:px-3.5 py-1 border-t border-[#1f2421]/14 bg-[#fffdf8]/90 flex flex-wrap items-center gap-x-3 gap-y-0.5 font-bureau text-[11px] font-bold tabular-nums">
-              {showAutoQuarterReceipt && lastAutoSettledQuarter && (
-                <span data-testid="auto-settled-quarter-receipt" className="text-[#1f5c53]">
-                  {isEn
-                    ? `✓ Q${lastAutoSettledQuarter.quarter} tax auto-settled (${
-                        lastAutoSettledQuarter.paidAmount > 0
-                          ? `-${formatEuros(lastAutoSettledQuarter.paidAmount, locale)}`
-                          : formatEuros(0, locale)
-                      })`
-                    : `✓ Trimestre T${lastAutoSettledQuarter.quarter} liquidado (${
-                        lastAutoSettledQuarter.paidAmount > 0
-                          ? `-${formatEuros(lastAutoSettledQuarter.paidAmount, locale)}`
-                          : formatEuros(0, locale)
-                      })`}
-                </span>
-              )}
-              {extMonthStart.invoices_settled.map((inv) => (
-                <span
-                  key={inv.invoice_id}
-                  className={inv.paid ? "text-[#1f5c53]" : "text-[#9e221b]"}
-                >
-                  {inv.paid
-                    ? ui.eventStage.invoicePaid(formatEuros(inv.amount, locale))
-                    : ui.eventStage.invoiceDefaulted(formatEuros(inv.amount, locale))}
-                </span>
-              ))}
-              {monthModMoral !== 0 && (
-                <span className={monthModMoral > 0 ? "text-[#1f5c53]" : "text-[#9e221b]"}>
-                  {ui.eventStage.deltaMoral}: {formatSignedInt(monthModMoral)}
-                </span>
-              )}
-              {totalMonthStressTick !== 0 && (
-                <span className={totalMonthStressTick < 0 ? "text-[#1f5c53]" : "text-[#7a4308]"}>
-                  {ui.eventStage.deltaStress}: {formatSignedInt(totalMonthStressTick)}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Outcome Resolution View */}
       {pendingOutcome ? (
         <article
@@ -647,10 +774,12 @@ export function EventStage({
             <span className="stamp-badge text-[11px] px-2 py-0.5 rounded bg-[#e8f5f1] text-[#1f5c53] border border-[#1f5c53]/45 shrink-0">
               {state.ending ? ui.eventStage.dossierClosedBadge : ui.eventStage.rulingRecordedBadge}
             </span>
-            <span className="font-bureau text-xs font-bold text-[#4a524e] truncate">
+            <span className="font-bureau text-xs font-bold text-[#4a524e] text-right leading-tight min-w-0 break-words">
               {resolveEventTitle(pendingOutcome.event, locale)}
             </span>
           </div>
+
+          {renderDockedEconomyStrip()}
 
           <div className="outcome-card-body p-3.5 sm:p-4 space-y-3">
             <div className="rounded-lg bg-[#f6efe0] border border-[#1f2421]/20 px-3 py-2 text-xs text-[#373f3a]">
@@ -842,13 +971,24 @@ export function EventStage({
                     />
                   );
                 })()}
-              {appliedEffects?.set_family_status && (
-                <DeltaPill
-                  label={isEn ? "Personal status" : "Situación familiar"}
-                  formatted={translateFamilyStatus(appliedEffects.set_family_status.status, locale)}
-                  favorable={appliedEffects.set_family_status.status !== "separated"}
-                />
-              )}
+              {appliedEffects?.set_family_status &&
+                (() => {
+                  const famStatus = appliedEffects.set_family_status.status;
+                  const partnerCost = compiledCatalog.balance.default_partner_monthly_cost;
+                  const costSuffix =
+                    (famStatus === "dating" || famStatus === "cohabiting") && partnerCost > 0
+                      ? ` (-${formatEuros(partnerCost, locale)}/m)`
+                      : famStatus === "separated" && partnerCost > 0
+                        ? ` (${formatEuros(0, locale)}/m)`
+                        : "";
+                  return (
+                    <DeltaPill
+                      label={isEn ? "Personal status" : "Situación familiar"}
+                      formatted={`${translateFamilyStatus(famStatus, locale)}${costSuffix}`}
+                      favorable={famStatus !== "separated"}
+                    />
+                  );
+                })()}
               {appliedEffects?.add_child && (
                 <DeltaPill
                   label={isEn ? "Family" : "Familia"}
@@ -935,7 +1075,9 @@ export function EventStage({
             )}
           </div>
 
-          <div className="event-card-body p-3.5 sm:p-4 space-y-2.5 sm:space-y-3">
+          {renderDockedEconomyStrip()}
+
+          <div className="event-card-body p-3 sm:p-4 space-y-2 sm:space-y-3">
             {/* Visual Comic Header Banner + Pinned Multi-Expression Polaroid */}
             {bannerResolution && (
               <div
@@ -957,8 +1099,8 @@ export function EventStage({
                   onError={handleCategoryArtError}
                   className={`event-banner-img w-full ${
                     bannerResolution.kind === "milestone"
-                      ? "aspect-video sm:aspect-auto sm:h-36"
-                      : "aspect-[8/3] sm:aspect-auto sm:h-32"
+                      ? "[@media(max-width:767px)_and_(min-height:801px)]:h-[96px] [@media(max-width:767px)_and_(max-height:800px)]:h-[76px] [@media(max-width:767px)_and_(max-height:690px)]:h-[56px] [@media(max-width:1023px)_and_(max-height:500px)]:hidden sm:h-36"
+                      : "[@media(max-width:767px)_and_(min-height:801px)]:h-[88px] [@media(max-width:767px)_and_(max-height:800px)]:h-[68px] [@media(max-width:767px)_and_(max-height:690px)]:h-[52px] [@media(max-width:1023px)_and_(max-height:500px)]:hidden sm:h-32"
                   } object-cover rounded-lg border-2 border-[#1f2421] bg-[#f6efe0] shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] ${renderModeClass(
                     bannerResolution.asset.render_mode,
                   )}`}
@@ -969,9 +1111,13 @@ export function EventStage({
                     data-testid="event-character-polaroid"
                     data-expression={activeCharacterExpression}
                     data-asset-id={activeCharacterPortrait.id}
-                    className="event-polaroid-desktop polaroid-card rounded-[3px] flex sm:block items-center gap-2.5 mx-1 sm:mx-0 mb-0 mt-2 sm:mt-0 p-1 sm:pb-1.5 w-fit max-w-[calc(100%-0.5rem)] sm:w-22 sm:absolute sm:right-3 sm:bottom-0 z-10"
+                    title={activeCharacterName}
+                    className="event-polaroid-desktop polaroid-card rounded-[3px] flex sm:block items-center gap-1.5 sm:gap-2 m-0 p-1 sm:pb-1.5 w-auto max-w-[calc(100%-0.75rem)] sm:w-22 absolute right-1.5 bottom-1.5 sm:right-3 sm:bottom-0 z-10"
                   >
-                    <span className="polaroid-pin" aria-hidden="true" />
+                    <span
+                      className="polaroid-pin polaroid-pin-sm sm:top-[-6px] sm:w-3 sm:h-3 sm:ml-[-6px]"
+                      aria-hidden="true"
+                    />
                     <img
                       data-testid="event-character-polaroid-img"
                       src={activeCharacterPortrait.url}
@@ -980,20 +1126,23 @@ export function EventStage({
                       height={activeCharacterPortrait.height}
                       decoding="async"
                       onError={handleCategoryArtError}
-                      className={`w-10 h-10 sm:w-full aspect-square object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
+                      className={`w-[30px] h-[30px] sm:w-full aspect-square object-cover shrink-0 border border-[#1f2421]/35 bg-[#f6efe0] ${renderModeClass(
                         activeCharacterPortrait.render_mode,
                       )}`}
                     />
-                    <figcaption className="min-w-0 pr-1 sm:pr-0 sm:mt-1 px-0.5 sm:text-center font-bureau text-[10px] font-bold text-[#1f2421] leading-tight line-clamp-2">
-                      {activeCharacterName}
+                    <figcaption className="min-w-0 max-w-full overflow-hidden [overflow-wrap:anywhere] pr-1 sm:pr-0 sm:mt-1 px-0.5 sm:text-center font-bureau text-[10px] font-bold text-[#1f2421] leading-tight">
+                      {shortCharacterName}
                     </figcaption>
+                    {activeCharacterName !== shortCharacterName && (
+                      <span className="sr-only left-0 top-0">{activeCharacterName}</span>
+                    )}
                   </figure>
                 )}
               </div>
             )}
 
             {/* Title & Body — never truncated */}
-            <div className="space-y-1.5">
+            <div className="space-y-1 sm:space-y-1.5">
               <h2
                 ref={eventTitleRef}
                 tabIndex={-1}
@@ -1004,7 +1153,7 @@ export function EventStage({
               </h2>
               <p
                 data-testid="event-body"
-                className="text-sm sm:text-[14.5px] text-[#373f3a] leading-relaxed xl:leading-snug"
+                className="text-sm sm:text-[14.5px] text-[#373f3a] leading-snug sm:leading-relaxed xl:leading-snug"
               >
                 {resolveEventBody(activeEventView.event, locale)}
               </p>
@@ -1013,7 +1162,11 @@ export function EventStage({
             {/* Choice Buttons (min-height >= 48px on touch & desktop, >= 6px gap, 2-col on >=4 choices) */}
             <fieldset
               data-choice-count={activeEventView.choices.length}
-              className="event-choices-grid pt-0.5 border-0 p-0 m-0 min-w-0"
+              className={`event-choices-grid pt-0.5 border-0 p-0 m-0 min-w-0 ${
+                activeEventView.choices.length >= 4
+                  ? "[@media(max-height:800px)]:!grid [@media(max-height:800px)]:grid-cols-2 [@media(max-height:800px)]:gap-1.5"
+                  : ""
+              }`}
               aria-label={ui.eventStage.choicesAria}
             >
               {activeEventView.choices.map((entry, index) => {
@@ -1024,7 +1177,7 @@ export function EventStage({
                 const hasWeightedOutcomes = Boolean(choice.outcomes && choice.outcomes.length > 0);
                 const resolvedLabel = resolveChoiceLabel(activeEventView.event.id, choice, locale);
                 const stakeChips = eligible
-                  ? buildDeterministicStakeChips(choice, resolvedLabel, locale)
+                  ? buildDeterministicStakeChips(choice, resolvedLabel, locale, state)
                   : [];
 
                 return (
@@ -1035,7 +1188,11 @@ export function EventStage({
                     data-choice-id={choice.id}
                     disabled={!eligible}
                     onClick={() => onSelectChoice(choice.id)}
-                    className={`event-choice-btn w-full min-h-12 text-left rounded-lg border-2 px-3 sm:px-3.5 py-2 transition-all flex items-start gap-2.5 ${
+                    className={`event-choice-btn w-full min-h-12 text-left rounded-lg border-2 px-3 sm:px-3.5 py-2 ${
+                      activeEventView.choices.length >= 4
+                        ? "[@media(max-width:639px)_and_(max-height:800px)]:px-2 [@media(max-width:639px)_and_(max-height:800px)]:py-1.5 [@media(max-width:639px)_and_(max-height:800px)]:gap-1.5"
+                        : ""
+                    } transition-all flex items-start gap-2.5 ${
                       eligible
                         ? "border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] active:translate-y-px shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] cursor-pointer"
                         : "border-[#7a7468] bg-[#efe4ce] text-[#373f3a] cursor-not-allowed"
@@ -1053,20 +1210,20 @@ export function EventStage({
                     </span>
 
                     <span className="flex-1 min-w-0 space-y-1 self-center">
-                      <span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-                        <span className="font-semibold text-sm sm:text-[14.5px] leading-snug text-[#1f2421]">
+                      <span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 min-w-0">
+                        <span className="font-semibold text-sm sm:text-[14.5px] leading-snug text-[#1f2421] min-w-0 break-words">
                           {resolvedLabel}
                         </span>
 
                         {(hasWeightedOutcomes || stakeChips.length > 0) && eligible && (
                           <span
                             data-testid={`choice-stakes-${index}`}
-                            className="inline-flex flex-wrap items-center gap-1 shrink-0"
+                            className="inline-flex flex-wrap items-center gap-1 max-w-full min-w-0"
                           >
                             {stakeChips.map((chip) => (
                               <span
                                 key={chip.key}
-                                className={`inline-flex items-center font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded border leading-none whitespace-nowrap tabular-nums ${stakeChipClass(
+                                className={`inline-flex items-center font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded border leading-tight max-w-full break-words tabular-nums ${stakeChipClass(
                                   chip.tone,
                                 )}`}
                               >
@@ -1074,7 +1231,7 @@ export function EventStage({
                               </span>
                             ))}
                             {hasWeightedOutcomes && (
-                              <span className="inline-flex items-center gap-1 font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#7a4308] border border-[#7a4308]/35 shrink-0">
+                              <span className="inline-flex items-center gap-1 font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#7a4308] border border-[#7a4308]/35 max-w-full">
                                 <Dices className="w-3 h-3 shrink-0" aria-hidden="true" />
                                 <span>{ui.eventStage.uncertaintyBadge}</span>
                               </span>

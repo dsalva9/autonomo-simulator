@@ -41,7 +41,7 @@ choices:
       stress: 4
       reputation: 5
       add_modifier:
-        id: mod_soporte_custodia
+        id: mod_custodia_sistema_rescatado
         label: Mantenimiento y custodia
         remaining_months: 5
         monthly_billed_delta: 320

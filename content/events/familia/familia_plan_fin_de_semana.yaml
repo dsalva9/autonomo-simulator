@@ -32,8 +32,6 @@ choices:
       stress: -12
       moral: 8
       personal_life: 12
-      set_flags:
-        - relacion_con_alex
   - id: escapada_desconexion_total
     label: "Aceptar el plan, silenciar el móvil y recargar pilas"
     result_text: "Gastas algo en gasolina y comida casera, pero el lunes vuelves al escritorio recordando qué se siente al tener vida propia fuera del despacho."

@@ -34,8 +34,6 @@ choices:
       moral: 9
       stress: -10
       personal_life: 14
-      set_flags:
-        - relacion_con_alex
       schedule_events:
         - event_id: familia_mudanza_conjunta
           delay_months: 5
@@ -54,8 +52,6 @@ choices:
           moral: 6
           stress: -6
           personal_life: 10
-          set_flags:
-            - relacion_con_alex
       - id: amistad_cordial
         weight: 40
         result_text: "Después de cancelar dos martes seguidos por entregas urgentes, la chispa queda en una amistad simpática de mensajes esporádicos."

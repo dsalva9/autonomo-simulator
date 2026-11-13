@@ -56,8 +56,6 @@ choices:
             partner_character_id: null
           clear_flags:
             - convivencia_estable
-            - pareja_estable
-            - relacion_con_alex
             - crisis_pareja_latente
   - id: ir_a_terapia_pareja_y_cumplir
     label: "Empezar terapia de pareja y apagar pantallas a las seis sin excusas (180 €)"
@@ -70,7 +68,7 @@ choices:
       clear_flags:
         - crisis_pareja_latente
       add_modifier:
-        id: pacto_desconexion_familiar
+        id: mod_terapia_pareja_pacto
         label: "Vínculo familiar reforzado"
         remaining_months: 4
         monthly_billed_delta: -110

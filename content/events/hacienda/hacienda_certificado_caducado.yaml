@@ -11,6 +11,11 @@ character_id: null
 illustration_id: null
 requirements:
   min_month: 4
+  months_of_year:
+    - 1
+    - 4
+    - 7
+    - 10
   gestor_tiers:
     - self
     - cheap

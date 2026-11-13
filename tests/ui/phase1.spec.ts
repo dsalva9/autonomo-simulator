@@ -25,7 +25,6 @@ async function waitForImageDimensions(
   locator: Locator,
 ): Promise<{ naturalWidth: number; naturalHeight: number }> {
   await expect(locator).toBeVisible();
-  await locator.scrollIntoViewIfNeeded();
 
   let dims: { naturalWidth: number; naturalHeight: number } | null = null;
   await expect
@@ -44,22 +43,29 @@ async function waitForImageDimensions(
   return dims!;
 }
 
-async function clickCentered(locator: Locator): Promise<void> {
-  await expect(locator).toBeVisible();
-  await locator.evaluate((el) => {
-    el.scrollIntoView({ block: "center", inline: "nearest" });
-  });
-  await locator.click();
-}
-
 async function selectChoiceAndAcknowledge(page: Page, choiceId: string): Promise<void> {
   const choiceBtn = page.locator(`[data-choice-id="${choiceId}"]`);
   await expect(choiceBtn).toBeEnabled();
-  await clickCentered(choiceBtn);
+  await choiceBtn.click();
 
   await expect(page.getByTestId("outcome-panel")).toBeVisible();
   await expect(page.getByTestId("outcome-result-text")).not.toBeEmpty();
-  await clickCentered(page.getByTestId("outcome-continue-btn"));
+  await page.getByTestId("outcome-continue-btn").click();
+}
+
+async function withDeskSceneVisible<T>(page: Page, fn: () => Promise<T>): Promise<T> {
+  const viewport = page.viewportSize();
+  const isMobileDesk = Boolean(viewport && viewport.width < 1024);
+  if (isMobileDesk) {
+    await page.getByTestId("mobile-tab-entorno").click();
+  }
+  try {
+    return await fn();
+  } finally {
+    if (isMobileDesk) {
+      await page.getByTestId("mobile-tab-despacho").click();
+    }
+  }
 }
 
 async function assertPolaroidDoesNotOverlapChoices(page: Page): Promise<void> {
@@ -172,12 +178,14 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
-    // 1. Style A WebP desk background & reactive prop threshold (hidden on M1 at 500 €, visible >= 1,200 €)
-    const sceneBg = page.getByTestId("scene-bg");
-    await expect(sceneBg).toHaveAttribute("data-asset-id", "bg_despacho_base");
-    const bgDims = await waitForImageDimensions(sceneBg);
-    expect(bgDims).toEqual({ naturalWidth: 1280, naturalHeight: 720 });
-    await expect(page.getByTestId("scene-prop-facturas")).toHaveCount(0);
+    // 1. Style A WebP desk background & reactive prop threshold (hidden on M1 at 520 €, visible >= 1,200 €)
+    await withDeskSceneVisible(page, async () => {
+      const sceneBg = page.getByTestId("scene-bg");
+      await expect(sceneBg).toHaveAttribute("data-asset-id", "bg_despacho_base");
+      const bgDims = await waitForImageDimensions(sceneBg);
+      expect(bgDims).toEqual({ naturalWidth: 1280, naturalHeight: 720 });
+      await expect(page.getByTestId("scene-prop-facturas")).toHaveCount(0);
+    });
 
     // 2. Modular 8:3 category banner on Month 1 (gestor_oferta_servicios)
     const bannerArt = page.getByTestId("event-banner-art");
@@ -188,25 +196,19 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     // Hire Paco -> verify Entorno miniature CSS Polaroid loads cleanly & reactive invoice prop appears once accrued tax >= 1,200 €
     await selectChoiceAndAcknowledge(page, "contratar_paco_barato");
-    await selectChoiceAndAcknowledge(page, "patrocinar_mesa_breve_presentacion");
+    await selectChoiceAndAcknowledge(page, "entrega_express_contado");
 
-    const propFacturas = page.getByTestId("scene-prop-facturas");
-    const propDims = await waitForImageDimensions(propFacturas);
-    expect(propDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
-    expect(okSvgCount).toBeGreaterThanOrEqual(1);
+    await withDeskSceneVisible(page, async () => {
+      const propFacturas = page.getByTestId("scene-prop-facturas");
+      const propDims = await waitForImageDimensions(propFacturas);
+      expect(propDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
+      expect(okSvgCount).toBeGreaterThanOrEqual(1);
 
-    const viewport = page.viewportSize();
-    if (viewport && viewport.width < 1280) {
-      await page.getByTestId("mobile-tab-entorno").click();
-    }
-    const entornoGestorPolaroid = page.getByTestId("entorno-polaroid-gestor");
-    await expect(entornoGestorPolaroid).toBeVisible();
-    const gestorThumbDims = await waitForImageDimensions(entornoGestorPolaroid.locator("img"));
-    expect(gestorThumbDims).toEqual({ naturalWidth: 512, naturalHeight: 512 });
-
-    if (viewport && viewport.width < 1280) {
-      await page.getByTestId("mobile-tab-despacho").click();
-    }
+      const entornoGestorPolaroid = page.getByTestId("entorno-polaroid-gestor");
+      await expect(entornoGestorPolaroid).toBeVisible();
+      const gestorThumbDims = await waitForImageDimensions(entornoGestorPolaroid.locator("img"));
+      expect(gestorThumbDims).toEqual({ naturalWidth: 512, naturalHeight: 512 });
+    });
 
     // Advance through Month 3 Trimestre to Month 4 (gestor_paco_espantada_benidorm) for Paco's multi-expression stage Polaroid
     await selectChoiceAndAcknowledge(page, "aceptar_mitad_efectivo_y_cajas");
@@ -263,7 +265,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     await expect(page.locator('[data-reduced-motion="true"]')).toBeAttached();
 
     // 3. Start run and verify .polaroid-card transform is flattened
-    await page.getByTestId("seed-input").fill("P35-ALEX-26");
+    await page.getByTestId("seed-input").fill("P36-ALEX-24");
     await page.getByTestId("start-run-btn").click();
 
     const polaroid = page.getByTestId("event-character-polaroid");
@@ -272,7 +274,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     expect(["none", "matrix(1, 0, 0, 1, 0, 0)"]).toContain(flattenedTransform);
 
     // 4. Advance to Month 2 familia_cita_con_alex and verify reactive family photo desk prop
-    await selectChoiceAndAcknowledge(page, "rechazar_firmar_penalizaciones_absurdas");
+    await selectChoiceAndAcknowledge(page, "escapada_desconexion_total");
 
     await expect(page.getByTestId("event-card")).toHaveAttribute(
       "data-event-id",
@@ -280,9 +282,11 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     );
     await selectChoiceAndAcknowledge(page, "apostar_por_citas_con_alex");
 
-    const propFamilia = page.getByTestId("scene-prop-familia");
-    const familiaDims = await waitForImageDimensions(propFamilia);
-    expect(familiaDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
+    await withDeskSceneVisible(page, async () => {
+      const propFamilia = page.getByTestId("scene-prop-familia");
+      const familiaDims = await waitForImageDimensions(propFamilia);
+      expect(familiaDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
+    });
   });
 
   test("QA-12: Bespoke 16:9 milestone illustration, reactive burnout desk & deterministic EndRunScreen with 16:9 ending panel + Canvas export", async ({
@@ -292,42 +296,42 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
       testInfo.project.name === "mobile-chromium" ? "mobile-390x844" : "desktop-1440x900";
 
     await page.goto("./");
-    await page.getByTestId("seed-input").fill("P35-BURN-DET-87");
+    await page.getByTestId("seed-input").fill("P36-BURN-35");
     await page.getByTestId("start-run-btn").click();
 
     // Month 1..3 escalation + Q1 deferral
-    await selectChoiceAndAcknowledge(page, "exigir_factura_legal");
-    await selectChoiceAndAcknowledge(page, "priorizar_cartera_clientes");
-    await selectChoiceAndAcknowledge(page, "coger_los_billetes_en_la_terraza");
+    await selectChoiceAndAcknowledge(page, "tragar_para_no_discutir");
+    await selectChoiceAndAcknowledge(page, "aceptar_mitad_efectivo_y_cajas");
+    await selectChoiceAndAcknowledge(page, "seguir_autogestion");
 
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-defer-btn").click();
 
-    // Month 4..6 escalation -> stress >= 75 switches desk background to bg_despacho_burnout
-    await selectChoiceAndAcknowledge(page, "aceptar_mitad_efectivo_y_cajas");
-    await selectChoiceAndAcknowledge(page, "ibuprofeno_y_seguir_tecleando");
-
-    await expect(page.getByTestId("scene-bg")).toHaveAttribute(
-      "data-asset-id",
-      "bg_despacho_burnout",
-    );
-    const burnoutBgDims = await waitForImageDimensions(page.getByTestId("scene-bg"));
-    expect(burnoutBgDims).toEqual({ naturalWidth: 1280, naturalHeight: 720 });
-
-    await selectChoiceAndAcknowledge(page, "facturar_bajo_concepto_generico");
+    // Month 4..8 escalation -> stress >= 75 switches desk background to bg_despacho_burnout on M9 hacienda_carta_certificada
+    await selectChoiceAndAcknowledge(page, "exigir_factura_legal");
+    await selectChoiceAndAcknowledge(page, "seguir_con_plantilla_casera");
+    await selectChoiceAndAcknowledge(page, "priorizar_cartera_clientes");
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-pay-btn").click();
 
-    // Month 7..9: reach hacienda_carta_certificada (16:9 milestone illustration + reactive cafe prop) -> escalate stress to 100
-    await selectChoiceAndAcknowledge(page, "trabajar_de_pie_en_encimera");
-    await selectChoiceAndAcknowledge(page, "comprar_antena_router_portatil");
+    await selectChoiceAndAcknowledge(page, "regularizar_apuntes_dudosos_sin_litigar");
+    await selectChoiceAndAcknowledge(page, "guardar_pagare_hasta_vencimiento");
 
     await expect(page.getByTestId("event-card")).toHaveAttribute(
       "data-event-id",
       "hacienda_carta_certificada",
     );
-    const cafeDims = await waitForImageDimensions(page.getByTestId("scene-prop-cafe"));
-    expect(cafeDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
+    await withDeskSceneVisible(page, async () => {
+      await expect(page.getByTestId("scene-bg")).toHaveAttribute(
+        "data-asset-id",
+        "bg_despacho_burnout",
+      );
+      const burnoutBgDims = await waitForImageDimensions(page.getByTestId("scene-bg"));
+      expect(burnoutBgDims).toEqual({ naturalWidth: 1280, naturalHeight: 720 });
+
+      const cafeDims = await waitForImageDimensions(page.getByTestId("scene-prop-cafe"));
+      expect(cafeDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
+    });
 
     const milestoneBanner = page.getByTestId("event-banner-art");
     await expect(milestoneBanner).toHaveAttribute("data-banner-kind", "milestone");
@@ -340,7 +344,12 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     await assertPolaroidDoesNotOverlapChoices(page);
     await selectChoiceAndAcknowledge(page, "pagar_recargo_pronto_pago");
-    await selectChoiceAndAcknowledge(page, "ir_al_banco_por_nrc_manana");
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.getByTestId("trimestre-pay-btn").click();
+
+    await selectChoiceAndAcknowledge(page, "podar_planes_al_minimo");
+    await selectChoiceAndAcknowledge(page, "aceptar_anexo_compensatorio");
+    await selectChoiceAndAcknowledge(page, "vender_kit_cerrado_sin_cambios");
 
     await expect(page.getByTestId("end-run-screen")).toBeVisible();
     const endIllus = page.getByTestId("end-run-illustration");
@@ -371,7 +380,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     });
 
     // Verify unlocked Phase 1 achievements persisted to profile
-    await clickCentered(page.getByTestId("end-return-title-btn"));
+    await page.getByTestId("end-return-title-btn").click();
     await page.getByTestId("title-tab-achievements").click();
     await expect(page.getByTestId("achievement-item-primer_trimestre")).toContainText("SELLADO");
     await expect(page.getByTestId("achievement-item-superviviente_hacienda")).toContainText(

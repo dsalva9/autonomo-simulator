@@ -16,6 +16,8 @@ requirements:
 weight: 11
 cooldown_months: 11
 max_occurrences: 3
+exclusive_with:
+  - hacienda_notificacion_dehu_viernes
 choices:
   - id: improvisar_oficina_en_terraza_de_verano
     label: Compartir datos del móvil y contestar el escrito entre helados

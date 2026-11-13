@@ -13,6 +13,9 @@ illustration_id: illus_hito_primer_trimestre
 requirements:
   min_month: 2
   max_month: 6
+  months_of_year:
+    - 3
+    - 4
 weight: 22
 cooldown_months: 24
 max_occurrences: 1

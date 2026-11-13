@@ -8,7 +8,7 @@ gestor_actualizacion_navegador_autofirma_solo.choices.montar_navegador_antiguo_d
 gestor_actualizacion_navegador_autofirma_solo.choices.montar_navegador_antiguo_de_guerra.outcomes.almacen_certificados_bloqueado.result_text: "You corrupt your system key store and end up paying an on-call tax agency to rescue the filing tomorrow morning."
 gestor_actualizacion_navegador_autofirma_solo.choices.firmar_desde_movil_con_app_oficial.label: "Export your certificate to mobile and sign on a tiny screen"
 gestor_actualizacion_navegador_autofirma_solo.choices.firmar_desde_movil_con_app_oficial.result_text: "You strain your eyes zooming into microscopic tax boxes, yet manage to submit without relying on your desktop."
-gestor_actualizacion_navegador_autofirma_solo.choices.pasar_a_elena_y_olvidar_autofirma.label: "Retire solo filing and retain Elena Montes's firm (170 €/mo)"
+gestor_actualizacion_navegador_autofirma_solo.choices.pasar_a_elena_y_olvidar_autofirma.label: "Retire solo filing and retain Elena Montes's firm (€170/mo)"
 gestor_actualizacion_navegador_autofirma_solo.choices.pasar_a_elena_y_olvidar_autofirma.result_text: "You authorize Elena as your tax representative and close Autofirma with the spiritual relief of a freed prisoner."
 
 # 2. gestor_apagon_vacaciones_julio
@@ -17,9 +17,9 @@ gestor_apagon_vacaciones_julio.body: "It is 39 degrees outside with five days le
 gestor_apagon_vacaciones_julio.choices.cuadrar_asientos_con_cafe_con_hielo.label: "Turn on a desk fan and reconcile the tricky entries yourself"
 gestor_apagon_vacaciones_julio.choices.cuadrar_asientos_con_cafe_con_hielo.outcomes.cuadre_veraniego_limpio.result_text: "You burn a sweltering afternoon double-checking tax boxes, but you nail the return without spending an extra euro."
 gestor_apagon_vacaciones_julio.choices.cuadrar_asientos_con_cafe_con_hielo.outcomes.gasto_olvidado_por_calor.result_text: "Rushing through the heat, you leave out several deductible invoices out of caution and end up overpaying this quarter."
-gestor_apagon_vacaciones_julio.choices.pagar_revision_externa_guardia.label: "Pay an on-call tax specialist for a clean, on-time filing (190 €)"
+gestor_apagon_vacaciones_julio.choices.pagar_revision_externa_guardia.label: "Pay an on-call tax specialist for a clean, on-time filing (€190)"
 gestor_apagon_vacaciones_julio.choices.pagar_revision_externa_guardia.result_text: "An advisor taking August off reviews your books in an hour, fixes the withholdings, and leaves your return ready with zero surprises."
-gestor_apagon_vacaciones_julio.choices.saltar_a_elena_en_pleno_julio.label: "Ditch the beach bar and hire Elena Montes's firm (170 €/mo)"
+gestor_apagon_vacaciones_julio.choices.saltar_a_elena_en_pleno_julio.label: "Ditch the beach bar and hire Elena Montes's firm (€170/mo)"
 gestor_apagon_vacaciones_julio.choices.saltar_a_elena_en_pleno_julio.result_text: "Elena's on-duty partner takes over your books in thirty minutes, nails the July filing, and retires Paco's beach voice notes forever."
 
 # 3. gestor_auditoria_preventiva_veterano
@@ -27,9 +27,9 @@ gestor_auditoria_preventiva_veterano.title: "Five Years of Books: Preventive Com
 gestor_auditoria_preventiva_veterano.body: "After half a decade of non-stop invoicing, you have piled up dozens of quarterly filings, rule changes, and diverse clients. A preventive audit of the last four open tax years could spare you a nasty surprise."
 gestor_auditoria_preventiva_veterano.choices.confiar_en_el_reloj_de_prescripcion.label: "Leave old binders shut and let the statute clock run out"
 gestor_auditoria_preventiva_veterano.choices.confiar_en_el_reloj_de_prescripcion.result_text: "You spend zero euros on accounting archaeology today, crossing your fingers whenever certified mail hits your inbox."
-gestor_auditoria_preventiva_veterano.choices.contratar_auditoria_cuatro_anos.label: "Commission a preventive audit of all open tax years (340 €)"
+gestor_auditoria_preventiva_veterano.choices.contratar_auditoria_cuatro_anos.label: "Commission a preventive audit of all open tax years (€340)"
 gestor_auditoria_preventiva_veterano.choices.contratar_auditoria_cuatro_anos.result_text: "You catch and amend two minor mismatches from three summers ago, bulletproofing your track record right as your savings grow."
-gestor_auditoria_preventiva_veterano.choices.dar_salto_estable_a_elena.label: "Sign up permanently for Elena Montes's full shield (170 €/mo)"
+gestor_auditoria_preventiva_veterano.choices.dar_salto_estable_a_elena.label: "Sign up permanently for Elena Montes's full shield (€170/mo)"
 gestor_auditoria_preventiva_veterano.choices.dar_salto_estable_a_elena.result_text: "You hand your historical binders to Elena's firm and enter your veteran years backed by top-tier fiscal armor."
 
 # 4. gestor_bucle_sms_clave_pin
@@ -38,9 +38,9 @@ gestor_bucle_sms_clave_pin.body: "A major client demands your tax-clearance cert
 gestor_bucle_sms_clave_pin.choices.insistir_pegado_a_la_ventana.label: "Lean halfway out the window and keep retrying until it lands"
 gestor_bucle_sms_clave_pin.choices.insistir_pegado_a_la_ventana.outcomes.codigo_entra_al_quinto_intento.result_text: "On the fifth try the SMS lands instantly, you grab the stamped PDF, and you unlock the client's payment at the buzzer."
 gestor_bucle_sms_clave_pin.choices.insistir_pegado_a_la_ventana.outcomes.bloqueo_temporal_por_reintentos.result_text: "Too many attempts lock your account for the day, and the client bumps your invoice to next week's payment batch."
-gestor_bucle_sms_clave_pin.choices.instalar_lector_dni_electronico.label: "Run downstairs for a USB smart-ID card reader (35 €)"
+gestor_bucle_sms_clave_pin.choices.instalar_lector_dni_electronico.label: "Run downstairs for a USB smart-ID card reader (€35)"
 gestor_bucle_sms_clave_pin.choices.instalar_lector_dni_electronico.result_text: "After thirty minutes wrestling with browser drivers, the chip connects cleanly and spits out an impeccable certificate."
-gestor_bucle_sms_clave_pin.choices.pedir_tramite_puntual_gestoria.label: "Pay a licensed tax agency to pull the certificate now (70 €)"
+gestor_bucle_sms_clave_pin.choices.pedir_tramite_puntual_gestoria.label: "Pay a licensed tax agency to pull the certificate now (€70)"
 gestor_bucle_sms_clave_pin.choices.pedir_tramite_puntual_gestoria.result_text: "Using their agency proxy, they download the stamped file in three clicks and make you look effortless to the client's finance team."
 
 # 5. gestor_cambio_paco_a_elena
@@ -48,7 +48,7 @@ gestor_cambio_paco_a_elena.title: "Accounting Rescue: From Churro Shop to Full A
 gestor_cambio_paco_a_elena.body: "After your latest scares with Paco's folders, Elena Montes's firm offers to take over your books and audit past quarters. Paco swears on WhatsApp he just upgraded his spreadsheet and offers a free month if you stay."
 gestor_cambio_paco_a_elena.choices.aceptar_mes_gratis_de_paco.label: "Stick with Paco in exchange for waiving this month's fee"
 gestor_cambio_paco_a_elena.choices.aceptar_mes_gratis_de_paco.result_text: "You pocket the sixty euros and accept living with that artisanal burst of adrenaline at the end of every quarter."
-gestor_cambio_paco_a_elena.choices.contratar_traspaso_a_elena.label: "Pay the onboarding audit and switch to Elena Montes (170 €/mo)"
+gestor_cambio_paco_a_elena.choices.contratar_traspaso_a_elena.label: "Pay the onboarding audit and switch to Elena Montes (€170/mo)"
 gestor_cambio_paco_a_elena.choices.contratar_traspaso_a_elena.result_text: "Elena's team cleans up your ledger in forty-eight hours, fixes three shaky entries, and gives you back uninterrupted sleep."
 gestor_cambio_paco_a_elena.choices.cortar_por_lo_sano_sin_gestor.label: "Drop Paco altogether and run your own books from scratch"
 gestor_cambio_paco_a_elena.choices.cortar_por_lo_sano_sin_gestor.result_text: "You save on monthly retainer fees at the cost of sacrificing one Sunday every quarter to wrestle with official tax forms."
@@ -71,7 +71,7 @@ gestor_casilla_equivocada_modelo_303.choices.cruzar_dedos_hasta_resumen_anual.ou
 gestor_casilla_equivocada_modelo_303.choices.cruzar_dedos_hasta_resumen_anual.outcomes.discrepancia_automatica_casillas.result_text: "With no matching Modelo 349 EU summary on file, an automated alert fires and costs you a formal data-mismatch fine."
 gestor_casilla_equivocada_modelo_303.choices.presentar_rectificativa_esa_misma_noche.label: "Brew strong coffee and file a corrective VAT return before midnight"
 gestor_casilla_equivocada_modelo_303.choices.presentar_rectificativa_esa_misma_noche.result_text: "You wrestle for an hour with reference numbers from the prior receipt, leaving every VAT box spotless before midnight."
-gestor_casilla_equivocada_modelo_303.choices.delegar_desaguisado_en_paco.label: "Give up solo forms and hire Paco to untangle the mess (60 €/mo)"
+gestor_casilla_equivocada_modelo_303.choices.delegar_desaguisado_en_paco.label: "Give up solo forms and hire Paco to untangle the mess (€60/mo)"
 gestor_casilla_equivocada_modelo_303.choices.delegar_desaguisado_en_paco.result_text: "Paco files an explanatory note first thing tomorrow and takes over your monthly folders for a modest retainer."
 
 # 8. gestor_certificado_fnmt_caducado
@@ -80,9 +80,9 @@ gestor_certificado_fnmt_caducado.body: "You click sign on your quarterly return 
 gestor_certificado_fnmt_caducado.choices.peregrinar_ayuntamiento_comarcal.label: "Drive forty kilometers to a rural town hall with walk-in desks"
 gestor_certificado_fnmt_caducado.choices.peregrinar_ayuntamiento_comarcal.outcomes.funcionario_apiadado.result_text: "A veteran clerk takes pity on your dark circles, validates your identity in two minutes, and gets you home in time to file."
 gestor_certificado_fnmt_caducado.choices.peregrinar_ayuntamiento_comarcal.outcomes.ventanilla_cerrada_a_las_dos.result_text: "The shutter slams shut for a long coffee break right in front of you, forcing an emergency neighborhood agency filing."
-gestor_certificado_fnmt_caducado.choices.pagar_videoidentificacion_urgente.label: "Pay for express certified video-ID renewal from home (45 €)"
+gestor_certificado_fnmt_caducado.choices.pagar_videoidentificacion_urgente.label: "Pay for express certified video-ID renewal from home (€45)"
 gestor_certificado_fnmt_caducado.choices.pagar_videoidentificacion_urgente.result_text: "You hold your ID card up to the webcam looking shipwrecked, download the fresh certificate by afternoon, and file on time."
-gestor_certificado_fnmt_caducado.choices.autorizar_presentacion_colaborador.label: "Pay an authorized tax agent to submit this quarter (95 €)"
+gestor_certificado_fnmt_caducado.choices.autorizar_presentacion_colaborador.label: "Pay an authorized tax agent to submit this quarter (€95)"
 gestor_certificado_fnmt_caducado.choices.autorizar_presentacion_colaborador.result_text: "A licensed firm files your return under their professional signature in ten minutes while you renew your certificate calmly."
 
 # 9. gestor_compensacion_app_fiscal
@@ -92,7 +92,7 @@ gestor_compensacion_app_fiscal.choices.exportar_libros_y_cerrar_cuenta.label: "D
 gestor_compensacion_app_fiscal.choices.exportar_libros_y_cerrar_cuenta.result_text: "You store tidy local invoice folders on your drive and rid yourself of midnight chatbot notifications forever."
 gestor_compensacion_app_fiscal.choices.exigir_reembolso_por_incidencia.label: "Demand a full refund of subscription fees and SLA damages"
 gestor_compensacion_app_fiscal.choices.exigir_reembolso_por_incidencia.result_text: "You cite their service-level clause in icy detail and receive a direct cash payout to close the incident ticket."
-gestor_compensacion_app_fiscal.choices.migrar_historico_a_paco.label: "Export your ledger and move to Paco's ring binders (60 €/mo)"
+gestor_compensacion_app_fiscal.choices.migrar_historico_a_paco.label: "Export your ledger and move to Paco's ring binders (€60/mo)"
 gestor_compensacion_app_fiscal.choices.migrar_historico_a_paco.result_text: "You trade broken artificial intelligence for Paco's ballpoint pen: at least if he messes up, you can complain downstairs."
 
 # 10. gestor_conciliacion_bancaria_anual_solo
@@ -102,7 +102,7 @@ gestor_conciliacion_bancaria_anual_solo.choices.puntear_extractos_el_fin_de_sema
 gestor_conciliacion_bancaria_anual_solo.choices.puntear_extractos_el_fin_de_semana.result_text: "Numbers float behind your eyelids by Sunday night, but every single gateway cent balances without spending a euro."
 gestor_conciliacion_bancaria_anual_solo.choices.cuadrar_diferencias_a_ojimetro.label: "Plug a generic rounding line and pray nobody looks closely"
 gestor_conciliacion_bancaria_anual_solo.choices.cuadrar_diferencias_a_ojimetro.result_text: "You close the spreadsheet in five minutes and win your afternoon back, sweeping a quiet mismatch under the rug."
-gestor_conciliacion_bancaria_anual_solo.choices.comprar_conector_conciliacion.label: "Buy a professional bank-reconciliation utility (160 €)"
+gestor_conciliacion_bancaria_anual_solo.choices.comprar_conector_conciliacion.label: "Buy a professional bank-reconciliation utility (€160)"
 gestor_conciliacion_bancaria_anual_solo.choices.comprar_conector_conciliacion.result_text: "You match three thousand lines in ten minutes, rescue forgotten gateway fees, and leave your ledger spotless."
 
 # 11. gestor_elena_alerta_holding_patrimonio
@@ -112,7 +112,7 @@ gestor_elena_alerta_holding_patrimonio.choices.hacer_caso_a_elena_y_blindar_sust
 gestor_elena_alerta_holding_patrimonio.choices.hacer_caso_a_elena_y_blindar_sustancia.result_text: "You skip hotel-ballroom tax tricks and reinforce clean documentary proof around your professional reserves."
 gestor_elena_alerta_holding_patrimonio.choices.probar_esquema_agresivo_del_ponencia.label: "Push aggressive patrimonial write-offs inspired by the guru's talk"
 gestor_elena_alerta_holding_patrimonio.choices.probar_esquema_agresivo_del_ponencia.result_text: "You trim taxes in the short run, though Elena logs a written compliance disclaimer over the obvious audit risk."
-gestor_elena_alerta_holding_patrimonio.choices.canalizar_excedente_a_activos_productivos.label: "Channel surplus cash into real deductible studio equipment (920 €)"
+gestor_elena_alerta_holding_patrimonio.choices.canalizar_excedente_a_activos_productivos.label: "Channel surplus cash into real deductible studio equipment (€920)"
 gestor_elena_alerta_holding_patrimonio.choices.canalizar_excedente_a_activos_productivos.result_text: "You convert idle cash into genuine revenue-producing studio assets backed by airtight tax deductions."
 
 # 12. gestor_elena_blindaje_operaciones_internacionales
@@ -128,7 +128,7 @@ gestor_elena_blindaje_operaciones_internacionales.choices.subir_tarifa_bruta_y_f
 # 13. gestor_elena_bonificacion_contratacion
 gestor_elena_bonificacion_contratacion.title: "Elena Unlocks Staff Training Credits and Payroll Rebates"
 gestor_elena_bonificacion_contratacion.body: "Auditing your studio's social-security filings, Elena Montes spots unused subsidized training credits and a clean payroll rebate if you formalize a career development plan."
-gestor_elena_bonificacion_contratacion.choices.implantar_plan_carrera_y_credito_formativo.label: "Formalize the full subsidized training and career plan (180 €)"
+gestor_elena_bonificacion_contratacion.choices.implantar_plan_carrera_y_credito_formativo.label: "Formalize the full subsidized training and career plan (€180)"
 gestor_elena_bonificacion_contratacion.choices.implantar_plan_carrera_y_credito_formativo.result_text: "You trim social-security costs with spotless paperwork and morale surges as your employee sees real growth."
 gestor_elena_bonificacion_contratacion.choices.aplicar_solo_bonificacion_automatica_tgss.label: "Claim only the direct payroll rebate without cutting delivery hours"
 gestor_elena_bonificacion_contratacion.choices.aplicar_solo_bonificacion_automatica_tgss.result_text: "You capture the monthly social-security discount cleanly without slowing studio production."
@@ -142,7 +142,7 @@ gestor_elena_cuadro_amortizacion_acelerada.choices.mantener_tabla_lineal_conserv
 gestor_elena_cuadro_amortizacion_acelerada.choices.mantener_tabla_lineal_conservadora.result_text: "You spread your tax shield evenly across coming fiscal years with zero scrutiny risk."
 gestor_elena_cuadro_amortizacion_acelerada.choices.activar_coeficiente_acelerado_este_trimestre.label: "Apply accelerated depreciation multipliers to cut taxes now"
 gestor_elena_cuadro_amortizacion_acelerada.choices.activar_coeficiente_acelerado_este_trimestre.result_text: "Elena logs every serial number in your investment-goods ledger and legally trims your upcoming quarterly bill."
-gestor_elena_cuadro_amortizacion_acelerada.choices.renovar_respaldo_y_amortizar_conjunto.label: "Add backup storage hardware and depreciate the full bundle (680 €)"
+gestor_elena_cuadro_amortizacion_acelerada.choices.renovar_respaldo_y_amortizar_conjunto.label: "Add backup storage hardware and depreciate the full bundle (€680)"
 gestor_elena_cuadro_amortizacion_acelerada.choices.renovar_respaldo_y_amortizar_conjunto.result_text: "You harden your studio against data loss while maximizing clean quarterly deductions."
 
 # 15. gestor_elena_deduccion_id_software
@@ -150,7 +150,7 @@ gestor_elena_deduccion_id_software.title: "Technological Innovation Tax Credit a
 gestor_elena_deduccion_id_software.body: "Elena reviews the custom tools and automated workflows you built for clients: they qualify for technological innovation tax credits, though Hacienda scrutinizes claims lacking external technical reports."
 gestor_elena_deduccion_id_software.choices.aplicar_solo_gasto_ordinario_prudente.label: "Deduct costs as ordinary operating expenses without tempting Gómez"
 gestor_elena_deduccion_id_software.choices.aplicar_solo_gasto_ordinario_prudente.result_text: "You pass up the bonus credit, sleeping soundly knowing your return won't trip specialized audit filters."
-gestor_elena_deduccion_id_software.choices.encargar_memoria_tecnica_certificada.label: "Commission a certified technical report and claim the credit (340 €)"
+gestor_elena_deduccion_id_software.choices.encargar_memoria_tecnica_certificada.label: "Commission a certified technical report and claim the credit (€340)"
 gestor_elena_deduccion_id_software.choices.encargar_memoria_tecnica_certificada.result_text: "With an expert report attached to your file, you capture a handsome tax saving and sharpen your studio's prestige."
 gestor_elena_deduccion_id_software.choices.marcar_casilla_innovacion_sin_peritaje.label: "Claim the innovation box using only internal notes to save fees"
 gestor_elena_deduccion_id_software.choices.marcar_casilla_innovacion_sin_peritaje.outcomes.memoria_interna_supera_filtro.result_text: "Your internal technical dossier with Elena clears review this year and you pocket the full tax reduction."
@@ -171,17 +171,17 @@ gestor_elena_dilema_sociedad_limitada.title: "Stay Sole Trader or Incorporate a 
 gestor_elena_dilema_sociedad_limitada.body: "With your revenue climbing steadily, Elena Montes lays out the classic freelancer crossroads: build a corporate wrapper to pitch bigger enterprise accounts, or keep the lean agility of a sole trader."
 gestor_elena_dilema_sociedad_limitada.choices.mantener_estructura_ligera_actual.label: "Skip the notary for now and stay nimble as a sole trader"
 gestor_elena_dilema_sociedad_limitada.choices.mantener_estructura_ligera_actual.result_text: "You close the corporate folder without taking on notary costs or mercantile ledgers and keep billing nimbly as a sole trader."
-gestor_elena_dilema_sociedad_limitada.choices.pedir_informe_comparativo_previo.label: "Pay only for a side-by-side tax simulation first (180 €)"
+gestor_elena_dilema_sociedad_limitada.choices.pedir_informe_comparativo_previo.label: "Pay only for a side-by-side tax simulation first (€180)"
 gestor_elena_dilema_sociedad_limitada.choices.pedir_informe_comparativo_previo.result_text: "You get a down-to-the-cent breakdown of pros, cons, and mercantile registry fees so you can decide with a cool head."
-gestor_elena_dilema_sociedad_limitada.choices.encargar_protocolo_mercantil_sl.label: "Commission the corporate bylaws and name reservation (640 €)"
+gestor_elena_dilema_sociedad_limitada.choices.encargar_protocolo_mercantil_sl.label: "Commission the corporate bylaws and name reservation (€640)"
 gestor_elena_dilema_sociedad_limitada.choices.encargar_protocolo_mercantil_sl.result_text: "Elena launches the incorporation dossier and books the notary slot to upgrade your commercial standing next cycle."
 
 # 18. gestor_elena_escritura_notarial_sl
 gestor_elena_escritura_notarial_sl.title: "Corporate Verdict: Fixed Overhead vs. B2B Muscle"
 gestor_elena_escritura_notarial_sl.body: "The structuring review is in: operating under a mercantile umbrella opens doors to enterprise tenders and bigger retainers, though it demands registry filings and strict double-entry accounting every month."
-gestor_elena_escritura_notarial_sl.choices.adoptar_blindaje_sin_constituir.label: "Stay sole trader and apply only the accounting upgrades (140 €)"
+gestor_elena_escritura_notarial_sl.choices.adoptar_blindaje_sin_constituir.label: "Stay sole trader and apply only the accounting upgrades (€140)"
 gestor_elena_escritura_notarial_sl.choices.adoptar_blindaje_sin_constituir.result_text: "You adopt the report's depreciation rules and contract clauses without taking on corporate tax filings or registry fees."
-gestor_elena_escritura_notarial_sl.choices.activar_estructura_comercial_b2b.label: "Sign the mercantile rollout to land larger B2B accounts (480 €)"
+gestor_elena_escritura_notarial_sl.choices.activar_estructura_comercial_b2b.label: "Sign the mercantile rollout to land larger B2B accounts (€480)"
 gestor_elena_escritura_notarial_sl.choices.activar_estructura_comercial_b2b.result_text: "You walk out of the notary with fresh credentials: admin rigor goes up, and your corporate proposals carry instant weight."
 gestor_elena_escritura_notarial_sl.choices.guardar_proyecto_en_el_cajon.label: "Shelve the corporate folder until cashflow feels wider"
 gestor_elena_escritura_notarial_sl.choices.guardar_proyecto_en_el_cajon.result_text: "You archive the dossier without adding a single euro in fixed overhead and keep billing at your usual nimble pace."
@@ -191,7 +191,7 @@ gestor_elena_escudo_requerimiento.title: "Elena Intercepts a Tricky Tax Query on
 gestor_elena_escudo_requerimiento.body: "An automated cross-check challenges three supplier invoices and demands auxiliary ledgers within ten business days. Before your pulse even spikes, Elena already has an indexed legal response ready to file."
 gestor_elena_escudo_requerimiento.choices.revisar_y_firmar_respuesta_estandar.label: "Gather the bank transfer proofs yourself and file the base brief"
 gestor_elena_escudo_requerimiento.choices.revisar_y_firmar_respuesta_estandar.result_text: "You spend two hours pulling wire receipts and Elena closes out the requirement with crisp professional authority."
-gestor_elena_escudo_requerimiento.choices.firmar_defensa_documental_completa.label: "Authorize full legal defense and certified audit annex (160 €)"
+gestor_elena_escudo_requerimiento.choices.firmar_defensa_documental_completa.label: "Authorize full legal defense and certified audit annex (€160)"
 gestor_elena_escudo_requerimiento.choices.firmar_defensa_documental_completa.result_text: "The inquiry comes back closed in record time with zero penalties. Today you bless every single euro of her monthly fee."
 gestor_elena_escudo_requerimiento.choices.aprovechar_para_meter_ticket_dudoso.label: "Ask her to slip a debatable expense claim into the same reply"
 gestor_elena_escudo_requerimiento.choices.aprovechar_para_meter_ticket_dudoso.result_text: "You claw back extra cash by slipping the debatable receipt into the reply, leaving your tax ID flagged for future checks."
@@ -201,7 +201,7 @@ gestor_elena_optimizacion_formacion.title: "Elena Spots Training and Innovation 
 gestor_elena_optimizacion_formacion.body: "While auditing your software licenses and technical courses, Elena Montes finds a clean path to deduct professional upskilling and prototyping costs. Certifying that dossier also strengthens enterprise bids."
 gestor_elena_optimizacion_formacion.choices.intentar_meter_escapada_como_congreso.label: "Ask her to bundle a long-weekend hotel stay as a conference"
 gestor_elena_optimizacion_formacion.choices.intentar_meter_escapada_como_congreso.result_text: "Elena replies with the tax code underlined in red, drops the hotel bill, and logs a stern compliance warning on your file."
-gestor_elena_optimizacion_formacion.choices.ejecutar_memoria_tecnica_completa.label: "Approve the technical brief and expand certified training (320 €)"
+gestor_elena_optimizacion_formacion.choices.ejecutar_memoria_tecnica_completa.label: "Approve the technical brief and expand certified training (€320)"
 gestor_elena_optimizacion_formacion.choices.ejecutar_memoria_tecnica_completa.result_text: "You trim taxes with airtight documentation and lift your average project rate thanks to fresh technical credentials."
 gestor_elena_optimizacion_formacion.choices.aplicar_solo_recibos_ya_pagados.label: "Reclassify only paid course receipts without spending extra"
 gestor_elena_optimizacion_formacion.choices.aplicar_solo_recibos_ya_pagados.result_text: "Elena neatly categorizes this semester's training invoices, lightening your next quarterly bill without touching cash today."
@@ -209,7 +209,7 @@ gestor_elena_optimizacion_formacion.choices.aplicar_solo_recibos_ya_pagados.resu
 # 21. gestor_elena_pacto_sucesion_decada
 gestor_elena_pacto_sucesion_decada.title: "Near-Decade Milestone: IP Licensing and Continuity Protocol"
 gestor_elena_pacto_sucesion_decada.body: "With your veteran studio thriving, Elena proposes registering and licensing your reusable templates, frameworks, and master contracts so revenue doesn't depend solely on your hourly grind."
-gestor_elena_pacto_sucesion_decada.choices.protocolizar_licencias_y_cartera_b2b.label: "Notarize IP licensing and B2B master agreements with Elena (640 €)"
+gestor_elena_pacto_sucesion_decada.choices.protocolizar_licencias_y_cartera_b2b.label: "Notarize IP licensing and B2B master agreements with Elena (€640)"
 gestor_elena_pacto_sucesion_decada.choices.protocolizar_licencias_y_cartera_b2b.result_text: "Your intangible studio assets sit legally armored, generating recurring licensing revenue with clean tax treatment."
 gestor_elena_pacto_sucesion_decada.choices.registrar_solo_propiedad_intelectual_clave.label: "Register only core intellectual property without notary overhead"
 gestor_elena_pacto_sucesion_decada.choices.registrar_solo_propiedad_intelectual_clave.result_text: "You protect authorship over your flagship methodologies while keeping monthly administration lean."
@@ -221,9 +221,9 @@ gestor_elena_plan_prevision_autonomo.title: "Year-End Cap on the Simplified Free
 gestor_elena_plan_prevision_autonomo.body: "Final stretch of the year: Elena calculates to the euro how much you can contribute to a simplified self-employed pension plan to slash your top IRPF income-tax rate without draining cash."
 gestor_elena_plan_prevision_autonomo.choices.mantener_toda_la_liquidez_en_caja.label: "Keep every euro liquid in your checking account for now"
 gestor_elena_plan_prevision_autonomo.choices.mantener_toda_la_liquidez_en_caja.result_text: "You pay the full marginal rate without extra deductions, keeping your entire cash buffer available."
-gestor_elena_plan_prevision_autonomo.choices.aportar_tramo_optimo_plan_autonomos.label: "Contribute the optimal deductible cap before December 31 (950 €)"
+gestor_elena_plan_prevision_autonomo.choices.aportar_tramo_optimo_plan_autonomos.label: "Contribute the optimal deductible cap before December 31 (€950)"
 gestor_elena_plan_prevision_autonomo.choices.aportar_tramo_optimo_plan_autonomos.result_text: "You trim your top annual tax bracket in one stroke and feel a genuine long-term safety net for once."
-gestor_elena_plan_prevision_autonomo.choices.hacer_aportacion_prudente_mitad_tramo.label: "Make a moderate contribution balancing cashflow and tax relief (380 €)"
+gestor_elena_plan_prevision_autonomo.choices.hacer_aportacion_prudente_mitad_tramo.label: "Make a moderate contribution balancing cashflow and tax relief (€380)"
 gestor_elena_plan_prevision_autonomo.choices.hacer_aportacion_prudente_mitad_tramo.result_text: "You soften your annual IRPF bill while keeping plenty of operating cash for January."
 
 # 23. gestor_elena_precierre_noviembre
@@ -233,7 +233,7 @@ gestor_elena_precierre_noviembre.choices.escalonar_vencimientos_enero.label: "Tu
 gestor_elena_precierre_noviembre.choices.escalonar_vencimientos_enero.result_text: "You pace year-end milestones cleanly within the rules and close December with zero shocks or extra outlays."
 gestor_elena_precierre_noviembre.choices.facturar_a_tope_ignorando_tramo.label: "Ignore the bracket warning and cram extra rush jobs before New Year"
 gestor_elena_precierre_noviembre.choices.facturar_a_tope_ignorando_tramo.result_text: "You stack fast gross cash this month at the price of brutal overtime and a noticeably sharper tax bite at settlement."
-gestor_elena_precierre_noviembre.choices.adelantar_gastos_fijos_deducibles.label: "Pre-pay annual insurance and software licenses now (390 €)"
+gestor_elena_precierre_noviembre.choices.adelantar_gastos_fijos_deducibles.label: "Pre-pay annual insurance and software licenses now (€390)"
 gestor_elena_precierre_noviembre.choices.adelantar_gastos_fijos_deducibles.result_text: "You stop the bracket jump cold and cruise into the next few months with your core operating expenses already paid."
 
 # 24. gestor_elena_subida_iguala_anual
@@ -241,15 +241,15 @@ gestor_elena_subida_iguala_anual.title: "Elena Revises Retainer Fees Over New Di
 gestor_elena_subida_iguala_anual.body: "Elena Montes's firm announces a fee adjustment driven by heavier digital reporting mandates. She offers to bundle full audit-defense coverage, freeze your rate for early-month uploads, or part ways cleanly."
 gestor_elena_subida_iguala_anual.choices.pactar_descuento_por_orden_estricto.label: "Freeze your current fee by uploading sorted invoices on day one"
 gestor_elena_subida_iguala_anual.choices.pactar_descuento_por_orden_estricto.result_text: "Elena keeps your old rate provided every receipt lands organized on the first Monday: money saved through iron discipline."
-gestor_elena_subida_iguala_anual.choices.aceptar_anexo_defensa_integral.label: "Sign the full audit-defense addendum and upgrade coverage (175 €)"
+gestor_elena_subida_iguala_anual.choices.aceptar_anexo_defensa_integral.label: "Sign the full audit-defense addendum and upgrade coverage (€175)"
 gestor_elena_subida_iguala_anual.choices.aceptar_anexo_defensa_integral.result_text: "You pay a deductible supplement, and every certified tax letter goes straight to her legal desk without costing you sleep."
 gestor_elena_subida_iguala_anual.choices.darse_de_baja_y_volver_a_autogestion.label: "Decline the hike, close the contract, and file returns solo"
 gestor_elena_subida_iguala_anual.choices.darse_de_baja_y_volver_a_autogestion.result_text: "Elena hands over an impeccably indexed drive with your historical books and you return solo to the tax agency portal."
 
 # 25. gestor_fallo_app_fiscal_lowcost
 gestor_fallo_app_fiscal_lowcost.title: "Your Budget Tax App Multiplies Receipts by a Hundred"
-gestor_fallo_app_fiscal_lowcost.body: "That nine-euro cloud app promising autopilot taxes scanned an 18 € train ticket as 1,800 €. It queued a delirious draft return, and customer support is an automated bot replying with confetti emojis."
-gestor_fallo_app_fiscal_lowcost.choices.exigir_escalado_y_sustitutiva.label: "Pay urgent human support to void and amend the draft (85 €)"
+gestor_fallo_app_fiscal_lowcost.body: "That nine-euro cloud app promising autopilot taxes scanned an €18 train ticket as €1,800. It queued a delirious draft return, and customer support is an automated bot replying with confetti emojis."
+gestor_fallo_app_fiscal_lowcost.choices.exigir_escalado_y_sustitutiva.label: "Pay urgent human support to void and amend the draft (€85)"
 gestor_fallo_app_fiscal_lowcost.choices.exigir_escalado_y_sustitutiva.result_text: "You get a real human accountant to overwrite the botched draft before bank debit day and log a formal SLA complaint."
 gestor_fallo_app_fiscal_lowcost.choices.exportar_csv_y_rehacer_a_mano.label: "Download raw CSV exports and rebuild the entire return by hand"
 gestor_fallo_app_fiscal_lowcost.choices.exportar_csv_y_rehacer_a_mano.result_text: "You eat a cold sandwich at your keyboard purging duplicate rows, but you fix the mess without paying an extra cent."
@@ -261,9 +261,9 @@ gestor_inversion_amortizable_diciembre.title: "Depreciable Studio Upgrade or Cas
 gestor_inversion_amortizable_diciembre.body: "Years of heavy mileage show on your studio gear and furniture just before fiscal year-end. Elena Montes frames the trade-off: upgrading now trims cash but cuts taxes and boosts output; patching saves cash today."
 gestor_inversion_amortizable_diciembre.choices.aguantar_con_equipos_veteranos.label: "Spend zero euros now and squeeze one more year out of old gear"
 gestor_inversion_amortizable_diciembre.choices.aguantar_con_equipos_veteranos.result_text: "Your bank balance stays untouched today, though daily freezes and rattling cooling fans drag down your weekly pace."
-gestor_inversion_amortizable_diciembre.choices.actualizar_solo_esenciales.label: "Replace only critical essentials and protect tax reserves (480 €)"
+gestor_inversion_amortizable_diciembre.choices.actualizar_solo_esenciales.label: "Replace only critical essentials and protect tax reserves (€480)"
 gestor_inversion_amortizable_diciembre.choices.actualizar_solo_esenciales.result_text: "You swap out your chair and core tools while keeping most of your treasury intact for the quarterly tax debit."
-gestor_inversion_amortizable_diciembre.choices.renovar_estudio_integral_deducible.label: "Execute a full deductible studio equipment overhaul (1,450 €)"
+gestor_inversion_amortizable_diciembre.choices.renovar_estudio_integral_deducible.label: "Execute a full deductible studio equipment overhaul (€1,450)"
 gestor_inversion_amortizable_diciembre.choices.renovar_estudio_integral_deducible.result_text: "Your balance takes a noticeable dip today, but you unpack top-tier gear, cut next quarter's tax bill, and work twice as smoothly."
 
 # 27. gestor_laberinto_bienes_inversion
@@ -273,7 +273,7 @@ gestor_laberinto_bienes_inversion.choices.deducir_todo_de_golpe.label: "Expense 
 gestor_laberinto_bienes_inversion.choices.deducir_todo_de_golpe.result_text: "You slash this quarter's payment in one stroke and breathe easy today, planting a quiet time bomb if your books get crossed."
 gestor_laberinto_bienes_inversion.choices.calcular_tabla_lineal_a_mano.label: "Study the official tax manual and compute linear depreciation"
 gestor_laberinto_bienes_inversion.choices.calcular_tabla_lineal_a_mano.result_text: "You burn all Saturday afternoon over official tables and decimals, leaving the entry bulletproof for the next four years."
-gestor_laberinto_bienes_inversion.choices.pagar_consulta_fiscal_una_hora.label: "Pay a one-hour advisor consult to build the schedule (110 €)"
+gestor_laberinto_bienes_inversion.choices.pagar_consulta_fiscal_una_hora.label: "Pay a one-hour advisor consult to build the schedule (€110)"
 gestor_laberinto_bienes_inversion.choices.pagar_consulta_fiscal_una_hora.result_text: "A specialist hands you an exact quarter-by-quarter schedule and unlocks a legal accelerated-depreciation perk."
 
 # 28. gestor_migracion_verifactu_caos
@@ -284,7 +284,7 @@ gestor_migracion_verifactu_caos.choices.picar_facturas_formulario_publico.outcom
 gestor_migracion_verifactu_caos.choices.picar_facturas_formulario_publico.outcomes.salto_numeracion_y_rectificativas.result_text: "The browser crashes mid-submission, breaking your invoice sequence and forcing an urgent support bill to untangle it."
 gestor_migracion_verifactu_caos.choices.suscribir_programa_comercial_nube.label: "Subscribe to certified cloud billing software and migrate this weekend"
 gestor_migracion_verifactu_caos.choices.suscribir_programa_comercial_nube.result_text: "You add one more monthly SaaS fee to the freelancer backpack, but Monday morning you can bill without cold sweats."
-gestor_migracion_verifactu_caos.choices.implantar_conector_con_gestoria.label: "Pay for certified invoicing synced directly to your advisor (280 €)"
+gestor_migracion_verifactu_caos.choices.implantar_conector_con_gestoria.label: "Pay for certified invoicing synced directly to your advisor (€280)"
 gestor_migracion_verifactu_caos.choices.implantar_conector_con_gestoria.result_text: "The upfront cost stings, but every invoice goes out numbered, QR-stamped, and synced to your official ledgers in seconds."
 
 # 29. gestor_milagro_barato_paco
@@ -294,18 +294,18 @@ gestor_milagro_barato_paco.choices.dejarlo_pasar_sin_estres.label: "Thank him fo
 gestor_milagro_barato_paco.choices.dejarlo_pasar_sin_estres.result_text: "You carry on with your workday in peace without chasing registry windows."
 gestor_milagro_barato_paco.choices.reclamar_comisiones_indebidas.label: "Skip grants and ask him to reclaim unfair bank maintenance fees"
 gestor_milagro_barato_paco.choices.reclamar_comisiones_indebidas.result_text: "Armed with a battle-tested two-paragraph letter, Paco gets your bank to refund overcharged account maintenance fees."
-gestor_milagro_barato_paco.choices.tramitar_subvencion_relampago.label: "Pay him 50 € for rush filing and sign the grant form on the fly"
+gestor_milagro_barato_paco.choices.tramitar_subvencion_relampago.label: "Pay him €50 for rush filing and sign the grant form on the fly"
 gestor_milagro_barato_paco.choices.tramitar_subvencion_relampago.outcomes.concesion_aprobada.result_text: "Paco nails every stamped form at the buzzer and weeks later clean grant cash lands in your account. Churros are on you."
 gestor_milagro_barato_paco.choices.tramitar_subvencion_relampago.outcomes.cupo_agotado_por_segundos.result_text: "Grant funds run dry three minutes before your timestamp, though at least Paco's rush handling fee is tax-deductible."
 
 # 30. gestor_oferta_servicios
 gestor_oferta_servicios.title: "The Bookkeeping Dilemma"
 gestor_oferta_servicios.body: "Crumpled receipts and tax deadline alerts pile up on your desk. Paco 'Quick-File' offers bargain-menu bookkeeping, Elena Montes pitches surgical tax armor, or you can keep wrestling the tax portal solo."
-gestor_oferta_servicios.choices.seguir_autogestion.label: "Run my own tax filings bare-knuckled (0 €/mo)"
+gestor_oferta_servicios.choices.seguir_autogestion.label: "Run my own tax filings bare-knuckled (€0/mo)"
 gestor_oferta_servicios.choices.seguir_autogestion.result_text: "You skip the monthly retainer and face official tax forms alone. Whatever you save in euros, you build in character."
-gestor_oferta_servicios.choices.contratar_paco_barato.label: "Hand your folders to Paco 'Quick-File' (60 €/mo)"
+gestor_oferta_servicios.choices.contratar_paco_barato.label: "Hand your folders to Paco 'Quick-File' (€60/mo)"
 gestor_oferta_servicios.choices.contratar_paco_barato.result_text: "Paco clips your receipts into a binder smelling faintly of churros and replies with a thumbs-up. At least you are not alone."
-gestor_oferta_servicios.choices.contratar_elena_premium.label: "Retain Elena Montes's advisory firm (170 €/mo)"
+gestor_oferta_servicios.choices.contratar_elena_premium.label: "Retain Elena Montes's advisory firm (€170/mo)"
 gestor_oferta_servicios.choices.contratar_elena_premium.result_text: "Elena sets up a document portal with automated alerts and pre-audits. The monthly fee bites, but your blood pressure drops."
 
 # 31. gestor_olvido_modelo_349_ue
@@ -313,7 +313,7 @@ gestor_olvido_modelo_349_ue.title: "The Ghost of the Forgotten Modelo 349 EU Sum
 gestor_olvido_modelo_349_ue.body: "Filing solo, you billed two European clients VAT-free under reverse-charge rules, forgetting that EU services also require filing the Modelo 349 intra-community informative return."
 gestor_olvido_modelo_349_ue.choices.presentar_349_extemporaneo_voluntario.label: "File the late Modelo 349 voluntarily before Hacienda sends a notice"
 gestor_olvido_modelo_349_ue.choices.presentar_349_extemporaneo_voluntario.result_text: "You pay the reduced spontaneous late-filing penalty and head off a nastier EU cross-check inquiry."
-gestor_olvido_modelo_349_ue.choices.pagar_consulta_puntual_operador_ue.label: "Pay an EU VAT specialist for a clean one-off regularization (145 €)"
+gestor_olvido_modelo_349_ue.choices.pagar_consulta_puntual_operador_ue.label: "Pay an EU VAT specialist for a clean one-off regularization (€145)"
 gestor_olvido_modelo_349_ue.choices.pagar_consulta_puntual_operador_ue.result_text: "The advisor verifies your EU VIES tax IDs, clears the missing return, and aligns your quarterly books."
 gestor_olvido_modelo_349_ue.choices.ignorar_modelo_informativo_este_ano.label: "Ignore the informative form since zero VAT cash was owed anyway"
 gestor_olvido_modelo_349_ue.choices.ignorar_modelo_informativo_este_ano.result_text: "You skip paperwork today, leaving a glaring mismatch between your quarterly VAT boxes and the EU VIES registry."
@@ -325,7 +325,7 @@ gestor_paco_archivo_inundado_churreria.choices.confiar_en_el_calefactor_de_paco.
 gestor_paco_archivo_inundado_churreria.choices.confiar_en_el_calefactor_de_paco.result_text: "You save a week of chasing vendors, though half your historical receipts now resemble Dead Sea scrolls."
 gestor_paco_archivo_inundado_churreria.choices.escanear_supervivientes_y_pedir_copias.label: "Rescue the damp folders yourself and request PDF duplicates"
 gestor_paco_archivo_inundado_churreria.choices.escanear_supervivientes_y_pedir_copias.result_text: "Your desk smells like wet cardboard for three days, yet you rebuild your digital archive before the ink fades."
-gestor_paco_archivo_inundado_churreria.choices.migrar_todo_a_boveda_digital_elena.label: "Rescue your history and migrate to Elena's cloud vault (170 €/mo)"
+gestor_paco_archivo_inundado_churreria.choices.migrar_todo_a_boveda_digital_elena.label: "Rescue your history and migrate to Elena's cloud vault (€170/mo)"
 gestor_paco_archivo_inundado_churreria.choices.migrar_todo_a_boveda_digital_elena.result_text: "Elena's team digitizes every open tax year with verified backups, retiring Paco's soggy ring binders forever."
 
 # 33. gestor_paco_audio_cuatro_minutos
@@ -335,7 +335,7 @@ gestor_paco_audio_cuatro_minutos.choices.facturar_como_dice_paco_sin_mirar.label
 gestor_paco_audio_cuatro_minutos.choices.facturar_como_dice_paco_sin_mirar.result_text: "The client's finance department bounces the invoice back in disbelief and the sloppy filing leaves a mark."
 gestor_paco_audio_cuatro_minutos.choices.descifrar_normativa_por_tu_cuenta.label: "Play the audio at 2x speed and research the VAT rules yourself"
 gestor_paco_audio_cuatro_minutos.choices.descifrar_normativa_por_tu_cuenta.result_text: "You lose half an afternoon combing official tax manuals, but you send out a compliant invoice despite your own accountant."
-gestor_paco_audio_cuatro_minutos.choices.pagar_microconsulta_intracomunitaria.label: "Pay a cross-border VAT specialist for a one-off consult (110 €)"
+gestor_paco_audio_cuatro_minutos.choices.pagar_microconsulta_intracomunitaria.label: "Pay a cross-border VAT specialist for a one-off consult (€110)"
 gestor_paco_audio_cuatro_minutos.choices.pagar_microconsulta_intracomunitaria.result_text: "You register properly on the EU intra-community VIES census as required by law and issue a spotless European invoice."
 
 # 34. gestor_paco_caja_zapatos_tickets
@@ -356,7 +356,7 @@ gestor_paco_cliffhanger_modelo_303.choices.llamar_sin_parar_hasta_las_doce.outco
 gestor_paco_cliffhanger_modelo_303.choices.llamar_sin_parar_hasta_las_doce.outcomes.reloj_pasa_de_medianoche.result_text: "The server timestamps 00:02: late return and automatic surcharge for cutting the deadline to the final breath."
 gestor_paco_cliffhanger_modelo_303.choices.entrar_con_tu_certificado_y_presentar_directo.label: "Log into the tax portal yourself and submit the return by hand"
 gestor_paco_cliffhanger_modelo_303.choices.entrar_con_tu_certificado_y_presentar_directo.result_text: "Hands trembling, you punch in your totals in four minutes, enter the NRC bank code, and dodge the fine."
-gestor_paco_cliffhanger_modelo_303.choices.rescate_urgente_y_fichaje_de_elena.label: "Clear tonight's payment and sign with Elena tomorrow (170 €/mo)"
+gestor_paco_cliffhanger_modelo_303.choices.rescate_urgente_y_fichaje_de_elena.label: "Clear tonight's payment and sign with Elena tomorrow (€170/mo)"
 gestor_paco_cliffhanger_modelo_303.choices.rescate_urgente_y_fichaje_de_elena.result_text: "You save the quarter via NRC bank code and retain Elena so you never suffer another midnight cliffhanger."
 
 # 36. gestor_paco_deduccion_boda_cliente
@@ -375,7 +375,7 @@ gestor_paco_espantada_benidorm.body: "Twenty-four hours remain before Q1 taxes c
 gestor_paco_espantada_benidorm.choices.guiar_al_sobrino_por_videollamada.label: "Jump on a video call with nephew Kevin and dictate box by box"
 gestor_paco_espantada_benidorm.choices.guiar_al_sobrino_por_videollamada.outcomes.kevin_sorprende_y_acierta.result_text: "Turns out Kevin handles web portals better than his uncle: you file in ten minutes and even get a neatly named PDF."
 gestor_paco_espantada_benidorm.choices.guiar_al_sobrino_por_videollamada.outcomes.kevin_marca_casilla_equivocada.result_text: "Kevin swaps input and output VAT amid nervous laughter, costing you a small corrective payment to clean up the mess."
-gestor_paco_espantada_benidorm.choices.contratar_presentacion_urgente_externa.label: "Pay a serious rival agency for emergency same-day filing (155 €)"
+gestor_paco_espantada_benidorm.choices.contratar_presentacion_urgente_externa.label: "Pay a serious rival agency for emergency same-day filing (€155)"
 gestor_paco_espantada_benidorm.choices.contratar_presentacion_urgente_externa.result_text: "Another firm rescues your books in two hours, files cleanly, and you text Paco the receipt mid-sangria."
 gestor_paco_espantada_benidorm.choices.revocar_autorizacion_y_volver_solo.label: "Dump Paco today and submit the return with your own certificate"
 gestor_paco_espantada_benidorm.choices.revocar_autorizacion_y_volver_solo.result_text: "You cancel his direct debit on the spot: if someone is funding beach trips on April 19th, it will not be you."
@@ -386,7 +386,7 @@ gestor_paco_iva_charcuteria_cruzado.body: "Paco calls sweating bullets: while ke
 gestor_paco_iva_charcuteria_cruzado.choices.exigir_rectificativa_inmediata_a_paco.label: "March into his office and watch him file an immediate amendment"
 gestor_paco_iva_charcuteria_cruzado.choices.exigir_rectificativa_inmediata_a_paco.outcomes.subsanado_dentro_del_plazo.result_text: "You hover over his shoulder until every cured ham exits your VAT ledger before the filing window closes."
 gestor_paco_iva_charcuteria_cruzado.choices.exigir_rectificativa_inmediata_a_paco.outcomes.diferencia_cuota_con_recargo_minimo.result_text: "The correction lands a day late, leaving a small tax gap and surcharge that Paco haggles over."
-gestor_paco_iva_charcuteria_cruzado.choices.pagar_auditoria_externa_del_trimestre.label: "Pay an external advisor for a clean corrective filing (125 €)"
+gestor_paco_iva_charcuteria_cruzado.choices.pagar_auditoria_externa_del_trimestre.label: "Pay an external advisor for a clean corrective filing (€125)"
 gestor_paco_iva_charcuteria_cruzado.choices.pagar_auditoria_externa_del_trimestre.result_text: "A rival office files a spotless supplementary return, sparing you from explaining meat slicers to Inspector Gómez."
 gestor_paco_iva_charcuteria_cruzado.choices.dejar_paletillas_como_atencion_clientes.label: "Take Paco's cue and leave them disguised as 'client gift hampers'"
 gestor_paco_iva_charcuteria_cruzado.choices.dejar_paletillas_como_atencion_clientes.result_text: "You pay less VAT this month, though your digital-services tax code now claims industrial butcher machinery."
@@ -398,7 +398,7 @@ gestor_paco_jubilacion_sobrino_kevin.choices.auditar_borradores_de_kevin.label: 
 gestor_paco_jubilacion_sobrino_kevin.choices.auditar_borradores_de_kevin.result_text: "You catch two creative roundings per quarter, keeping the cheap monthly fee at the cost of playing accounting cop."
 gestor_paco_jubilacion_sobrino_kevin.choices.dejar_que_kevin_innove_sin_filtro.label: "Let Kevin unleash his 'viral tax-saving hacks' unchecked"
 gestor_paco_jubilacion_sobrino_kevin.choices.dejar_que_kevin_innove_sin_filtro.result_text: "He shaves immediate euros off your bill using dubious deductions that light up every statistical audit radar in Spain."
-gestor_paco_jubilacion_sobrino_kevin.choices.pagar_plus_atencion_directa_paco.label: "Pay a senior supplement so Paco signs your books himself (145 €)"
+gestor_paco_jubilacion_sobrino_kevin.choices.pagar_plus_atencion_directa_paco.label: "Pay a senior supplement so Paco signs your books himself (€145)"
 gestor_paco_jubilacion_sobrino_kevin.choices.pagar_plus_atencion_directa_paco.result_text: "Paco locks your binder in his personal desk drawer and reviews every quarter himself before heading to dominoes."
 
 # 40. gestor_paco_nominas_a_boligrafo
@@ -406,7 +406,7 @@ gestor_paco_nominas_a_boligrafo.title: "Jurassic Payslips from Paco's Back-Offic
 gestor_paco_nominas_a_boligrafo.body: "Now that you employ staff, Paco prints monthly payslips from a 2009 program that scrambles social-security contribution bases and rattles your team every payday."
 gestor_paco_nominas_a_boligrafo.choices.aguantar_con_recibos_chapuceros_paco.label: "Keep using Paco's clunky payslips to avoid extra payroll fees"
 gestor_paco_nominas_a_boligrafo.choices.aguantar_con_recibos_chapuceros_paco.result_text: "You save on labor advisory fees today, while studio morale sours and payroll filings creak."
-gestor_paco_nominas_a_boligrafo.choices.contratar_modulo_laboral_especializado.label: "Hire a dedicated labor specialist just for studio payroll (145 €)"
+gestor_paco_nominas_a_boligrafo.choices.contratar_modulo_laboral_especializado.label: "Hire a dedicated labor specialist just for studio payroll (€145)"
 gestor_paco_nominas_a_boligrafo.choices.contratar_modulo_laboral_especializado.result_text: "Social-security bulletins balance to the cent and your employee gets crisp, punctual payslips."
 gestor_paco_nominas_a_boligrafo.choices.repasar_tablas_cotizacion_cada_mes.label: "Audit every contribution base yourself before wiring monthly pay"
 gestor_paco_nominas_a_boligrafo.choices.repasar_tablas_cotizacion_cada_mes.result_text: "You catch two withholding slips before payday at the cost of burning another afternoon on bureaucracy."
@@ -428,7 +428,7 @@ gestor_paco_revision_gastos_dudosos.body: "Two months after the furniture receip
 gestor_paco_revision_gastos_dudosos.choices.preparar_dossier_fotografico_despacho.label: "Stage an immaculate workspace corner and submit photo evidence"
 gestor_paco_revision_gastos_dudosos.choices.preparar_dossier_fotografico_despacho.outcomes.aclaracion_archivada.result_text: "Your desk photos satisfy the reviewer, confirming professional use and closing the inquiry at zero extra cost."
 gestor_paco_revision_gastos_dudosos.choices.preparar_dossier_fotografico_despacho.outcomes.ajuste_parcial_de_cuota.result_text: "They accept the desk chair but disallow the rest as mixed home use, leaving you a modest tax difference to settle."
-gestor_paco_revision_gastos_dudosos.choices.presentar_complementaria_preventiva.label: "File a clean voluntary amendment and close the issue now (130 €)"
+gestor_paco_revision_gastos_dudosos.choices.presentar_complementaria_preventiva.label: "File a clean voluntary amendment and close the issue now (€130)"
 gestor_paco_revision_gastos_dudosos.choices.presentar_complementaria_preventiva.result_text: "You scrub any questionable line before it escalates into a penalty file and recover your peace of mind instantly."
 gestor_paco_revision_gastos_dudosos.choices.mantener_asiento_sin_tocar_nada.label: "Reply with Paco's boilerplate template and stand by every euro"
 gestor_paco_revision_gastos_dudosos.choices.mantener_asiento_sin_tocar_nada.result_text: "You keep your cash untouched this month, though a bright neon sticky note stays attached to your tax profile."
@@ -445,11 +445,11 @@ gestor_paco_sofa_gasto_oficina.choices.dejar_muebles_fuera_de_libros.result_text
 
 # 44. gestor_paco_suplemento_sorpresa
 gestor_paco_suplemento_sorpresa.title: "Surprise Surcharge for 'Folders and Annual Forms'"
-gestor_paco_suplemento_sorpresa.body: "Checking your bank app, you spot an extra 95 € direct debit from Paco's office labeled 'Annual summaries campaign, color copies, and laminated folders'. His sixty-euro window sign never mentioned a word."
+gestor_paco_suplemento_sorpresa.body: "Checking your bank app, you spot an extra €95 direct debit from Paco's office labeled 'Annual summaries campaign, color copies, and laminated folders'. His sixty-euro window sign never mentioned a word."
 gestor_paco_suplemento_sorpresa.choices.regatear_en_barra_con_paco.label: "Head down to the churro counter and haggle the charge in half"
 gestor_paco_suplemento_sorpresa.choices.regatear_en_barra_con_paco.outcomes.paco_rebaja_entre_porras.result_text: "Over two coffees he waives more than half the fee and promises fair warning next time he buys stationary."
 gestor_paco_suplemento_sorpresa.choices.regatear_en_barra_con_paco.outcomes.paco_se_planta_con_tarifario.result_text: "He pulls a laminated 2011 fee chart from behind a cabinet and you only shave twenty euros off after arguing."
-gestor_paco_suplemento_sorpresa.choices.asumir_suplemento_con_factura.label: "Demand an itemized deductible invoice and pay without drama (95 €)"
+gestor_paco_suplemento_sorpresa.choices.asumir_suplemento_con_factura.label: "Demand an itemized deductible invoice and pay without drama (€95)"
 gestor_paco_suplemento_sorpresa.choices.asumir_suplemento_con_factura.result_text: "Paco issues a proper invoice on the spot, you deduct the expense cleanly, and he pampers your annual summaries."
 gestor_paco_suplemento_sorpresa.choices.devolver_recibo_y_marcharse.label: "Reverse the debit in your banking app and return to solo filing"
 gestor_paco_suplemento_sorpresa.choices.devolver_recibo_y_marcharse.result_text: "Your ninety-five euros bounce right back, you collect your ring binder, and you become your own accounting department again."
@@ -459,9 +459,9 @@ gestor_panico_excel_domingo.title: "Sunday Midnight: #REF! Cascade Across Your L
 gestor_panico_excel_domingo.body: "It is 11:45 PM on the Sunday before quarterly tax day and your spreadsheet is spewing formula errors. Three invoices shifted columns and the VAT payable cell currently doubles your real bank balance."
 gestor_panico_excel_domingo.choices.rehacer_formulas_de_madrugada.label: "Brew a thermos of coffee and audit every row until sunrise"
 gestor_panico_excel_domingo.choices.rehacer_formulas_de_madrugada.result_text: "You hunt down a rogue parenthesis at 3:00 AM and save the quarter for free, though Monday you are a walking zombie."
-gestor_panico_excel_domingo.choices.comprar_plantilla_fiscal_auditada.label: "Buy a validated freelance ledger template and re-import (85 €)"
+gestor_panico_excel_domingo.choices.comprar_plantilla_fiscal_auditada.label: "Buy a validated freelance ledger template and re-import (€85)"
 gestor_panico_excel_domingo.choices.comprar_plantilla_fiscal_auditada.result_text: "You import your transactions in thirty minutes, spot two forgotten expenses, and balance the tax form cleanly."
-gestor_panico_excel_domingo.choices.rendirse_y_llamar_a_paco.label: "Send the spreadsheet to Paco first thing Monday (60 €/mo)"
+gestor_panico_excel_domingo.choices.rendirse_y_llamar_a_paco.label: "Send the spreadsheet to Paco first thing Monday (€60/mo)"
 gestor_panico_excel_domingo.choices.rendirse_y_llamar_a_paco.result_text: "You drop your crumpled receipts above the churro shop and swear never to debug VAT formulas after midnight again."
 
 # 46. gestor_reajuste_tramos_cotizacion
@@ -469,10 +469,10 @@ gestor_reajuste_tramos_cotizacion.title: "Social Security Bracket Reset on Real 
 gestor_reajuste_tramos_cotizacion.body: "The window opens to align your RETA self-employed social security bracket with your veteran net earnings. Decide whether to match to the euro, boost sick-leave cover, or ride the provisional minimum."
 gestor_reajuste_tramos_cotizacion.choices.apurar_tramo_minimo_provisional.label: "Keep the provisional minimum base and deal with true-ups later"
 gestor_reajuste_tramos_cotizacion.choices.apurar_tramo_minimo_provisional.result_text: "You preserve every euro of cashflow this quarter, knowing the automated settlement will eventually knock on your bank."
-gestor_reajuste_tramos_cotizacion.choices.calibrar_tramo_exacto_con_estudio.label: "Compute exact net yield and lock in the matching bracket (220 €)"
-gestor_reajuste_tramos_cotizacion.choices.calibrar_tramo_exacto_con_estudio.result_text: "You dodge retroactive true-up bills next year and sail through the coming months with predictable monthly quotas."
-gestor_reajuste_tramos_cotizacion.choices.ampliar_base_proteccion_veterana.label: "Step up one bracket voluntarily for stronger leave cover (310 €)"
-gestor_reajuste_tramos_cotizacion.choices.ampliar_base_proteccion_veterana.result_text: "You take on a slightly higher deductible quota, gaining real peace of mind over sick leave and future retirement."
+gestor_reajuste_tramos_cotizacion.choices.calibrar_tramo_exacto_con_estudio.label: "Compute exact net yield and lock in the matching bracket (€220)"
+gestor_reajuste_tramos_cotizacion.choices.calibrar_tramo_exacto_con_estudio.result_text: "You dodge retroactive true-up bills next year and sail through the coming months with predictable monthly contributions."
+gestor_reajuste_tramos_cotizacion.choices.ampliar_base_proteccion_veterana.label: "Step up one bracket voluntarily for stronger leave cover (€310)"
+gestor_reajuste_tramos_cotizacion.choices.ampliar_base_proteccion_veterana.result_text: "You take on a slightly higher deductible monthly contribution, gaining real peace of mind over sick leave and future retirement."
 
 # 47. gestor_retencion_mal_aplicada_factura_solo
 gestor_retencion_mal_aplicada_factura_solo.title: "Backwards IRPF Withholdings Across Your DIY Invoices"
@@ -489,9 +489,9 @@ gestor_revision_estrategia_anual.title: "Pre-Closing Annual Tax Strategy Review"
 gestor_revision_estrategia_anual.body: "Fiscal year-end approaches and Elena Montes calls a strategy review: you still have time to order depreciation schedules, tune IRPF withholdings, and time deductible costs before December seals the year."
 gestor_revision_estrategia_anual.choices.cerrar_ejercicio_sin_cambios.label: "Close the fiscal year as-is without touching what works"
 gestor_revision_estrategia_anual.choices.cerrar_ejercicio_sin_cambios.result_text: "You shut the binders without spending an extra euro today, trusting next quarter will arrive gently."
-gestor_revision_estrategia_anual.choices.ajustar_retenciones_cierre_elena.label: "Realign due dates and pending depreciation schedules (75 €)"
+gestor_revision_estrategia_anual.choices.ajustar_retenciones_cierre_elena.label: "Realign due dates and pending depreciation schedules (€75)"
 gestor_revision_estrategia_anual.choices.ajustar_retenciones_cierre_elena.result_text: "Elena fine-tunes your depreciation tables and December billing calendar with surgical precision."
-gestor_revision_estrategia_anual.choices.ejecutar_plan_cierre_con_gestoria.label: "Run the full annual optimization plan with Elena (180 €)"
+gestor_revision_estrategia_anual.choices.ejecutar_plan_cierre_con_gestoria.label: "Run the full annual optimization plan with Elena (€180)"
 gestor_revision_estrategia_anual.choices.ejecutar_plan_cierre_con_gestoria.result_text: "You align due dates and deductible expenses down to the cent, trimming operating drag across the start of next year."
 
 # 49. gestor_salto_asesoria_premium
@@ -499,7 +499,7 @@ gestor_salto_asesoria_premium.title: "Elena Montes's Pitch Before Anything Catch
 gestor_salto_asesoria_premium.body: "Your growing billing volume is outgrowing Paco's neighborhood binder shop. Elena Montes proposes an orderly ledger handover and quarterly tax planning before an audit scare forces your hand."
 gestor_salto_asesoria_premium.choices.seguir_con_cuota_barata_de_paco.label: "Stick with Paco's bargain fee while things hold together"
 gestor_salto_asesoria_premium.choices.seguir_con_cuota_barata_de_paco.result_text: "You keep monthly fixed overhead low for now, even if proactive tax strategy stays at zero."
-gestor_salto_asesoria_premium.choices.firmar_salto_ordenado_a_elena.label: "Make the professional leap to Elena Montes's firm (170 €/mo)"
+gestor_salto_asesoria_premium.choices.firmar_salto_ordenado_a_elena.label: "Make the professional leap to Elena Montes's firm (€170/mo)"
 gestor_salto_asesoria_premium.choices.firmar_salto_ordenado_a_elena.result_text: "Elena audits Paco's recent quarters, rescues three dormant deductions, and bulletproofs your tax calendar."
 gestor_salto_asesoria_premium.choices.pedir_a_paco_revision_trimestral_seria.label: "Press Paco to review your quarterly folders with real care"
 gestor_salto_asesoria_premium.choices.pedir_a_paco_revision_trimestral_seria.outcomes.paco_se_esmera_un_trimestre.result_text: "Sensing his retainer at risk, Paco checks your binder himself this quarter and rescues an overlooked receipt."

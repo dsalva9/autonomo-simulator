@@ -46,7 +46,7 @@ choices:
       stress: 1
       reputation: 5
       add_modifier:
-        id: mod_cartera_curada_senior
+        id: mod_cartera_fiel_retenida
         label: Cartera veterana seleccionada
         remaining_months: 5
         monthly_billed_delta: 340

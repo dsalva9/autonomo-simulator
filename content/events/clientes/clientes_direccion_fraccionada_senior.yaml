@@ -26,7 +26,7 @@ choices:
       personal_life: 3
       reputation: 5
       add_modifier:
-        id: mod_consejero_externo
+        id: mod_direccion_fraccionada_senior
         label: Consejero externo de comité
         remaining_months: 4
         monthly_billed_delta: 450
@@ -54,7 +54,7 @@ choices:
       reputation: 7
       employee_satisfaction: 7
       add_modifier:
-        id: mod_consejero_externo
+        id: mod_direccion_fraccionada_senior
         label: Consejero externo de comité
         remaining_months: 5
         monthly_billed_delta: 600

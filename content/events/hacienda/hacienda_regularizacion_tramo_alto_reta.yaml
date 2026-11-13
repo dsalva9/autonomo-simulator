@@ -19,7 +19,10 @@ requirements:
 weight: 12
 cooldown_months: 14
 max_occurrences: 3
-exclusive_with: []
+exclusive_with:
+  - hacienda_regularizacion_reta
+  - hacienda_regularizacion_cuota_devolucion_oficio
+  - gestor_reajuste_tramos_cotizacion
 choices:
   - id: repartir_cargo_en_cinco_meses
     label: Diluir el ajuste retroactivo en cinco recibos mensuales asumibles

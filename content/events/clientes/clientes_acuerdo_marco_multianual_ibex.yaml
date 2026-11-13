@@ -31,7 +31,7 @@ choices:
       set_flags:
         - proveedor_corporativo_activo
       add_modifier:
-        id: mod_esposas_oro_vip
+        id: mod_disponibilidad_marco_ibex
         label: Iguala VIP 24/7
         remaining_months: 5
         monthly_billed_delta: 750
@@ -58,7 +58,7 @@ choices:
       personal_life: 3
       reputation: 7
       add_modifier:
-        id: mod_iguala_vip_sana
+        id: mod_marco_ibex_desconexion
         label: Iguala VIP con desconexión
         remaining_months: 6
         monthly_billed_delta: 650

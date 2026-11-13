@@ -41,12 +41,14 @@ choices:
     effects:
       billed_income: 1600
       deductible_expense: 750
-      stress: -3
-      moral: 2
+      stress: 3
+      personal_life: -2
+      moral: 3
       reputation: 3
   - id: seguir_como_lobo_solitario
     label: "Agradecerle el interés y seguir remando en solitario"
     result_text: "Bastante deporte de riesgo es pagar tu propia cuota mensual como para asumir una nómina fija. Dani te deja su contacto por si más adelante cambias de idea."
     effects:
-      stress: 2
-      moral: 1
+      stress: -3
+      moral: 2
+      personal_life: 3

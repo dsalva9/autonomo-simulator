@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { type Locator, expect, test } from "@playwright/test";
+import { type Locator, type Page, expect, test } from "@playwright/test";
 
 const SCREENSHOT_DIR = resolve(process.cwd(), "test-results", "qa-screenshots");
 
@@ -202,6 +202,102 @@ async function assertReadableTextContrast(
     ratio,
     `UX Regression: ${label} has illegible effective contrast ratio (${ratio.toFixed(2)}:1 < ${minRatio}:1)`,
   ).toBeGreaterThanOrEqual(minRatio);
+}
+
+/**
+ * DEF-P36-01 Guard: Asserts zero horizontal/vertical bounding-box overlap and zero horizontal
+ * flex-child overflow across all visible direct children of `.month-economy-strip-row`.
+ */
+async function assertEconomyStripRowNonOverlap(page: Page, label: string): Promise<void> {
+  const strip = page.getByTestId("month-economy-strip");
+  await expect(strip, `Expected month-economy-strip visible (${label})`).toBeVisible();
+
+  const report = await strip.evaluate((stripEl) => {
+    const row = stripEl.querySelector(".month-economy-strip-row");
+    if (!row) {
+      return { ok: false, reason: "Missing .month-economy-strip-row" };
+    }
+    const visibleChildren = Array.from(row.children).filter((child) => {
+      const style = window.getComputedStyle(child);
+      if (style.display === "none" || style.visibility === "hidden") {
+        return false;
+      }
+      const rect = child.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    }) as HTMLElement[];
+
+    if (visibleChildren.length < 2) {
+      return {
+        ok: false,
+        reason: `Expected >= 2 visible children in .month-economy-strip-row, got ${visibleChildren.length}`,
+      };
+    }
+
+    for (let i = 0; i < visibleChildren.length; i += 1) {
+      const el = visibleChildren[i]!;
+      if (el.scrollWidth > el.clientWidth + 1) {
+        return {
+          ok: false,
+          reason: `Child ${i} overflows horizontally (scrollWidth=${el.scrollWidth} > clientWidth=${el.clientWidth}): "${el.textContent?.trim()}"`,
+        };
+      }
+    }
+
+    for (let i = 0; i < visibleChildren.length; i += 1) {
+      const a = visibleChildren[i]!.getBoundingClientRect();
+      for (let j = i + 1; j < visibleChildren.length; j += 1) {
+        const b = visibleChildren[j]!.getBoundingClientRect();
+        const overlapsX = a.left < b.right - 0.5 && a.right > b.left + 0.5;
+        const overlapsY = a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+        if (overlapsX && overlapsY) {
+          return {
+            ok: false,
+            reason: `Children ${i} (right=${a.right.toFixed(1)}) and ${j} (left=${b.left.toFixed(1)}) overlap in .month-economy-strip-row`,
+          };
+        }
+      }
+    }
+
+    return { ok: true, reason: "" };
+  });
+
+  expect(report.ok, `DEF-P36-01 Regression (${label}): ${report.reason}`).toBe(true);
+}
+
+/**
+ * DEF-P36-02 Guard: Whenever `[data-testid="event-character-polaroid"]` is visible on desktop,
+ * asserts its `<figcaption>` does not horizontally overflow (`scrollWidth <= clientWidth + 1`)
+ * and sits strictly inside `[data-testid="event-character-polaroid"]`'s left/right bounds.
+ */
+async function assertDesktopPolaroidContained(page: Page, label: string): Promise<void> {
+  const polaroid = page.getByTestId("event-character-polaroid");
+  if (!(await polaroid.isVisible())) {
+    return;
+  }
+
+  const metrics = await polaroid.evaluate((figEl) => {
+    const caption = figEl.querySelector("figcaption");
+    if (!caption) {
+      return { ok: false, reason: "Missing <figcaption> inside event-character-polaroid" };
+    }
+    const pRect = figEl.getBoundingClientRect();
+    const cRect = caption.getBoundingClientRect();
+    if (caption.scrollWidth > caption.clientWidth + 1) {
+      return {
+        ok: false,
+        reason: `figcaption scrollWidth (${caption.scrollWidth}) > clientWidth (${caption.clientWidth}) for "${caption.textContent?.trim()}"`,
+      };
+    }
+    if (cRect.left < pRect.left - 1 || cRect.right > pRect.right + 1) {
+      return {
+        ok: false,
+        reason: `figcaption [${cRect.left.toFixed(1)}..${cRect.right.toFixed(1)}] protrudes outside polaroid [${pRect.left.toFixed(1)}..${pRect.right.toFixed(1)}]`,
+      };
+    }
+    return { ok: true, reason: "" };
+  });
+
+  expect(metrics.ok, `DEF-P36-02 Regression (${label}): ${metrics.reason}`).toBe(true);
 }
 
 test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Suite", () => {
@@ -580,13 +676,32 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     expect(fontSizes.money, "Expected readable HUD money >= 12px").toBeGreaterThanOrEqual(12);
 
     // 2. Hit-target non-occlusion & >= 6px inter-button spacing across HUD and choices
-    for (const hudBtnId of [
-      "toggle-sfx-btn",
-      "toggle-fast-pacing-btn",
-      "return-title-btn",
-      "abandon-run-btn",
-    ] as const) {
-      await assertCenterHitTargetUnoccluded(page.getByTestId(hudBtnId), hudBtnId);
+    if (isMobile) {
+      const menuBtn = page.getByTestId("mobile-utility-menu-btn");
+      await assertCenterHitTargetUnoccluded(menuBtn, "mobile-utility-menu-btn");
+      await menuBtn.click();
+      await expect(page.getByTestId("mobile-utility-sheet")).toBeVisible();
+      for (const hudBtnId of [
+        "locale-toggle-btn",
+        "toggle-sfx-btn",
+        "toggle-fast-pacing-btn",
+        "return-title-btn",
+        "abandon-run-btn",
+      ] as const) {
+        await assertCenterHitTargetUnoccluded(page.getByTestId(hudBtnId), hudBtnId);
+      }
+      await page.keyboard.press("Escape");
+      await expect(page.getByTestId("mobile-utility-sheet")).toBeHidden();
+    } else {
+      for (const hudBtnId of [
+        "locale-toggle-btn",
+        "toggle-sfx-btn",
+        "toggle-fast-pacing-btn",
+        "return-title-btn",
+        "abandon-run-btn",
+      ] as const) {
+        await assertCenterHitTargetUnoccluded(page.getByTestId(hudBtnId), hudBtnId);
+      }
     }
 
     const choiceButtons = page.locator('[data-testid^="choice-btn-"]');
@@ -680,7 +795,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("hall-of-fame-list")).toBeVisible();
 
     // Tab until Hall of Fame tab is focused, then use ArrowRight / ArrowLeft + Tab into scrollable tabpanel
-    for (let i = 0; i < 10; i += 1) {
+    for (let i = 0; i < 16; i += 1) {
       const focusedTestId = await page.evaluate(
         () => document.activeElement?.getAttribute("data-testid") ?? null,
       );
@@ -885,7 +1000,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
   });
 
-  test("QA-25: VictoryModal keyboard focus trap, ArrowDown/ArrowUp cycling & above-the-fold layout (1366x768)", async ({
+  test("QA-25: Month 120 Q40 AnnualSummary -> VictoryModal transition, keyboard focus trap & above-the-fold layout (1366x768)", async ({
     page,
   }, testInfo) => {
     test.skip(
@@ -899,7 +1014,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.keyboard.press("Enter");
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
-    // Stage a valid persisted victory_prompt state in IndexedDB (keyval-store / keyval) and reload
+    // Stage Month 120 Q40 quarterly_tax settlement to verify Year 10 AnnualSummaryModal opens BEFORE VictoryModal (M2-07)
     await page.evaluate(async () => {
       await new Promise<void>((resolvePromise, rejectPromise) => {
         const openReq = indexedDB.open("keyval-store");
@@ -912,10 +1027,12 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
           getReq.onerror = () => rejectPromise(getReq.error);
           getReq.onsuccess = () => {
             const envelope = getReq.result;
-            envelope.state.phase = "victory_prompt";
-            envelope.state.pending_victory_badge = "rich_150k";
-            envelope.state.earned_victories = ["rich_150k"];
-            envelope.state.indicators.money = 152400;
+            envelope.state.month = 120;
+            envelope.state.phase = "quarterly_tax";
+            envelope.state.pending_victory_badge = null;
+            envelope.state.earned_victories = [];
+            envelope.state.indicators.money = 18500;
+            envelope.state.finances.accrued_tax_liability = 950;
             store.put(envelope, "autonomo:active_run");
           };
           tx.oncomplete = () => {
@@ -930,6 +1047,15 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.reload();
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await page.keyboard.press("Enter");
+
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.getByTestId("trimestre-pay-btn").click();
+
+    // Year 10 AnnualSummaryModal MUST appear first before VictoryModal
+    await expect(page.getByTestId("annual-summary-modal")).toBeVisible();
+    await expect(page.getByTestId("victory-modal")).toBeHidden();
+    await page.getByTestId("annual-summary-close-btn").click();
+    await expect(page.getByTestId("annual-summary-modal")).toBeHidden();
 
     await expect(page.getByTestId("victory-modal")).toBeVisible();
     const bounds = { minTop: 0, maxBottom: 768, viewportWidth: 1366 };
@@ -1003,17 +1129,22 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     // Verify English HUD, comma thousands formatting, and IndicatorBar ES<->EN hotkey + button
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 1");
-    await expect(page.getByTestId("indicator-money-value")).toHaveText("2,981 €");
+    await expect(page.getByTestId("indicator-money-value")).toHaveText("3,052 €");
     await expect(page.getByTestId("indicator-net-cash")).toContainText("Net:");
-    await expect(page.getByTestId("indicator-net-cash")).toContainText("2,481 €");
-
-    const hudLocaleBtn = page.getByTestId("locale-toggle-btn");
-    await assertCenterHitTargetUnoccluded(hudLocaleBtn, "IndicatorBar locale-toggle-btn");
+    await expect(page.getByTestId("indicator-net-cash")).toContainText("2,532 €");
 
     await page.keyboard.press("l");
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
 
+    if (isMobile) {
+      const menuBtn = page.getByTestId("mobile-utility-menu-btn");
+      await assertCenterHitTargetUnoccluded(menuBtn, "IndicatorBar mobile-utility-menu-btn");
+      await menuBtn.click();
+      await expect(page.getByTestId("mobile-utility-sheet")).toBeVisible();
+    }
+    const hudLocaleBtn = page.getByTestId("locale-toggle-btn");
+    await assertCenterHitTargetUnoccluded(hudLocaleBtn, "IndicatorBar locale-toggle-btn");
     await hudLocaleBtn.click();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 1");
@@ -1124,7 +1255,6 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       expect(lastChoiceBox!.y + lastChoiceBox!.height).toBeLessThanOrEqual(navBox!.y - 4);
 
       const m1Btn = page.locator('[data-choice-id="entrega_express_contado"]');
-      await m1Btn.scrollIntoViewIfNeeded();
       await m1Btn.click();
 
       await expect(page.getByTestId("outcome-panel")).toBeVisible();
@@ -1155,10 +1285,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 2");
 
     // 4. Advance Month 2 -> Month 3, add temporal modifier, settle English QuarterlyTaxModal, and verify translated modifier in Account Ledger
-    const m2Btn = page.locator('[data-choice-id="comprar_lector_dnie_profesional"]');
-    if (isMobile) {
-      await m2Btn.scrollIntoViewIfNeeded();
-    }
+    const m2Btn = page.locator('[data-choice-id="instalar_lector_dni_electronico"]');
     await m2Btn.click();
     await page.getByTestId("outcome-continue-btn").click();
 
@@ -1167,9 +1294,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       "familia_cuota_gimnasio_fantasma",
     );
     const m3Btn = page.locator('[data-choice-id="bloquear_tres_mananas_y_entrenar"]');
-    if (isMobile) {
-      await m3Btn.scrollIntoViewIfNeeded();
-    } else {
+    if (!isMobile) {
       expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
         vp.height + 2,
       );
@@ -1348,10 +1473,10 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     });
   }
 
-  test("QA-28: Multi-resolution responsive ergonomics — 1024x768 spacious tablet workspace (>=500px), 360x640 compact phone & 667x375 phone landscape", async ({
+  test("QA-28: Multi-resolution responsive ergonomics — 1024x768 2-col desktop workspace (>=500px), 360x640 compact phone & 667x375 phone landscape rail", async ({
     page,
   }) => {
-    // 1. Tablet 1024x768: spacious centered workspace (event-card >= 500px, zero 344px 3-col squeeze)
+    // 1. 1024x768: 2-column desktop workspace (event-card >= 500px, mobile bottom nav hidden, Right folder visible)
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("./");
     await page.getByTestId("seed-input").fill("P35-BANNER-139");
@@ -1361,15 +1486,18 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       1024,
     );
-    await expect(page.getByTestId("mobile-tab-despacho")).toBeVisible();
+    await expect(page.getByTestId("mobile-tab-despacho")).toBeHidden();
+    await expect(page.getByTestId("desktop-right-tab-entorno")).toBeVisible();
+    await expect(page.getByTestId("desktop-right-tab-cuentas")).toBeVisible();
+    await expect(page.getByTestId("desktop-right-tab-historial")).toBeVisible();
     const tabletCardBox = await page.getByTestId("event-card").boundingBox();
     expect(tabletCardBox).not.toBeNull();
     expect(
       tabletCardBox!.width,
-      `Expected spacious centered event-card >= 500px at 1024x768 (got ${tabletCardBox!.width}px)`,
+      `Expected spacious event-card >= 500px at 1024x768 (got ${tabletCardBox!.width}px)`,
     ).toBeGreaterThanOrEqual(500);
 
-    // 2. Compact phone 360x640 & Phone landscape 667x375
+    // 2. Compact phone 360x640 & Phone landscape 667x375 (58px left vertical rail)
     for (const phoneVp of [
       { label: "compact-phone-360x640", width: 360, height: 640 },
       { label: "phone-landscape-667x375", width: 667, height: 375 },
@@ -1387,18 +1515,22 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       expect(headerBox).not.toBeNull();
       expect(navBox).not.toBeNull();
 
-      if (phoneVp.height <= 420) {
+      const titleBox = await page.getByTestId("event-title").boundingBox();
+      expect(titleBox).not.toBeNull();
+      expect(titleBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1);
+
+      if (phoneVp.height <= 500) {
+        // Phone landscape docks nav as a 58px left vertical rail instead of a bottom bar
         expect(
           headerBox!.height,
           "Expected ultra-compact HUD <= 96px on short phone landscape",
         ).toBeLessThanOrEqual(96);
+        expect(navBox!.width).toBeLessThanOrEqual(62);
+        expect(titleBox!.x).toBeGreaterThanOrEqual(navBox!.x + navBox!.width - 1);
+        expect(titleBox!.y + titleBox!.height).toBeLessThanOrEqual(phoneVp.height);
+      } else {
+        expect(titleBox!.y + titleBox!.height).toBeLessThanOrEqual(navBox!.y + 1);
       }
-
-      // Event title must be immediately visible between sticky HUD and bottom nav at scrollY === 0
-      const titleBox = await page.getByTestId("event-title").boundingBox();
-      expect(titleBox).not.toBeNull();
-      expect(titleBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1);
-      expect(titleBox!.y + titleBox!.height).toBeLessThanOrEqual(navBox!.y + 1);
 
       for (const tabId of [
         "mobile-tab-despacho",
@@ -1447,12 +1579,12 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("outcome-panel")).toHaveCount(0);
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
 
-    await page.locator('[data-choice-id="mirar_al_techo_de_madrugada"]').click();
+    await page.locator('[data-choice-id="seguir_autogestion"]').click();
     await expect(page.getByTestId("outcome-panel")).toHaveCount(0);
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 3");
 
     // Resolving Month 3 with healthy buffer (money - totalDue >= 1,200 €) and zero inspection auto-settles Q1!
-    await page.locator('[data-choice-id="contratar_software_homologado"]').click();
+    await page.locator('[data-choice-id="separar_cuenta_impuestos"]').click();
     await expect(page.getByTestId("trimestre-modal")).toHaveCount(0);
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
 
@@ -1478,7 +1610,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
     await page.locator('[data-choice-id="empezar_relacion_alex"]').click();
-    await expect(page.getByTestId("outcome-panel")).toContainText("Expediente:");
+    await expect(page.getByTestId("outcome-panel")).toContainText("Situación familiar:");
 
     await page.getByTestId("return-title-btn").click();
     await expect(page.getByTestId("continue-run-card")).toContainText("P35-CASH-158");
@@ -1503,7 +1635,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       "gestor_oferta_servicios",
     );
 
-    // 2. Stage an Endless post-120m run in IndexedDB and verify Year 11 CuentasPanel living-cost creep + honorable retirement
+    // 2. Stage an Endless post-120m run in IndexedDB and verify Year 11 CuentasPanel tapered living-cost creep + honorable retirement
     await page.evaluate(async () => {
       await new Promise<void>((resolvePromise, rejectPromise) => {
         const openReq = indexedDB.open("keyval-store");
@@ -1533,8 +1665,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     await page.reload();
     await page.getByTestId("continue-run-btn").click();
-    // Month 128 (Year 11): effectiveLivingCost = 1,405 + 10 * 64 = 2,045 €/mo
-    await expect(page.getByTestId("panel-cuentas")).toContainText(/2\.?045\s*€/);
+    // Month 128 (Year 11, tapered 0.5x post-M120): effectiveLivingCost = 1,405 + 9.5 * 64 = 2,013 €/mo
+    await expect(page.getByTestId("panel-cuentas")).toContainText(/2\.?013\s*€/);
 
     await page.getByTestId("abandon-run-btn").click();
     await expect(page.getByTestId("abandon-modal")).toBeVisible();
@@ -1607,5 +1739,573 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.getByTestId("end-return-title-btn").click();
     await expect(page.getByTestId("continue-run-card")).toHaveCount(0);
     await expect(page.getByTestId("hall-of-fame-list").locator("li")).toHaveCount(2);
+  });
+
+  test("QA-31: Phase 3.6 Desktop Zero-Scroll & Symmetric Baselines across 1024x768, 1152x720, 1280x720, 1366x768, 1440x900 & 1920x1080", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "desktop-chromium",
+      "Desktop spatial reorganization matrix executes in desktop-chromium",
+    );
+
+    const desktopMatrix = [
+      { label: "1024x768", width: 1024, height: 768 },
+      { label: "1152x720", width: 1152, height: 720 },
+      { label: "1280x720", width: 1280, height: 720 },
+      { label: "1366x768", width: 1366, height: 768 },
+      { label: "1440x900", width: 1440, height: 900 },
+      { label: "1920x1080", width: 1920, height: 1080 },
+    ] as const;
+
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await page.goto("./");
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+
+    // 1. Fresh (0-run) TitleScreen zero-scroll check across all 6 desktop viewports
+    for (const vp of desktopMatrix) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      const metrics = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+      }));
+      expect(metrics.scrollY).toBe(0);
+      expect(
+        metrics.scrollHeight,
+        `Fresh TitleScreen overflow on ${vp.label} (${metrics.scrollHeight} > ${metrics.innerHeight + 2})`,
+      ).toBeLessThanOrEqual(metrics.innerHeight + 2);
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("start-run-btn"),
+        { minTop: 0, maxBottom: vp.height, viewportWidth: vp.width },
+        `Fresh TitleScreen start-run-btn (${vp.label})`,
+      );
+    }
+
+    // Create 1 archived Hall of Fame run + 1 active run so Veteran TitleScreen mounts both cards + archive entries
+    await page.getByTestId("seed-input").fill("P36-ARCHIVE-1");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await page.getByTestId("abandon-run-btn").click();
+    await page.getByTestId("abandon-oposiciones-btn").click();
+    await expect(page.getByTestId("end-run-screen")).toBeVisible();
+    await page.getByTestId("end-return-title-btn").click();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+
+    await page.getByTestId("seed-input").fill("P35-BANNER-139");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await page.getByTestId("return-title-btn").click();
+    await expect(page.getByTestId("continue-run-card")).toBeVisible();
+
+    // 2. Veteran TitleScreen zero-scroll check across all 6 desktop viewports
+    for (const vp of desktopMatrix) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      const metrics = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+      }));
+      expect(metrics.scrollY).toBe(0);
+      expect(
+        metrics.scrollHeight,
+        `Veteran TitleScreen overflow on ${vp.label} (${metrics.scrollHeight} > ${metrics.innerHeight + 2})`,
+      ).toBeLessThanOrEqual(metrics.innerHeight + 2);
+      const bounds = { minTop: 0, maxBottom: vp.height, viewportWidth: vp.width };
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("continue-run-btn"),
+        bounds,
+        `Veteran TitleScreen continue-run-btn (${vp.label})`,
+      );
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("start-run-btn"),
+        bounds,
+        `Veteran TitleScreen start-run-btn (${vp.label})`,
+      );
+    }
+
+    // 3. GameScreen symmetric column top/bottom baselines + 0px Event->Outcome jump + Diario visibility
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    for (const vp of desktopMatrix) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await expect(page.getByTestId("mobile-tab-despacho")).toBeHidden();
+
+      if (vp.width < 1120) {
+        await expect(page.getByTestId("desktop-right-tab-entorno")).toBeVisible();
+      } else if (vp.height < 740) {
+        await expect(page.getByTestId("scene-renderer")).toBeVisible();
+        await expect(page.getByTestId("desktop-right-tab-historial")).toBeVisible();
+      } else {
+        await expect(page.getByTestId("scene-renderer")).toBeVisible();
+        await expect(page.getByTestId("panel-historial")).toBeVisible();
+      }
+
+      const scrollState = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+      }));
+      expect(scrollState.scrollY).toBe(0);
+      expect(
+        scrollState.scrollHeight,
+        `GameScreen overflow on ${vp.label} (${scrollState.scrollHeight} > ${scrollState.innerHeight + 2})`,
+      ).toBeLessThanOrEqual(scrollState.innerHeight + 2);
+
+      if (vp.width < 1120) {
+        // 1024x768: 2-column symmetric desk (Center Stage + 3-tab Right folder)
+        await expect
+          .poll(
+            async () => {
+              const cBox = await page.getByTestId("event-card").boundingBox();
+              const rBox = await page
+                .locator(".game-desk-grid > aside > .paper-dossier")
+                .first()
+                .boundingBox();
+              if (!cBox || !rBox) return 999;
+              return Math.max(
+                Math.abs(cBox.y - rBox.y),
+                Math.abs(cBox.y + cBox.height - (rBox.y + rBox.height)),
+              );
+            },
+            { message: `Expected <= 2px column top/bottom delta on ${vp.label}` },
+          )
+          .toBeLessThanOrEqual(2);
+        await page.getByTestId("desktop-right-tab-historial").click();
+        await expect(page.getByTestId("panel-historial")).toBeVisible();
+        await page.getByTestId("desktop-right-tab-cuentas").click();
+      } else if (vp.height < 740) {
+        // 1152x720 & 1280x720: 3-column symmetric desk with 2-tab Right folder
+        await expect
+          .poll(
+            async () => {
+              const leftTopBox = await page.getByTestId("scene-renderer").boundingBox();
+              const leftBotBox = await page.getByTestId("panel-entorno").boundingBox();
+              const cBox = await page.getByTestId("event-card").boundingBox();
+              const rightBox = await page
+                .locator(".game-desk-grid > aside")
+                .nth(1)
+                .locator(".paper-dossier")
+                .first()
+                .boundingBox();
+              if (!leftTopBox || !leftBotBox || !cBox || !rightBox) return 999;
+              const tops = [leftTopBox.y, cBox.y, rightBox.y];
+              const bots = [
+                leftBotBox.y + leftBotBox.height,
+                cBox.y + cBox.height,
+                rightBox.y + rightBox.height,
+              ];
+              return Math.max(
+                Math.max(...tops) - Math.min(...tops),
+                Math.max(...bots) - Math.min(...bots),
+              );
+            },
+            { message: `Expected <= 2px column top/bottom delta on ${vp.label}` },
+          )
+          .toBeLessThanOrEqual(2);
+
+        await page.getByTestId("desktop-right-tab-historial").click();
+        await expect(page.getByTestId("panel-historial")).toBeVisible();
+        await page.getByTestId("desktop-right-tab-cuentas").click();
+      } else {
+        // 1366x768, 1440x900 & 1920x1080: 3-column symmetric desk with stacked Cuentas + Diario
+        await expect(page.getByTestId("panel-historial")).toContainText("Diario de Expediente");
+
+        await expect
+          .poll(
+            async () => {
+              const leftTopBox = await page.getByTestId("scene-renderer").boundingBox();
+              const leftBotBox = await page.getByTestId("panel-entorno").boundingBox();
+              const cBox = await page.getByTestId("event-card").boundingBox();
+              const rightTopBox = await page.getByTestId("panel-cuentas").boundingBox();
+              const rightBotBox = await page.getByTestId("panel-historial").boundingBox();
+              if (!leftTopBox || !leftBotBox || !cBox || !rightTopBox || !rightBotBox) return 999;
+              const tops = [leftTopBox.y, cBox.y, rightTopBox.y];
+              const bots = [
+                leftBotBox.y + leftBotBox.height,
+                cBox.y + cBox.height,
+                rightBotBox.y + rightBotBox.height,
+              ];
+              return Math.max(
+                Math.max(...tops) - Math.min(...tops),
+                Math.max(...bots) - Math.min(...bots),
+              );
+            },
+            { message: `Expected <= 2px column top/bottom delta on ${vp.label}` },
+          )
+          .toBeLessThanOrEqual(2);
+
+        if (vp.width === 1920) {
+          // Verify single-row Command Band 1 (Calendar, Treasury, Toolbar never wrap) & compact HUD height
+          const hudMetrics = await page.evaluate(() => {
+            const header = document.querySelector("header")!;
+            const band1 = header.querySelector(".hud-shell-inner > div:first-of-type")!;
+            const cal = header.querySelector('[data-testid="indicator-calendar"]')!;
+            const treasury = header.querySelector(".hud-treasury-strip")!;
+            const abandon = header.querySelector('[data-testid="abandon-run-btn"]')!;
+            const cy = (el: Element) => {
+              const r = el.getBoundingClientRect();
+              return r.top + r.height / 2;
+            };
+            const ys = [cy(cal), cy(treasury), cy(abandon)];
+            return {
+              headerHeight: header.getBoundingClientRect().height,
+              band1Height: band1.getBoundingClientRect().height,
+              rowCenterDelta: Math.max(...ys) - Math.min(...ys),
+            };
+          });
+          expect(hudMetrics.band1Height).toBeLessThanOrEqual(40);
+          expect(hudMetrics.rowCenterDelta).toBeLessThanOrEqual(4);
+          expect(hudMetrics.headerHeight).toBeLessThanOrEqual(90);
+        }
+      }
+
+      // DEF-P36-01 & DEF-P36-02 Guards across all 6 desktop viewports
+      await assertEconomyStripRowNonOverlap(page, `Desktop ES ${vp.label}`);
+      await assertDesktopPolaroidContained(page, `Desktop ES ${vp.label}`);
+    }
+
+    // Verify <= 2px Center card top-edge jump from event-card -> outcome-panel on 1366x768
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await expect(page.getByTestId("panel-historial")).toBeVisible();
+    await page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+      );
+    });
+    const preEventBox = await page.getByTestId("event-card").boundingBox();
+    expect(preEventBox).not.toBeNull();
+    await page.locator('[data-choice-id="contratar_paco_barato"]').click();
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+    await expect
+      .poll(
+        async () => {
+          const postOutcomeBox = await page.getByTestId("outcome-panel").boundingBox();
+          if (!postOutcomeBox) return 999;
+          return Math.max(
+            Math.abs(postOutcomeBox.y - preEventBox!.y),
+            Math.abs(
+              postOutcomeBox.y + postOutcomeBox.height - (preEventBox!.y + preEventBox!.height),
+            ),
+          );
+        },
+        { message: "Expected <= 2px Event->Outcome top/bottom jump on 1366x768" },
+      )
+      .toBeLessThanOrEqual(2);
+
+    // Explicit DEF-P36-01 & DEF-P36-02 regression check on Borja «El de la Visibilidad» (ES & EN) across tight desktop widths
+    await page.getByTestId("return-title-btn").click();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await page.getByTestId("seed-input").fill("P35-EN-LOCALE-134");
+    await page.getByTestId("start-run-btn").click();
+    await page.getByTestId("confirm-overwrite-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await expect(page.getByTestId("event-character-polaroid")).toBeVisible();
+
+    for (const tightVp of [
+      { label: "1024x768", width: 1024, height: 768 },
+      { label: "1152x720", width: 1152, height: 720 },
+      { label: "1280x720", width: 1280, height: 720 },
+    ] as const) {
+      await page.setViewportSize({ width: tightVp.width, height: tightVp.height });
+      await page.evaluate(async () => {
+        await Promise.all(
+          document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+        );
+      });
+      await assertEconomyStripRowNonOverlap(page, `Borja ES ${tightVp.label}`);
+      await assertDesktopPolaroidContained(page, `Borja ES ${tightVp.label}`);
+    }
+
+    await page.getByTestId("locale-toggle-btn").click();
+    for (const tightVp of [
+      { label: "1024x768", width: 1024, height: 768 },
+      { label: "1152x720", width: 1152, height: 720 },
+      { label: "1280x720", width: 1280, height: 720 },
+    ] as const) {
+      await page.setViewportSize({ width: tightVp.width, height: tightVp.height });
+      await page.evaluate(async () => {
+        await Promise.all(
+          document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+        );
+      });
+      await assertEconomyStripRowNonOverlap(page, `Borja EN ${tightVp.label}`);
+      await assertDesktopPolaroidContained(page, `Borja EN ${tightVp.label}`);
+    }
+    await page.getByTestId("locale-toggle-btn").click();
+  });
+
+  test("QA-32: Phase 3.6 Mobile & Landscape Zero-Scroll Despacho Loop + Entorno Diorama Showcase (375x667, 360x780, 390x844, 412x915, 667x375)", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "mobile-chromium",
+      "Mobile & landscape zero-scroll turn loop executes in mobile-chromium",
+    );
+
+    const mobileMatrix = [
+      { label: "375x667", width: 375, height: 667 },
+      { label: "360x780", width: 360, height: 780 },
+      { label: "390x844", width: 390, height: 844 },
+      { label: "412x915", width: 412, height: 915 },
+      { label: "667x375", width: 667, height: 375 },
+    ] as const;
+
+    for (const vp of mobileMatrix) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto("./");
+
+      // Start fresh seeded run (handle overwrite modal if active run exists from previous iteration)
+      await page.getByTestId("seed-input").fill("P35-EN-LOCALE-134");
+      await page.getByTestId("start-run-btn").click();
+      if (await page.getByTestId("confirm-overwrite-run-modal").isVisible()) {
+        await page.getByTestId("confirm-overwrite-run-btn").click();
+      }
+      await expect(page.getByTestId("game-screen")).toBeVisible();
+      await page.evaluate(async () => {
+        await Promise.all(
+          document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+        );
+      });
+      expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+      // 1. On Despacho, scene-bg MUST be hidden, and month-economy-strip MUST NOT overlap
+      await expect(page.getByTestId("scene-bg")).toBeHidden();
+      await assertEconomyStripRowNonOverlap(page, `Mobile/Landscape Despacho ${vp.label}`);
+
+      const headerBox = await page.locator("header").first().boundingBox();
+      const navBox = await page.locator("nav.mobile-desk-nav").boundingBox();
+      expect(headerBox).not.toBeNull();
+      expect(navBox).not.toBeNull();
+
+      const isLandscapeRail = vp.height <= 500;
+      const stageBounds = {
+        minTop: headerBox!.y + headerBox!.height,
+        maxBottom: isLandscapeRail ? vp.height : navBox!.y,
+        viewportWidth: vp.width,
+      };
+
+      // 2. At scrollY === 0, all choice-btn-* sit strictly inside visible stage (above bottom nav or inside landscape rail viewport)
+      const choices = page.locator('[data-testid^="choice-btn-"]');
+      const choiceCount = await choices.count();
+      expect(choiceCount).toBeGreaterThanOrEqual(2);
+      for (let i = 0; i < choiceCount; i += 1) {
+        const box = await assertVisibleInViewportWithoutScroll(
+          choices.nth(i),
+          stageBounds,
+          `Despacho choice-btn-${i} (${vp.label})`,
+        );
+        if (isLandscapeRail) {
+          expect(box.x).toBeGreaterThanOrEqual(navBox!.x + navBox!.width - 1);
+        }
+      }
+
+      // 3. Click choice directly WITHOUT scrolling -> outcome-continue-btn also sits strictly above fold at scrollY === 0
+      await page.locator('[data-choice-id="entrega_express_contado"]').click();
+      await expect(page.getByTestId("outcome-panel")).toBeVisible();
+      expect(await page.evaluate(() => window.scrollY)).toBe(0);
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("outcome-continue-btn"),
+        stageBounds,
+        `Despacho outcome-continue-btn (${vp.label})`,
+      );
+
+      // 4. Switching to Entorno reveals live scene-bg showcase (>= 140px on standard portrait phones, >= 115px on compact <=690px height, >= 105px on landscape)
+      await page.getByTestId("mobile-tab-entorno").click();
+      const sceneBg = page.getByTestId("scene-bg");
+      await expect(sceneBg).toBeVisible();
+      const bgBox = await sceneBg.boundingBox();
+      expect(bgBox).not.toBeNull();
+      const minShowcaseHeight = isLandscapeRail ? 105 : vp.height <= 690 ? 115 : 140;
+      expect(
+        bgBox!.height,
+        `Expected Entorno scene-bg height >= ${minShowcaseHeight}px on ${vp.label} (got ${bgBox!.height}px)`,
+      ).toBeGreaterThanOrEqual(minShowcaseHeight);
+      await page.getByTestId("mobile-tab-despacho").click();
+      await page.getByTestId("outcome-continue-btn").click();
+    }
+  });
+
+  test("QA-33: HUD Delta Non-Overlap, EndRunScreen Above-the-Fold CTAs + Toast Non-Occlusion & Repeat-Key Guard (H2-02, H2-03, H2-06)", async ({
+    page,
+  }, testInfo) => {
+    const isMobile = testInfo.project.name === "mobile-chromium";
+    const targetViewports = isMobile
+      ? ([
+          { label: "360x780", width: 360, height: 780 },
+          { label: "390x844", width: 390, height: 844 },
+        ] as const)
+      : ([
+          { label: "1366x768", width: 1366, height: 768 },
+          { label: "1440x900", width: 1440, height: 900 },
+        ] as const);
+
+    // 1. H2-06 Repeat-Key Guard: synthetic keydown with repeat: true MUST NOT trigger choice or advance outcome
+    await page.setViewportSize(targetViewports[0]);
+    await page.goto("./");
+    await page.getByTestId("seed-input").fill("P35-CASH-158");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    await page.getByTestId("choice-btn-0").focus();
+    await page.evaluate(() => {
+      const active = document.activeElement ?? window;
+      active.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "Enter",
+          code: "Enter",
+          repeat: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "1",
+          code: "Digit1",
+          repeat: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    });
+    await expect(page.getByTestId("event-card")).toBeVisible();
+    await expect(page.getByTestId("outcome-panel")).toHaveCount(0);
+
+    // Trigger choice that mutates money, stress, moral & personal_life
+    await page.locator('[data-choice-id="escapada_desconexion_total"]').click();
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+
+    // Repeat Enter on outcome-panel MUST NOT advance month
+    await page.getByTestId("outcome-continue-btn").focus();
+    await page.evaluate(() => {
+      const active = document.activeElement ?? window;
+      active.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "Enter",
+          code: "Enter",
+          repeat: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    });
+    await expect(page.getByTestId("outcome-panel")).toBeVisible();
+    await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
+
+    // 2. H2-03 Mobile HUD Delta Non-Overlap (360x780 & 390x844): 0px intersection between *-delta pills and sibling *-value
+    if (isMobile) {
+      for (const vp of targetViewports) {
+        await page.setViewportSize({ width: vp.width, height: vp.height });
+        const overlaps = await page.evaluate(() => {
+          const pairs = [
+            ["indicator-money-value", "indicator-money-delta"],
+            ["indicator-moral-value", "indicator-moral-delta"],
+            ["indicator-stress-value", "indicator-stress-delta"],
+            ["indicator-personal-life-value", "indicator-personal-life-delta"],
+            ["indicator-reputation-value", "indicator-reputation-delta"],
+          ] as const;
+          const issues: string[] = [];
+          let checkedCount = 0;
+          for (const [valId, deltaId] of pairs) {
+            const valEl = document.querySelector(`[data-testid="${valId}"]`);
+            const deltaEl = document.querySelector(`[data-testid="${deltaId}"]`);
+            if (!valEl || !deltaEl) continue;
+            const vr = valEl.getBoundingClientRect();
+            const dr = deltaEl.getBoundingClientRect();
+            if (dr.width === 0 || dr.height === 0) continue;
+            checkedCount += 1;
+            const ix = Math.max(0, Math.min(vr.right, dr.right) - Math.max(vr.left, dr.left));
+            const iy = Math.max(0, Math.min(vr.bottom, dr.bottom) - Math.max(vr.top, dr.top));
+            if (ix > 0.25 && iy > 0.25) {
+              issues.push(`${deltaId} overlaps ${valId} by ${ix.toFixed(1)}x${iy.toFixed(1)}px`);
+            }
+          }
+          return { checkedCount, issues };
+        });
+        expect(overlaps.checkedCount).toBeGreaterThanOrEqual(4);
+        expect(overlaps.issues, `HUD delta overlap on ${vp.label}`).toEqual([]);
+      }
+    }
+
+    // 3. H2-02 EndRunScreen Above-the-Fold Primary CTAs + Zero AchievementToast Occlusion
+    for (const vp of targetViewports) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto("./");
+      // Clear unlocked achievements so hiring Paco freshly triggers AchievementToast right before ending
+      await page.evaluate(async () => {
+        await new Promise<void>((resolvePromise, rejectPromise) => {
+          const openReq = indexedDB.open("keyval-store");
+          openReq.onerror = () => rejectPromise(openReq.error);
+          openReq.onsuccess = () => {
+            const db = openReq.result;
+            const tx = db.transaction("keyval", "readwrite");
+            const store = tx.objectStore("keyval");
+            const getReq = store.get("autonomo:profile");
+            getReq.onerror = () => rejectPromise(getReq.error);
+            getReq.onsuccess = () => {
+              const env = getReq.result;
+              if (env && typeof env === "object") {
+                env.achievements = {};
+                store.put(env, "autonomo:profile");
+              }
+              store.delete("autonomo:active_run");
+            };
+            tx.oncomplete = () => {
+              db.close();
+              resolvePromise();
+            };
+            tx.onerror = () => rejectPromise(tx.error);
+          };
+        });
+      });
+      await page.reload();
+
+      await page.getByTestId("seed-input").fill("P35-BANNER-139");
+      await page.getByTestId("start-run-btn").click();
+      if (await page.getByTestId("confirm-overwrite-run-modal").isVisible()) {
+        await page.getByTestId("confirm-overwrite-run-btn").click();
+      }
+      await expect(page.getByTestId("game-screen")).toBeVisible();
+
+      // Unlock gestor_contratado toast, then immediately abandon to EndRunScreen while toast is active
+      await page.locator('[data-choice-id="contratar_paco_barato"]').click();
+      await expect(page.getByTestId("achievement-toast")).toBeVisible();
+
+      if (vp.width < 768) {
+        await page.getByTestId("mobile-utility-menu-btn").click();
+        await expect(page.getByTestId("mobile-utility-sheet")).toBeVisible();
+      }
+      await page.getByTestId("abandon-run-btn").click();
+      await expect(page.getByTestId("abandon-modal")).toBeVisible();
+      // While modal is open, AchievementToast must defer rendering (0% modal overlap)
+      await expect(page.getByTestId("achievement-toast")).toBeHidden();
+      await page.getByTestId("abandon-oposiciones-btn").click();
+
+      await expect(page.getByTestId("end-run-screen")).toBeVisible();
+      expect(await page.evaluate(() => window.scrollY)).toBe(0);
+      await expect(page.getByTestId("achievement-toast")).toBeVisible();
+
+      const fullBounds = { minTop: 0, maxBottom: vp.height, viewportWidth: vp.width };
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("end-new-run-btn"),
+        fullBounds,
+        `EndRunScreen end-new-run-btn (${vp.label})`,
+      );
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("end-return-title-btn"),
+        fullBounds,
+        `EndRunScreen end-return-title-btn (${vp.label})`,
+      );
+      await assertCenterHitTargetUnoccluded(
+        page.getByTestId("end-new-run-btn"),
+        `EndRunScreen end-new-run-btn with toast (${vp.label})`,
+      );
+      await assertCenterHitTargetUnoccluded(
+        page.getByTestId("end-return-title-btn"),
+        `EndRunScreen end-return-title-btn with toast (${vp.label})`,
+      );
+    }
   });
 });

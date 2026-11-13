@@ -25,7 +25,7 @@ self.addEventListener("install", (event) => {
         const batch = urls.slice(i, i + batchSize);
         await Promise.allSettled(
           batch.map(async (url) => {
-            const response = await fetch(url);
+            const response = await fetch(url, { cache: "reload" });
             if (response.ok && response.status === 200) {
               await cache.put(url, response);
             }

@@ -103,6 +103,8 @@ interface SingleRunMetrics {
   post120MonthsSimulated: number;
   post120EventsDrawn: number;
   starvedMonthsCount: number;
+  postChoiceTotalCount: number;
+  postChoiceMoral100Count: number;
   eventsSeen: Set<string>;
   categoriesSeen: Set<EventCategory>;
 }
@@ -114,6 +116,7 @@ interface ArchetypeAggregate {
   rich150kCount: number;
   rich150kRate: number;
   pinnedMaxStatsCount: number;
+  postChoiceMoral100Rate: number;
   avgLifetimeBilled: number;
   avgPeakMonthlyBilling: number;
   avgPeakStress: number;
@@ -121,6 +124,7 @@ interface ArchetypeAggregate {
   auditsPerQuarter: number;
   bankruptcyCount: number;
   burnoutCount: number;
+  resignationMoralCount: number;
   endings: Record<string, number>;
 }
 
@@ -354,7 +358,7 @@ function selectBotChoice(
   }
 
   // WorkaholicGrowthBot (ambitious studio builder: scales billing + staff while walking closer to burnout)
-  if (state.indicators.stress >= 75) {
+  if (state.indicators.stress >= 90) {
     const relief = [...choices]
       .filter((c) => {
         const est = estimateChoiceImpact(c);
@@ -463,6 +467,8 @@ function runSingleSimulation(
   let post120MonthsSimulated = 0;
   let post120EventsDrawn = 0;
   let starvedMonthsCount = 0;
+  let postChoiceTotalCount = 0;
+  let postChoiceMoral100Count = 0;
 
   const recordMonthStart = (monthStart?: MonthStartSummary) => {
     if (!monthStart) {
@@ -521,6 +527,10 @@ function runSingleSimulation(
       const picked = selectBotChoice(bot, state, eligible, botPrng);
       botPrng = picked.botPrng;
       const step = applyPlayerChoice(state, catalog, picked.choiceId);
+      postChoiceTotalCount += 1;
+      if (step.resolution.postChoiceState?.indicators.moral === 100) {
+        postChoiceMoral100Count += 1;
+      }
       state = step.state;
       assertGameStateInvariants(state, seed);
 
@@ -611,6 +621,8 @@ function runSingleSimulation(
     post120MonthsSimulated,
     post120EventsDrawn,
     starvedMonthsCount,
+    postChoiceTotalCount,
+    postChoiceMoral100Count,
     eventsSeen,
     categoriesSeen,
   };
@@ -649,8 +661,11 @@ describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studi
       let sumPeakFiscal = 0;
       let sumAudits = 0;
       let sumQuarters = 0;
+      let sumPostChoiceTotal = 0;
+      let sumPostChoiceMoral100 = 0;
       let bankruptcyCount = 0;
       let burnoutCount = 0;
+      let resignationMoralCount = 0;
       const endings: Record<string, number> = {};
 
       for (let i = 0; i < runs; i += 1) {
@@ -664,6 +679,7 @@ describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studi
         }
         if (m.endingId === "defeat_bankruptcy") bankruptcyCount += 1;
         if (m.endingId === "defeat_burnout_stress") burnoutCount += 1;
+        if (m.endingId === "defeat_resignation_moral") resignationMoralCount += 1;
 
         sumLifetimeBilled += m.lifetimeBilled;
         sumPeakMonthly += m.peakMonthlyBilling;
@@ -671,6 +687,8 @@ describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studi
         sumPeakFiscal += m.peakFiscalRisk;
         sumAudits += m.haciendaAuditOrSurchargeCount;
         sumQuarters += m.quartersPaid + m.quartersDeferred;
+        sumPostChoiceTotal += m.postChoiceTotalCount;
+        sumPostChoiceMoral100 += m.postChoiceMoral100Count;
 
         totalInvoicesPaid += m.invoicesPaid;
         totalInvoicesDefaulted += m.invoicesDefaulted;
@@ -689,6 +707,7 @@ describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studi
         rich150kCount,
         rich150kRate: rich150kCount / runs,
         pinnedMaxStatsCount,
+        postChoiceMoral100Rate: sumPostChoiceMoral100 / Math.max(1, sumPostChoiceTotal),
         avgLifetimeBilled: sumLifetimeBilled / runs,
         avgPeakMonthlyBilling: sumPeakMonthly / runs,
         avgPeakStress: sumPeakStress / runs,
@@ -696,6 +715,7 @@ describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studi
         auditsPerQuarter: sumAudits / Math.max(1, sumQuarters),
         bankruptcyCount,
         burnoutCount,
+        resignationMoralCount,
         endings,
       };
     }
@@ -768,6 +788,12 @@ describe("Phase 3.5 Monte Carlo simulation suite over deductible overhead, studi
       summary.AggressiveTaxDodgerBot.auditsPerQuarter,
     );
     expect(summary.ConservativeLegalBot.pinnedMaxStatsCount).toBeLessThanOrEqual(25);
+    expect(summary.ConservativeLegalBot.postChoiceMoral100Rate).toBeLessThan(0.35);
+    expect(summary.WorkaholicGrowthBot.postChoiceMoral100Rate).toBeLessThan(0.35);
+    expect(
+      summary.RandomBot.resignationMoralCount +
+        summary.AggressiveTaxDodgerBot.resignationMoralCount,
+    ).toBeGreaterThan(0);
   });
 
   it("captures WorkaholicGrowthBot highest average peak monthly billing, higher burnout tension vs ConservativeLegalBot, and achievable ~15%–30% rich_150k rate", () => {

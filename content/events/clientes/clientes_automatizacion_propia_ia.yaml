@@ -33,8 +33,8 @@ choices:
         id: mod_supervision_flujo_ia
         label: Supervisión mensual de flujos
         remaining_months: 4
-        monthly_billed_delta: 280
-        monthly_stress_delta: 2
+        monthly_billed_delta: 360
+        monthly_stress_delta: 1
       moral: 6
       reputation: 3
       stress: 1

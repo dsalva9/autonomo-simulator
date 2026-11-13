@@ -27,6 +27,7 @@ import type {
   ContentCatalog,
   EndingId,
   GameState,
+  MonthStartSummary,
   QuarterlySettlementMode,
   TurnResolution,
   VictoryBadge,
@@ -73,6 +74,7 @@ export function startNewRun(
 export function stepMonthStart(
   state: GameState,
   catalog: ContentCatalog,
+  overdraftStressDelta = 0,
 ): { state: GameState; resolution: TurnResolution } {
   if (state.phase !== "month_start") {
     throw new Error(`Expected phase 'month_start', received '${state.phase}'.`);
@@ -81,7 +83,7 @@ export function stepMonthStart(
   const recurring = applyRecurringMonthEconomy(state, catalog);
   const drawn = drawTurnEvents(recurring.state, catalog);
 
-  const monthStartSummary = {
+  const monthStartSummary: MonthStartSummary = {
     month: state.month,
     gross_billing: recurring.grossBilling,
     tax_accrued_on_billing: recurring.taxAccruedOnBilling,
@@ -94,6 +96,13 @@ export function stepMonthStart(
     passive_stress_delta: recurring.passiveStressDelta,
     modifier_moral_delta: recurring.modifierMoralDelta,
     modifier_stress_delta: recurring.modifierStressDelta,
+    overdraft_stress_delta: overdraftStressDelta,
+    maintenance_moral_delta: recurring.maintenanceMoralDelta,
+    maintenance_reputation_delta: recurring.maintenanceReputationDelta,
+    maintenance_personal_life_delta: recurring.maintenancePersonalLifeDelta,
+    net_moral_delta: recurring.modifierMoralDelta + recurring.maintenanceMoralDelta,
+    net_stress_delta:
+      recurring.passiveStressDelta + recurring.modifierStressDelta + overdraftStressDelta,
     drawn_events: drawn.drawnEventIds,
     cooldown_relaxed: drawn.cooldownRelaxed,
   };
@@ -321,7 +330,14 @@ export function resolveVictoryPrompt(
     pending_victory_badge: null,
   };
 
-  if (continuedState.month % 12 === 0) {
+  const currentYear = Math.floor(continuedState.month / 12);
+  const alreadyShowedAnnualSummary =
+    continuedState.annual_snapshot.year > currentYear ||
+    continuedState.history.some(
+      (entry) => entry.kind === "annual_summary" && entry.month === continuedState.month,
+    );
+
+  if (continuedState.month % 12 === 0 && !alreadyShowedAnnualSummary) {
     return enterAnnualSummaryPhase(continuedState, catalog);
   }
 
@@ -333,10 +349,7 @@ export function retireFromRun(
   catalog: ContentCatalog,
 ): { state: GameState; resolution: TurnResolution } {
   const canRetire =
-    state.phase !== "game_over" &&
-    (state.endless_mode ||
-      state.month >= catalog.balance.victory_month ||
-      state.earned_victories.length > 0);
+    state.phase !== "game_over" && (state.endless_mode || state.earned_victories.length > 0);
 
   if (!canRetire) {
     throw new Error(
@@ -345,12 +358,6 @@ export function retireFromRun(
   }
 
   const unlockedVictories: VictoryBadge[] = [];
-  if (
-    state.month >= catalog.balance.victory_month &&
-    !state.earned_victories.includes("hero_120m")
-  ) {
-    unlockedVictories.push("hero_120m");
-  }
   if (
     state.indicators.money >= catalog.balance.victory_money &&
     !state.earned_victories.includes("rich_150k")
@@ -430,6 +437,16 @@ export function dismissAnnualSummary(
     annual_snapshot: createInitialAnnualAccumulator(nextYear, state.indicators.money),
   };
 
+  if (resetSnapshotState.pending_victory_badge != null) {
+    return {
+      state: {
+        ...resetSnapshotState,
+        phase: "victory_prompt",
+      },
+      resolution: {},
+    };
+  }
+
   return advanceToNextMonth(resetSnapshotState, catalog);
 }
 
@@ -456,7 +473,8 @@ function runEndOfMonthChecks(
   deferredTaxDefaulted: boolean,
 ): { state: GameState; resolution: TurnResolution } {
   const { balance } = catalog;
-  let stress = state.indicators.stress;
+  const stressBeforeOverdraft = state.indicators.stress;
+  let stress = stressBeforeOverdraft;
   const moral = state.indicators.moral;
   const money = state.indicators.money;
   let consecutiveNegativeMonths = state.finances.consecutive_negative_months;
@@ -467,6 +485,7 @@ function runEndOfMonthChecks(
   } else {
     consecutiveNegativeMonths = 0;
   }
+  const overdraftStressDelta = stress - stressBeforeOverdraft;
 
   const updatedState: GameState = {
     ...state,
@@ -527,13 +546,28 @@ function runEndOfMonthChecks(
       );
     }
 
+    const victoryState: GameState = {
+      ...updatedState,
+      earned_victories: earnedVictories,
+      pending_victory_badge: newlyUnlockedVictories[0],
+      history,
+    };
+
+    if (victoryState.month % 12 === 0) {
+      const annual = enterAnnualSummaryPhase(victoryState, catalog);
+      return {
+        state: annual.state,
+        resolution: {
+          ...annual.resolution,
+          unlockedVictories: newlyUnlockedVictories,
+        },
+      };
+    }
+
     return {
       state: {
-        ...updatedState,
+        ...victoryState,
         phase: "victory_prompt",
-        earned_victories: earnedVictories,
-        pending_victory_badge: newlyUnlockedVictories[0],
-        history,
       },
       resolution: {
         unlockedVictories: newlyUnlockedVictories,
@@ -545,7 +579,7 @@ function runEndOfMonthChecks(
     return enterAnnualSummaryPhase(updatedState, catalog);
   }
 
-  return advanceToNextMonth(updatedState, catalog);
+  return advanceToNextMonth(updatedState, catalog, overdraftStressDelta);
 }
 
 function finalizeGameOver(
@@ -614,11 +648,12 @@ function enterAnnualSummaryPhase(
 function advanceToNextMonth(
   state: GameState,
   catalog: ContentCatalog,
+  overdraftStressDelta = 0,
 ): { state: GameState; resolution: TurnResolution } {
   const nextMonthState: GameState = {
     ...state,
     month: state.month + 1,
     phase: "month_start",
   };
-  return stepMonthStart(nextMonthState, catalog);
+  return stepMonthStart(nextMonthState, catalog, overdraftStressDelta);
 }

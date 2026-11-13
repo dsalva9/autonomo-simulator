@@ -13,7 +13,8 @@ requirements:
 weight: 12
 cooldown_months: 14
 max_occurrences: 3
-exclusive_with: []
+exclusive_with:
+  - hacienda_notificacion_agosto_traicionera
 choices:
   - id: abrir_y_presentar_reposicion
     label: "Abrirla esta noche y presentar recurso de reposición con tus facturas"

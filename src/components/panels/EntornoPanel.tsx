@@ -15,13 +15,20 @@ import { useGameStore } from "../../store/gameStore.ts";
 export interface EntornoPanelProps {
   state: GameState;
   locale?: string;
+  embeddedInFolder?: boolean;
+  className?: string;
 }
 
 function renderModeClass(mode: RenderMode): string {
   return mode === "pixel_art" ? "render-pixel-art" : "render-vector-hd";
 }
 
-export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
+export function EntornoPanel({
+  state,
+  locale: localeProp,
+  embeddedInFolder = false,
+  className = "",
+}: EntornoPanelProps) {
   const storeLocale = useGameStore((s) => s.profile.settings.locale);
   const locale = localeProp ?? storeLocale;
   const isEn = normalizeLocale(locale) === "en";
@@ -47,6 +54,15 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
   const employeeSatisfaction = state.employee
     ? Math.max(0, Math.min(100, Math.round(state.employee.satisfaction)))
     : 0;
+  // Live satisfaction-scaled effective billing multiplier matching src/engine/economy.ts
+  const effectiveEmployeeMultiplier = state.employee
+    ? 1 + (state.employee.billing_multiplier - 1) * (0.4 + 0.8 * (employeeSatisfaction / 100))
+    : 1;
+
+  // Avoid redundant "Laura (Senior Specialist) · Senior Specialist" repetition when character name already embeds role
+  const showEmployeeRoleSuffix =
+    Boolean(employeeRoleLabel) &&
+    (!employeeName || !employeeName.toLowerCase().includes(employeeRoleLabel.toLowerCase()));
 
   const empSatBarColor =
     employeeSatisfaction >= 65
@@ -65,21 +81,29 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
     <section
       data-testid="panel-entorno"
       aria-label={ui.entorno.sectionAria}
-      className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
+      className={`${
+        embeddedInFolder
+          ? "flex-1 min-h-0 flex flex-col overflow-hidden bg-[#fffdf8]"
+          : "paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col"
+      } ${className}`}
     >
-      <div className="dossier-header">
-        <div className="flex items-center gap-2 min-w-0">
-          <Users className="w-4 h-4 text-[#264e7a] shrink-0" aria-hidden="true" />
-          <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
-            {ui.entorno.heading}
-          </h2>
+      {!embeddedInFolder ? (
+        <div className="dossier-header shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <Users className="w-4 h-4 text-[#264e7a] shrink-0" aria-hidden="true" />
+            <h2 className="font-editorial font-bold text-base text-[#1f2421] leading-tight">
+              {ui.entorno.heading}
+            </h2>
+          </div>
+          <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] shrink-0">
+            {ui.entorno.badge}
+          </span>
         </div>
-        <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] shrink-0">
-          {ui.entorno.badge}
-        </span>
-      </div>
+      ) : (
+        <h2 className="sr-only">{ui.entorno.heading}</h2>
+      )}
 
-      <div className="divide-y divide-[#1f2421]/14">
+      <div className="entorno-body flex-1 min-h-0 overflow-y-auto dossier-scroll divide-y md:max-lg:grid md:max-lg:grid-cols-3 md:max-lg:divide-y-0 md:max-lg:divide-x divide-[#1f2421]/14">
         {/* Row 1: Gestoría */}
         <div className="px-3 py-2 flex items-center gap-2.5">
           <div className="w-10 shrink-0 flex items-center justify-center">
@@ -110,10 +134,10 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
             <div className="stamp-badge text-[10px] text-[#7a4308] leading-none">
               {ui.entorno.gestorHeader}
             </div>
-            <p className="font-bold text-[#1f2421] truncate">
+            <p className="font-bold text-[#1f2421] leading-snug break-words">
               {gestorName ?? translateGestorTier(state.gestor.tier, locale)}
             </p>
-            <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums truncate">
+            <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums leading-snug break-words">
               {formatEuros(state.gestor.monthly_fee, locale)}
               {ui.entorno.perMonth} ·{" "}
               {ui.entorno.shieldPct(Math.round(state.gestor.inspection_shield * 100))}
@@ -151,11 +175,11 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
             <div className="stamp-badge text-[10px] text-[#9e221b] leading-none">
               {ui.entorno.personalLifeHeader}
             </div>
-            <p className="font-bold text-[#1f2421] truncate">
+            <p className="font-bold text-[#1f2421] leading-snug break-words">
               {translateFamilyStatus(state.family.status, locale)}
               {partnerName ? ` · ${partnerName}` : ""}
             </p>
-            <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums truncate">
+            <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums leading-snug break-words">
               {ui.entorno.childrenAndCost(
                 state.family.children_count,
                 formatEuros(state.family.monthly_cost, locale),
@@ -196,14 +220,14 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
             </div>
             {state.employee ? (
               <>
-                <p className="font-bold text-[#1f2421] truncate">
-                  {employeeName ? `${employeeName} · ` : ""}
-                  {employeeRoleLabel}
+                <p className="font-bold text-[#1f2421] leading-snug line-clamp-2 break-words">
+                  {employeeName ?? employeeRoleLabel}
+                  {employeeName && showEmployeeRoleSuffix ? ` · ${employeeRoleLabel}` : ""}
                 </p>
-                <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums truncate">
+                <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums leading-snug break-words">
                   {formatEuros(state.employee.monthly_cost, locale)}
                   {ui.entorno.perMonth} ·{" "}
-                  {ui.entorno.billingMultiplier(state.employee.billing_multiplier)}
+                  {ui.entorno.billingMultiplier(effectiveEmployeeMultiplier)}
                 </p>
                 <div
                   data-testid="entorno-employee-satisfaction"
@@ -230,8 +254,12 @@ export function EntornoPanel({ state, locale: localeProp }: EntornoPanelProps) {
               </>
             ) : (
               <>
-                <p className="font-bold text-[#1f2421] truncate">{ui.entorno.noEmployeesTitle}</p>
-                <p className="text-[11px] text-[#4a524e] truncate">{ui.entorno.noEmployeesSub}</p>
+                <p className="font-bold text-[#1f2421] leading-snug break-words">
+                  {ui.entorno.noEmployeesTitle}
+                </p>
+                <p className="text-[11px] text-[#4a524e] leading-snug break-words">
+                  {ui.entorno.noEmployeesSub}
+                </p>
               </>
             )}
           </div>

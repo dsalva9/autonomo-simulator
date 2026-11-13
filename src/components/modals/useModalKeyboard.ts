@@ -34,12 +34,13 @@ function isTextInputElement(target: HTMLElement | null): boolean {
 }
 
 /**
- * Provides full desktop keyboard accessibility for modal dialogs:
- * - Ignores held-key `event.repeat` auto-repeat storms.
+ * Provides full desktop keyboard & screen-reader modal isolation:
+ * - Blocks held-key `event.repeat` auto-repeat storms (`preventDefault` on `Enter`/`Space`/`Tab`).
+ * - Marks background sibling regions `inert` while mounted so assistive tech & focus stay inside.
  * - Auto-focuses `[data-autofocus="true"]` (or first focusable control) on mount without scrolling.
  * - Restores focus to the previously focused trigger element on unmount.
  * - Traps `Tab` / `Shift+Tab` and stray `focusin` strictly inside the modal dialog.
- * - Cycles `[data-modal-option="true"]` buttons with `ArrowDown` / `ArrowUp`.
+ * - Cycles `[data-modal-option="true"]` buttons with `ArrowDown`/`ArrowRight` & `ArrowUp`/`ArrowLeft`.
  * - Dispatches `Escape`, single-key `shortcuts` (`1`..`3`), and fallback `Enter`/`Space`.
  */
 export function useModalKeyboard(
@@ -53,6 +54,22 @@ export function useModalKeyboard(
     const dialog = dialogRef.current;
     const previousFocused =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const inertTargets: HTMLElement[] = [];
+    if (dialog?.parentElement) {
+      for (const child of Array.from(dialog.parentElement.children)) {
+        if (
+          child instanceof HTMLElement &&
+          child !== dialog &&
+          child.tagName !== "DIALOG" &&
+          child.getAttribute("data-testid") !== "achievement-toast" &&
+          !child.inert
+        ) {
+          inertTargets.push(child);
+          child.inert = true;
+        }
+      }
+    }
 
     const focusInitial = () => {
       if (!dialog) {
@@ -84,6 +101,9 @@ export function useModalKeyboard(
 
     return () => {
       document.removeEventListener("focusin", handleFocusIn);
+      for (const el of inertTargets) {
+        el.inert = false;
+      }
       if (previousFocused?.isConnected) {
         previousFocused.focus({ preventScroll: true });
       }
@@ -93,6 +113,10 @@ export function useModalKeyboard(
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.repeat) {
+        if (event.key === "Enter" || event.key === " " || event.key === "Tab") {
+          event.preventDefault();
+          event.stopPropagation();
+        }
         return;
       }
       if (event.altKey || event.ctrlKey || event.metaKey) {
@@ -128,7 +152,12 @@ export function useModalKeyboard(
         return;
       }
 
-      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp" ||
+        event.key === "ArrowRight" ||
+        event.key === "ArrowLeft"
+      ) {
         const optionButtons = Array.from(
           dialog.querySelectorAll<HTMLElement>('[data-modal-option="true"]:not(:disabled)'),
         );
@@ -140,14 +169,14 @@ export function useModalKeyboard(
           const active =
             document.activeElement instanceof HTMLElement ? document.activeElement : null;
           const currentIndex = active ? candidates.indexOf(active) : -1;
-          const nextIndex =
-            event.key === "ArrowDown"
-              ? currentIndex < 0
-                ? 0
-                : (currentIndex + 1) % candidates.length
-              : currentIndex <= 0
-                ? candidates.length - 1
-                : currentIndex - 1;
+          const moveForward = event.key === "ArrowDown" || event.key === "ArrowRight";
+          const nextIndex = moveForward
+            ? currentIndex < 0
+              ? 0
+              : (currentIndex + 1) % candidates.length
+            : currentIndex <= 0
+              ? candidates.length - 1
+              : currentIndex - 1;
           candidates[nextIndex]?.focus({ preventScroll: true });
         }
         return;

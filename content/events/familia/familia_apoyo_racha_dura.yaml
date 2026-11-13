@@ -43,7 +43,8 @@ choices:
     label: "Sonreír diciendo «está todo bajo control» y volver al teclado"
     result_text: "Prefieres no mezclar cuentas ni preocupaciones y sacas un encargo menor adelante, aunque Álex nota perfectamente que sigues llevando la procesión por dentro."
     effects:
-      billed_income: 450
-      moral: 2
-      stress: -2
+      billed_income: 680
+      moral: 1
+      stress: 2
       personal_life: -4
+      reputation: 3

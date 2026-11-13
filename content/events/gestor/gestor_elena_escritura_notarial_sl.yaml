@@ -41,6 +41,8 @@ choices:
       moral: 5
       reputation: 7
       fiscal_risk: -8
+      set_flags:
+        - sociedad_limitada_activa
       clear_flags:
         - dossier_sl_elena
       add_modifier:

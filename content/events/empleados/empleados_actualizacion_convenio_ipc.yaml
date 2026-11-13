@@ -20,12 +20,13 @@ max_occurrences: 4
 exclusive_with: []
 choices:
   - id: actualizar_sueldo_sobre_ipc
-    label: "Aplicar la subida íntegra y repercutir tarifas nuevas a clientes"
-    result_text: "Ajustas precios sin complejos, sostienes el poder adquisitivo en casa y mantienes una rotación cero digna de estudio veterano."
+    label: "Aplicar la subida íntegra y repercutir parte en tarifas nuevas"
+    result_text: "Asumes el grueso de la subida salarial, sostienes el poder adquisitivo en casa y blindas rotación cero en el estudio."
     effects:
-      billed_income: 850
+      billed_income: 300
+      deductible_expense: 360
       moral: 6
-      stress: -4
+      stress: -3
       reputation: 3
       employee_satisfaction: 14
       clear_flags:
@@ -34,17 +35,18 @@ choices:
         id: mod_revision_ipc_plantilla
         label: "Revisión salarial anual consolidada"
         remaining_months: 6
-        monthly_billed_delta: 360
-        monthly_expense_delta: 230
+        monthly_billed_delta: 240
+        monthly_expense_delta: 280
         monthly_stress_delta: -1
   - id: compensar_con_retribucion_flexible
     label: "Cubrir formación y equipamiento deducible (390 €) con ajuste moderado"
     result_text: "Amortiguas la subida fija mensual combinando mejoras deducibles y horario cómodo sin desencajar la tesorería del trimestre."
     effects:
       deductible_expense: 390
-      moral: 3
-      stress: -2
-      employee_satisfaction: 7
+      moral: 4
+      stress: -5
+      personal_life: 4
+      employee_satisfaction: 8
       clear_flags:
         - desgaste_plantilla
   - id: absorber_subida_en_complementos
@@ -52,7 +54,7 @@ choices:
     result_text: "Es perfectamente legal sobre el papel de la gestoría, pero la nómina idéntica mes tras mes enfría las ganas de dar el extra."
     effects:
       moral: -5
-      stress: 6
+      stress: 5
       employee_satisfaction: -14
       set_flags:
         - desgaste_plantilla
@@ -60,5 +62,5 @@ choices:
         id: mod_malestar_absorcion_salarial
         label: "Apatía por sueldo congelado de facto"
         remaining_months: 4
-        monthly_billed_delta: -190
+        monthly_moral_delta: -1
         monthly_stress_delta: 2

@@ -8,7 +8,7 @@
       "width": 512,
       "height": 320,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "ui_fallback_hacienda": {
       "path": "ui/fallback_hacienda.svg",
@@ -16,7 +16,7 @@
       "width": 512,
       "height": 320,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "ui_fallback_familia": {
       "path": "ui/fallback_familia.svg",
@@ -24,7 +24,7 @@
       "width": 512,
       "height": 320,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "ui_fallback_empleados": {
       "path": "ui/fallback_empleados.svg",
@@ -32,7 +32,7 @@
       "width": 512,
       "height": 320,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "ui_fallback_gestor": {
       "path": "ui/fallback_gestor.svg",
@@ -40,7 +40,7 @@
       "width": 512,
       "height": 320,
       "render_mode": "vector_hd",
-      "status": "placeholder"
+      "status": "ready"
     },
     "prop_facturas": {
       "path": "ui/prop_facturas.svg",

@@ -206,7 +206,14 @@ export function drawTurnEvents(state: GameState, catalog: ContentCatalog): DrawT
     }
 
     const targetEvent = eventMap.get(queued.event_id);
-    if (targetEvent && isEventHardEligible(state, targetEvent)) {
+    const minFiscalRiskReq = targetEvent?.requirements?.stats?.fiscal_risk?.min;
+    const queuedEvalState =
+      queued.source_event_id === "quarterly_inspection" &&
+      minFiscalRiskReq != null &&
+      state.fiscal_risk < minFiscalRiskReq
+        ? { ...state, fiscal_risk: minFiscalRiskReq }
+        : state;
+    if (targetEvent && isEventHardEligible(queuedEvalState, targetEvent)) {
       slot1Event = targetEvent;
     } else if (targetEvent && (queued.deferred_months ?? 0) < 6) {
       remainingQueue.push({
@@ -386,19 +393,22 @@ export function selectInspectableHaciendaEvent(
   state: GameState,
   catalog: ContentCatalog,
 ): { eventId: string | null; prng: PrngState } {
+  const targetMonth = state.month % 3 === 0 ? state.month + 1 : state.month;
+  const evaluationState: GameState =
+    targetMonth === state.month ? state : { ...state, month: targetMonth };
   const alreadyQueued = new Set(state.scheduled_queue.map((q) => q.event_id));
   const hardEligible = catalog.events.filter(
     (event) =>
       !alreadyQueued.has(event.id) &&
       isInspectableHaciendaEvent(event) &&
-      isEventHardEligible(state, event),
+      isEventHardEligible(evaluationState, event),
   );
 
   if (hardEligible.length === 0) {
     return { eventId: null, prng: state.prng };
   }
 
-  const nonCooldown = hardEligible.filter((event) => !isEventOnCooldown(state, event.id));
+  const nonCooldown = hardEligible.filter((event) => !isEventOnCooldown(evaluationState, event.id));
   const candidates = nonCooldown.length > 0 ? nonCooldown : hardEligible;
   const picked = pickWeighted(state.prng, candidates);
   return { eventId: picked.item.id, prng: picked.prng };

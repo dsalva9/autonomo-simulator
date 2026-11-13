@@ -641,7 +641,7 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
     );
   });
 
-  it("supports voluntary retireFromRun in Endless mode or at victory milestones with retired_hero vs retired_rich", () => {
+  it("supports voluntary retireFromRun only after earning a victory badge or entering Endless mode, and shows Year 10 annual summary before M120 victory prompt", () => {
     const catalog: ContentCatalog = {
       balance: createFixtureBalance(),
       characters: createFixtureCharacters(),
@@ -652,21 +652,89 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
     // Cannot retire early without victory badge or endless mode
     expect(() => retireFromRun(earlyState, catalog)).toThrow();
 
-    // Retiring at Month 120 with < 150,000 € awards hero_120m + retired_hero
-    const heroCandidate: GameState = {
+    // Entering Month 120 with M120 event unresolved and Q40 unpaid (only 119 months survived) MUST NOT allow honorable retirement
+    const month120StartCandidate: GameState = {
       ...earlyState,
       month: 120,
+      earned_victories: [],
+      endless_mode: false,
       indicators: { ...earlyState.indicators, money: 42000 },
     };
-    const heroRetired = retireFromRun(heroCandidate, catalog);
+    expect(() => retireFromRun(month120StartCandidate, catalog)).toThrow();
+
+    // Surviving Month 120 and settling Q40 shows Year 10 annual_summary BEFORE victory_prompt
+    const m120QuarterState: GameState = {
+      ...earlyState,
+      month: 120,
+      phase: "quarterly_tax",
+      current_turn_events: [],
+      indicators: { ...earlyState.indicators, money: 42000, stress: 30, moral: 75 },
+      finances: {
+        ...earlyState.finances,
+        current_quarter_billed: 6000,
+        accrued_tax_liability: 1200,
+      },
+      annual_snapshot: {
+        ...earlyState.annual_snapshot,
+        year: 10,
+        start_money: 35000,
+        billed: 24000,
+        expenses: 15000,
+        taxes_paid: 3600,
+        events_resolved: 12,
+      },
+    };
+    const afterQ40 = settleQuarter(m120QuarterState, catalog, "pay");
+    expect(afterQ40.state.month).toBe(120);
+    expect(afterQ40.state.phase).toBe("annual_summary");
+    expect(afterQ40.state.earned_victories).toContain("hero_120m");
+    expect(afterQ40.state.pending_victory_badge).toBe("hero_120m");
+    expect(afterQ40.resolution.annualSummary?.year).toBe(10);
+    expect(afterQ40.resolution.unlockedVictories).toEqual(["hero_120m"]);
+
+    // Dismissing Year 10 annual summary opens victory_prompt instead of skipping to Month 121
+    const afterYear10Summary = dismissAnnualSummary(afterQ40.state, catalog);
+    expect(afterYear10Summary.state.month).toBe(120);
+    expect(afterYear10Summary.state.phase).toBe("victory_prompt");
+    expect(afterYear10Summary.state.pending_victory_badge).toBe("hero_120m");
+
+    // Choosing "retire" on victory_prompt ends run with retired_hero while preserving Year 10 annual_summary history
+    const retiredAt120 = resolveVictoryPrompt(afterYear10Summary.state, catalog, "retire");
+    expect(retiredAt120.state.phase).toBe("game_over");
+    expect(retiredAt120.state.ending).toEqual({
+      id: "retired_hero",
+      month: 120,
+      summary_quote: catalog.balance.ending_quotes!.retired_hero,
+    });
+    expect(
+      retiredAt120.state.history.some((e) => e.kind === "annual_summary" && e.month === 120),
+    ).toBe(true);
+
+    // Choosing "continue" on victory_prompt enters Endless Mode at Month 121 without repeating Year 10 annual_summary
+    const continuedIntoEndless = resolveVictoryPrompt(
+      afterYear10Summary.state,
+      catalog,
+      "continue",
+    );
+    expect(continuedIntoEndless.state.endless_mode).toBe(true);
+    expect(continuedIntoEndless.state.month).toBe(121);
+    expect(continuedIntoEndless.state.phase).toBe("event_resolution");
+
+    // Voluntary retireFromRun works once hero_120m has been genuinely earned
+    const heroEarnedCandidate: GameState = {
+      ...earlyState,
+      month: 120,
+      earned_victories: ["hero_120m"],
+      indicators: { ...earlyState.indicators, money: 42000 },
+    };
+    const heroRetired = retireFromRun(heroEarnedCandidate, catalog);
     expect(heroRetired.state.phase).toBe("game_over");
     expect(heroRetired.state.ending).toEqual({
       id: "retired_hero",
       month: 120,
       summary_quote: catalog.balance.ending_quotes!.retired_hero,
     });
-    expect(heroRetired.state.earned_victories).toContain("hero_120m");
-    expect(heroRetired.resolution.unlockedVictories).toEqual(["hero_120m"]);
+    expect(heroRetired.state.earned_victories).toEqual(["hero_120m"]);
 
     // Retiring in Endless mode after earning rich_150k (or holding >= 150,000 €) awards retired_rich
     const richEndlessCandidate: GameState = {
@@ -688,5 +756,147 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
 
     // Cannot retire again once already in game_over
     expect(() => retireFromRun(richRetired.state, catalog)).toThrow();
+  });
+
+  it("evaluates pre-decay fiscal_risk and next-month months_of_year on triggered inspections and delivers queued audit after risk decay", () => {
+    const wrongMonthAudit: EventDef = {
+      schema_version: 1,
+      id: "hacienda_cruce_modelo_347_clientes",
+      category: "hacienda",
+      title: "Cruce Modelo 347",
+      body: "Solo febrero y marzo.",
+      character_id: "hacienda_inspector_gomez",
+      requirements: {
+        months_of_year: [2, 3],
+        stats: { fiscal_risk: { min: 20 } },
+      },
+      weight: 50,
+      cooldown_months: 12,
+      choices: [
+        { id: "aportar", label: "Aportar", effects: { stress: 4 } },
+        { id: "gestor", label: "Gestor", effects: { deductible_expense: 120 } },
+      ],
+    };
+    const validMinRiskAudit: EventDef = {
+      schema_version: 1,
+      id: "hacienda_visita_comprobacion_censal",
+      category: "hacienda",
+      title: "Comprobación censal",
+      body: "Requiere riesgo pre-decaimiento >= 28.",
+      character_id: "hacienda_inspector_gomez",
+      requirements: {
+        months_of_year: [1, 4, 7, 10],
+        stats: { fiscal_risk: { min: 28 } },
+      },
+      weight: 8,
+      cooldown_months: 12,
+      choices: [
+        { id: "atender", label: "Atender", effects: { stress: 5 } },
+        { id: "alegar", label: "Alegar", effects: { deductible_expense: 150 } },
+      ],
+    };
+    const fillerClient: EventDef = {
+      schema_version: 1,
+      id: "clientes_relleno",
+      category: "clientes",
+      title: "Cliente",
+      body: "Relleno.",
+      weight: 10,
+      cooldown_months: 0,
+      choices: [
+        { id: "a", label: "A", effects: { billed_income: 500 } },
+        { id: "b", label: "B", effects: { stress: -2 } },
+      ],
+    };
+
+    const catalog: ContentCatalog = {
+      balance: {
+        ...createFixtureBalance(),
+        gestor_tiers: {
+          ...createFixtureBalance().gestor_tiers,
+          self: {
+            ...createFixtureBalance().gestor_tiers.self,
+            quarterly_error_prob: 0,
+          },
+        },
+        inspection_curve: {
+          ...createFixtureBalance().inspection_curve,
+          min_fiscal_risk: 15,
+          max_probability: 1,
+          exponent: 0.0001,
+          risk_decay_on_trigger: 35,
+        },
+      },
+      characters: createFixtureCharacters(),
+      events: [wrongMonthAudit, validMinRiskAudit, fillerClient],
+    };
+
+    const q1State: GameState = {
+      ...createInitialGameState(catalog, { seed: "PRE-DECAY-INSPECTION" }),
+      month: 3,
+      fiscal_risk: 38,
+    };
+
+    // Direct call at Month 3 checks Month 4 (April) -> skips [2, 3] event and selects min:28 event
+    expect(selectInspectableHaciendaEvent(q1State, catalog).eventId).toBe(
+      "hacienda_visita_comprobacion_censal",
+    );
+
+    // prepareQuarterlyTax decays fiscal_risk 38 -> 3, yet schedules hacienda_visita_comprobacion_censal
+    const prepared = prepareQuarterlyTax(q1State, catalog, selectInspectableHaciendaEvent);
+    expect(prepared.report.inspection_triggered).toBe(true);
+    expect(prepared.report.inspection_scheduled_event_id).toBe(
+      "hacienda_visita_comprobacion_censal",
+    );
+    expect(prepared.state.fiscal_risk).toBe(3);
+
+    // Settling Q1 advances to Month 4 where drawTurnEvents delivers the scheduled audit in Slot 1 despite post-decay fiscal_risk === 3
+    const settled = settleQuarter(prepared.state, catalog, "pay");
+    expect(settled.state.month).toBe(4);
+    expect(settled.state.current_turn_events[0]).toBe("hacienda_visita_comprobacion_censal");
+  });
+
+  it("populates MonthStartSummary overdraft, maintenance, and net stress/moral deltas matching exact post-outcome state transitions", () => {
+    const catalog: ContentCatalog = {
+      balance: {
+        ...createFixtureBalance(),
+        high_stat_decay_threshold: 60,
+        negative_cash_monthly_stress: 6,
+      },
+      characters: createFixtureCharacters(),
+      events: [
+        {
+          schema_version: 1,
+          id: "clientes_mes_rojo",
+          category: "clientes",
+          title: "Pago urgente",
+          body: "Te deja en descubierto.",
+          weight: 10,
+          cooldown_months: 0,
+          choices: [
+            { id: "pagar", label: "Pagar", effects: { cash_delta: -4500, moral: 15 } },
+            { id: "esperar", label: "Esperar", effects: { stress: 1 } },
+          ],
+        },
+      ],
+    };
+
+    const m1 = startNewRun(catalog, { seed: "NET-DELTA-TELESCOPE" });
+    const step = applyPlayerChoice(m1.state, catalog, "pagar");
+    const postChoice = step.resolution.postChoiceState!;
+    const ms = step.resolution.monthStart!;
+
+    expect(postChoice.indicators.money).toBeLessThan(0);
+    expect(ms.overdraft_stress_delta).toBe(6);
+    expect(ms.net_stress_delta).toBe(
+      (ms.passive_stress_delta ?? 0) +
+        (ms.modifier_stress_delta ?? 0) +
+        (ms.overdraft_stress_delta ?? 0),
+    );
+    expect(ms.net_stress_delta).toBe(step.state.indicators.stress - postChoice.indicators.stress);
+    expect(ms.net_moral_delta).toBe(
+      (ms.modifier_moral_delta ?? 0) + (ms.maintenance_moral_delta ?? 0),
+    );
+    expect(ms.net_moral_delta).toBe(step.state.indicators.moral - postChoice.indicators.moral);
   });
 });

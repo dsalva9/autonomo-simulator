@@ -275,13 +275,17 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
     expect(computeMonthlyDeductibleExpenses(withNegMod, catalog)).toBe(310 + 170 + 2100);
 
     // Annual cost-of-living creep: Year 1 (month 12) = +0, Year 2 (month 13) = +30, Year 10 (month 115) = +270
+    // Post-victory_month (120) Endless taper at 0.5x: Year 12 (month 133, elapsedYears=11) = (9 + 2*0.5)*30 = +300
     expect(computeMonthlyRecurringExpenses({ ...base, month: 12 }, catalog)).toBe(1250 + 310);
     expect(computeMonthlyRecurringExpenses({ ...base, month: 13 }, catalog)).toBe(1250 + 30 + 310);
     expect(computeMonthlyRecurringExpenses({ ...base, month: 115 }, catalog)).toBe(
       1250 + 270 + 310,
     );
+    expect(computeMonthlyRecurringExpenses({ ...base, month: 133 }, catalog)).toBe(
+      1250 + 300 + 310,
+    );
 
-    // High-stat maintenance drift & personal_life >= 82 stress relief
+    // High-stat maintenance drift & personal_life >= 76 stress relief
     const highStatState = {
       ...stateSat75,
       indicators: {
@@ -297,23 +301,51 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
       },
     };
     const drifted = applyRecurringMonthEconomy(highStatState, catalog);
-    // personal_life = 84 >= 82 -> -2 stress + -1 partner support = -3 passiveStressDelta
+    // personal_life = 84 >= 76 -> -2 stress + -1 partner support = -3 passiveStressDelta
     expect(drifted.passiveStressDelta).toBe(-3);
     expect(drifted.state.indicators.stress).toBe(37);
-    // reputation 75 >= 68 -> 74; personal_life 84 >= 78 with employee -> 82; moral 80 >= 78 -> 79
+    // reputation 75 >= 68 -> 74; personal_life 84 >= 78 with employee -> 82; moral 80 >= 76 -> 77; employee sat 75 at stress 37 < 42 -> 76
     expect(drifted.state.indicators.reputation).toBe(74);
     expect(drifted.state.indicators.personal_life).toBe(82);
-    expect(drifted.state.indicators.moral).toBe(79);
+    expect(drifted.state.indicators.moral).toBe(77);
+    expect(drifted.state.employee?.satisfaction).toBe(76);
+    expect(drifted.maintenanceReputationDelta).toBe(-1);
+    expect(drifted.maintenancePersonalLifeDelta).toBe(-2);
+    expect(drifted.maintenanceMoralDelta).toBe(-3);
+
+    // Starved employee crisis curve: 42..54 -> 0, 55..71 -> -2, >= 72 -> -4, plus -2 when desgaste_plantilla flag is active
+    const midStressStaff = applyRecurringMonthEconomy(
+      { ...stateSat75, indicators: { ...stateSat75.indicators, stress: 50, personal_life: 55 } },
+      catalog,
+    );
+    expect(midStressStaff.state.employee?.satisfaction).toBe(75);
+
+    const highStressStaff = applyRecurringMonthEconomy(
+      { ...stateSat75, indicators: { ...stateSat75.indicators, stress: 60, personal_life: 55 } },
+      catalog,
+    );
+    expect(highStressStaff.state.employee?.satisfaction).toBe(73);
+
+    const burnoutStaffWithFlag = applyRecurringMonthEconomy(
+      {
+        ...stateSat75,
+        flags: { desgaste_plantilla: true },
+        indicators: { ...stateSat75.indicators, stress: 75, personal_life: 55 },
+      },
+      catalog,
+    );
+    expect(burnoutStaffWithFlag.state.employee?.satisfaction).toBe(69);
   });
 
-  it("enforces Phase 3.5 balance.yaml starting cash window, tax-deductible parameters, and negative after-tax passive baseline", () => {
+  it("enforces Phase 3.6 balance.yaml starting cash window, Turn-1 personal_life buffer, tax-deductible parameters, and negative after-tax passive baseline", () => {
     const liveBalance = BalanceConfigSchema.parse(
       parseYaml(readFileSync(join(process.cwd(), "content/config/balance.yaml"), "utf8")),
     );
     expect(liveBalance.annual_living_cost_growth).toBe(64);
     expect(liveBalance.high_stat_decay_threshold).toBe(60);
     expect(liveBalance.event_novelty_decay_k).toBe(0.85);
-    expect(liveBalance.personal_life_recovery_threshold).toBe(65);
+    expect(liveBalance.initial_indicators.personal_life).toBe(68);
+    expect(liveBalance.personal_life_recovery_threshold).toBe(50);
     expect(liveBalance.personal_life_monthly_stress_relief).toBe(1);
     expect(liveBalance.default_partner_support_modifier).toBe(1);
     expect(liveBalance.gestor_tiers.self).toMatchObject({
@@ -338,6 +370,11 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
     const started = startNewRun(liveCatalog, { seed: "BALANCE-WINDOW-CHECK" });
     expect(started.state.indicators.money).toBeGreaterThanOrEqual(2900);
     expect(started.state.indicators.money).toBeLessThanOrEqual(3500);
+    expect(started.state.indicators.personal_life).toBe(67);
+    expect(started.state.indicators.personal_life).toBeGreaterThanOrEqual(
+      liveBalance.personal_life_recovery_threshold,
+    );
+    expect(started.resolution.monthStart?.passive_stress_delta).toBe(-1);
 
     // Passive Month 1 cashflow after net tax reserve (even with deductible RETA shield) must be negative without client gigs
     const m1Summary = started.resolution.monthStart!;

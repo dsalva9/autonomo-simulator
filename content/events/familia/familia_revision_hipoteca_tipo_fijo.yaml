@@ -28,7 +28,7 @@ choices:
           moral: 7
           personal_life: 4
           add_modifier:
-            id: mod_cuota_vivienda_amortizada
+            id: mod_hipoteca_igualada_banco
             label: "Cuota de vivienda aliviada"
             remaining_months: 5
             monthly_expense_delta: -60

@@ -278,7 +278,7 @@ export interface GameState {
 
 ### 3.2 Initial Run State (Month 1 Defaults — Parameterized in `content/config/balance.yaml`)
 - Starts at `month: 1`, `family.status: "single"`, `family.children_count: 0`, `employee: null`, `gestor.tier: "self"`.
-- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md) and [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md)): `money: 2600` (`~2,981 €` after Month 1 recurring step, `~2,481 €` net after deductible-adjusted tax reserve), `moral: 75`, `stress: 20`, `personal_life: 65`, `reputation: 35`, `fiscal_risk: 0`.
+- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md) and [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md)): `money: 2600` (`~3,052 €` after Month 1 recurring step, `~2,532 €` net after deductible-adjusted tax reserve), `moral: 75`, `stress: 20`, `personal_life: 68`, `reputation: 35`, `fiscal_risk: 0`.
 
 ---
 
@@ -295,13 +295,13 @@ stateDiagram-v2
     EventResolution --> EndOfMonthChecks: month % 3 != 0
     QuarterlyTax --> EndOfMonthChecks: Pay in full OR request 1-time Aplazamiento\n(+ fiscal inspection check)
     EndOfMonthChecks --> GameOver: Bankruptcy OR Stress == 100 OR Moral == 0
-    EndOfMonthChecks --> VictoryPrompt: Newly hit Month 120 OR Money >= 150,000 €
-    VictoryPrompt --> GameOver: Player chooses Retire
-    VictoryPrompt --> AnnualSummary: Player continues & month % 12 == 0
-    VictoryPrompt --> AdvanceMonth: Player continues & month % 12 != 0
     EndOfMonthChecks --> AnnualSummary: Alive & month % 12 == 0
-    EndOfMonthChecks --> AdvanceMonth: Alive & month % 12 != 0
-    AnnualSummary --> AdvanceMonth: Dismiss annual report
+    AnnualSummary --> VictoryPrompt: Dismiss report & newly earned victory pending
+    AnnualSummary --> AdvanceMonth: Dismiss report & no pending victory
+    EndOfMonthChecks --> VictoryPrompt: Alive & month % 12 != 0 & newly hit Money >= 150,000 €
+    VictoryPrompt --> GameOver: Player chooses Retire
+    VictoryPrompt --> AdvanceMonth: Player chooses Continue (Endless Mode)
+    EndOfMonthChecks --> AdvanceMonth: Alive & month % 12 != 0 & no new victory
     AdvanceMonth --> MonthStart: month += 1 & Autosave
 ```
 
@@ -317,10 +317,10 @@ stateDiagram-v2
      - `finances.current_quarter_billed += grossBilling`
      - `rawTax = round(grossBilling * balance.effective_quarterly_tax_rate) - round(deductibleExpenses * balance.deductible_tax_fraction)`
      - `finances.accrued_tax_liability = max(0, finances.accrued_tax_liability + rawTax)`
-   - Deduct **Recurring Monthly Obligations** (including annual cost-of-living creep `floor((month - 1) / 12) * (balance.annual_living_cost_growth ?? 0)`):
+   - Deduct **Recurring Monthly Obligations** (including annual cost-of-living creep, tapering to `0.5x` per year after `balance.victory_month` in Endless Mode):
      - `totalExpenses = baseLivingCost + livingCostCreep + autonomoQuota + gestor.monthly_fee + family.monthly_cost + (employee?.monthly_cost ?? 0) + modifierExpenses`
      - `indicators.money -= totalExpenses`
-   - Tick `TemporalModifier`s (`remaining_months -= 1`, apply monthly stat deltas, prune expired), apply passive stress relief (`1` at `personal_life >= personal_life_recovery_threshold`, `2` at `personal_life >= 82`, plus `family.support_modifier`), and apply gentle late-game stat maintenance drift above `balance.high_stat_decay_threshold`.
+   - Tick `TemporalModifier`s (`remaining_months -= 1`, apply monthly stat deltas, prune expired), apply passive stress relief (`1` at `personal_life >= personal_life_recovery_threshold`, `2` at `personal_life >= 82`, plus `family.support_modifier`), apply gentle late-game stat maintenance drift above `balance.high_stat_decay_threshold` plus high-stress employee satisfaction erosion, and emit a complete `MonthStartSummary` (including `overdraft_stress_delta`, `maintenance_moral_delta`, `maintenance_reputation_delta`, `maintenance_personal_life_delta`, `net_moral_delta`, and `net_stress_delta` so HUD deltas and the monthly ticker never contradict each other).
 
 2. **`EventDraw` & `EventResolution` (Pacing Cap: Max 2 Cards/Month)**:
    - **Slot 1 (Scheduled Chain Follow-Up)**: Inspect `scheduled_queue` for entries with `trigger_month <= month`. Pop **at most 1** (FIFO) whose `event_id` meets `isEventHardEligible`. Temporarily ineligible due entries defer by 1 month (`trigger_month: month + 1`, `deferred_months + 1`) up to 6 times before expiring; excess due entries stay queued for next month.
@@ -335,13 +335,13 @@ stateDiagram-v2
 3. **`QuarterlyTax` (*"El Trimestre"* — Months 3, 6, 9, 12, ...)**:
    - **Gestor & Hacienda Check**:
      - Roll `gestor_tiers[gestor.tier].quarterly_error_prob` when `accrued_tax_liability > 0` for filing surcharges and stress penalties.
-     - Roll `fiscal_risk` against `balance.inspection_curve` (mitigated by `gestor.inspection_shield`). If triggered, select an eligible `weight > 0` Hacienda audit/comprobación/requerimiento event via seeded `selectInspectableHaciendaEvent` (excluding `weight: 0` chain finales and portal/certificate glitches) for `month + 1`—or apply `fallback_fine_base + fallback_fine_per_risk * fiscal_risk` if none are eligible—and decay `fiscal_risk`.
+     - Roll `fiscal_risk` against `balance.inspection_curve` (mitigated by `gestor.inspection_shield`). If triggered, select an eligible `weight > 0` Hacienda audit/comprobación/requerimiento event via seeded `selectInspectableHaciendaEvent` **before** applying the `-35` `fiscal_risk` decay (evaluating eligibility at target month `month + 1`, including `months_of_year`, and excluding `weight: 0` chain finales and portal/certificate glitches)—or apply `fallback_fine_base + fallback_fine_per_risk * fiscal_risk` if none are eligible—and then decay `fiscal_risk`.
    - **Maturing Deferral First**: If `finances.deferred_tax` is due this month (`due_month === month`), its `principal + surcharge` is mandatory—if `money - mandatoryDue < balance.hard_debt_floor` or cannot be settled per deferral rules, **Bancarrota** triggers (no chaining a second deferral onto a defaulted deferral).
    - **Current Quarter Bill (`accrued_tax_liability`)**:
      - **Option A — Pay in Full**: `money -= accrued_tax_liability`; `accrued_tax_liability = 0`.
      - **Option B — Request *"Aplazamiento"* (enabled only when `deferred_tax === null` and `accrued_tax_liability > 0`)**: Moves `accrued_tax_liability` into `deferred_tax` due at `month + 3` with `balance.deferral_surcharge_pct` (e.g., `+10%`) and applies immediate `stress` penalty (e.g., `+8`).
 
-4. **`EndOfMonthChecks` (Insolvency, Burnout, Victories, Annual Report)**:
+4. **`EndOfMonthChecks` (Insolvency, Burnout, Annual Report & Victories)**:
    - **Insolvency (*"Números Rojos"*)**:
      - If `indicators.money < 0`: increment `consecutive_negative_months` and apply `balance.negative_cash_monthly_stress` (e.g., `+6` Stress).
      - Else: reset `consecutive_negative_months = 0`.
@@ -349,11 +349,12 @@ stateDiagram-v2
    - **Psychological Defeat**:
      - If `indicators.stress >= 100`: trigger `defeat_burnout_stress` (*"Baja por ansiedad"*).
      - Else if `indicators.moral <= 0`: trigger `defeat_resignation_moral` (*"A preparar oposiciones / volver a oficina"*).
+   - **Annual Summary (`month % 12 === 0`) Before Year-End Victory Prompt**:
+     - At every year-end (`month % 12 === 0`, including Month 120 / Year 10 after settling Q40), `EndOfMonthChecks` emits `AnnualSummary` (yearly billed, taxes paid, net cash change, family/employee milestones, highlight events), resets `annual_snapshot`, and enters `phase: "annual_summary"` first. When the player closes `AnnualSummaryModal` (`dismissAnnualSummary`), any newly earned victory (`hero_120m` at Month 120 or `rich_150k`) transitions into `phase: "victory_prompt"` before advancing to the next month.
    - **Victories (One-Time Prompts & Voluntary Endless Retirement)**:
      - If `month >= 120` and `"hero_120m"` not in `earned_victories`: award `"hero_120m"`, prompt **Retire (`retired_hero`)** vs **Continue (`endless_mode = true`)**.
      - If `indicators.money >= 150000` and `"rich_150k"` not in `earned_victories`: award `"rich_150k"`, prompt **Retire (`retired_rich`)** vs **Continue (`endless_mode = true`)**.
-     - At any non-`game_over` phase once `endless_mode`, `month >= victory_month`, or `earned_victories.length > 0` holds, pure `retireFromRun(state, catalog)` settles voluntary retirement into `"retired_rich"` (when `money >= victory_money` or `"rich_150k"` earned) else `"retired_hero"`.
-   - **Annual Summary (`month % 12 === 0`)**: Emit `AnnualSummary` (yearly billed, taxes paid, net cash change, family/employee milestones, highlight events) and reset `annual_snapshot`.
+     - At any non-`game_over` phase once `endless_mode || earned_victories.length > 0` holds (never prematurely before settling Q40), pure `retireFromRun(state, catalog)` settles voluntary retirement into `"retired_rich"` (when `money >= victory_money` or `"rich_150k"` earned) else `"retired_hero"`.
 
 ---
 
@@ -509,16 +510,23 @@ Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:
 
 ## 7. UI/UX, Style-Agnostic Scene Renderer & Accessibility
 
-### 7.1 Responsive Layout Architecture (Mobile-First, Spacious Tablet, Single-Screen Desktop)
-- **Mobile & Tablet (`< 1280px` — `360×640`, `360×780`, `390×844`, `667×375` landscape & `1024×768` tablet)**:
-  - Sticky compact top HUD (`<= 140px`, ultra-compact `<= 96px` on short phone landscape): Month/Year (`Año 3 · Mes 2 · Trimestre en 1 mes`), `Money` + tax-adjusted `Libre` strip, and 4 aligned micro-gauges (`Moral`, `Stress`, `Personal Life`, `Reputation`).
-  - Main viewport: Centered spacious workspace (`max-w-3xl`, `>= 500px` card width on `1024×768` tablets with zero `344px` column squeeze) + prominent **Event Card** with thumb-friendly (`min-height: 48px`, `>= 6px` gap) choice buttons, inline stake hints (`choice-stakes-*`), and bottom padding clearing the fixed bottom bar. Automatic `window.scrollTo({ top: 0 })` runs on turn-state transitions (`event -> outcome -> next event`) whenever `scrollY > 0` so players never have to manually scroll back up to read outcomes.
-  - Bottom Navigation Bar: `Despacho` (Play), `Cuentas` (Trimestre accrual, deductible tax shield, fixed costs, invoices), `Entorno` (Gestor, Family, Employee satisfaction), `Historial` (Log & Achievements).
-- **Desktop (`>= 1280px` — `1280×600` 150% DPI, `1366×650` real laptop, `1366×768` & `1440×900`+ desktop)**:
-  - Dedicated 3-column workspace engineered to fit **100% within a single screen (`scrollY === 0`, `scrollHeight <= innerHeight + 2`)** across both standard (`768px`–`900px`) and compact Chrome+taskbar (`600px`–`650px`) heights (including `2×2` grid compaction on 4-choice cards) so players never yo-yo scroll down for choices and back up for outcomes:
-    - **Left Panel**: Live **Office Scene** (viewport-proportioned height, reactive desk props, character portrait) + compact `Entorno` status cards.
-    - **Center Stage**: 1-line horizontal monthly cashflow ticker, height-capped (`98px–148px`) comic banner with non-overlapping NPC Polaroid, event narrative card, all choice buttons (`1`–`4`), and immediate above-the-fold outcome panel.
-    - **Right Panel**: Compact Financial Ledger (*"Cuaderno de Cuentas"*), quarterly tax reserve tracker, active temporal modifiers, and internally scrollable `Diario de Expediente` + `Sellos de carrera` panels.
+### 7.1 Responsive Layout Architecture (Zero-Scroll Mobile Stage & Symmetric Desktop Frame)
+- **Mobile, Phone Landscape & Portrait Tablets (`< 1024px` — `360×640`, `375×667`, `360×780`, `390×844`, `412×915`, `667×375` landscape & `768×1024` portrait tablet)**:
+  - **Slim `~100px` Top `IndicatorBar`**: On `< 768px`, collapses the 5 secondary HUD actions (`locale-toggle-btn`, `toggle-sfx-btn`, `toggle-fast-pacing-btn`, `return-title-btn`, `abandon-run-btn`) into a `[⚙]` button (`mobile-utility-menu-btn`) opening `mobile-utility-sheet` (`>= 44px` touch rows), promotes `indicator-fiscal-risk` into Row 1 beside the calendar pill, locks Row 2 (`.hud-treasury-strip`) to a single `26px` line (`Caja` + tax reserve + `Libre`), and renders Row 3 gauge delta pills inline (`0px` digit overlap).
+  - **Strict 4-Tab Division of Responsibility**:
+    - **`Despacho` (Pure Decision Stage)**: Renders **only** the active `event-card` / `outcome-panel` (docked 1-row `month-economy-strip` with `[Detalle ▾]`, height-tiered banner, corner-pinned `30×30px` mini-Polaroid with `0px` vertical flow cost, and `>= 48px` choice buttons)—achieving a **100% Zero-Scroll turn loop** at `scrollY === 0` across `375×667`, `360×780`, `390×844`, `412×915`, and `667×375` landscape (`SceneRenderer` never mounts on `Despacho`).
+    - **`Entorno` (Live Diorama Showcase + Support Network)**: Hosts the panoramic `16:9` `SceneRenderer` desk (`160px` mobile / `200px` portrait-tablet height) with 4 non-overlapping prop lanes, active status chips (`scene-mobile-prop-chips`), and `Gestoría / Familia / Plantilla` cards (showing live satisfaction-scaled employee billing boost).
+    - **`Cuentas`**: Full P&L breakdown, `Provisión Trimestral`, deferrals, pending invoices, and active modifiers.
+    - **`Historial`**: Compact `28px` `<details data-testid="historial-seals-accordion">` career seals accordion + uncapped `Diario de Expediente` logbook.
+  - **Navigation Bar & Landscape Rail**: Fixed bottom `mobile-desk-nav` (`lg:hidden`) with ambient status dots (`mobile-tab-dot-*`); on phone landscape (`max-width: 1023px` and `max-height: 500px`, e.g., `667×375`), docks as a `58px` left vertical rail alongside an ultra-compact `<= 96px` HUD and `2-col` choice grid. Automatic `window.scrollTo({ top: 0 })` resets scroll on any turn transition whenever `scrollY > 0`.
+- **Desktop & `125%` DPI Laptops (`>= 1024px` (`lg:`) — `1024×768`, `1152×720`, `1280×720`, `1280×600`, `1366×650`, `1366×768`, `1440×900`, `1920×1080`+)**:
+  - Locked to a **symmetric single-screen frame (`100dvh`, `overflow: hidden`, `items-stretch`, `scrollHeight <= innerHeight + 2`)** at `min-height: 576px` so Left, Center, and Right columns share identical top and bottom baselines (`<= 2px` delta) with zero outer `<aside>` scrollbars and zero yo-yo scrolling:
+    - **`1024px–1119px` (`1024×768`, `1093×614` `1366@125%` DPI)**: 2-column symmetric desk (`minmax(0,1fr)` Center Stage + `308px` Right folder with `[Despacho | Cuentas | Diario]` tabs: `desktop-right-tab-entorno`, `desktop-right-tab-cuentas`, `desktop-right-tab-historial`).
+    - **`1120px–1279px` (`1152×720` `1440@125%` DPI)**: Compact 3-column symmetric desk (`256px | minmax(0,1fr) | 276px`).
+    - **`1280px–1535px` (`1280×720`, `1366×768`, `1440×900`)**: Standard 3-column symmetric desk (`296px | minmax(0,1fr) | 320px`, `max-w-[1440px]`).
+    - **`>= 1536px` (`1920×1080`+)**: Wide 3-column symmetric desk (`328px | minmax(0,1fr) | 352px`, `2xl:max-w-[1600px]`) with a non-wrapping single-row Command Band 1 HUD.
+    - **Center Dossier Stability**: `month-economy-strip` docks directly inside both `event-card` and `outcome-panel` below `.dossier-header`, eliminating any vertical jump (`<= 2px`) between Event and Outcome states.
+    - **Right-Column Height Split**: On `height >= 740px` (`1366×768`, `1440×900`, `1920×1080`), `CuentasPanel` caps at `max-h-[50%]` above a `flex-1 min-h-[200px]` `HistorialPanel` so `'Diario de Expediente'` is always visible alongside `Cuentas`; on short `< 740px` heights (`1152×720`, `1280×720`, `1366×650`, `1280×600`), the Right column switches cleanly to a 2-tab `[📒 Cuentas | 📜 Diario (N)]` folder.
 
 ### 7.2 Asset Manifest, Multi-Expression Portraits & Style-Agnostic Scene Renderer
 Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/001-art-direction-webp-and-expressions.md), `assets/manifest.json` registers all `.webp` comic panels/portraits and standalone `.svg` props/fallbacks under logical `snake_case` IDs:
@@ -564,10 +572,10 @@ Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/00
 - **100% Zero-Mouse Desktop Keyboard Playability**:
   - `TitleScreen`: `Enter` (continue active run or start new run), `C` (continue run), `N` (new run), `S` / `/` (focus seed input, `Esc` blurs), `1` / `2` and WAI-ARIA `ArrowLeft` / `ArrowRight` (`role="tablist"`) for `Salón de Caídos` & `Logros` + scrollable `role="tabpanel"` (`tabIndex={0}`), `L` (`ES | EN` language switcher), and `R` / `M` / `F` for reduced motion, office sound, and *Modo ágil*.
   - `GameScreen` & `EventStage`: `1`–`9` direct choice hotkeys, `ArrowDown` / `ArrowUp` cycling across enabled `choice-btn-*` buttons + `Enter` / `Space` confirm, `Enter` / `Space` / `1` on `outcome-panel`, HUD hotkeys (`L` language `ES | EN`, `M` sound, `F` *Modo ágil*, `I` return to `TitleScreen` preserving autosave, `B` open `AbandonRunModal`, `Esc` dismiss `AchievementToast`), and focusable `historial-timeline` (`tabIndex={0}`) for scrolling journal entries.
-  - All 4 Modals (`QuarterlyTaxModal`, `VictoryModal`, `AnnualSummaryModal`, `AbandonRunModal` via `useModalKeyboard`): automatic initial focus (`preventScroll: true`), focus restoration on close, strict `Tab` / `Shift+Tab` focus trapping inside `<dialog>`, `ArrowDown` / `ArrowUp` option cycling, `1`–`3` direct option shortcuts, and `Esc` to cancel `AbandonRunModal`.
-  - `EndRunScreen`: automatic focus on `end-new-run-btn`, `ArrowLeft` / `ArrowRight` / `ArrowUp` / `ArrowDown` across all 5 actions, `N` / `Enter` (new run), `I` / `Esc` (return to `TitleScreen` & `Salón de Caídos`), `C` (copy summary), `D` (download PNG), and `S` (native share).
+  - All 5 Modals (`QuarterlyTaxModal`, `VictoryModal`, `AnnualSummaryModal`, `AbandonRunModal`, `ConfirmOverwriteModal` via `useModalKeyboard`): automatic initial focus (`preventScroll: true`), focus restoration on close, strict `Tab` / `Shift+Tab` focus trapping inside `<dialog>` with background workspace marked `inert`, 4-way arrow option cycling, `1`–`3` direct option shortcuts, held-key `event.repeat` suppression (`Enter` / `Space` / `Tab` / digits), and `Esc` to cancel `AbandonRunModal` / `ConfirmOverwriteModal`.
+  - `EndRunScreen`: automatic focus on `end-new-run-btn`, `ArrowLeft` / `ArrowRight` / `ArrowUp` / `ArrowDown` across all 5 actions, `N` / `Enter` (new run), `I` / `Esc` (return to `TitleScreen` & `Salón de Caídos`), `C` (copy summary), `D` (download PNG), `S` (native share), and Hall of Fame `"Ver acta"` certificate reopen.
   - Crisp `:focus-visible` rings (with inner negative offset on flush tabs/scroll panels so `overflow-hidden` cards never clip focus halos), no hover-only disclosures, and zero scroll drift across keyboard turns.
-- **Viewport & Hit-Target Ergonomics**: Primary CTAs on `TitleScreen` (including active-run resume), `QuarterlyTaxModal`, `AbandonRunModal`, and `EndRunScreen` (illustration + `<canvas>` certificate + Share/Replay actions) sit 100% above the fold on `1366×768` and `1440×900`. Interactive buttons/tabs maintain unoccluded pointer centers (`document.elementFromPoint`), `AchievementToast` anchors away from primary turn controls (`top-[7.5rem]` on mobile, `bottom-4 right-4` on desktop), and narrative/choice copy never truncates silently (`scrollHeight <= clientHeight`, no `ellipsis`) while maintaining legibility floors (`>= 17px` event title, `>= 13.5px` body/choices, `>= 12px` HUD money).
+- **Viewport & Hit-Target Ergonomics**: `TitleScreen` (Hero-mounted `Ajustes de despacho` + inline `seed-input` + flex-filling archive) achieves `0px` page scroll across all `>= 1024px` desktop viewports (both Fresh `0`-run and Veteran states) and keeps primary CTAs above the fold on mobile. Primary CTAs on `QuarterlyTaxModal`, `AbandonRunModal`, `VictoryModal`, and `EndRunScreen` (with mobile `[end-new-run-btn, end-return-title-btn]` placed above secondary share controls) sit 100% above the fold on `360×780`, `390×844`, `1366×768`, and `1440×900`. Interactive buttons/tabs maintain unoccluded pointer centers (`document.elementFromPoint`), `AchievementToast` (`z-40`) defers rendering whenever any modal is open and docks at the top on `EndRunScreen` (`0%` CTA occlusion), and narrative/choice copy never truncates silently (`scrollHeight <= clientHeight`, no `ellipsis`) while maintaining legibility floors (`>= 17px` event title, `>= 13.5px` body/choices, `>= 12px` HUD money).
 - Semantic landmarks, `aria-live="polite"` announcements for outcome text and stat changes, WCAG AA contrast (`>= 4.5:1`), colorblind-safe `+`/`-` directional icons alongside green/red stat badges.
 - Respects `prefers-reduced-motion` (disables shake/confetti/desk transitions).
 - Initial JS + compiled content bundle target: `< 250 KB` gzipped for instant mobile load over 4G.
@@ -589,7 +597,7 @@ Every completed task or milestone runs a full verification + QA + delivery seque
    - `pnpm lint` — `biome check .`.
    - `pnpm test` — `vitest run` (engine, schema, service, i18n, content, itch packager, and 300-event Monte Carlo simulation suites).
    - `pnpm build` — Production Vite bundle (`dist/`) verifying zero bundling or asset-resolution errors.
-   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-30`) against `dist/`.
+   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-33`) against `dist/`.
    - **GitHub Actions CI (`.github/workflows/verify.yml`)**: Runs the full `pnpm verify` + `pnpm build:itch` pipeline on pushes and pull requests targeting `main` and uploads `release/autonomo-simulator-web.zip` as a workflow artifact.
 2. **Structured Manual Test Plan, Usability Audit & Playwright Execution (Local -> Live Vercel Production)**:
    - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, narrow mobile `360×780`, mobile `390×844`, compact laptop `1366×768`, and desktop `1440×900` multi-panel layout).

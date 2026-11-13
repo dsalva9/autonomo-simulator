@@ -10,6 +10,8 @@ tags:
   - hogar
 requirements:
   min_month: 5
+  required_flags:
+    - mascota_en_casa
   forbidden_flags:
     - sin_mascota_decidido
 weight: 10

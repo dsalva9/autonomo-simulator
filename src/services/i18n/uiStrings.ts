@@ -3,8 +3,16 @@ import { type SupportedLocale, type UILocale, normalizeLocale } from "./resolveE
 export interface ConfirmOverwriteRunStrings {
   heading: string;
   body: string;
+  bodyWithRun: (calendar: string, cash: string) => string;
   confirmBtn: string;
   cancelBtn: string;
+  closeAria: string;
+}
+
+export interface EmptyHallGoalItem {
+  code: string;
+  target: string;
+  desc: string;
 }
 
 export interface UiStrings {
@@ -41,6 +49,7 @@ export interface UiStrings {
     newRunHeading: string;
     box01Badge: string;
     seedInputLabel: string;
+    seedInlineLabel: string;
     seedPlaceholder: string;
     startRunBtn: string;
     startRunTitle: string;
@@ -52,25 +61,37 @@ export interface UiStrings {
     reducedMotionTitleAttr: string;
     reducedMotionOn: string;
     reducedMotionAuto: string;
+    motionPillAuto: string;
+    motionPillOn: string;
     sfxTitle: string;
     sfxDesc: string;
     sfxTitleAttr: string;
     sfxMutedLabel: string;
     sfxActiveLabel: string;
+    sfxPillActive: string;
+    sfxPillMuted: string;
     fastPacingTitle: string;
     fastPacingDesc: string;
     fastPacingTitleAttr: string;
     fastPacingOn: string;
     fastPacingNormal: string;
+    fastPillOff: string;
+    fastPillOn: string;
     archiveTablistAria: string;
+    hallTabBase: string;
     hallTabLabel: (count: number) => string;
     hallTabTitle: string;
+    achievementsTabBase: string;
     achievementsTabLabel: (unlocked: number, total: number) => string;
     achievementsTabTitle: string;
+    emptyHallStamp: string;
     emptyHallTitle: string;
     emptyHallBody: string;
+    emptyHallGoals: EmptyHallGoalItem[];
     hallCashPrefix: string;
     hallBilledPrefix: string;
+    viewCertBtn: string;
+    viewCertTitle: string;
     achievementUnlockedBadge: string;
     achievementPendingBadge: string;
     confirmOverwriteRun: ConfirmOverwriteRunStrings;
@@ -134,6 +155,9 @@ export interface UiStrings {
     billedShort: string;
     fixedCostsShort: string;
     vatIrpfShort: string;
+    detailsToggleBtn: string;
+    detailsToggleAria: string;
+    deductibleInline: (formattedAmount: string) => string;
     invoicePaid: (amount: string) => string;
     invoiceDefaulted: (amount: string) => string;
     autoSettledQuarterBadge: (quarter: number, formattedPaid: string) => string;
@@ -366,15 +390,21 @@ export interface UiStrings {
 const ES_CONFIRM_OVERWRITE_RUN: ConfirmOverwriteRunStrings = {
   heading: "¿Reemplazar expediente en curso?",
   body: "Tienes una partida activa guardada. Iniciar una nueva alta archivará sin certificado el expediente actual.",
+  bodyWithRun: (calendar, cash) =>
+    `Tienes una partida activa en ${calendar} con ${cash}. Si inicias una nueva alta en el RETA, el expediente actual se descartará sin emitir certificado.`,
   confirmBtn: "Sí, iniciar nueva alta",
   cancelBtn: "Cancelar y mantener expediente",
+  closeAria: "Cancelar",
 };
 
 const EN_CONFIRM_OVERWRITE_RUN: ConfirmOverwriteRunStrings = {
   heading: "Replace active dossier?",
   body: "You have an active saved run in progress. Starting a new registration will overwrite your current dossier.",
+  bodyWithRun: (calendar, cash) =>
+    `You have an active dossier on ${calendar} (${cash}). Starting a new registration will permanently discard it without issuing a certificate.`,
   confirmBtn: "Yes, start new run",
   cancelBtn: "Cancel & keep active run",
+  closeAria: "Cancel",
 };
 
 const ES_STRINGS: UiStrings = {
@@ -414,6 +444,7 @@ const ES_STRINGS: UiStrings = {
     newRunHeading: "Nueva alta en el RETA",
     box01Badge: "CASILLA 01",
     seedInputLabel: "Semilla reproducible (opcional)",
+    seedInlineLabel: "Semilla",
     seedPlaceholder: "Ej. AUT-2026-PACO (vacío = aleatoria)",
     startRunBtn: "Nueva alta en el RETA",
     startRunTitle: "Iniciar nueva partida en el RETA (N)",
@@ -426,27 +457,55 @@ const ES_STRINGS: UiStrings = {
     reducedMotionTitleAttr: "Alternar movimiento reducido (R)",
     reducedMotionOn: "Reducido: SÍ",
     reducedMotionAuto: "Automático",
+    motionPillAuto: "Mov.: Auto",
+    motionPillOn: "Mov.: Fijo",
     sfxTitle: "Sonido de oficina",
     sfxDesc: "Sellos, papel y timbre en decisiones y trimestres.",
     sfxTitleAttr: "Alternar sonido de oficina (M)",
     sfxMutedLabel: "Silenciado",
     sfxActiveLabel: "Activo",
+    sfxPillActive: "Sonido: SÍ",
+    sfxPillMuted: "Sonido: NO",
     fastPacingTitle: "Modo ágil",
     fastPacingDesc:
       "Avanza directo en trámites rutinarios salvo tiradas con incertidumbre o fin de partida.",
     fastPacingTitleAttr: "Alternar modo ágil (F)",
     fastPacingOn: "Ágil: SÍ",
     fastPacingNormal: "Normal",
+    fastPillOff: "Modo ágil",
+    fastPillOn: "Ágil: SÍ",
     archiveTablistAria: "Archivo del jugador",
+    hallTabBase: "Salón de Caídos",
     hallTabLabel: (count) => `Salón de Caídos (${count})`,
     hallTabTitle: "Salón de Caídos (1)",
+    achievementsTabBase: "Logros",
     achievementsTabLabel: (unlocked, total) => `Logros (${unlocked}/${total})`,
     achievementsTabTitle: "Logros desbloqueados (2)",
+    emptyHallStamp: "EXPEDIENTE PROVINCIAL EN BLANCO",
     emptyHallTitle: "Archivo provincial sin expedientes cerrados",
     emptyHallBody:
       "Tus jubilaciones gloriosas, abandonos a tiempo y bancarrotas quedarán registradas aquí con su cotización oficial.",
+    emptyHallGoals: [
+      {
+        code: "META 01 · RETA",
+        target: "120 Meses",
+        desc: "Diez años seguidos cotizando sin causar baja.",
+      },
+      {
+        code: "META 02 · COLCHÓN",
+        target: "150.000 €",
+        desc: "Liquidez limpia en cuenta para retirarte a tiempo.",
+      },
+      {
+        code: "META 03 · CARRERA",
+        target: "15 Sellos",
+        desc: "Hitos oficiales desde el primer 303 al Modo Infinito.",
+      },
+    ],
     hallCashPrefix: "Caja",
     hallBilledPrefix: "Facturado",
+    viewCertBtn: "Ver acta",
+    viewCertTitle: "Abrir certificado y tarjeta PNG de este expediente",
     achievementUnlockedBadge: "SELLADO",
     achievementPendingBadge: "PENDIENTE",
     confirmOverwriteRun: ES_CONFIRM_OVERWRITE_RUN,
@@ -510,6 +569,9 @@ const ES_STRINGS: UiStrings = {
     billedShort: "Fact.: ",
     fixedCostsShort: "Fijos: ",
     vatIrpfShort: "IVA/IRPF: ",
+    detailsToggleBtn: "Detalle",
+    detailsToggleAria: "Mostrar u ocultar desglose mensual fijo",
+    deductibleInline: (formattedAmount) => `(-${formattedAmount} deduc.)`,
     invoicePaid: (amount) => `✓ Factura cobrada: +${amount}`,
     invoiceDefaulted: (amount) => `✗ Factura impagada (${amount})`,
     autoSettledQuarterBadge: (quarter, formattedPaid) =>
@@ -794,6 +856,7 @@ const EN_STRINGS: UiStrings = {
     newRunHeading: "Register as Self-Employed",
     box01Badge: "BOX 01",
     seedInputLabel: "Reproducible seed (optional)",
+    seedInlineLabel: "Seed",
     seedPlaceholder: "e.g. AUT-2026-PACO (blank = random)",
     startRunBtn: "Register as Self-Employed",
     startRunTitle: "Start a new self-employed run (N)",
@@ -805,26 +868,54 @@ const EN_STRINGS: UiStrings = {
     reducedMotionTitleAttr: "Toggle reduced motion (R)",
     reducedMotionOn: "Reduced: ON",
     reducedMotionAuto: "Automatic",
+    motionPillAuto: "Motion: Auto",
+    motionPillOn: "Motion: Static",
     sfxTitle: "Office audio",
     sfxDesc: "Rubber stamps, paper rustle, and desk bell cues.",
     sfxTitleAttr: "Toggle office audio (M)",
     sfxMutedLabel: "Muted",
     sfxActiveLabel: "Active",
+    sfxPillActive: "Audio: ON",
+    sfxPillMuted: "Audio: OFF",
     fastPacingTitle: "Fast pacing",
     fastPacingDesc: "Skips routine pauses except risky rolls or run-ending events.",
     fastPacingTitleAttr: "Toggle fast pacing (F)",
     fastPacingOn: "Fast: ON",
     fastPacingNormal: "Normal",
+    fastPillOff: "Fast mode",
+    fastPillOn: "Fast: ON",
     archiveTablistAria: "Player archive",
+    hallTabBase: "Hall of the Fallen",
     hallTabLabel: (count) => `Hall of the Fallen (${count})`,
     hallTabTitle: "Hall of the Fallen (1)",
+    achievementsTabBase: "Achievements",
     achievementsTabLabel: (unlocked, total) => `Achievements (${unlocked}/${total})`,
     achievementsTabTitle: "Unlocked achievements (2)",
+    emptyHallStamp: "BLANK PROVINCIAL ARCHIVE",
     emptyHallTitle: "Provincial archive has no closed dossiers yet",
     emptyHallBody:
       "Your glorious retirements, timely exits, and bankruptcies will be logged here with their official record.",
+    emptyHallGoals: [
+      {
+        code: "GOAL 01 · TENURE",
+        target: "120 Months",
+        desc: "Ten full years registered without folding.",
+      },
+      {
+        code: "GOAL 02 · CUSHION",
+        target: "150,000 €",
+        desc: "Net cash in the bank for an early golden exit.",
+      },
+      {
+        code: "GOAL 03 · CAREER",
+        target: "15 Seals",
+        desc: "Official milestones from first Q1 tax to Endless Mode.",
+      },
+    ],
     hallCashPrefix: "Cash",
     hallBilledPrefix: "Billed",
+    viewCertBtn: "View cert.",
+    viewCertTitle: "Open certificate & PNG card for this dossier",
     achievementUnlockedBadge: "SEALED",
     achievementPendingBadge: "LOCKED",
     confirmOverwriteRun: EN_CONFIRM_OVERWRITE_RUN,
@@ -888,6 +979,9 @@ const EN_STRINGS: UiStrings = {
     billedShort: "Billed: ",
     fixedCostsShort: "Fixed: ",
     vatIrpfShort: "VAT/Tax: ",
+    detailsToggleBtn: "Details",
+    detailsToggleAria: "Show or hide monthly recurring breakdown",
+    deductibleInline: (formattedAmount) => `(-${formattedAmount} ded.)`,
     invoicePaid: (amount) => `✓ Invoice paid: +${amount}`,
     invoiceDefaulted: (amount) => `✗ Invoice defaulted (${amount})`,
     autoSettledQuarterBadge: (quarter, formattedPaid) =>
@@ -1048,7 +1142,7 @@ const EN_STRINGS: UiStrings = {
     victory: {
       diplomaBadge: "SELF-EMPLOYED SURVIVAL DIPLOMA",
       richHeadline: "Rolling in It!",
-      heroHeadline: '"Self-Employed Hero!"',
+      heroHeadline: "Self-Employed Hero!",
       richSubheadline:
         "You cleared 150,000 € in net bank cash without the Tax Agency or your clients finishing you off.",
       heroSubheadline:

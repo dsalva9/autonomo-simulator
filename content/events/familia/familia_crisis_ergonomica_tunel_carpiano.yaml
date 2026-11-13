@@ -40,7 +40,7 @@ choices:
       moral: 7
       personal_life: 5
       add_modifier:
-        id: mod_espalda_cuidada
+        id: mod_ergonomia_tunel_carpiano
         label: "Ergonomía y espalda al día"
         remaining_months: 5
         monthly_billed_delta: 110

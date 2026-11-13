@@ -23,13 +23,13 @@ exclusive_with: []
 choices:
   - id: dar_titulo_nuevo_y_prima_puntual
     label: "Actualizar su cargo público, darle prima hoy (250 €) y revisar en seis meses"
-    result_text: "Reconoces su evolución sin disparar el coste fijo mensual de golpe y sacáis adelante un hito extra motivados."
+    result_text: "Reconoces su evolución sin disparar el coste fijo mensual de golpe y refuerzas su orgullo de pertenencia al estudio."
     effects:
-      billed_income: 380
       deductible_expense: 250
       stress: -3
       moral: 6
-      employee_satisfaction: 8
+      reputation: 2
+      employee_satisfaction: 9
   - id: ascender_categoria_y_dar_cuentas_propias
     label: "Subirle categoría salarial y confiarle cuentas propias del estudio"
     requirements:
@@ -55,9 +55,10 @@ choices:
         monthly_stress_delta: -2
   - id: pedirle_otro_ano_de_rodaje_igual
     label: "Decirle que aún necesita más tablas antes de tocar su nómina"
-    result_text: "Dani asiente en silencio guardando su libreta; acabas de regalarle motivos para escuchar ofertas fuera."
+    result_text: "Dani asiente en silencio y saca el hito pendiente, aunque le acabas de regalar motivos para escuchar ofertas fuera."
     effects:
-      stress: 5
+      billed_income: 280
+      stress: 4
       moral: -5
       employee_satisfaction: -14
       set_flags:

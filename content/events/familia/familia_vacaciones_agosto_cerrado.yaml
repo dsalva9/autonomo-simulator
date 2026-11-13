@@ -20,7 +20,8 @@ requirements:
 weight: 11
 cooldown_months: 11
 max_occurrences: 4
-exclusive_with: []
+exclusive_with:
+  - clientes_desierto_agosto
 choices:
   - id: escapada_corta_de_cinco_dias
     label: "Pactar cinco días de costa y aprovechar la quincena tranquila (240 €)"

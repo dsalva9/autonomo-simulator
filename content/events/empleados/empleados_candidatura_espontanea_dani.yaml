@@ -46,7 +46,7 @@ choices:
       billed_income: 1250
       deductible_expense: 520
       moral: 3
-      stress: -3
+      stress: 2
       add_modifier:
         id: mod_bolsa_externa_dani
         label: "Bolsa mensual de apoyo externo"
@@ -57,5 +57,6 @@ choices:
     label: "Agradecerle el aviso y seguir solo hasta consolidar tesorería"
     result_text: "Dani lo entiende perfectamente y promete volver a escribirte más adelante. Cierras el correo con la tranquilidad de no estirar los pies más que la manta."
     effects:
-      moral: 1
-      stress: 1
+      moral: 2
+      stress: -4
+      personal_life: 3

@@ -20,12 +20,14 @@ exclusive_with: []
 choices:
   - id: comprar_estufa_y_esperar_pieza
     label: "Tirar de calefactor eléctrico y esperar al técnico sin urgencia (165 €)"
-    result_text: "Sobrevives cinco días calentando solo tu metro cuadrado de mesa y recibes un pequeño susto después en la factura de la luz."
+    result_text: "Sacas las entregas envuelto en manta junto al calefactor cinco días, con un susto posterior en el recibo de la luz."
     effects:
       cash_delta: -165
+      billed_income: 360
       stress: 5
       moral: -2
       personal_life: -3
+      reputation: 1
       add_modifier:
         id: mod_pico_luz_invierno
         label: "Pico de luz por calefactor"
@@ -36,7 +38,6 @@ choices:
     result_text: "Ahorras la tarifa de urgencia y comes sopa casera caliente, a cambio de explicar cada hora por qué sigues mirando la pantalla."
     effects:
       cash_delta: -190
-      billed_income: 260
       stress: 3
       moral: 2
       personal_life: 4

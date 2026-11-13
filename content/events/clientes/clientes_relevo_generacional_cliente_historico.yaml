@@ -36,7 +36,7 @@ choices:
           stress: 3
           reputation: 6
           add_modifier:
-            id: mod_cliente_directivo_fiel
+            id: mod_cliente_relevo_historico
             label: Acuerdo con nueva dirección
             remaining_months: 5
             monthly_billed_delta: 420

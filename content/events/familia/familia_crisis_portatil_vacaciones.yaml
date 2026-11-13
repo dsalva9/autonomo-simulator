@@ -91,7 +91,6 @@ choices:
             partner_character_id: pareja_alex
           clear_flags:
             - convivencia_estable
-            - relacion_con_alex
             - crisis_pareja_latente
       - id: ultimatum_helado
         weight: 45

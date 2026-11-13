@@ -19,6 +19,10 @@ requirements:
 weight: 11
 cooldown_months: 14
 max_occurrences: 3
+exclusive_with:
+  - hacienda_regularizacion_reta
+  - hacienda_regularizacion_tramo_alto_reta
+  - gestor_reajuste_tramos_cotizacion
 choices:
   - id: cobrar_devolucion_de_oficio_en_banco
     label: Aceptar el abono de oficio y reforzar tu liquidez hoy
@@ -35,7 +39,7 @@ choices:
       moral: 5
       personal_life: 4
       add_modifier:
-        id: mod_cobertura_social_veterana
+        id: mod_base_cotizacion_consolidada
         label: Cobertura profesional reforzada
         remaining_months: 4
         monthly_moral_delta: 2

@@ -24,10 +24,11 @@ choices:
     label: "Respaldar a Laura y presupuestar recargo exprés si lo quieren mañana"
     result_text: "De pronto la urgencia vital podía esperar o bien aprueban el suplemento sin discutir. Laura sonríe orgullosa de estar en tu barco."
     effects:
-      billed_income: 1400
+      billed_income: 950
       moral: 7
       stress: -4
-      reputation: 4
+      personal_life: 3
+      reputation: 3
       employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
@@ -35,18 +36,21 @@ choices:
     label: "Despedir a Laura a su hora y quedarte tú solo sacando el marrón"
     result_text: "Respetas su horario sagrado a costa de cenar frente a la pantalla a las once de la noche preguntándote quién manda aquí."
     effects:
-      billed_income: 800
+      billed_income: 1250
       moral: -3
-      stress: 12
+      stress: 11
       personal_life: -7
-      employee_satisfaction: 3
+      reputation: 4
+      employee_satisfaction: 4
   - id: presionar_para_quedarse_ambos
     label: "Pedirle como excepción crítica que se quede hoy contigo hasta tarde"
-    result_text: "Sacáis el encargo adelante en dos horas tensas, pero Laura toma nota mental del límite cruzado en su libreta."
+    result_text: "Sacáis el encargo completo en dos horas tensas, pero Laura toma nota mental del límite cruzado en su libreta."
     effects:
-      billed_income: 950
+      billed_income: 1550
       moral: -7
-      stress: 9
+      stress: 8
+      personal_life: -3
+      reputation: 5
       employee_satisfaction: -15
       set_flags:
         - desgaste_plantilla

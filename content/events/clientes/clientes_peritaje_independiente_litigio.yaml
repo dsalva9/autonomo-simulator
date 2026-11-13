@@ -39,7 +39,7 @@ choices:
       stress: 4
       reputation: 9
       add_modifier:
-        id: mod_ticket_minimo_senior
+        id: mod_servicio_pericial_web
         label: Posicionamiento sénior de alto margen
         remaining_months: 5
         monthly_billed_delta: 480

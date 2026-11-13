@@ -42,12 +42,14 @@ choices:
     effects:
       billed_income: 2750
       deductible_expense: 1350
-      moral: 3
-      stress: -3
+      moral: 4
+      stress: 5
+      personal_life: -2
       reputation: 4
   - id: descartar_estructura_pesada
     label: "Declinar con honestidad: tu tesorería aún prefiere ir ligera de equipaje"
     result_text: "Laura agradece tu franqueza sin rodeos corporativos y seguís en contacto profesional por si más adelante te cuadran las cuentas."
     effects:
-      moral: 1
-      stress: 1
+      moral: 2
+      stress: -4
+      personal_life: 4

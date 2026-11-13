@@ -47,6 +47,7 @@ export interface UIStoreState {
   activeMobileTab: MobileWorkspaceTab;
   activeTitleTab: TitleSubTab;
   abandonModalOpen: boolean;
+  confirmOverwriteOpen: boolean;
   reducedMotionOverride: boolean | null;
   sfxMuted: boolean;
   fastPacing: boolean;
@@ -55,6 +56,7 @@ export interface UIStoreState {
   setActiveMobileTab: (tab: MobileWorkspaceTab) => void;
   setActiveTitleTab: (tab: TitleSubTab) => void;
   setAbandonModalOpen: (open: boolean) => void;
+  setConfirmOverwriteOpen: (open: boolean) => void;
   setReducedMotionOverride: (value: boolean | null) => void;
   setSfxMuted: (muted: boolean) => void;
   toggleSfxMuted: () => void;
@@ -70,15 +72,21 @@ export const useUIStore = create<UIStoreState>((set) => ({
   activeMobileTab: "despacho",
   activeTitleTab: "hall_of_fame",
   abandonModalOpen: false,
+  confirmOverwriteOpen: false,
   reducedMotionOverride: null,
   sfxMuted: readStoredBoolean(SFX_MUTED_STORAGE_KEY, false),
   fastPacing: readStoredBoolean(FAST_PACING_STORAGE_KEY, false),
   toast: null,
 
-  setScreenView: (screenView) => set({ screenView }),
+  setScreenView: (screenView) =>
+    set((state) => ({
+      screenView,
+      confirmOverwriteOpen: screenView === "game" ? false : state.confirmOverwriteOpen,
+    })),
   setActiveMobileTab: (activeMobileTab) => set({ activeMobileTab }),
   setActiveTitleTab: (activeTitleTab) => set({ activeTitleTab }),
   setAbandonModalOpen: (abandonModalOpen) => set({ abandonModalOpen }),
+  setConfirmOverwriteOpen: (confirmOverwriteOpen) => set({ confirmOverwriteOpen }),
   setReducedMotionOverride: (reducedMotionOverride) => set({ reducedMotionOverride }),
   setSfxMuted: (sfxMuted) => {
     writeStoredBoolean(SFX_MUTED_STORAGE_KEY, sfxMuted);
@@ -114,5 +122,6 @@ export const useUIStore = create<UIStoreState>((set) => ({
       screenView: "game",
       activeMobileTab: "despacho",
       abandonModalOpen: false,
+      confirmOverwriteOpen: false,
     }),
 }));

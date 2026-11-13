@@ -230,6 +230,12 @@ export interface MonthStartSummary {
   passive_stress_delta: number;
   modifier_moral_delta?: number;
   modifier_stress_delta?: number;
+  overdraft_stress_delta?: number;
+  maintenance_moral_delta?: number;
+  maintenance_reputation_delta?: number;
+  maintenance_personal_life_delta?: number;
+  net_moral_delta?: number;
+  net_stress_delta?: number;
   drawn_events: string[];
   cooldown_relaxed: boolean;
 }

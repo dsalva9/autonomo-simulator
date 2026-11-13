@@ -38,25 +38,30 @@ export function VictoryModal({ state, locale: localeProp, onDecide }: VictoryMod
       aria-modal="true"
       aria-labelledby="victory-modal-title"
       data-testid="victory-modal"
-      className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
+      className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 [@media(max-height:500px)]:p-2"
     >
-      <div className="paper-dossier animate-dossier w-full max-w-lg max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl overflow-hidden">
-        <div className="bg-[#1f5c53] text-[#fffdf8] px-4 sm:px-5 py-2.5 sm:py-3 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
+      <div className="paper-dossier animate-dossier w-full max-w-xl max-h-[calc(100dvh-1.5rem)] flex flex-col rounded-xl overflow-hidden">
+        <div className="bg-[#1f5c53] text-[#fffdf8] px-4 sm:px-5 py-2.5 sm:py-3 [@media(max-height:500px)]:py-1.5 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
           <Trophy className="w-5 h-5 sm:w-7 sm:h-7 text-[#fce592] shrink-0" aria-hidden="true" />
           <div className="min-w-0">
-            <p className="stamp-badge text-[10px] sm:text-xs text-[#fce592] truncate">
+            <p className="stamp-badge text-[10px] sm:text-xs text-[#fce592] leading-tight break-words">
               {v.diplomaBadge}
             </p>
-            <h2 id="victory-modal-title" className="font-editorial text-lg sm:text-2xl font-bold">
+            <h2
+              id="victory-modal-title"
+              className="font-editorial text-lg sm:text-2xl [@media(max-height:500px)]:text-base font-bold leading-tight"
+            >
               {headline}
             </h2>
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 p-3.5 sm:p-4 space-y-3 text-sm overflow-y-auto dossier-scroll">
-          <p className="text-xs sm:text-base text-[#1f2421] leading-relaxed">{subheadline}</p>
+        <div className="flex-1 min-h-0 p-3.5 sm:p-4 [@media(max-height:500px)]:py-2 space-y-3 [@media(max-height:500px)]:space-y-2 text-sm overflow-y-auto dossier-scroll">
+          <p className="text-xs sm:text-base [@media(max-height:500px)]:text-xs text-[#1f2421] leading-relaxed">
+            {subheadline}
+          </p>
 
-          <div className="rounded-lg border border-[#1f5c53] bg-[#e8f5f1] p-3 space-y-1 text-xs">
+          <div className="rounded-lg border border-[#1f5c53] bg-[#e8f5f1] p-3 [@media(max-height:500px)]:p-2 space-y-1 text-xs">
             <div className="flex items-center gap-1.5 font-bureau font-bold text-[#1f5c53]">
               <Award className="w-4 h-4 shrink-0" aria-hidden="true" />
               {v.sealedBadgeHeading}
@@ -72,23 +77,23 @@ export function VictoryModal({ state, locale: localeProp, onDecide }: VictoryMod
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3.5 sm:px-4 py-2 sm:py-2.5 space-y-2">
+        <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3.5 sm:px-4 py-2 sm:py-2.5 [@media(max-height:500px)]:py-1.5 grid grid-cols-1 sm:grid-cols-2 [@media(max-height:500px)]:grid-cols-2 gap-2 items-stretch">
           <button
             type="button"
             data-testid="victory-continue-btn"
             data-autofocus="true"
             data-modal-option="true"
             onClick={() => onDecide("continue")}
-            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-4 py-2.5 font-bold flex items-center justify-between gap-2 cursor-pointer transition-colors"
+            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-3.5 py-2 font-bold flex items-center justify-between gap-2 cursor-pointer transition-colors"
           >
-            <span className="inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 text-left">
               <span className="font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20 shrink-0 tabular-nums">
                 1
               </span>
-              <InfinityIcon className="w-5 h-5 shrink-0" aria-hidden="true" />
-              <span className="text-xs sm:text-sm">{v.continueEndlessBtn}</span>
+              <InfinityIcon className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="text-xs sm:text-[13.5px] leading-tight">{v.continueEndlessBtn}</span>
             </span>
-            <span className="hidden sm:inline-block font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20 shrink-0">
+            <span className="hidden lg:inline-block font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20 shrink-0">
               {v.enterKeyLabel}
             </span>
           </button>
@@ -98,13 +103,13 @@ export function VictoryModal({ state, locale: localeProp, onDecide }: VictoryMod
             data-testid="victory-retire-btn"
             data-modal-option="true"
             onClick={() => onDecide("retire")}
-            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] px-4 py-2.5 font-bold flex items-center justify-between gap-2 cursor-pointer transition-colors"
+            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] px-3.5 py-2 font-bold flex items-center justify-between gap-2 cursor-pointer transition-colors"
           >
             <span className="inline-flex items-center gap-2 text-left">
               <span className="font-bureau text-xs px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8] shrink-0 tabular-nums">
                 2
               </span>
-              <span className="text-xs sm:text-sm">{v.retireBtn}</span>
+              <span className="text-xs sm:text-[13.5px] leading-tight">{v.retireBtn}</span>
             </span>
           </button>
         </div>

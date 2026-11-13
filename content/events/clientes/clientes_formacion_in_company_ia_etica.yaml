@@ -34,7 +34,7 @@ choices:
       stress: 4
       reputation: 7
       add_modifier:
-        id: mod_supervision_flujo_ia
+        id: mod_supervision_taller_ia
         label: Supervisión mensual de flujos
         remaining_months: 5
         monthly_billed_delta: 450

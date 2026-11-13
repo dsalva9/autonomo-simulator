@@ -314,30 +314,63 @@ export function evaluateUnlockedAchievements(
     state.finances.deferred_tax !== null ||
     state.history.some((entry) => entry.kind === "quarterly_tax");
 
+  const hasSurvivedMilestoneMonth = (targetMonth: number): boolean =>
+    state.month > targetMonth ||
+    (state.month === targetMonth &&
+      (state.phase === "annual_summary" ||
+        state.phase === "victory_prompt" ||
+        (state.ending !== null && state.earned_victories.length > 0) ||
+        (state.ending === null &&
+          state.history.some(
+            (entry) => entry.kind === "quarterly_tax" && entry.month >= targetMonth,
+          ))));
+
+  const hasResolvedHaciendaEvent =
+    state.history.some(
+      (entry) => entry.kind === "event_choice" && entry.event_id?.startsWith("hacienda_"),
+    ) ||
+    Object.entries(state.occurrences).some(
+      ([id, count]) => id.startsWith("hacienda_") && count > 0,
+    );
+  const survivedHacienda =
+    state.ending === null &&
+    state.phase !== "game_over" &&
+    state.indicators.stress < 100 &&
+    state.indicators.moral > 0 &&
+    hasResolvedHaciendaEvent;
+
+  const mandatoryDeferredDue =
+    state.phase === "quarterly_tax" &&
+    state.finances.deferred_tax !== null &&
+    state.finances.deferred_tax.due_month <= state.month
+      ? state.finances.deferred_tax.principal + state.finances.deferred_tax.surcharge
+      : 0;
+  const effectiveMoney =
+    state.phase === "quarterly_tax"
+      ? state.indicators.money - state.finances.accrued_tax_liability - mandatoryDeferredDue
+      : state.indicators.money;
+  const canUnlockWealthSeal = state.ending === null || state.earned_victories.length > 0;
+
   maybeUnlock("primer_trimestre", hasSettledFirstQuarter);
-  maybeUnlock("primer_ano", state.month >= 12);
+  maybeUnlock("primer_ano", hasSurvivedMilestoneMonth(12));
   maybeUnlock("gestor_contratado", state.gestor.tier !== "self");
   maybeUnlock("aplazamiento_solicitado", state.finances.deferred_tax !== null);
   maybeUnlock("numeros_rojos_superados", hasRecoveredFromNegativeCash(state));
-  maybeUnlock(
-    "superviviente_hacienda",
-    Object.entries(state.occurrences).some(
-      ([id, count]) => id.startsWith("hacienda_") && count > 0,
-    ),
-  );
-  maybeUnlock("colchon_10k", state.indicators.money >= 10_000);
+  maybeUnlock("superviviente_hacienda", survivedHacienda);
+  maybeUnlock("colchon_10k", canUnlockWealthSeal && effectiveMoney >= 10_000);
   maybeUnlock("primer_empleado", state.employee !== null);
   maybeUnlock(
     "familia_formada",
     state.family.status === "cohabiting" || state.family.children_count > 0,
   );
   maybeUnlock("criatura_en_casa", state.family.children_count >= 1);
-  maybeUnlock("cinco_anos", state.month >= 60);
+  maybeUnlock("cinco_anos", hasSurvivedMilestoneMonth(60));
   maybeUnlock("facturacion_100k", state.finances.lifetime_billed >= 100_000);
   maybeUnlock("heroe_120m", state.earned_victories.includes("hero_120m"));
   maybeUnlock(
     "ricachon_150k",
-    state.indicators.money >= 150_000 || state.earned_victories.includes("rich_150k"),
+    (canUnlockWealthSeal && effectiveMoney >= 150_000) ||
+      state.earned_victories.includes("rich_150k"),
   );
   maybeUnlock("modo_infinito", state.endless_mode === true);
 

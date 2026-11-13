@@ -16,7 +16,8 @@ requirements:
 weight: 11
 cooldown_months: 11
 max_occurrences: 4
-exclusive_with: []
+exclusive_with:
+  - familia_vacaciones_agosto_cerrado
 choices:
   - id: bajar_persiana_quince_dias
     label: Bajar la persiana de verdad y desconectar quince días

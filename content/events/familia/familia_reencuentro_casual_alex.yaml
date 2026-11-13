@@ -32,8 +32,6 @@ choices:
       stress: -10
       moral: 10
       personal_life: 14
-      set_flags:
-        - relacion_con_alex
       clear_flags:
         - crisis_pareja_latente
         - ex_pareja_alex

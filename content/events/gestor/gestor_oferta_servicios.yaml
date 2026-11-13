@@ -21,8 +21,6 @@ choices:
     label: "Llevar yo mis propias cuentas a pelo (0 €/mes)"
     result_text: "Decides ahorrarte la iguala mensual y enfrentarte en solitario a los formularios oficiales. Lo que te ahorras en euros lo inviertes en carácter."
     effects:
-      set_gestor:
-        tier: self
       stress: 4
       moral: -1
   - id: contratar_paco_barato

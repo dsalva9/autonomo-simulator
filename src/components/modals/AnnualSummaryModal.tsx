@@ -58,17 +58,20 @@ export function AnnualSummaryModal({
       data-testid="annual-summary-modal"
       className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
     >
-      <div className="paper-dossier animate-dossier w-full max-w-lg max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl overflow-hidden">
-        <div className="bg-[#264e7a] text-[#fffdf8] px-4 sm:px-5 py-2.5 sm:py-3 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
+      <div className="paper-dossier animate-dossier w-full max-w-lg max-h-[calc(100dvh-1.5rem)] flex flex-col rounded-xl overflow-hidden">
+        <div className="bg-[#264e7a] text-[#fffdf8] px-4 sm:px-5 py-2 sm:py-3 [@media(max-height:500px)]:py-1.5 border-b-2 border-[#1f2421] flex items-center gap-3 shrink-0">
           <FileSpreadsheet
             className="w-5 h-5 sm:w-6 sm:h-6 text-[#fce592] shrink-0"
             aria-hidden="true"
           />
           <div className="min-w-0">
-            <p className="stamp-badge text-[10px] sm:text-[11px] text-[#fce592] truncate">
+            <p className="stamp-badge text-[10px] sm:text-[11px] text-[#fce592] leading-tight break-words">
               {a.formBadge}
             </p>
-            <h2 id="annual-summary-title" className="font-editorial text-base sm:text-xl font-bold">
+            <h2
+              id="annual-summary-title"
+              className="font-editorial text-base sm:text-xl font-bold leading-snug"
+            >
               {a.heading(summary.year, summary.month)}
             </h2>
           </div>
@@ -124,7 +127,7 @@ export function AnnualSummaryModal({
                   <ShieldCheck className="w-3 h-3 shrink-0" aria-hidden="true" />
                   {a.gestorCardLabel}
                 </span>
-                <p className="font-bold text-[#1f2421] truncate">
+                <p className="font-bold text-[#1f2421] leading-snug break-words">
                   {gestorChar
                     ? translateCharacterName(gestorChar, locale)
                     : translateGestorTier(state.gestor.tier, locale)}
@@ -140,7 +143,7 @@ export function AnnualSummaryModal({
                   <Heart className="w-3 h-3 shrink-0" aria-hidden="true" />
                   {a.familyCardLabel}
                 </span>
-                <p className="font-bold text-[#1f2421] truncate">
+                <p className="font-bold text-[#1f2421] leading-snug break-words">
                   {partnerChar
                     ? translateCharacterName(partnerChar, locale)
                     : translateFamilyStatus(state.family.status, locale)}
@@ -159,7 +162,7 @@ export function AnnualSummaryModal({
                   <Briefcase className="w-3 h-3 shrink-0" aria-hidden="true" />
                   {a.staffCardLabel}
                 </span>
-                <p className="font-bold text-[#1f2421] truncate">
+                <p className="font-bold text-[#1f2421] leading-snug break-words">
                   {state.employee
                     ? employeeChar
                       ? translateCharacterName(employeeChar, locale)

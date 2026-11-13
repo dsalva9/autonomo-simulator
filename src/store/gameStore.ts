@@ -10,6 +10,7 @@ import {
   type VictoryDecision,
   appendHistory,
   applyPlayerChoice,
+  createInitialGameState,
   dismissAnnualSummary,
   getActiveEvent,
   resolveEndingQuote,
@@ -27,6 +28,7 @@ import {
 import { defaultPlatformAdapter } from "../services/platform/PlatformPort.ts";
 import {
   type AchievementId,
+  type PastRunSummary,
   type PersistedPendingTurn,
   type ProfileEnvelope,
   type SaveActiveRunOptions,
@@ -53,6 +55,109 @@ export interface AutoSettledQuarterInfo {
 export type IndicatorDeltas = Partial<Record<keyof Indicators, number>>;
 
 const FAST_PACING_AUTO_SETTLE_MIN_BUFFER = 1200;
+const LAST_MONTH_START_STORAGE_KEY = "autonomo:last_month_start";
+
+interface StoredLastMonthStartPayload {
+  run_id: string;
+  month: number;
+  summary: MonthStartSummary;
+}
+
+function readStoredLastMonthStart(runId: string, month: number): MonthStartSummary | null {
+  try {
+    if (typeof globalThis.localStorage === "undefined") {
+      return null;
+    }
+    const raw = globalThis.localStorage.getItem(LAST_MONTH_START_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw) as Partial<StoredLastMonthStartPayload>;
+    if (
+      parsed &&
+      parsed.run_id === runId &&
+      parsed.month === month &&
+      parsed.summary &&
+      typeof parsed.summary === "object" &&
+      parsed.summary.month === month
+    ) {
+      return parsed.summary;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredLastMonthStart(
+  runId: string | null | undefined,
+  summary: MonthStartSummary | null | undefined,
+): void {
+  try {
+    if (typeof globalThis.localStorage === "undefined" || !runId || !summary) {
+      return;
+    }
+    const payload: StoredLastMonthStartPayload = {
+      run_id: runId,
+      month: summary.month,
+      summary,
+    };
+    globalThis.localStorage.setItem(LAST_MONTH_START_STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    // Ignore storage quota / private mode / Node SecurityError exceptions
+  }
+}
+
+function clearStoredLastMonthStart(): void {
+  try {
+    if (typeof globalThis.localStorage === "undefined") {
+      return;
+    }
+    globalThis.localStorage.removeItem(LAST_MONTH_START_STORAGE_KEY);
+  } catch {
+    // Ignore storage exceptions
+  }
+}
+
+function shouldRetainAutoSettledQuarter(
+  info: AutoSettledQuarterInfo | null,
+  nextState: GameState,
+): AutoSettledQuarterInfo | null {
+  if (!info || nextState.ending !== null) {
+    return null;
+  }
+  if (info.month === nextState.month || info.month === nextState.month - 1) {
+    return info;
+  }
+  return null;
+}
+
+function buildPastRunCertificateState(entry: PastRunSummary): GameState {
+  const base = createInitialGameState(compiledCatalog, {
+    seed: entry.seed,
+    runId: entry.run_id,
+  });
+  return {
+    ...base,
+    month: entry.months_survived,
+    phase: "game_over",
+    indicators: {
+      ...base.indicators,
+      money: entry.final_money,
+    },
+    finances: {
+      ...base.finances,
+      lifetime_billed: entry.lifetime_billed,
+    },
+    earned_victories: [...entry.earned_victories],
+    endless_mode: entry.endless_mode,
+    ending: {
+      id: entry.ending_id,
+      month: entry.months_survived,
+      summary_quote: entry.summary_quote,
+    },
+  };
+}
 
 function diffIndicators(prev: Indicators, next: Indicators): IndicatorDeltas {
   const deltas: IndicatorDeltas = {};
@@ -87,9 +192,7 @@ export function canRetireHonorably(state: GameState | null): boolean {
   return Boolean(
     state &&
       state.phase !== "game_over" &&
-      (state.endless_mode ||
-        state.month >= compiledCatalog.balance.victory_month ||
-        state.earned_victories.length > 0),
+      (state.endless_mode || state.earned_victories.length > 0),
   );
 }
 
@@ -140,6 +243,7 @@ export interface GameStoreState {
   hydrating: boolean;
   activeRun: GameState | null;
   outcomePreviewState: GameState | null;
+  viewingCertificateRun: GameState | null;
   queuedFinalState: GameState | null;
   queuedPostOutcomeDeltas: IndicatorDeltas | null;
   queuedMonthStart: MonthStartSummary | null;
@@ -154,6 +258,7 @@ export interface GameStoreState {
   hydrate: () => Promise<void>;
   startRun: (seed?: string) => Promise<void>;
   continueRun: () => void;
+  openPastRunCertificate: (entry: PastRunSummary) => void;
   chooseOption: (choiceId: string) => Promise<void>;
   acknowledgeOutcome: () => void;
   settleQuarterlyTax: (mode: QuarterlySettlementMode) => Promise<void>;
@@ -169,10 +274,12 @@ export interface GameStoreState {
   toggleLocalePreference: () => Promise<void>;
 }
 
-export function getVisibleGameState(
-  store: Pick<GameStoreState, "activeRun" | "outcomePreviewState">,
-): GameState | null {
-  return store.outcomePreviewState ?? store.activeRun;
+export function getVisibleGameState(store: {
+  activeRun: GameState | null;
+  outcomePreviewState: GameState | null;
+  viewingCertificateRun?: GameState | null;
+}): GameState | null {
+  return store.viewingCertificateRun ?? store.outcomePreviewState ?? store.activeRun;
 }
 
 export const useGameStore = create<GameStoreState>((set, get) => {
@@ -201,6 +308,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     hydrating: false,
     activeRun: null,
     outcomePreviewState: null,
+    viewingCertificateRun: null,
     queuedFinalState: null,
     queuedPostOutcomeDeltas: null,
     queuedMonthStart: null,
@@ -237,6 +345,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         !hydratedPendingTurn &&
         (hydratedRun.phase === "game_over" || hydratedRun.ending !== null)
       ) {
+        clearStoredLastMonthStart();
         const synced = await enqueueStorage(() => activeStoragePort.syncRunProgress(hydratedRun));
         resolvedProfile = synced.profile;
         extraUnlocked = synced.newlyUnlocked;
@@ -259,18 +368,23 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         };
       }
 
+      const restoredLastMonthStart =
+        hydratedPendingTurn?.last_month_start ??
+        (hydratedRun ? readStoredLastMonthStart(hydratedRun.run_id, hydratedRun.month) : null);
+
       set((curr) => ({
         hydrated: true,
         hydrating: false,
         profile: resolvedProfile,
         activeRun: hydratedRun,
         outcomePreviewState: hydratedPendingTurn?.outcome_preview_state ?? null,
+        viewingCertificateRun: null,
         queuedFinalState: hydratedPendingTurn?.queued_final_state ?? null,
         queuedPostOutcomeDeltas: hydratedPendingTurn?.queued_post_outcome_deltas ?? null,
         queuedMonthStart: hydratedPendingTurn?.queued_month_start ?? null,
         corruptedSaveNotice: loadedRun.corruptedRecovery?.reason ?? null,
         pendingOutcome: restoredPendingOutcome,
-        lastMonthStart: hydratedPendingTurn?.last_month_start ?? null,
+        lastMonthStart: restoredLastMonthStart,
         lastDeltas: hydratedPendingTurn?.last_deltas ?? {},
         lastChoiceImmediateDeltas: hydratedPendingTurn?.last_deltas ?? {},
         lastAutoSettledQuarter: null,
@@ -282,14 +396,17 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     },
 
     startRun: async (seed?: string) => {
+      const pendingFatal = get().queuedFinalState;
       const cleanSeed = seed?.trim() ? seed.trim() : undefined;
       const { state, resolution } = startNewRun(compiledCatalog, { seed: cleanSeed });
 
       useUIStore.getState().resetForRunEntry();
+      writeStoredLastMonthStart(state.run_id, resolution.monthStart ?? null);
 
       set({
         activeRun: state,
         outcomePreviewState: null,
+        viewingCertificateRun: null,
         queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
@@ -300,6 +417,9 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         lastAutoSettledQuarter: null,
       });
 
+      if (pendingFatal !== null) {
+        await syncStateProgress(pendingFatal);
+      }
       await syncStateProgress(state);
     },
 
@@ -308,6 +428,13 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       if (!current) {
         return;
       }
+      set({ viewingCertificateRun: null });
+      useUIStore.getState().resetForRunEntry();
+    },
+
+    openPastRunCertificate: (entry: PastRunSummary) => {
+      const certState = buildPastRunCertificateState(entry);
+      set({ viewingCertificateRun: certState });
       useUIStore.getState().resetForRunEntry();
     },
 
@@ -416,20 +543,34 @@ export const useGameStore = create<GameStoreState>((set, get) => {
 
       const finalState = autoQ.state;
       const totalDeltas = diffIndicators(prevIndicators, finalState.indicators);
-      const visibleDeltas = Object.keys(choiceDeltas).length > 0 ? choiceDeltas : totalDeltas;
+      const visibleDeltas: IndicatorDeltas =
+        Object.keys(choiceDeltas).length > 0
+          ? autoQ.autoSettled !== null &&
+            totalDeltas.money !== undefined &&
+            choiceDeltas.money === undefined
+            ? { ...choiceDeltas, money: totalDeltas.money }
+            : choiceDeltas
+          : totalDeltas;
+      const resolvedMonthStart = autoQ.monthStart ?? resolution.monthStart ?? get().lastMonthStart;
 
-      set((curr) => ({
+      if (finalState.ending !== null) {
+        clearStoredLastMonthStart();
+      } else {
+        writeStoredLastMonthStart(finalState.run_id, resolvedMonthStart);
+      }
+
+      set({
         activeRun: finalState,
         pendingOutcome: null,
         outcomePreviewState: null,
         queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
-        lastMonthStart: autoQ.monthStart ?? resolution.monthStart ?? curr.lastMonthStart,
+        lastMonthStart: resolvedMonthStart,
         lastDeltas: visibleDeltas,
         lastChoiceImmediateDeltas: choiceDeltas,
         lastAutoSettledQuarter: autoQ.autoSettled,
-      }));
+      });
 
       await syncStateProgress(finalState);
     },
@@ -446,6 +587,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         (activeRun.phase === "game_over" || activeRun.ending !== null ? activeRun : null);
 
       if (finalEndedState !== null) {
+        clearStoredLastMonthStart();
         set((curr) => ({
           activeRun: finalEndedState,
           pendingOutcome: null,
@@ -464,17 +606,20 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         const autoQ = tryAutoSettleQuarterlyTax(activeRun);
         if (autoQ.autoSettled !== null) {
           const deltas = diffIndicators(activeRun.indicators, autoQ.state.indicators);
-          set((curr) => ({
+          const nextMonthStart =
+            autoQ.monthStart ?? snapshot.queuedMonthStart ?? snapshot.lastMonthStart;
+          writeStoredLastMonthStart(autoQ.state.run_id, nextMonthStart);
+          set({
             activeRun: autoQ.state,
             pendingOutcome: null,
             outcomePreviewState: null,
             queuedFinalState: null,
             queuedPostOutcomeDeltas: null,
             queuedMonthStart: null,
-            lastMonthStart: autoQ.monthStart ?? curr.queuedMonthStart ?? curr.lastMonthStart,
+            lastMonthStart: nextMonthStart,
             lastDeltas: deltas,
             lastAutoSettledQuarter: autoQ.autoSettled,
-          }));
+          });
           void syncStateProgress(autoQ.state);
           return;
         }
@@ -488,6 +633,10 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         const hasSameMonthPostDeltas =
           curr.queuedPostOutcomeDeltas !== null &&
           Object.keys(curr.queuedPostOutcomeDeltas).length > 0;
+        const nextMonthStart = monthAdvanced
+          ? (curr.queuedMonthStart ?? curr.lastMonthStart)
+          : curr.lastMonthStart;
+        writeStoredLastMonthStart(curr.activeRun?.run_id, nextMonthStart);
 
         return {
           pendingOutcome: null,
@@ -501,9 +650,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
             : hasSameMonthPostDeltas
               ? (curr.queuedPostOutcomeDeltas ?? curr.lastDeltas)
               : curr.lastDeltas,
-          lastMonthStart: monthAdvanced
-            ? (curr.queuedMonthStart ?? curr.lastMonthStart)
-            : curr.lastMonthStart,
+          lastMonthStart: nextMonthStart,
         };
       });
       void syncStateProgress(activeRun);
@@ -518,19 +665,25 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       const prevIndicators = current.indicators;
       const { state: nextState, resolution } = settleQuarter(current, compiledCatalog, mode);
       const deltas = diffIndicators(prevIndicators, nextState.indicators);
+      const nextMonthStart = resolution.monthStart ?? get().lastMonthStart;
+      if (nextState.ending !== null) {
+        clearStoredLastMonthStart();
+      } else {
+        writeStoredLastMonthStart(nextState.run_id, nextMonthStart);
+      }
 
-      set((curr) => ({
+      set({
         activeRun: nextState,
         outcomePreviewState: null,
         queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
         pendingOutcome: null,
-        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastMonthStart: nextMonthStart,
         lastDeltas: deltas,
         lastChoiceImmediateDeltas: {},
         lastAutoSettledQuarter: null,
-      }));
+      });
 
       await syncStateProgress(nextState);
     },
@@ -548,6 +701,12 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         decision,
       );
       const deltas = diffIndicators(prevIndicators, nextState.indicators);
+      const nextMonthStart = resolution.monthStart ?? get().lastMonthStart;
+      if (nextState.ending !== null) {
+        clearStoredLastMonthStart();
+      } else {
+        writeStoredLastMonthStart(nextState.run_id, nextMonthStart);
+      }
 
       set((curr) => ({
         activeRun: nextState,
@@ -556,10 +715,13 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
         pendingOutcome: null,
-        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastMonthStart: nextMonthStart,
         lastDeltas: deltas,
         lastChoiceImmediateDeltas: {},
-        lastAutoSettledQuarter: null,
+        lastAutoSettledQuarter: shouldRetainAutoSettledQuarter(
+          curr.lastAutoSettledQuarter,
+          nextState,
+        ),
       }));
 
       await syncStateProgress(nextState);
@@ -574,6 +736,12 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       const prevIndicators = current.indicators;
       const { state: nextState, resolution } = dismissAnnualSummary(current, compiledCatalog);
       const deltas = diffIndicators(prevIndicators, nextState.indicators);
+      const nextMonthStart = resolution.monthStart ?? get().lastMonthStart;
+      if (nextState.ending !== null) {
+        clearStoredLastMonthStart();
+      } else {
+        writeStoredLastMonthStart(nextState.run_id, nextMonthStart);
+      }
 
       set((curr) => ({
         activeRun: nextState,
@@ -582,10 +750,13 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
         pendingOutcome: null,
-        lastMonthStart: resolution.monthStart ?? curr.lastMonthStart,
+        lastMonthStart: nextMonthStart,
         lastDeltas: deltas,
         lastChoiceImmediateDeltas: {},
-        lastAutoSettledQuarter: null,
+        lastAutoSettledQuarter: shouldRetainAutoSettledQuarter(
+          curr.lastAutoSettledQuarter,
+          nextState,
+        ),
       }));
 
       await syncStateProgress(nextState);
@@ -619,12 +790,14 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         ),
       };
 
+      clearStoredLastMonthStart();
       useUIStore.getState().setAbandonModalOpen(false);
       useUIStore.getState().setScreenView("game");
 
       set({
         activeRun: endedState,
         outcomePreviewState: null,
+        viewingCertificateRun: null,
         queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
@@ -646,12 +819,14 @@ export const useGameStore = create<GameStoreState>((set, get) => {
 
       const retiredState = buildRetiredRunState(current);
 
+      clearStoredLastMonthStart();
       useUIStore.getState().setAbandonModalOpen(false);
       useUIStore.getState().setScreenView("game");
 
       set({
         activeRun: retiredState,
         outcomePreviewState: null,
+        viewingCertificateRun: null,
         queuedFinalState: null,
         queuedPostOutcomeDeltas: null,
         queuedMonthStart: null,
@@ -665,15 +840,25 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     },
 
     returnToTitle: () => {
+      const viewingCert = get().viewingCertificateRun;
       const current = get().activeRun;
       const hasPendingOutcome = get().pendingOutcome !== null;
       useUIStore.getState().setAbandonModalOpen(false);
       useUIStore.getState().setScreenView("title");
 
+      if (viewingCert !== null) {
+        set({
+          viewingCertificateRun: null,
+        });
+        return;
+      }
+
       if (current && current.ending !== null && !hasPendingOutcome) {
+        clearStoredLastMonthStart();
         set({
           activeRun: null,
           outcomePreviewState: null,
+          viewingCertificateRun: null,
           queuedFinalState: null,
           queuedPostOutcomeDeltas: null,
           queuedMonthStart: null,
@@ -685,11 +870,13 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         void syncStateProgress(current);
       } else if (hasPendingOutcome) {
         set({
+          viewingCertificateRun: null,
           lastAutoSettledQuarter: null,
         });
       } else {
         set({
           outcomePreviewState: null,
+          viewingCertificateRun: null,
           queuedFinalState: null,
           queuedPostOutcomeDeltas: null,
           queuedMonthStart: null,

@@ -12,6 +12,11 @@ character_expression: stressed
 illustration_id: null
 requirements:
   min_month: 3
+  months_of_year:
+    - 1
+    - 4
+    - 7
+    - 10
   gestor_tiers:
     - cheap
 weight: 12

@@ -32,6 +32,8 @@ choices:
         monthly_billed_delta: 640
         monthly_stress_delta: 4
       reputation: 3
+      set_flags:
+        - cliente_fijo_activo
   - id: pactar_bolsa_horario_oficina
     label: Negociar una bolsa de horas estrictamente en horario de oficina
     requirements:
@@ -48,6 +50,8 @@ choices:
         monthly_stress_delta: 1
       moral: 4
       reputation: 3
+      set_flags:
+        - cliente_fijo_activo
   - id: declinar_correa_electronica
     label: Rechazar la guardia permanente y trabajar solo bajo proyecto cerrado
     result_text: Renuncias al dinero fácil a cambio de seguir siendo dueño de tu agenda.

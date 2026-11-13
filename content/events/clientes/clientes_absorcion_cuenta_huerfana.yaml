@@ -36,7 +36,7 @@ choices:
         - proveedor_corporativo_activo
         - cliente_fijo_activo
       add_modifier:
-        id: mod_bolsa_horas_marta
+        id: mod_bolsa_horas_cuenta_directa
         label: Bolsa de horas corporativa
         remaining_months: 4
         monthly_billed_delta: 500

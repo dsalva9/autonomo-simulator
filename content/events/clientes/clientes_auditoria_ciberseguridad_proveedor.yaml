@@ -38,6 +38,7 @@ choices:
           reputation: 6
           set_flags:
             - proveedor_corporativo_activo
+            - homologacion_proveedor_activa
       - id: piden_segunda_ronda_de_evidencias
         weight: 25
         result_text: Un auditor puntilloso pide capturas hasta del salvapantallas. Apruebas y cobras, pero tras una semana soporífera.
@@ -51,7 +52,7 @@ choices:
     label: Aportar tu homologación previa y facturar 3.500 € con recargo documental
     requirements:
       required_flags:
-        - proveedor_corporativo_activo
+        - homologacion_proveedor_activa
     result_text: "Tener la homologación corporativa al día te ahorra media vida: seguridad valida tu expediente en 24 horas y renuevas íntegro."
     effects:
       billed_income: 3500

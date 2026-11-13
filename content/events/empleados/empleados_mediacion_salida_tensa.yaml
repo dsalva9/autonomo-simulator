@@ -40,7 +40,7 @@ choices:
       clear_flags:
         - desgaste_plantilla
       add_modifier:
-        id: mod_pacto_reconciliacion_laboral
+        id: mod_tregua_mediacion_estudio
         label: "Acuerdo renovado de convivencia en estudio"
         remaining_months: 4
         monthly_billed_delta: 220

@@ -37,8 +37,10 @@ choices:
       personal_life: 8
   - id: asumir_repartos_y_quejarse_bajito
     label: "Seguir abriendo al mensajero cada media hora para evitar el debate"
-    result_text: "Pierdes el hilo cuatro veces al día firmando paquetes ajenos y llegas al viernes con la paciencia deshilachada."
+    result_text: "Pierdes el hilo firmando paquetes ajenos, aunque rascas horas extra de cliente llegando al viernes deshilachado."
     effects:
+      billed_income: 420
       stress: 8
       moral: -4
       personal_life: -5
+      reputation: 1

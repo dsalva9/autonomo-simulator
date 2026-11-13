@@ -48,13 +48,15 @@ choices:
       billed_income: 850
       deductible_expense: 140
       moral: 6
-      stress: -4
+      stress: 3
+      personal_life: -2
       reputation: 4
       employee_satisfaction: 12
   - id: prohibir_experimentos_en_estudio
     label: "Agradecer la iniciativa pero mantener el método manual de siempre"
     result_text: "Evitas cualquier susto técnico, aunque Dani guarda su prototipo en una carpeta olvidada con evidente decepción."
     effects:
-      moral: -3
-      stress: 1
-      employee_satisfaction: -9
+      moral: -2
+      stress: -2
+      personal_life: 2
+      employee_satisfaction: -8

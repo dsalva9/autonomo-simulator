@@ -26,6 +26,8 @@ choices:
       personal_life: 5
       reputation: 4
     requirements:
+      required_flags:
+        - cliente_fijo_activo
       stats:
         reputation:
           min: 56
@@ -41,7 +43,7 @@ choices:
           stress: 3
           reputation: 5
           add_modifier:
-            id: mod_tarifas_ipc
+            id: mod_iguala_indexada_ipc
             label: Tarifas actualizadas al IPC
             remaining_months: 5
             monthly_billed_delta: 280

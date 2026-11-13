@@ -39,9 +39,9 @@ choices:
         - portfolio_actualizado
   - id: encerrarse_finde_plantilla_gratuita
     label: Sacrificar el fin de semana maquetando una página mínima sin gastar
-    result_text: Llegas al lunes con ojeras y una web digna que cumple el expediente y desbloquea la mitad del encargo.
+    result_text: Llegas al lunes con ojeras y una web digna que cumple el expediente y desbloquea casi todo el encargo.
     effects:
-      billed_income: 1550
+      billed_income: 1850
       stress: 9
       personal_life: -5
       reputation: 4

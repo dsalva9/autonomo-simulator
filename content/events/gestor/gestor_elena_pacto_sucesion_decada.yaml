@@ -34,7 +34,7 @@ choices:
       reputation: 6
       fiscal_risk: -10
       add_modifier:
-        id: mod_estructura_mercantil_b2b
+        id: mod_licencias_recurrentes_b2b
         label: Estructura mercantil B2B
         remaining_months: 6
         monthly_billed_delta: 320

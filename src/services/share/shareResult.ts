@@ -34,6 +34,17 @@ export interface RenderShareCardOptions {
   locale?: SupportedLocale;
 }
 
+export interface LoadShareCardOptions {
+  isCancelled?: () => boolean;
+}
+
+export function stripOuterQuotes(text: string): string {
+  return text
+    .trim()
+    .replace(/^["«“]+|["»”]+$/g, "")
+    .trim();
+}
+
 export const CANONICAL_GAME_URL = "https://autonomo-simulator.vercel.app/";
 
 export function resolveShareUrl(explicitUrl?: string): string {
@@ -85,10 +96,11 @@ export function buildShareText(
   const isEn = normalizeLocale(locale) === "en";
   const meta = getEndingMetadata(summary.endingId, locale);
   const duration = formatDurationMonthsEs(summary.monthsSurvived, locale);
-  const quote =
+  const quote = stripOuterQuotes(
     isEn && summary.localizedQuoteEn
       ? summary.localizedQuoteEn
-      : resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale);
+      : resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale),
+  );
 
   if (isEn) {
     const lines: string[] = [
@@ -123,7 +135,7 @@ export function buildShareText(
     lines.push(`🏅 Sellos conquistados: ${badges}`);
   }
 
-  lines.push(`«${summary.summaryQuote}»`);
+  lines.push(`«${stripOuterQuotes(summary.summaryQuote)}»`);
   lines.push(`🎲 Semilla: ${summary.seed} · ${summary.gameUrl}`);
 
   return lines.join("\n");
@@ -543,7 +555,8 @@ export function renderShareCardToCanvas(
 
   ctx.fillStyle = "#1F2421";
   ctx.font = hasIllustration ? "italic 25px Georgia, serif" : "italic 30px Georgia, serif";
-  const framedQuote = isEn ? `"${localizedQuote}"` : `«${localizedQuote}»`;
+  const cleanQuote = stripOuterQuotes(localizedQuote);
+  const framedQuote = isEn ? `"${cleanQuote}"` : `«${cleanQuote}»`;
   const quoteLines = wrapCanvasParagraph(ctx, framedQuote, width - 224);
   let quoteY = quoteBoxY + (hasIllustration ? 66 : 88);
   const quoteStep = hasIllustration ? 31 : 40;
@@ -678,13 +691,20 @@ export async function loadAndRenderShareCard(
   summary: EndRunShareSummary,
   illustrationUrl?: string | null,
   locale: SupportedLocale = "es-ES",
+  options?: LoadShareCardOptions,
 ): Promise<boolean> {
+  if (options?.isCancelled?.()) {
+    return false;
+  }
   const baseRendered = renderShareCardToCanvas(canvas, summary, { locale });
   if (!illustrationUrl || !illustrationUrl.trim()) {
     return baseRendered;
   }
 
   const loadedImage = await preloadShareIllustration(illustrationUrl);
+  if (options?.isCancelled?.()) {
+    return false;
+  }
   if (!loadedImage) {
     return baseRendered;
   }

@@ -4,7 +4,7 @@ initial_indicators:
   money: 2600
   moral: 75
   stress: 20
-  personal_life: 65
+  personal_life: 68
   reputation: 35
   fiscal_risk: 0
 
@@ -16,10 +16,10 @@ child_monthly_cost: 280
 
 reputation_multiplier_min: 0.74
 reputation_multiplier_max: 1.24
-moral_multiplier_min: 0.70
-moral_multiplier_max: 1.13
+moral_multiplier_min: 0.78
+moral_multiplier_max: 1.15
 
-personal_life_recovery_threshold: 65
+personal_life_recovery_threshold: 50
 personal_life_monthly_stress_relief: 1
 high_stat_decay_threshold: 60
 event_novelty_decay_k: 0.85

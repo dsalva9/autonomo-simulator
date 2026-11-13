@@ -92,7 +92,6 @@ async function resolveOneEventStep(page: Page): Promise<void> {
   for (let i = 0; i < count; i += 1) {
     const btn = buttons.nth(i);
     if (await btn.isEnabled()) {
-      await btn.scrollIntoViewIfNeeded();
       await btn.click();
       clicked = true;
       break;
@@ -101,9 +100,7 @@ async function resolveOneEventStep(page: Page): Promise<void> {
   expect(clicked, "Expected at least 1 eligible choice").toBe(true);
 
   await expect(page.getByTestId("outcome-panel")).toBeVisible();
-  const continueBtn = page.getByTestId("outcome-continue-btn");
-  await continueBtn.scrollIntoViewIfNeeded();
-  await continueBtn.click();
+  await page.getByTestId("outcome-continue-btn").click();
 }
 
 async function advanceUntilQuarterlyTaxModal(page: Page): Promise<void> {
@@ -115,6 +112,22 @@ async function advanceUntilQuarterlyTaxModal(page: Page): Promise<void> {
     await resolveOneEventStep(page);
   }
   await expect(trimestreModal).toBeVisible();
+}
+
+async function ensureHudActionVisible(page: Page, testId: string): Promise<Locator> {
+  const direct = page.getByTestId(testId);
+  if (await direct.isVisible()) {
+    return direct;
+  }
+  await page.getByTestId("mobile-utility-menu-btn").click();
+  await expect(page.getByTestId("mobile-utility-sheet")).toBeVisible();
+  await expect(direct).toBeVisible();
+  return direct;
+}
+
+async function clickHudAction(page: Page, testId: string): Promise<void> {
+  const btn = await ensureHudActionVisible(page, testId);
+  await btn.click();
 }
 
 test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & Share Card QA Suite", () => {
@@ -158,41 +171,38 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("game-screen")).toBeVisible();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
 
-    // Month 1 post-start cash: 2.600 € initial seed capital + 2.096 € billing - 1.715 € fixed costs = 2.981 €
-    // Net accrued tax on Month 1 (587 € gross - 87 € deductible RETA shield): -500 € -> Tax-adjusted Libre = 2.481 €
+    // Month 1 post-start cash: 2.600 € initial seed capital + 2.167 € billing - 1.715 € fixed costs = 3.052 €
+    // Net accrued tax on Month 1 (607 € gross - 87 € deductible RETA shield): -520 € -> Tax-adjusted Libre = 2.532 €
     const viewport = page.viewportSize();
     const moneyBox = page.getByTestId("indicator-money");
     const moneyValue = page.getByTestId("indicator-money-value");
     const netCash = page.getByTestId("indicator-net-cash");
 
-    await expect(page.getByTestId("month-economy-strip")).toContainText("Caja fija: +381 €");
+    await expect(page.getByTestId("month-economy-strip")).toContainText("Caja fija: +452 €");
     await expect(moneyBox).toBeVisible();
-    await expect(moneyValue).toHaveText("2.981 €");
+    await expect(moneyValue).toHaveText("3.052 €");
     await expect(netCash).toBeVisible();
     await expect(netCash).toContainText(
       viewport && viewport.width < 768 ? "Res.:" : "Reserva Trimestre:",
     );
-    await expect(netCash).toContainText("-500 €");
+    await expect(netCash).toContainText("-520 €");
     await expect(netCash).toContainText("Libre:");
-    await expect(netCash).toContainText("2.481 €");
+    await expect(netCash).toContainText("2.532 €");
 
     // Verify ledger-net-after-tax in CuentasPanel (desktop right column or mobile Cuentas tab)
-    if (viewport && viewport.width < 1280) {
+    if (viewport && viewport.width < 1024) {
       await page.getByTestId("mobile-tab-cuentas").click();
       await expect(page.getByTestId("ledger-net-after-tax")).toBeVisible();
-      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-119 €");
+      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-79 €");
       await page.getByTestId("mobile-tab-despacho").click();
     } else {
       await expect(page.getByTestId("ledger-net-after-tax")).toBeVisible();
-      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-119 €");
+      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-79 €");
     }
 
     // Step 1 (Negative Cash Effect, -90 €): click choice on Month 1 and verify immediate Month 1 preview
     const negChoice = page.locator('[data-choice-id="escapada_desconexion_total"]');
     await expect(negChoice).toBeEnabled();
-    if (viewport && viewport.width < 1280) {
-      await negChoice.scrollIntoViewIfNeeded();
-    }
     await negChoice.click();
 
     await expect(page.getByTestId("outcome-panel")).toBeVisible();
@@ -200,8 +210,8 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
     await expect(page.getByTestId("indicator-calendar")).not.toContainText("Año 1 · Mes 2");
     // Cash and negative red delta update immediately on Month 1
-    await expect(moneyValue).toHaveText("2.891 €");
-    await expect(netCash).toContainText("2.391 €");
+    await expect(moneyValue).toHaveText("2.962 €");
+    await expect(netCash).toContainText("2.442 €");
 
     const moneyDelta = page.getByTestId("indicator-money-delta");
     await expect(moneyDelta).toBeVisible();
@@ -212,22 +222,19 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await page.getByTestId("outcome-continue-btn").click();
     await expect(page.getByTestId("outcome-panel")).toBeHidden();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
-    await expect(moneyValue).toHaveText("3.325 €");
+    await expect(moneyValue).toHaveText("3.445 €");
 
-    // Step 2 (Positive Cash Effect, +1.400 €): verify positive green delta stays on Month 2 until acknowledged
-    const posChoice = page.locator('[data-choice-id="exigir_factura_legal"]');
+    // Step 2 (Positive Cash Effect, +600 €): verify positive green delta stays on Month 2 until acknowledged
+    const posChoice = page.locator('[data-choice-id="exigir_euros_aunque_sea_en_dos_plazos"]');
     await expect(posChoice).toBeEnabled();
-    if (viewport && viewport.width < 1280) {
-      await posChoice.scrollIntoViewIfNeeded();
-    }
     await posChoice.click();
 
     await expect(page.getByTestId("outcome-panel")).toBeVisible();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
     await expect(page.getByTestId("indicator-calendar")).not.toContainText("Año 1 · Mes 3");
-    await expect(moneyValue).toHaveText("4.725 €");
+    await expect(moneyValue).toHaveText("4.045 €");
     await expect(moneyDelta).toBeVisible();
-    await expect(moneyDelta).toHaveText("+1.400 €");
+    await expect(moneyDelta).toHaveText("+600 €");
     await expect(moneyDelta).toHaveClass(/text-\[#1f5c53\]/);
 
     await page.getByTestId("outcome-continue-btn").click();
@@ -365,7 +372,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
       }
 
       // 4. AbandonRunModal zero-clip check (then cancel to continue to Month 3)
-      await page.getByTestId("abandon-run-btn").click();
+      await clickHudAction(page, "abandon-run-btn");
       const abandonModal = page.getByTestId("abandon-modal");
       await expect(abandonModal).toBeVisible();
       await assertZeroHorizontalOverflow(page, vp.width, `AbandonRunModal (${vp.label})`);
@@ -393,7 +400,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
       await expect(trimestreModal).toBeHidden();
 
       // 6. EndRunScreen zero-clip check
-      await page.getByTestId("abandon-run-btn").click();
+      await clickHudAction(page, "abandon-run-btn");
       await page.getByTestId("abandon-oposiciones-btn").click();
       await expect(page.getByTestId("end-run-screen")).toBeVisible();
       await assertZeroHorizontalOverflow(page, vp.width, `EndRunScreen (${vp.label})`);
@@ -429,48 +436,48 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     expect(scrollMetrics.scrollWidth).toBeLessThanOrEqual(scrollMetrics.innerWidth);
 
     const leftCol = page.getByTestId("scene-renderer");
-    const centerTop = page.getByTestId("month-economy-strip");
+    const centerStrip = page.getByTestId("month-economy-strip");
     const eventCard = page.getByTestId("event-card");
     const rightCol = page.getByTestId("panel-cuentas");
     const panelHistorial = page.getByTestId("panel-historial");
 
     await expect(leftCol).toBeVisible();
-    await expect(centerTop).toBeVisible();
+    await expect(centerStrip).toBeVisible();
     await expect(eventCard).toBeVisible();
     await expect(rightCol).toBeVisible();
     await expect(panelHistorial).toBeVisible();
 
     const leftBox = await leftCol.boundingBox();
-    const centerBox = await centerTop.boundingBox();
+    const centerStripBox = await centerStrip.boundingBox();
     const eventCardBox = await eventCard.boundingBox();
     const rightBox = await rightCol.boundingBox();
 
     expect(leftBox).not.toBeNull();
-    expect(centerBox).not.toBeNull();
+    expect(centerStripBox).not.toBeNull();
     expect(eventCardBox).not.toBeNull();
     expect(rightBox).not.toBeNull();
 
-    // Strict 3-track horizontal non-overlap and viewport containment
+    // Strict 3-track horizontal non-overlap and viewport containment (month-economy-strip docked inside event-card)
     expect(leftBox!.x).toBeGreaterThanOrEqual(0);
-    expect(leftBox!.x + leftBox!.width).toBeLessThanOrEqual(centerBox!.x + 1);
-    expect(centerBox!.x + centerBox!.width).toBeLessThanOrEqual(rightBox!.x + 1);
+    expect(leftBox!.x + leftBox!.width).toBeLessThanOrEqual(eventCardBox!.x + 1);
+    expect(eventCardBox!.x + eventCardBox!.width).toBeLessThanOrEqual(rightBox!.x + 1);
     expect(rightBox!.x + rightBox!.width).toBeLessThanOrEqual(1440.5);
-    expect(Math.abs(eventCardBox!.x - centerBox!.x)).toBeLessThanOrEqual(1);
-    expect(Math.abs(eventCardBox!.width - centerBox!.width)).toBeLessThanOrEqual(1);
+    expect(Math.abs(eventCardBox!.x - centerStripBox!.x)).toBeLessThanOrEqual(4);
+    expect(Math.abs(eventCardBox!.width - centerStripBox!.width)).toBeLessThanOrEqual(6);
 
-    // Aligned top edges across Left, Center, and Right columns (<= 4px spread)
+    // Aligned top edges across Left, Center, and Right columns (<= 2px spread)
     const topSpread =
-      Math.max(leftBox!.y, centerBox!.y, rightBox!.y) -
-      Math.min(leftBox!.y, centerBox!.y, rightBox!.y);
+      Math.max(leftBox!.y, eventCardBox!.y, rightBox!.y) -
+      Math.min(leftBox!.y, eventCardBox!.y, rightBox!.y);
     expect(
       topSpread,
-      `Expected aligned top edges across 3 desktop columns (left=${leftBox!.y}, center=${centerBox!.y}, right=${rightBox!.y})`,
-    ).toBeLessThanOrEqual(4);
+      `Expected aligned top edges across 3 desktop columns (left=${leftBox!.y}, center=${eventCardBox!.y}, right=${rightBox!.y})`,
+    ).toBeLessThanOrEqual(2);
 
-    // Verify HistorialPanel displays 15 career seals without horizontal overflow
+    // Verify HistorialPanel displays 15 career seals inside collapsible accordion without horizontal overflow
     await expect(panelHistorial).toContainText("Sellos de carrera");
     await expect(panelHistorial).toContainText("0/15");
-    await expect(panelHistorial.locator(".grid.grid-cols-2 > span")).toHaveCount(15);
+    await expect(panelHistorial.locator(".historial-seals-grid > span")).toHaveCount(15);
 
     const historialBox = await panelHistorial.boundingBox();
     expect(historialBox).not.toBeNull();
@@ -550,31 +557,36 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
-    const sfxBtn = page.getByTestId("toggle-sfx-btn");
-    await expect(sfxBtn).toHaveAttribute("aria-pressed", "true");
-    await sfxBtn.click();
-    await expect(sfxBtn).toHaveAttribute("aria-pressed", "false");
+    const sfxBtnInitial = await ensureHudActionVisible(page, "toggle-sfx-btn");
+    await expect(sfxBtnInitial).toHaveAttribute("aria-pressed", "true");
+    await sfxBtnInitial.click();
     expect(await page.evaluate(() => window.localStorage.getItem("autonomo:sfx_muted"))).toBe(
       "true",
     );
-    await sfxBtn.click();
-    await expect(sfxBtn).toHaveAttribute("aria-pressed", "true");
+
+    const sfxBtnMuted = await ensureHudActionVisible(page, "toggle-sfx-btn");
+    await expect(sfxBtnMuted).toHaveAttribute("aria-pressed", "false");
+    await sfxBtnMuted.click();
     expect(await page.evaluate(() => window.localStorage.getItem("autonomo:sfx_muted"))).toBe(
       "false",
     );
 
-    const fastPacingBtn = page.getByTestId("toggle-fast-pacing-btn");
+    const fastPacingBtn = await ensureHudActionVisible(page, "toggle-fast-pacing-btn");
     await expect(fastPacingBtn).toHaveAttribute("aria-pressed", "false");
     await fastPacingBtn.click();
-    await expect(fastPacingBtn).toHaveAttribute("aria-pressed", "true");
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width < 768) {
+      await expect(page.getByTestId("mobile-utility-fast-indicator")).toBeVisible();
+    } else {
+      await expect(page.getByTestId("toggle-fast-pacing-btn")).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+    }
 
     // With Modo ágil active, clicking a non-terminal choice advances directly to Month 2 without stopping at outcome-panel
-    const viewport = page.viewportSize();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
     const month1Choice = page.locator('[data-choice-id="quedarse_adelantando_entregas"]');
-    if (viewport && viewport.width < 1280) {
-      await month1Choice.scrollIntoViewIfNeeded();
-    }
     await month1Choice.click();
 
     await expect(page.getByTestId("outcome-panel")).toHaveCount(0);
@@ -582,7 +594,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("event-card")).toBeVisible();
 
     // 4. Abandon run -> EndRunScreen -> verify illustrated 1080x1350 Share Card canvas
-    await page.getByTestId("abandon-run-btn").click();
+    await clickHudAction(page, "abandon-run-btn");
     await expect(page.getByTestId("abandon-modal")).toBeVisible();
     await page.getByTestId("abandon-oposiciones-btn").click();
 

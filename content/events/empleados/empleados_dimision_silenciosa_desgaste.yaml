@@ -14,7 +14,7 @@ requirements:
   min_month: 14
   has_employee: true
   employee_satisfaction:
-    max: 45
+    max: 55
 weight: 14
 cooldown_months: 12
 max_occurrences: 3

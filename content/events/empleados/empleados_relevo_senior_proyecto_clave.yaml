@@ -53,4 +53,5 @@ choices:
     effects:
       billed_income: 1350
       stress: 2
+      personal_life: 3
       reputation: -1

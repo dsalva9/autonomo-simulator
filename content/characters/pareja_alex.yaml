@@ -10,4 +10,4 @@ expressions:
   pleased: char_pareja_alex_feliz
 family_params:
   monthly_cost: 180
-  support_modifier: 2
+  support_modifier: 1

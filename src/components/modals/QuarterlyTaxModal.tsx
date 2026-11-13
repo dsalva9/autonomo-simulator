@@ -33,6 +33,11 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
   const totalPayNow = accruedDue + deferredDue;
   const cashAfterFullPay = state.indicators.money - totalPayNow;
   const deferralSurcharge = Math.round(accruedDue * balance.deferral_surcharge_pct);
+  const gestorErrorStress =
+    report && report.gestor_error_surcharge > 0
+      ? ((report as { gestor_error_stress?: number }).gestor_error_stress ??
+        balance.gestor_tiers[state.gestor.tier].quarterly_error_stress)
+      : 0;
 
   let deferDisabledReason: string | null = null;
   if (!canDefer) {
@@ -60,18 +65,21 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
       data-testid="trimestre-modal"
       className="fixed inset-0 z-50 m-0 h-dvh w-full max-h-none max-w-none border-0 bg-[#1f2421]/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
     >
-      <div className="paper-dossier animate-dossier w-full max-w-xl max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl overflow-hidden">
+      <div className="paper-dossier animate-dossier w-full max-w-2xl max-h-[calc(100dvh-1.5rem)] flex flex-col rounded-xl overflow-hidden">
         {/* Official Red Header */}
-        <div className="bg-[#b42b24] text-[#fffdf8] px-3.5 sm:px-5 py-2 sm:py-2.5 border-b-2 border-[#1f2421] flex items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <Landmark className="w-5 h-5 shrink-0" aria-hidden="true" />
+        <div className="bg-[#b42b24] text-[#fffdf8] px-3.5 sm:px-5 py-2 [@media(max-height:500px)]:py-1.5 border-b-2 border-[#1f2421] flex items-center justify-between gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <Landmark
+              className="w-5 h-5 [@media(max-height:500px)]:w-4 [@media(max-height:500px)]:h-4 shrink-0"
+              aria-hidden="true"
+            />
             <div className="min-w-0">
-              <p className="stamp-badge text-[10px] sm:text-xs text-[#fce592] truncate">
+              <p className="stamp-badge text-[10px] sm:text-xs text-[#fce592] leading-tight break-words">
                 {q.formBadge}
               </p>
               <h2
                 id="trimestre-modal-title"
-                className="font-editorial text-base sm:text-lg font-bold"
+                className="font-editorial text-base sm:text-lg [@media(max-height:500px)]:text-sm font-bold leading-snug"
               >
                 {q.heading(state.month, report?.quarter ?? 1)}
               </h2>
@@ -83,11 +91,11 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
         </div>
 
         {/* Scrollable Breakdown Body */}
-        <div className="flex-1 min-h-0 p-3 sm:p-4 space-y-2 text-sm overflow-y-auto dossier-scroll">
+        <div className="flex-1 min-h-0 p-3 sm:p-4 [@media(max-height:500px)]:p-2.5 space-y-2 text-sm overflow-y-auto dossier-scroll shadow-[inset_0_-10px_10px_-10px_rgba(31,36,33,0.18)]">
           <p className="text-xs sm:text-sm text-[#373f3a] leading-snug">{q.intro}</p>
 
           {/* Breakdown Ledger */}
-          <div className="rounded-lg border border-[#1f2421]/40 bg-[#f6efe0] p-3 space-y-1.5 text-xs sm:text-sm">
+          <div className="rounded-lg border border-[#1f2421]/40 bg-[#f6efe0] p-2.5 sm:p-3 space-y-1.5 text-xs sm:text-sm">
             <div className="flex items-center justify-between gap-2">
               <span className="text-[#373f3a]">{q.quarterBilled}</span>
               <span className="font-bureau font-bold text-[#1f2421] tabular-nums whitespace-nowrap shrink-0">
@@ -103,6 +111,7 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
                 <span>{q.gestorErrorSurcharge}</span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
                   +{formatEuros(report.gestor_error_surcharge, locale)}
+                  {gestorErrorStress > 0 ? ` · +${gestorErrorStress} ${q.stressWord}` : ""}
                 </span>
               </div>
             )}
@@ -186,23 +195,23 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
           )}
         </div>
 
-        {/* Pinned Settlement Footer CTAs */}
-        <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3 sm:px-4 py-2 sm:py-2.5 space-y-2">
+        {/* Pinned Settlement Footer CTAs (2-col on sm: & short landscape so body scroll maximizes) */}
+        <div className="shrink-0 border-t border-[#1f2421]/18 bg-[#fffdf8] px-3 sm:px-4 py-2 [@media(max-height:500px)]:py-1.5 grid grid-cols-1 sm:grid-cols-2 [@media(max-height:500px)]:grid-cols-2 gap-2 items-stretch">
           <button
             type="button"
             data-testid="trimestre-pay-btn"
             data-autofocus="true"
             data-modal-option="true"
             onClick={() => onSettle("pay")}
-            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-3.5 sm:px-4 py-2 font-bold text-left flex items-center justify-between gap-3 cursor-pointer transition-colors"
+            className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] px-3 sm:px-3.5 py-2 [@media(max-height:500px)]:py-1.5 font-bold text-left flex flex-col justify-between gap-1 cursor-pointer transition-colors"
           >
-            <span className="inline-flex items-center gap-2 min-w-0">
+            <span className="inline-flex items-start gap-2 min-w-0">
               <span className="font-bureau text-xs px-1.5 py-0.5 rounded bg-[#fffdf8]/20 shrink-0 tabular-nums">
                 1
               </span>
-              <span className="text-xs sm:text-sm">{q.payFullBtn}</span>
+              <span className="text-xs sm:text-sm leading-snug">{q.payFullBtn}</span>
             </span>
-            <span className="font-bureau text-xs sm:text-sm shrink-0 tabular-nums whitespace-nowrap">
+            <span className="font-bureau text-xs sm:text-sm pl-7 tabular-nums whitespace-nowrap text-[#fce592]">
               -{formatEuros(totalPayNow, locale)}
             </span>
           </button>
@@ -213,32 +222,35 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
             data-modal-option="true"
             disabled={!canDefer}
             onClick={() => onSettle("defer")}
-            className={`w-full min-h-12 rounded-lg border-2 px-3.5 sm:px-4 py-2 text-left transition-colors ${
+            className={`w-full min-h-12 rounded-lg border-2 px-3 sm:px-3.5 py-2 [@media(max-height:500px)]:py-1.5 text-left flex flex-col justify-between gap-0.5 transition-colors ${
               canDefer
                 ? "border-[#1f2421] bg-[#fffdf8] hover:bg-[#fcf4df] text-[#1f2421] cursor-pointer"
                 : "border-[#1f2421]/30 bg-[#efe4ce]/70 text-[#4a524e] cursor-not-allowed"
             }`}
           >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 sm:gap-2 font-bold">
-              <span className="inline-flex items-center gap-2">
+            <div className="space-y-0.5 font-bold">
+              <span className="inline-flex items-start gap-2">
                 <span className="font-bureau text-xs px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fffdf8] shrink-0 tabular-nums">
                   2
                 </span>
-                <CalendarClock className="w-4 h-4 shrink-0 text-[#8f510d]" aria-hidden="true" />
-                <span className="text-xs sm:text-sm">{q.requestDeferralBtn}</span>
+                <CalendarClock
+                  className="w-4 h-4 shrink-0 text-[#8f510d] mt-0.5"
+                  aria-hidden="true"
+                />
+                <span className="text-xs sm:text-sm leading-snug">{q.requestDeferralBtn}</span>
               </span>
-              <span className="font-bureau text-[11px] sm:text-xs text-[#8f510d] sm:shrink-0 pl-7 sm:pl-0 tabular-nums">
+              <p className="font-bureau text-[11px] text-[#8f510d] pl-7 tabular-nums">
                 +{Math.round(balance.deferral_surcharge_pct * 100)}% (+
                 {formatEuros(deferralSurcharge, locale)}) · +{balance.deferral_stress_penalty}{" "}
                 {q.stressWord}
-              </span>
+              </p>
             </div>
             {deferDisabledReason ? (
-              <p className="mt-0.5 text-[11px] sm:text-xs font-semibold text-[#b42b24] pl-7 sm:pl-0">
+              <p className="text-[11px] font-semibold text-[#b42b24] pl-7 leading-tight">
                 {q.lockedPrefix} {deferDisabledReason}
               </p>
             ) : (
-              <p className="mt-0.5 text-[11px] sm:text-xs text-[#4a524e] pl-7 sm:pl-0">
+              <p className="text-[11px] text-[#4a524e] pl-7 leading-tight [@media(max-height:500px)]:hidden">
                 {q.deferSummary(
                   formatEuros(accruedDue, locale),
                   state.month + 3,

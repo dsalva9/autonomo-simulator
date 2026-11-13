@@ -26,7 +26,7 @@ import {
 } from "../../src/services/i18n/resolveEventText.ts";
 
 describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML content catalog contracts", () => {
-  it("validates assets/manifest.json with 60 entries (51 WebP + 9 SVG, 55 ready + 5 fallbacks)", () => {
+  it("validates assets/manifest.json with 60 entries (51 WebP + 9 SVG, all 60 ready)", () => {
     const result = validateAssets(process.cwd());
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
@@ -46,7 +46,7 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
     expect(nonFallbackEntries).toHaveLength(55);
     expect(fallbackEntries).toHaveLength(5);
 
-    for (const [id, asset] of nonFallbackEntries) {
+    for (const [id, asset] of entries) {
       expect(asset.status, `Expected asset '${id}' to have status 'ready'`).toBe("ready");
       expect(asset.render_mode).toBe("vector_hd");
     }

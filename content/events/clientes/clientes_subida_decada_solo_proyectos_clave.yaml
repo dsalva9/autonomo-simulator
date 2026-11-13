@@ -37,7 +37,7 @@ choices:
           personal_life: 5
           reputation: 7
           add_modifier:
-            id: mod_ticket_minimo_senior
+            id: mod_filtro_proyectos_clave
             label: Posicionamiento sénior de alto margen
             remaining_months: 6
             monthly_billed_delta: 520

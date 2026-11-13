@@ -1,4 +1,4 @@
-import { Award, History } from "lucide-react";
+import { Award, ChevronDown, History } from "lucide-react";
 import {
   type EndingId,
   type GameState,
@@ -27,6 +27,8 @@ export interface HistorialPanelProps {
   state: GameState;
   unlockedAchievements: Record<string, string>;
   locale?: string;
+  embeddedInFolder?: boolean;
+  className?: string;
 }
 
 function describeHistoryEntry(entry: HistoryEntry, state: GameState, locale: string): string {
@@ -108,6 +110,8 @@ export function HistorialPanel({
   state,
   unlockedAchievements,
   locale: localeProp,
+  embeddedInFolder = false,
+  className = "",
 }: HistorialPanelProps) {
   const storeLocale = useGameStore((s) => s.profile.settings.locale);
   const locale = localeProp ?? storeLocale;
@@ -124,72 +128,91 @@ export function HistorialPanel({
     <section
       data-testid="panel-historial"
       aria-label={ui.historial.sectionAria}
-      className="paper-dossier rounded-xl overflow-hidden bg-[#fffdf8]"
+      className={`${
+        embeddedInFolder
+          ? "flex-1 min-h-0 flex flex-col overflow-hidden bg-[#fffdf8]"
+          : "paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col"
+      } ${className}`}
     >
-      <div className="dossier-header">
-        <div className="flex items-center gap-2 min-w-0">
-          <History className="w-4 h-4 text-[#7a4308] shrink-0" aria-hidden="true" />
-          <h2 className="font-editorial font-bold text-base text-[#1f2421] truncate">
-            {ui.historial.heading}
-          </h2>
+      {!embeddedInFolder ? (
+        <div className="dossier-header shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <History className="w-4 h-4 text-[#7a4308] shrink-0" aria-hidden="true" />
+            <h2 className="font-editorial font-bold text-base text-[#1f2421] leading-tight">
+              {ui.historial.heading}
+            </h2>
+          </div>
+          <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#7a4308] shrink-0 tabular-nums">
+            {ui.historial.entriesCountBadge(state.history.length)}
+          </span>
         </div>
-        <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#fcf4df] text-[#7a4308] shrink-0 tabular-nums">
-          {ui.historial.entriesCountBadge(state.history.length)}
-        </span>
-      </div>
+      ) : (
+        <h2 className="sr-only">{ui.historial.heading}</h2>
+      )}
 
-      <div className="historial-body p-3 space-y-2">
-        {/* Tidy Career Seals Progress + Full Grid on Mobile/Tablet, Compact Scrollable on Desktop */}
-        <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] p-2 space-y-1.5">
-          <div className="flex items-center justify-between text-xs font-bold text-[#1f2421]">
-            <span className="inline-flex items-center gap-1.5">
+      <div className="historial-body flex-1 min-h-0 flex flex-col gap-2 p-2.5 sm:p-3">
+        {/* Compact 28px Collapsible Career Seals Accordion (non-truncating rows when expanded) */}
+        <details
+          data-testid="historial-seals-accordion"
+          className="group shrink-0 rounded-lg border border-[#1f2421]/22 bg-[#f6efe0] overflow-hidden"
+        >
+          <summary className="min-h-7 px-2.5 py-1 flex items-center justify-between gap-2 text-xs font-bold text-[#1f2421] cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden hover:bg-[#efe4ce]/70 transition-colors">
+            <span className="inline-flex items-center gap-1.5 min-w-0">
               <Award className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
-              {ui.historial.careerSealsHeading}
+              <span>{ui.historial.careerSealsHeading}</span>
+              <span className="font-bureau text-[11px] text-[#1f5c53] tabular-nums shrink-0">
+                · {unlockedCount}/{localizedAchievements.length}
+              </span>
             </span>
-            <span className="font-bureau text-[11px] text-[#1f5c53] tabular-nums">
-              {unlockedCount}/{localizedAchievements.length}
-            </span>
-          </div>
 
-          <div
-            aria-hidden="true"
-            className="h-1.5 w-full rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
-          >
-            <div
-              className="h-full bg-[#1f5c53] transition-all duration-200"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-
-          <div className="historial-seals-grid grid grid-cols-2 gap-1 xl:max-h-14 overflow-y-auto dossier-scroll pr-0.5">
-            {localizedAchievements.map((ach) => {
-              const isUnlocked = Boolean(unlockedAchievements[ach.id]);
-              return (
+            <span className="inline-flex items-center gap-1.5 shrink-0">
+              <span
+                aria-hidden="true"
+                className="hidden sm:inline-block w-12 h-1.5 rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
+              >
                 <span
-                  key={ach.id}
-                  title={`${ach.title}: ${ach.description}`}
-                  className={`font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded border truncate ${
-                    isUnlocked
-                      ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/45"
-                      : "bg-[#efe4ce] text-[#373f3a] border-[#1f2421]/25"
-                  }`}
-                >
-                  {isUnlocked ? "★ " : "○ "}
-                  {ach.title}
-                </span>
-              );
-            })}
-          </div>
-        </div>
+                  className="block h-full bg-[#1f5c53] transition-all duration-200"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </span>
+              <ChevronDown
+                className="w-3.5 h-3.5 text-[#4a524e] transition-transform duration-150 group-open:rotate-180"
+                aria-hidden="true"
+              />
+            </span>
+          </summary>
 
-        {/* Reverse-Chronological Timeline */}
+          <div className="px-2 pb-2 pt-1.5 border-t border-[#1f2421]/14 max-h-40 overflow-y-auto dossier-scroll">
+            <div className="historial-seals-grid grid grid-cols-2 gap-1">
+              {localizedAchievements.map((ach) => {
+                const isUnlocked = Boolean(unlockedAchievements[ach.id]);
+                return (
+                  <span
+                    key={ach.id}
+                    title={`${ach.title}: ${ach.description}`}
+                    className={`font-bureau text-[10px] leading-tight font-bold px-1.5 py-1 rounded border break-words ${
+                      isUnlocked
+                        ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/45"
+                        : "bg-[#efe4ce] text-[#373f3a] border-[#1f2421]/25"
+                    }`}
+                  >
+                    {isUnlocked ? "★ " : "○ "}
+                    {ach.title}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        </details>
+
+        {/* Reverse-Chronological Timeline — uncapped flex-1 on desktop, natural scroll on mobile */}
         <ul
           data-testid="historial-timeline"
           data-keyboard-scroll="true"
           // biome-ignore lint/a11y/noNoninteractiveTabindex: WCAG 2.1.1 scrollable log container requires keyboard focus for Arrow/Page scrolling
           tabIndex={0}
           aria-label={ui.historial.timelineAria}
-          className="historial-timeline divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] xl:max-h-28 2xl:max-h-40 overflow-y-auto dossier-scroll text-xs"
+          className="historial-timeline flex-1 min-h-0 divide-y divide-[#1f2421]/12 rounded-lg border border-[#1f2421]/18 bg-[#fffdf8] overflow-y-auto dossier-scroll text-xs"
         >
           {recentEntries.map((entry) => (
             <li key={entry.id} className="px-2.5 py-1.5 space-y-0.5">

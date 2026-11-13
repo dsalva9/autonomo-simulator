@@ -58,7 +58,7 @@ choices:
       moral: 11
       personal_life: 14
       add_modifier:
-        id: despacho_propio_en_casa
+        id: mod_galeria_estudio_infantil
         label: "Despacho propio y convivencia ordenada"
         remaining_months: 5
         monthly_billed_delta: 95

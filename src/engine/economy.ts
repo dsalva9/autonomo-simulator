@@ -80,8 +80,13 @@ export function computeMonthlyRecurringExpenses(state: GameState, catalog: Conte
     }
   }
 
-  const livingCostCreep =
-    Math.max(0, Math.floor((state.month - 1) / 12)) * (balance.annual_living_cost_growth ?? 0);
+  const elapsedYears = Math.max(0, Math.floor((state.month - 1) / 12));
+  const fullGrowthYears = Math.max(0, Math.floor((balance.victory_month - 1) / 12));
+  const effectiveYears =
+    elapsedYears <= fullGrowthYears
+      ? elapsedYears
+      : fullGrowthYears + (elapsedYears - fullGrowthYears) * 0.5;
+  const livingCostCreep = effectiveYears * (balance.annual_living_cost_growth ?? 0);
   const employeeCost = state.employee ? state.employee.monthly_cost : 0;
   const total =
     balance.base_living_cost +
@@ -118,6 +123,9 @@ export interface RecurringMonthResult {
   passiveStressDelta: number;
   modifierMoralDelta: number;
   modifierStressDelta: number;
+  maintenanceMoralDelta: number;
+  maintenanceReputationDelta: number;
+  maintenancePersonalLifeDelta: number;
 }
 
 export function applyRecurringMonthEconomy(
@@ -250,7 +258,7 @@ export function applyRecurringMonthEconomy(
   let passiveStressDelta = 0;
   if (personalLife >= balance.personal_life_recovery_threshold) {
     const personalLifeRelief =
-      personalLife >= 82
+      personalLife >= 76
         ? Math.max(2, balance.personal_life_monthly_stress_relief)
         : balance.personal_life_monthly_stress_relief;
     passiveStressDelta -= personalLifeRelief;
@@ -267,17 +275,69 @@ export function applyRecurringMonthEconomy(
     passiveStressDelta = stress - before;
   }
 
+  let maintenanceReputationDelta = 0;
+  let maintenancePersonalLifeDelta = 0;
+  let maintenanceMoralDelta = 0;
+
   if (balance.high_stat_decay_threshold != null) {
     const threshold = balance.high_stat_decay_threshold;
     if (reputation >= threshold) {
+      const beforeRep = reputation;
       reputation = clampStat(reputation - (reputation >= 90 ? 2 : 1));
+      maintenanceReputationDelta = reputation - beforeRep;
     }
     if (personalLife >= threshold) {
+      const beforePl = personalLife;
       const plDecay = personalLife >= 90 || (state.employee && personalLife >= 78) ? 2 : 1;
       personalLife = clampStat(personalLife - plDecay);
+      maintenancePersonalLifeDelta = personalLife - beforePl;
     }
-    if (moral >= 78 || stress >= 62) {
-      moral = clampStat(moral - (moral >= 90 ? 2 : 1));
+
+    let rawMoralDrift = 0;
+    if (moral >= 93) {
+      rawMoralDrift -= 6;
+    } else if (moral >= 85) {
+      rawMoralDrift -= 5;
+    } else if (moral >= 76) {
+      rawMoralDrift -= 3;
+    } else if (moral >= 68) {
+      rawMoralDrift -= 2;
+    }
+    if (stress >= 65) {
+      rawMoralDrift -= 1;
+    }
+    if (state.fiscal_risk >= 60) {
+      rawMoralDrift -= 5;
+    } else if (state.fiscal_risk >= 35) {
+      rawMoralDrift -= 3;
+    }
+    if (state.finances.consecutive_negative_months >= 1) {
+      rawMoralDrift -= 2;
+    }
+    if (reputation <= 22) {
+      rawMoralDrift -= 3;
+    } else if (state.month >= 8 && reputation <= 30) {
+      rawMoralDrift -= 1;
+    }
+    if (personalLife <= 25) {
+      rawMoralDrift -= 3;
+    } else if (personalLife <= 32) {
+      rawMoralDrift -= 1;
+    }
+    if (
+      moral <= 34 &&
+      (stress >= 58 ||
+        state.fiscal_risk >= 28 ||
+        reputation <= 28 ||
+        personalLife <= 32 ||
+        state.finances.consecutive_negative_months >= 1)
+    ) {
+      rawMoralDrift -= 4;
+    }
+    if (rawMoralDrift !== 0) {
+      const beforeMoral = moral;
+      moral = clampStat(moral + rawMoralDrift);
+      maintenanceMoralDelta = moral - beforeMoral;
     }
   }
 
@@ -286,9 +346,22 @@ export function applyRecurringMonthEconomy(
     months_active: state.gestor.months_active + 1,
   };
 
+  let empSatDelta = 0;
+  if (stress >= 72) {
+    empSatDelta -= 4;
+  } else if (stress >= 55) {
+    empSatDelta -= 2;
+  } else if (stress < 42) {
+    empSatDelta += 1;
+  }
+  if (flags.desgaste_plantilla) {
+    empSatDelta -= 2;
+  }
+
   const nextEmployee = state.employee
     ? {
         ...state.employee,
+        satisfaction: clampStat(state.employee.satisfaction + empSatDelta),
         months_employed: state.employee.months_employed + 1,
       }
     : null;
@@ -345,6 +418,9 @@ export function applyRecurringMonthEconomy(
     passiveStressDelta,
     modifierMoralDelta,
     modifierStressDelta,
+    maintenanceMoralDelta,
+    maintenanceReputationDelta,
+    maintenancePersonalLifeDelta,
   };
 }
 
@@ -404,7 +480,7 @@ export function prepareQuarterlyTax(
         ...state,
         month: state.month + 1,
         prng,
-        fiscal_risk: fiscalRisk,
+        fiscal_risk: riskBeforeDecay,
         scheduled_queue: scheduledQueue,
       };
       const inspectionLookup = findInspectableEventId(tempState, catalog);

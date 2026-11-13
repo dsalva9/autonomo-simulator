@@ -46,6 +46,17 @@ async function advanceUntilQuarterlyTaxModal(page: Page): Promise<void> {
   await expect(trimestreModal).toBeVisible();
 }
 
+async function clickHudAction(page: Page, testId: string): Promise<void> {
+  const directBtn = page.getByTestId(testId);
+  if (await directBtn.isVisible()) {
+    await directBtn.click();
+    return;
+  }
+  await page.getByTestId("mobile-utility-menu-btn").click();
+  await expect(page.getByTestId("mobile-utility-sheet")).toBeVisible();
+  await page.getByTestId(testId).click();
+}
+
 test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () => {
   let consoleErrors: string[] = [];
   let pageErrors: string[] = [];
@@ -120,8 +131,8 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
           const imgs = Array.from(document.querySelectorAll("img")).filter(
             (img) => img.offsetParent !== null,
           );
-          if (imgs.length < 2) {
-            return ["fewer-than-2-visible-images"];
+          if (imgs.length < 1) {
+            return ["fewer-than-1-visible-image"];
           }
           return imgs
             .filter((img) => !img.complete || img.naturalWidth === 0)
@@ -136,10 +147,9 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     });
 
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 1280) {
-      // Mobile / Tablet (< 1280px): slim mobile subject art visible, desktop footer hidden; bottom tabs switch panels
-      await expect(page.getByTestId("scene-subject-mobile-art")).toBeVisible();
-      await expect(page.getByTestId("scene-subject-art")).toBeHidden();
+    if (viewport && viewport.width < 1024) {
+      // Mobile / Portrait Tablet (< 1024px): Despacho is pure card stage; Entorno hosts live desk diorama
+      await expect(page.getByTestId("scene-bg")).toBeHidden();
 
       const tabCuentas = page.getByTestId("mobile-tab-cuentas");
       const tabBox = await tabCuentas.boundingBox();
@@ -150,6 +160,9 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
 
       await page.getByTestId("mobile-tab-entorno").click();
       await expect(page.getByTestId("panel-entorno")).toBeVisible();
+      await expect(page.getByTestId("scene-bg")).toBeVisible();
+      await expect(page.getByTestId("scene-subject-mobile-art")).toBeVisible();
+      await expect(page.getByTestId("scene-subject-art")).toBeHidden();
 
       await page.getByTestId("mobile-tab-historial").click();
       await expect(page.getByTestId("panel-historial")).toBeVisible();
@@ -192,7 +205,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
 
     // Start a second seeded run to verify 1-time Aplazamiento ("defer") via overwrite guard
-    await page.getByTestId("return-title-btn").click();
+    await clickHudAction(page, "return-title-btn");
     await page.getByTestId("seed-input").fill("FASE0-TRIMESTRE-DEFER");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("confirm-overwrite-run-modal")).toBeVisible();
@@ -207,7 +220,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 4");
 
     const viewport = page.viewportSize();
-    if (viewport && viewport.width < 1280) {
+    if (viewport && viewport.width < 1024) {
       await page.getByTestId("mobile-tab-cuentas").click();
     }
     await expect(page.getByTestId("ledger-deferred-tax")).toContainText("VENCE MES 6");
@@ -288,12 +301,12 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     await expect(page.getByTestId("event-card")).toBeVisible();
 
     // Open voluntary exit modal, test Escape close, then trigger voluntary abandonment ending
-    await page.getByTestId("abandon-run-btn").click();
+    await clickHudAction(page, "abandon-run-btn");
     await expect(page.getByTestId("abandon-modal")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByTestId("abandon-modal")).toBeHidden();
 
-    await page.getByTestId("abandon-run-btn").click();
+    await clickHudAction(page, "abandon-run-btn");
     await page.getByTestId("abandon-oposiciones-btn").click();
 
     // Verify EndRunScreen & rendered 1080x1350 certificate canvas

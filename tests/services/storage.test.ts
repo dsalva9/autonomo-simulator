@@ -172,12 +172,46 @@ describe("StoragePort & Save Migrations", () => {
       "criatura_en_casa",
     ]);
 
-    const month12State: GameState = { ...midCareerState, month: 12 };
+    // Reaching Month 12 during event_resolution (before settling Q4) must NOT prematurely unlock primer_ano
+    const month12PreSettlementState: GameState = {
+      ...midCareerState,
+      month: 12,
+      phase: "event_resolution",
+    };
+    const syncM12Pre = await storage.syncRunProgress(
+      month12PreSettlementState,
+      "2026-11-11T10:11:30.000Z",
+    );
+    expect(syncM12Pre.newlyUnlocked).toEqual([]);
+
+    // Surviving Month 12 (entering annual_summary or month > 12) unlocks primer_ano
+    const month12State: GameState = {
+      ...midCareerState,
+      month: 12,
+      phase: "annual_summary",
+    };
     const syncM12 = await storage.syncRunProgress(month12State, "2026-11-11T10:12:00.000Z");
     expect(syncM12.newlyUnlocked).toEqual(["primer_ano"]);
 
+    // Reaching Month 60 during event_resolution (before settling Q20) must NOT prematurely unlock cinco_anos
+    const month60PreSettlementState: GameState = {
+      ...month12State,
+      month: 60,
+      phase: "event_resolution",
+    };
+    const syncM60Pre = await storage.syncRunProgress(
+      month60PreSettlementState,
+      "2026-11-11T11:20:00.000Z",
+    );
+    expect(syncM60Pre.newlyUnlocked).toEqual([]);
+
     // Reaching start of Month 120 without earned_victories["hero_120m"] must NOT prematurely unlock heroe_120m
-    const month120StartState: GameState = { ...month12State, month: 120, earned_victories: [] };
+    const month120StartState: GameState = {
+      ...month12State,
+      month: 120,
+      phase: "event_resolution",
+      earned_victories: [],
+    };
     const syncM120Start = await storage.syncRunProgress(
       month120StartState,
       "2026-11-11T11:55:00.000Z",
@@ -189,6 +223,7 @@ describe("StoragePort & Save Migrations", () => {
     const endlessVeteranState: GameState = {
       ...month12State,
       month: 121,
+      phase: "event_resolution",
       endless_mode: true,
       indicators: { ...baseState.indicators, money: 155_000 },
       finances: { ...month12State.finances, lifetime_billed: 142_000 },
@@ -202,6 +237,124 @@ describe("StoragePort & Save Migrations", () => {
       "modo_infinito",
     ]);
     expect(Object.keys(syncVet.profile.achievements)).toHaveLength(15);
+  });
+
+  it("enforces post-tax wealth deductions during quarterly_tax and requires non-ended run for superviviente_hacienda", async () => {
+    const driver = createMemoryStorageDriver();
+    const storage = createStorageAdapter(driver);
+
+    const { state: baseState } = startNewRun(compiledCatalog, {
+      seed: "TEST-ACH-P36-GUARDS",
+      runId: "run_ach_p36_guards",
+    });
+
+    // 1. Fatal Hacienda event (game_over / ending !== null or stress >= 100 / moral <= 0) must NOT unlock superviviente_hacienda
+    const fatalHaciendaState: GameState = {
+      ...baseState,
+      month: 6,
+      phase: "game_over",
+      ending: {
+        id: "defeat_burnout_stress",
+        month: 6,
+        summary_quote: "Demasiados requerimientos.",
+      },
+      indicators: { ...baseState.indicators, stress: 100 },
+      history: [
+        ...baseState.history,
+        {
+          id: "hist_choice_6_hacienda",
+          month: 6,
+          kind: "event_choice",
+          event_id: "hacienda_carta_certificada",
+          choice_id: "ignorar_requerimiento",
+        },
+      ],
+      occurrences: { hacienda_carta_certificada: 1 },
+    };
+    const syncFatalHacienda = await storage.syncRunProgress(
+      fatalHaciendaState,
+      "2026-11-12T09:00:00.000Z",
+    );
+    expect(syncFatalHacienda.newlyUnlocked).not.toContain("superviviente_hacienda");
+
+    // Non-ended run with a resolved hacienda_* choice DOES unlock superviviente_hacienda
+    const survivedHaciendaState: GameState = {
+      ...baseState,
+      month: 6,
+      phase: "event_resolution",
+      ending: null,
+      indicators: { ...baseState.indicators, stress: 58, moral: 60 },
+      history: [
+        ...baseState.history,
+        {
+          id: "hist_choice_6_hacienda_ok",
+          month: 6,
+          kind: "event_choice",
+          event_id: "hacienda_carta_certificada",
+          choice_id: "aportar_documentacion",
+        },
+      ],
+    };
+    const syncSurvivedHacienda = await storage.syncRunProgress(
+      survivedHaciendaState,
+      "2026-11-12T09:05:00.000Z",
+    );
+    expect(syncSurvivedHacienda.newlyUnlocked).toContain("superviviente_hacienda");
+
+    // 2. During phase: "quarterly_tax", colchon_10k and ricachon_150k deduct accrued_tax_liability + mandatory due deferred_tax
+    const preTaxInflated10k: GameState = {
+      ...survivedHaciendaState,
+      month: 6,
+      phase: "quarterly_tax",
+      indicators: { ...survivedHaciendaState.indicators, money: 11_200 },
+      finances: {
+        ...survivedHaciendaState.finances,
+        accrued_tax_liability: 900,
+        deferred_tax: { principal: 500, surcharge: 50, due_month: 6 }, // effectiveMoney = 11_200 - 900 - 550 = 9_750 < 10_000
+      },
+    };
+    const syncPreTax10k = await storage.syncRunProgress(
+      preTaxInflated10k,
+      "2026-11-12T09:10:00.000Z",
+    );
+    expect(syncPreTax10k.newlyUnlocked).not.toContain("colchon_10k");
+
+    const postTaxTrue10k: GameState = {
+      ...preTaxInflated10k,
+      indicators: { ...preTaxInflated10k.indicators, money: 11_600 }, // 11_600 - 900 - 550 = 10_150 >= 10_000
+    };
+    const syncPostTax10k = await storage.syncRunProgress(
+      postTaxTrue10k,
+      "2026-11-12T09:11:00.000Z",
+    );
+    expect(syncPostTax10k.newlyUnlocked).toContain("colchon_10k");
+
+    const preTaxInflated150k: GameState = {
+      ...postTaxTrue10k,
+      month: 36,
+      phase: "quarterly_tax",
+      indicators: { ...postTaxTrue10k.indicators, money: 153_000 },
+      finances: {
+        ...postTaxTrue10k.finances,
+        accrued_tax_liability: 2_800,
+        deferred_tax: { principal: 600, surcharge: 60, due_month: 36 }, // effectiveMoney = 153_000 - 2_800 - 660 = 149_540 < 150_000
+      },
+    };
+    const syncPreTax150k = await storage.syncRunProgress(
+      preTaxInflated150k,
+      "2026-11-12T09:15:00.000Z",
+    );
+    expect(syncPreTax150k.newlyUnlocked).not.toContain("ricachon_150k");
+
+    const postTaxTrue150k: GameState = {
+      ...preTaxInflated150k,
+      indicators: { ...preTaxInflated150k.indicators, money: 154_000 }, // 154_000 - 2_800 - 660 = 150_540 >= 150_000
+    };
+    const syncPostTax150k = await storage.syncRunProgress(
+      postTaxTrue150k,
+      "2026-11-12T09:16:00.000Z",
+    );
+    expect(syncPostTax150k.newlyUnlocked).toContain("ricachon_150k");
   });
 
   it("also unlocks numeros_rojos_superados when consecutive_negative_months > 0 and cash rebounds mid-month, but never on game_over", async () => {

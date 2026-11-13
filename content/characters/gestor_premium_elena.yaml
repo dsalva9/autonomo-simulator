@@ -10,5 +10,5 @@ expressions:
   pleased: char_gestor_premium_elena_satisfecha
 gestor_params:
   tier: premium
-  monthly_fee: 180
-  inspection_shield: 0.70
+  monthly_fee: 170
+  inspection_shield: 0.72

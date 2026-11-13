@@ -38,7 +38,8 @@ choices:
     result_text: "Cumples con el saludo de rigor y salvas la mañana siguiente, aunque vuelves en taxi sintiéndote un poco marciano."
     effects:
       cash_delta: -25
-      billed_income: 350
-      stress: 3
+      billed_income: 680
+      stress: 2
       moral: -2
       personal_life: -3
+      reputation: 3

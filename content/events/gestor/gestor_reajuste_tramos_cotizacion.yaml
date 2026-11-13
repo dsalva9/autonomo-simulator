@@ -17,7 +17,10 @@ requirements:
 weight: 12
 cooldown_months: 9
 max_occurrences: 3
-exclusive_with: []
+exclusive_with:
+  - hacienda_regularizacion_reta
+  - hacienda_regularizacion_tramo_alto_reta
+  - hacienda_regularizacion_cuota_devolucion_oficio
 choices:
   - id: apurar_tramo_minimo_provisional
     label: "Dejar la base mínima provisional y ya regularizarán más adelante"

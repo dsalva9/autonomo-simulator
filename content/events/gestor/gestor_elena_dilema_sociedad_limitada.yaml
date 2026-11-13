@@ -14,6 +14,8 @@ requirements:
   min_month: 16
   gestor_tiers:
     - premium
+  forbidden_flags:
+    - sociedad_limitada_activa
 weight: 12
 cooldown_months: 14
 max_occurrences: 2

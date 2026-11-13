@@ -30,7 +30,7 @@ choices:
       reputation: 4
       employee_satisfaction: 8
       add_modifier:
-        id: mod_iguala_recomendacion
+        id: mod_iguala_referido_plantilla
         label: "Iguala por boca-oreja"
         remaining_months: 4
         monthly_billed_delta: 280

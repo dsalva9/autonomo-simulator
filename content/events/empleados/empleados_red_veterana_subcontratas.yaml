@@ -20,30 +20,31 @@ choices:
     label: "Adelantar reserva deducible (780 €) y cerrar grandes encargos"
     result_text: "Operas como un estudio ágil sin nóminas permanentes: absorbes picos potentes de facturación manteniendo tu libertad intacta."
     effects:
-      billed_income: 2350
+      billed_income: 1450
       deductible_expense: 780
       moral: 6
-      stress: -5
+      stress: 2
       reputation: 5
       add_modifier:
         id: mod_red_senior_preferente
         label: "Red externa preferente garantizada"
         remaining_months: 5
-        monthly_billed_delta: 310
+        monthly_billed_delta: 420
         monthly_stress_delta: -2
   - id: colaborar_solo_bajo_demanda
     label: "Mantener acuerdos puntuales encargo a encargo sin adelantar dinero"
     result_text: "Cierras un buen proyecto compartido pagando su parte al contado y sigues ligero de compromisos para el mes que viene."
     effects:
-      billed_income: 1650
+      billed_income: 1850
       deductible_expense: 720
       moral: 3
-      stress: -2
+      stress: -4
+      personal_life: 2
       reputation: 2
   - id: replegar_a_cartera_artesanal
     label: "Declinar el cupo y quedarte solo con tus clientes directos de siempre"
     result_text: "Dejas pasar contratos voluminosos, pero disfrutas la calma artesana de depender únicamente de tu propio teclado."
     effects:
       moral: 2
-      stress: -3
-      personal_life: 3
+      stress: -9
+      personal_life: 6
