@@ -5,6 +5,11 @@ import { GameScreen } from "./screens/GameScreen.tsx";
 import { TitleScreen } from "./screens/TitleScreen.tsx";
 import { normalizeLocale } from "./services/i18n/resolveEventText.ts";
 import { getUiStrings } from "./services/i18n/uiStrings.ts";
+import {
+  type SeoPageView,
+  parseUrlLocaleParam,
+  syncDocumentSeo,
+} from "./services/seo/documentSeo.ts";
 import { getVisibleGameState, useGameStore } from "./store/gameStore.ts";
 import { useUIStore } from "./store/uiStore.ts";
 
@@ -16,6 +21,7 @@ export function App() {
   const viewingCertificateRun = useGameStore((s) => s.viewingCertificateRun);
   const pendingOutcome = useGameStore((s) => s.pendingOutcome);
   const locale = useGameStore((s) => s.profile.settings.locale);
+  const setLocalePreference = useGameStore((s) => s.setLocalePreference);
 
   const screenView = useUIStore((s) => s.screenView);
   const confirmOverwriteOpen = useUIStore((s) => s.confirmOverwriteOpen);
@@ -31,17 +37,36 @@ export function App() {
   });
   const isViewingArchivedCertificate = viewingCertificateRun !== null;
   const inGameView = hydrated && screenView === "game" && visibleState !== null;
+  const isEndRunView =
+    inGameView &&
+    visibleState.ending !== null &&
+    (isViewingArchivedCertificate || pendingOutcome === null);
+  const seoView: SeoPageView = !inGameView ? "title" : isEndRunView ? "end_run" : "game";
   const handlingPopStateRef = useRef(false);
+  const appliedUrlLangRef = useRef(false);
 
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
 
   useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = normalizedLocale === "en" ? "en" : "es";
+    if (!hydrated || appliedUrlLangRef.current || typeof window === "undefined") {
+      return;
     }
-  }, [normalizedLocale]);
+    appliedUrlLangRef.current = true;
+    const requestedLocale = parseUrlLocaleParam(window.location.search);
+    if (requestedLocale && normalizeLocale(locale) !== normalizeLocale(requestedLocale)) {
+      void setLocalePreference(requestedLocale);
+    }
+  }, [hydrated, locale, setLocalePreference]);
+
+  useEffect(() => {
+    syncDocumentSeo({
+      view: seoView,
+      locale: normalizedLocale,
+      state: visibleState,
+    });
+  }, [seoView, normalizedLocale, visibleState]);
 
   useEffect(() => {
     if (!hydrated || typeof window === "undefined" || !window.history) {

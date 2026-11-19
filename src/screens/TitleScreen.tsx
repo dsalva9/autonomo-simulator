@@ -21,9 +21,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { KofiSupportBanner } from "../components/common/KofiSupportBanner.tsx";
 import { useModalKeyboard } from "../components/modals/useModalKeyboard.ts";
 import { getLocalizedAchievementCatalog } from "../services/achievements/definitions.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
+import { compiledCatalog, resolveManifestAsset } from "../services/content/catalog.ts";
 import {
   getEndingMetadata,
   getVictoryBadgeLabel,
@@ -378,13 +380,20 @@ export function TitleScreen() {
   const unlockedCount = localizedAchievements.filter((ach) =>
     Boolean(profile.achievements[ach.id]),
   ).length;
+  const landingIllustration = resolveManifestAsset(
+    compiledCatalog.manifest,
+    "illus_portada_landing",
+  );
 
   return (
     <main
       data-testid="title-screen"
-      className="title-screen-shell w-full max-w-[1360px] mx-auto px-3.5 sm:px-5 py-2 sm:py-3 min-h-dvh lg:h-dvh lg:max-h-dvh lg:overflow-hidden [@media(max-height:559px)]:!h-auto [@media(max-height:559px)]:!max-h-none [@media(max-height:559px)]:!overflow-visible flex flex-col"
+      className="title-screen-shell w-full max-w-[1360px] mx-auto px-3.5 sm:px-5 py-2 sm:py-3 min-h-dvh lg:h-dvh lg:max-h-dvh lg:overflow-hidden [@media(max-height:559px)]:!h-auto [@media(max-height:559px)]:!max-h-none [@media(max-height:559px)]:!overflow-visible flex flex-col justify-center"
     >
-      <div inert={confirmOverwriteOpen} className="flex-1 min-h-0 flex flex-col gap-2 sm:gap-2.5">
+      <div
+        inert={confirmOverwriteOpen}
+        className="w-full flex-1 lg:max-h-[820px] min-h-0 flex flex-col gap-2 sm:gap-2.5"
+      >
         {/* Compact Corrupt Save Recovery Banner */}
         {corruptedSaveNotice && (
           <div
@@ -539,17 +548,67 @@ export function TitleScreen() {
           </div>
         </section>
 
-        {/* Main 12-Column Workspace Grid: Play Actions (Left) + Provincial Archive (Right) */}
-        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 lg:items-stretch gap-3 sm:gap-3.5">
-          {/* Left Column: Compact Continue Card + Inline-Seed New Run Card */}
-          <div className="title-left-stack lg:col-span-5 flex flex-col gap-2.5 min-h-0">
+        {/* Main 12-Column Workspace Grid: Illustrated Landing + Play + Ko-fi (Left 7) & Balanced Provincial Archive (Right 5) */}
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 lg:items-stretch gap-2.5 sm:gap-3.5">
+          {/* Left Column: Illustrated Brief & How-to-Play + Play CTAs + Ko-fi Support */}
+          <div className="title-left-stack lg:col-span-7 flex flex-col gap-2 min-h-0">
+            <section
+              data-testid="landing-guide-card"
+              className="paper-dossier lg:flex-1 lg:min-h-0 rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col"
+            >
+              <div className="title-guide-header dossier-header !min-h-[30px] !py-1 !px-3 shrink-0">
+                <span className="stamp-badge text-[10px] text-[#7a4308]">
+                  {ui.title.landingGuideBadge}
+                </span>
+                <span className="hidden sm:inline font-bureau text-[10.5px] font-bold text-[#4a524e] truncate">
+                  {ui.title.landingIllustrationCaption}
+                </span>
+              </div>
+
+              <div className="title-guide-body flex-1 min-h-0 p-2 sm:p-2.5 flex flex-col gap-2">
+                {landingIllustration && (
+                  <div className="title-guide-illus-wrap relative h-32 sm:h-48 lg:h-auto lg:flex-1 lg:min-h-[52px] rounded-lg border-2 border-[#1f2421] overflow-hidden bg-[#f6efe0]">
+                    <img
+                      data-testid="landing-hero-illustration"
+                      data-asset-id={landingIllustration.id}
+                      src={landingIllustration.url}
+                      alt={ui.title.landingIllustrationAlt}
+                      width={landingIllustration.width}
+                      height={landingIllustration.height}
+                      decoding="async"
+                      className="w-full h-full lg:absolute lg:inset-0 object-cover object-center render-vector-hd"
+                    />
+                  </div>
+                )}
+
+                <div className="title-guide-steps shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2">
+                  {ui.title.landingSteps.map((item) => (
+                    <div
+                      key={item.step}
+                      className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5 space-y-0.5"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="stamp-badge text-[9.5px] px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fce592] shrink-0">
+                          {item.step}
+                        </span>
+                        <h2 className="font-editorial text-xs sm:text-[13px] font-bold text-[#1f2421] leading-tight">
+                          {item.title}
+                        </h2>
+                      </div>
+                      <p className="text-[11px] text-[#373f3a] leading-snug">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
             {hasResumableRun && activeRun && resumableCalendar && (
               <section
                 data-testid="continue-run-card"
                 className="paper-dossier shrink-0 rounded-xl overflow-hidden bg-[#e8f5f1]"
               >
-                <div className="dossier-header !min-h-[32px] !py-1.5 !px-3 !bg-[#d7ede6] !border-[#1f5c53]/25">
-                  <span className="stamp-badge text-[10px] sm:text-[11px] px-2 py-0.5 rounded bg-[#1f5c53] text-[#fffdf8] shrink-0">
+                <div className="dossier-header !min-h-[28px] !py-1 !px-3 !bg-[#d7ede6] !border-[#1f5c53]/25">
+                  <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#1f5c53] text-[#fffdf8] shrink-0">
                     {ui.title.activeDossierBadge}
                   </span>
                   <span className="font-bureau text-[11px] font-bold text-[#373f3a] break-all text-right leading-tight">
@@ -557,26 +616,26 @@ export function TitleScreen() {
                   </span>
                 </div>
 
-                <div className="title-card-body p-2.5 sm:p-3 space-y-2">
-                  <div className="grid grid-cols-2 divide-x divide-[#1f2421]/14 rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] text-xs">
-                    <div className="px-2.5 py-1.5">
-                      <span className="text-[#4a524e] block text-[10px] sm:text-[11px] leading-tight">
+                <div className="title-card-body p-2 sm:p-2.5 flex flex-col sm:flex-row sm:items-center gap-2">
+                  <div className="flex-1 grid grid-cols-2 divide-x divide-[#1f2421]/14 rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] text-xs">
+                    <div className="px-2.5 py-1">
+                      <span className="text-[#4a524e] block text-[10px] leading-tight">
                         {ui.title.calendarLabel}
                       </span>
                       <strong
                         data-testid="continue-run-calendar"
-                        className="font-editorial text-sm text-[#1f2421] leading-snug"
+                        className="font-editorial text-xs sm:text-sm text-[#1f2421] leading-snug"
                       >
                         {resumableCalendar.label}
                       </strong>
                     </div>
-                    <div className="px-2.5 py-1.5">
-                      <span className="text-[#4a524e] block text-[10px] sm:text-[11px] leading-tight">
+                    <div className="px-2.5 py-1">
+                      <span className="text-[#4a524e] block text-[10px] leading-tight">
                         {ui.title.cashInHandLabel}
                       </span>
                       <strong
                         data-testid="continue-run-money"
-                        className={`font-bureau text-sm tabular-nums whitespace-nowrap leading-snug ${
+                        className={`font-bureau text-xs sm:text-sm tabular-nums whitespace-nowrap leading-snug ${
                           activeRun.indicators.money < 0 ? "text-[#9e221b]" : "text-[#1f5c53]"
                         }`}
                       >
@@ -590,7 +649,7 @@ export function TitleScreen() {
                     data-testid="continue-run-btn"
                     title={ui.title.continueTitle}
                     onClick={handleContinueRun}
-                    className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-sm sm:text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                    className="sm:w-auto min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-sm sm:text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors shrink-0"
                   >
                     <Play
                       className="w-4 h-4 sm:w-5 sm:h-5 fill-current shrink-0"
@@ -605,13 +664,13 @@ export function TitleScreen() {
               </section>
             )}
 
-            {/* New Run Card with Single-Row Inline Seed Field */}
+            {/* New Run Card with Big Play CTA + Single-Row Inline Seed Field */}
             <form
               onSubmit={handleStartFormSubmit}
               className="paper-dossier shrink-0 rounded-xl overflow-hidden bg-[#fffdf8]"
             >
-              <div className="dossier-header !min-h-[32px] !py-1.5 !px-3">
-                <h2 className="font-editorial text-sm sm:text-base font-bold text-[#1f2421] flex items-center gap-1.5">
+              <div className="dossier-header !min-h-[28px] !py-1 !px-3">
+                <h2 className="font-editorial text-sm font-bold text-[#1f2421] flex items-center gap-1.5">
                   <FilePlus2 className="w-4 h-4 text-[#9e221b] shrink-0" aria-hidden="true" />
                   {ui.title.newRunHeading}
                 </h2>
@@ -620,7 +679,7 @@ export function TitleScreen() {
                 </span>
               </div>
 
-              <div className="title-card-body p-2.5 sm:p-3 space-y-2">
+              <div className="title-card-body p-2 sm:p-2.5 space-y-2">
                 <div className="flex items-center gap-2">
                   <label
                     htmlFor="seed-input"
@@ -642,7 +701,7 @@ export function TitleScreen() {
                     placeholder={ui.title.seedPlaceholder}
                     aria-label={ui.title.seedInputLabel}
                     maxLength={40}
-                    className="flex-1 min-w-0 h-9 rounded-md border-2 border-[#1f2421]/60 bg-[#f6efe0] px-2.5 py-1 font-bureau text-xs sm:text-sm text-[#1f2421] placeholder:text-[#4a524e]"
+                    className="flex-1 min-w-0 h-8 sm:h-9 rounded-md border-2 border-[#1f2421]/60 bg-[#f6efe0] px-2.5 py-1 font-bureau text-xs sm:text-sm text-[#1f2421] placeholder:text-[#4a524e]"
                   />
                 </div>
 
@@ -650,7 +709,7 @@ export function TitleScreen() {
                   type="submit"
                   data-testid="start-run-btn"
                   title={ui.title.startRunTitle}
-                  className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm sm:text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-xs"
+                  className="w-full min-h-12 sm:min-h-13 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm sm:text-base lg:text-lg px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-[2px_2px_0px_0px_rgba(31,36,33,0.9)]"
                 >
                   <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" aria-hidden="true" />
                   <span>{ui.title.startRunBtn}</span>
@@ -666,10 +725,18 @@ export function TitleScreen() {
                 )}
               </div>
             </form>
+
+            {/* Ko-fi Support Banner (visible on both Mobile & Desktop) */}
+            <KofiSupportBanner
+              locale={locale}
+              context="landing"
+              testId="kofi-landing-banner"
+              className="shrink-0"
+            />
           </div>
 
-          {/* Right Column: Salón de Caídos & 15 Logros (Flex-Filled on >=1024px) */}
-          <section className="lg:col-span-7 paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col min-h-0">
+          {/* Right Column: Salón de Caídos & 15 Logros (Balanced 5-col Dossier Matching Left Height) */}
+          <section className="lg:col-span-5 paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col min-h-0">
             <div
               role="tablist"
               aria-label={ui.title.archiveTablistAria}
@@ -764,7 +831,7 @@ export function TitleScreen() {
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-2">
                         {ui.title.emptyHallGoals.map((goal) => (
                           <div
                             key={goal.code}
@@ -783,13 +850,15 @@ export function TitleScreen() {
                     <ul className="space-y-2.5">
                       {profile.hall_of_fame.map((run) => {
                         const meta = getEndingMetadata(run.ending_id, locale);
+                        const runSeed = (run as { seed?: string }).seed;
                         const rawQuote = resolveLocalizedEndingQuote(
                           run.ending_id,
                           run.summary_quote,
                           locale,
+                          undefined,
+                          runSeed,
                         );
                         const cleanQuote = stripOuterQuotes(rawQuote);
-                        const runSeed = (run as { seed?: string }).seed;
                         return (
                           <li
                             key={run.run_id}

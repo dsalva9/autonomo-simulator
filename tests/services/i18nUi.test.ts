@@ -634,4 +634,55 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
     expect(esLockReasons).toContain("Requiere Satisfacción laboral mín. 65");
     expect(esLockReasons).toContain("Requiere «cláusula de pausa firmada»");
   });
+
+  it("substitutes randomized partner names across ES and EN titles, bodies, modifiers, characters, and flags", () => {
+    const parejaChar = compiledCatalog.characters.pareja_alex!;
+    expect(translateCharacterName(parejaChar, "es-ES", "Gabi")).toBe("Gabi");
+    expect(translateCharacterName(parejaChar, "en", "Noa")).toBe("Noa");
+    expect(translateCharacterName(parejaChar, "en")).toBe("Álex");
+
+    const impulsoEvent = compiledCatalog.events.find(
+      (e) => e.id === "familia_impulso_profesional_pareja",
+    )!;
+    expect(resolveEventTitle(impulsoEvent, "es-ES", "Clara")).toBe("El salto profesional de Clara");
+    expect(resolveEventTitle(impulsoEvent, "en", "Cris")).toBe("Cris's Big Career Leap");
+    expect(resolveEventBody(impulsoEvent, "en", "Noa")).toContain("Noa comes home");
+    expect(
+      resolveChoiceLabel(impulsoEvent.id, impulsoEvent.choices[0]!, "es-ES", "Gabi"),
+    ).toContain("Gabi");
+    expect(
+      resolveChoiceResultText(
+        impulsoEvent.id,
+        impulsoEvent.choices[0]!.id,
+        null,
+        impulsoEvent.choices[0]!.result_text ?? null,
+        "en",
+        "Clara",
+      ),
+    ).toContain("Clara's new role");
+
+    expect(
+      translateModifierLabel(
+        {
+          id: "mod_impulso_carrera_alex",
+          label: "Nueva etapa profesional de Álex",
+        },
+        "es-ES",
+        "Noa",
+      ),
+    ).toBe("Nueva etapa profesional de Noa");
+    expect(
+      translateModifierLabel(
+        {
+          id: "mod_impulso_carrera_alex",
+          label: "Nueva etapa profesional de Álex",
+        },
+        "en",
+        "Noa",
+      ),
+    ).toBe("Noa's new career chapter");
+
+    expect(humanizeFlag("ex_pareja_alex", "es-ES", "Cris")).toBe("ex pareja (Cris)");
+    expect(humanizeFlag("ex_pareja_alex", "en", "Cris")).toBe("history as Cris's ex-partner");
+  });
 });

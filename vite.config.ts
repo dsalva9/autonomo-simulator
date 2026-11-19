@@ -5,7 +5,15 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { type Plugin, defineConfig } from "vite";
 
-const EXCLUDED_PRECACHE_FILES = new Set(["sw.js", "og-preview.png", ".DS_Store", "Thumbs.db"]);
+const EXCLUDED_PRECACHE_FILES = new Set([
+  "sw.js",
+  "og-preview.png",
+  "promo-portada.jpg",
+  "robots.txt",
+  "sitemap.xml",
+  ".DS_Store",
+  "Thumbs.db",
+]);
 
 function collectDistFiles(dirPath: string, distRoot: string, acc: string[] = []): string[] {
   if (!existsSync(dirPath)) {

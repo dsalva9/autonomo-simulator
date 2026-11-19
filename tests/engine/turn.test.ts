@@ -3,17 +3,21 @@ import {
   type ContentCatalog,
   type EventDef,
   type GameState,
+  PARTNER_NAME_POOL,
   applyPlayerChoice,
   computeEffectiveEventWeight,
   createInitialGameState,
+  createPrng,
   dismissAnnualSummary,
   drawTurnEvents,
   evaluateRequirements,
   findInspectableHaciendaEventId,
   getActiveEvent,
   isInspectableHaciendaEvent,
+  pickPartnerNameForSeed,
   prepareQuarterlyTax,
   resolveChoiceEffects,
+  resolvePartnerName,
   resolveVictoryPrompt,
   retireFromRun,
   selectInspectableHaciendaEvent,
@@ -343,9 +347,63 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
     ).state;
     expect(separated.family.status).toBe("separated");
     expect(separated.family.partner_character_id).toBeNull();
+    expect(separated.family.partner_name).toBe(base.family.partner_name);
     expect(separated.family.support_modifier).toBe(0);
     expect(separated.flags.historia_con_alex).toBe(true);
     expect(separated.flags.ex_pareja_alex).toBe(true);
+  });
+
+  it("randomizes partner_name deterministically across 5 names without perturbing state.prng", () => {
+    const catalog: ContentCatalog = {
+      balance: createFixtureBalance(),
+      characters: createFixtureCharacters(),
+      events: createFixtureEvents(),
+    };
+
+    expect(PARTNER_NAME_POOL).toHaveLength(5);
+    const seen = new Set<string>();
+    for (let i = 0; i < 60; i += 1) {
+      const seed = `PARTNER-POOL-SEED-${i}`;
+      const picked = pickPartnerNameForSeed(seed);
+      expect(PARTNER_NAME_POOL).toContain(picked);
+      expect(pickPartnerNameForSeed(seed)).toBe(picked);
+      const state = createInitialGameState(catalog, { seed });
+      expect(state.family.partner_name).toBe(picked);
+      expect(state.prng).toEqual(createPrng(seed));
+      seen.add(picked);
+    }
+    expect(seen.size).toBe(PARTNER_NAME_POOL.length);
+
+    // Verify personalized substitution into history and outcome summary when non-canonical name is active
+    const nonAlexSeed = Array.from({ length: 40 }, (_, i) => `NON-ALEX-${i}`).find(
+      (s) => pickPartnerNameForSeed(s) !== "Álex",
+    )!;
+    const expectedName = pickPartnerNameForSeed(nonAlexSeed);
+    const runState = createInitialGameState(catalog, { seed: nonAlexSeed });
+    const familyEvent: EventDef = {
+      ...catalog.events.find((e) => e.id === "familia_plan_fin_de_semana")!,
+      title: "Operación desconexión con Álex",
+      choices: [
+        {
+          id: "escapada",
+          label: "Ir de escapada con Álex",
+          result_text: "Álex apaga los móviles y desconectáis todo el puente.",
+          effects: {
+            set_family_status: { status: "dating", partner_character_id: "pareja_alex" },
+          },
+        },
+        { id: "quedarse", label: "Quedarse trabajando", effects: { stress: 4 } },
+      ],
+    };
+    const applied = resolveChoiceEffects(runState, catalog, familyEvent, familyEvent.choices[0]);
+
+    expect(resolvePartnerName(applied.state)).toBe(expectedName);
+    expect(applied.summary.result_text).toContain(expectedName);
+    expect(applied.summary.result_text).not.toContain("Álex");
+    const lastHist = applied.state.history.at(-1)!;
+    expect(lastHist.title).toContain(expectedName);
+    expect(lastHist.summary).toContain(expectedName);
+    expect(lastHist.summary).not.toContain("Álex");
   });
 
   it("filters Hacienda inspections to real weighted audit events and applies fallback fine when none are eligible", () => {

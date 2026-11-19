@@ -1,13 +1,15 @@
 import { ArrowRight, CheckCircle2, Dices, Lock, Receipt } from "lucide-react";
 import { type SyntheticEvent, useEffect, useRef, useState } from "react";
-import type {
-  ActiveEventView,
-  ChoiceOutcomeSummary,
-  ChoiceSpec,
-  EffectsSpec,
-  GameState,
-  MonthStartSummary,
-  RenderMode,
+import {
+  type ActiveEventView,
+  type ChoiceOutcomeSummary,
+  type ChoiceSpec,
+  type EffectsSpec,
+  type GameState,
+  type MonthStartSummary,
+  type RenderMode,
+  resolvePartnerName,
+  substitutePartnerName,
 } from "../../engine/index.ts";
 import {
   compiledCatalog,
@@ -482,11 +484,12 @@ export function EventStage({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [keyboardEnabled, pendingOutcome, activeEventView, onSelectChoice, onContinueOutcome]);
 
+  const partnerName = resolvePartnerName(state);
   const activeCharacter = activeEventView?.event.character_id
     ? compiledCatalog.characters[activeEventView.event.character_id]
     : undefined;
   const activeCharacterName = activeCharacter
-    ? translateCharacterName(activeCharacter, locale)
+    ? translateCharacterName(activeCharacter, locale, partnerName)
     : "";
   const shortCharacterName = activeCharacter ? formatShortPolaroidName(activeCharacterName) : "";
   const activeCharacterExpression = activeEventView?.event.character_expression ?? "neutral";
@@ -520,8 +523,8 @@ export function EventStage({
     : undefined;
   const displayedChoiceLabel = pendingOutcome
     ? pendingChoiceObj
-      ? resolveChoiceLabel(pendingOutcome.event.id, pendingChoiceObj, locale)
-      : pendingOutcome.choiceLabel
+      ? resolveChoiceLabel(pendingOutcome.event.id, pendingChoiceObj, locale, partnerName)
+      : substitutePartnerName(pendingOutcome.choiceLabel, partnerName)
     : "";
 
   const appliedEffects: EffectsSpec | undefined = pendingOutcome
@@ -775,7 +778,7 @@ export function EventStage({
               {state.ending ? ui.eventStage.dossierClosedBadge : ui.eventStage.rulingRecordedBadge}
             </span>
             <span className="font-bureau text-xs font-bold text-[#4a524e] text-right leading-tight min-w-0 break-words">
-              {resolveEventTitle(pendingOutcome.event, locale)}
+              {resolveEventTitle(pendingOutcome.event, locale, partnerName)}
             </span>
           </div>
 
@@ -797,6 +800,7 @@ export function EventStage({
                 pendingOutcome.outcome.outcome_id,
                 pendingOutcome.outcome.result_text,
                 locale,
+                partnerName,
               ) ?? ui.eventStage.defaultResultFallback}
             </p>
 
@@ -916,7 +920,7 @@ export function EventStage({
                       (mod.monthly_stress_delta ?? 0) <= 0);
                   return (
                     <DeltaPill
-                      label={translateModifierLabel(mod, locale)}
+                      label={translateModifierLabel(mod, locale, partnerName)}
                       formatted={summary}
                       favorable={favorable}
                     />
@@ -927,7 +931,7 @@ export function EventStage({
                   const empChar =
                     compiledCatalog.characters[appliedEffects.hire_employee.character_id];
                   const empName = empChar
-                    ? translateCharacterName(empChar, locale)
+                    ? translateCharacterName(empChar, locale, partnerName)
                     : appliedEffects.hire_employee.character_id;
                   const empCost = empChar?.employee_params?.monthly_cost ?? 0;
                   const empMult = empChar?.employee_params?.billing_multiplier ?? 1;
@@ -1004,7 +1008,9 @@ export function EventStage({
                 <span className="inline-flex flex-wrap items-center gap-1 rounded-md border border-[#264e7a]/50 bg-[#ebf2fa] px-2.5 py-1 font-bureau text-xs font-bold text-[#264e7a]">
                   <span>{isEn ? "Dossier:" : "Expediente:"}</span>
                   <span>
-                    {appliedSetFlags.map((flag) => humanizeFlag(flag, locale)).join(" · ")}
+                    {appliedSetFlags
+                      .map((flag) => humanizeFlag(flag, locale, partnerName))
+                      .join(" · ")}
                   </span>
                 </span>
               )}
@@ -1012,7 +1018,9 @@ export function EventStage({
                 <span className="inline-flex flex-wrap items-center gap-1 rounded-md border border-[#1f2421]/30 bg-[#efe4ce] px-2.5 py-1 font-bureau text-xs font-bold text-[#373f3a]">
                   <span>{isEn ? "Cleared:" : "Archivado:"}</span>
                   <span>
-                    {appliedClearFlags.map((flag) => humanizeFlag(flag, locale)).join(" · ")}
+                    {appliedClearFlags
+                      .map((flag) => humanizeFlag(flag, locale, partnerName))
+                      .join(" · ")}
                   </span>
                 </span>
               )}
@@ -1149,13 +1157,13 @@ export function EventStage({
                 data-testid="event-title"
                 className="font-editorial text-lg sm:text-xl font-bold text-[#1f2421] leading-snug outline-none"
               >
-                {resolveEventTitle(activeEventView.event, locale)}
+                {resolveEventTitle(activeEventView.event, locale, partnerName)}
               </h2>
               <p
                 data-testid="event-body"
                 className="text-sm sm:text-[14.5px] text-[#373f3a] leading-snug sm:leading-relaxed xl:leading-snug"
               >
-                {resolveEventBody(activeEventView.event, locale)}
+                {resolveEventBody(activeEventView.event, locale, partnerName)}
               </p>
             </div>
 
@@ -1175,7 +1183,12 @@ export function EventStage({
                   ? []
                   : explainChoiceLockReasons(state, choice.requirements, locale);
                 const hasWeightedOutcomes = Boolean(choice.outcomes && choice.outcomes.length > 0);
-                const resolvedLabel = resolveChoiceLabel(activeEventView.event.id, choice, locale);
+                const resolvedLabel = resolveChoiceLabel(
+                  activeEventView.event.id,
+                  choice,
+                  locale,
+                  partnerName,
+                );
                 const stakeChips = eligible
                   ? buildDeterministicStakeChips(choice, resolvedLabel, locale, state)
                   : [];

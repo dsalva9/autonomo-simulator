@@ -1,5 +1,5 @@
 import { Briefcase, Heart, ShieldCheck, Users } from "lucide-react";
-import type { GameState, RenderMode } from "../../engine/index.ts";
+import { type GameState, type RenderMode, resolvePartnerName } from "../../engine/index.ts";
 import { compiledCatalog, resolveCharacterPortraitAsset } from "../../services/content/catalog.ts";
 import {
   formatEuros,
@@ -42,7 +42,9 @@ export function EntornoPanel({
   const partnerChar = state.family.partner_character_id
     ? characters[state.family.partner_character_id]
     : undefined;
-  const partnerName = partnerChar ? translateCharacterName(partnerChar, locale) : undefined;
+  const partnerName = partnerChar
+    ? translateCharacterName(partnerChar, locale, resolvePartnerName(state))
+    : undefined;
   const partnerPortrait = resolveCharacterPortraitAsset(manifest, partnerChar);
 
   const employeeChar = state.employee ? characters[state.employee.character_id] : undefined;

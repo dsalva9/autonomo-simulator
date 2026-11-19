@@ -4,6 +4,7 @@ import {
   computeBaselineMonthlyBilling,
   computeMonthlyDeductibleExpenses,
   computeMonthlyRecurringExpenses,
+  resolvePartnerName,
 } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
 import {
@@ -331,7 +332,9 @@ export function CuentasPanel({
                       className="rounded border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1"
                     >
                       <div className="flex items-start justify-between gap-2 font-bold text-[#1f2421] leading-snug">
-                        <span className="break-words">{translateModifierLabel(mod, locale)}</span>
+                        <span className="break-words">
+                          {translateModifierLabel(mod, locale, resolvePartnerName(state))}
+                        </span>
                         <span className="font-bureau text-[10px] text-[#7a4308] tabular-nums whitespace-nowrap shrink-0">
                           {ui.cuentas.remainingMonths(mod.remaining_months)}
                         </span>

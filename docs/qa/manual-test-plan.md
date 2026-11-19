@@ -427,3 +427,27 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
   - Held keys (`event.repeat === true`) never auto-fire choices or advance outcomes prematurely.
   - HUD delta pills have `0px` bounding-box intersection with sibling numeric indicator values on narrow mobile viewports.
   - Both `end-new-run-btn` and `end-return-title-btn` sit 100% inside `[0, innerHeight]` at `scrollY === 0` and pass center-point hit-testing with zero `AchievementToast` occlusion across mobile and desktop.
+
+---
+
+### QA-34: Seeded Partner-Name Randomization (`PARTNER_NAME_POOL`) Across `ES` & `EN`
+- **Preconditions**: Fresh run initialized with deterministic seed (`P36-ALEX-24` or any seed mapping to `"Álex"`, `"Cris"`, `"Gabi"`, `"Noa"`, or `"Clara"`).
+- **Steps**:
+  1. Start a run on `TitleScreen` and advance to a `familia_*` partner event (`familia_cita_con_alex`).
+  2. Inspect `event-title`, `event-body`, `event-character-polaroid`, choice labels, outcome result text, `EntornoPanel` (`Red de Apoyo`), and `HistorialPanel` in both `ES` and `EN`.
+- **Expected Result**:
+  - Each seed deterministically assigns one of the 5 partner names (`"Álex"`, `"Cris"`, `"Gabi"`, `"Noa"`, `"Clara"`) without perturbing `state.prng`, and substitutes that partner name consistently across Polaroids, event copy, modifiers, flags, `Red de Apoyo`, and `Diario de Expediente` in both `ES` and `EN`.
+
+---
+
+### QA-35: Illustrated Landing Balance, Mobile & Desktop Ko-fi Support Links & Technical/On-Page SEO (`QA-34` in `tests/ui/ux-usability.spec.ts`)
+- **Preconditions**: Executed in both `desktop-chromium` (`1440×900`, `1920×1080`) and `mobile-chromium` (`390×844`).
+- **Steps**:
+  1. Fetch `./robots.txt`, `./sitemap.xml`, and `./promo-portada.jpg`, and inspect `<head>` for valid Schema.org `@graph` JSON-LD (`VideoGame` + `WebSite`), `canonical`, `hreflang` (`es`, `en`, `x-default`), and meta description.
+  2. Inspect `[data-testid="landing-guide-card"]`, `[data-testid="landing-hero-illustration"]` (`960×540` `illus_portada_landing`), and `[data-testid="kofi-landing-banner-link"]` (`https://ko-fi.com/dsal80`) across mobile and desktop; on `1440×900` and `1920×1080`, measure top/bottom alignment (`<= 2px` delta) and bounded max height (`<= 720px` column height) between `.title-left-stack` and the Right archive column.
+  3. Navigate to `./?lang=en` and verify `<html lang="en">` + English `<title>` (`Spanish Freelancer Survival Game`) + English Ko-fi CTA (`Buy me a coffee on Ko-fi`).
+  4. Start a run (verifying dynamic `GameScreen` `<title>`), stage Year 15 (`month: 180`, `endless_mode: true`) `AnnualSummaryModal` → `150,000 €` `VictoryModal` → `EndRunScreen`, and verify `[data-testid="kofi-annual-banner-link"]`, `[data-testid="kofi-victory-banner-link"]`, and `[data-testid="kofi-endrun-banner-link"]` are visible and unoccluded on both mobile and desktop.
+- **Expected Result**:
+  - `robots.txt`, `sitemap.xml`, JSON-LD, `hreflang`, `?lang=en` deep link, and dynamic per-screen `<title>` / `<meta description>` all validate cleanly.
+  - `TitleScreen` renders the bespoke `960×540` landing illustration, 3-step quick guide, big Play CTA, and symmetric desktop columns (`<= 2px` top/bottom delta, never over-stretching on `1080p`).
+  - Ko-fi support (`https://ko-fi.com/dsal80`) is accessible, high-contrast (`>= 4.5:1`), and unoccluded across Landing, `EndRunScreen`, `VictoryModal` (`120m` & `150k €`), and post-victory Endless `AnnualSummaryModal` (including Year 15+) on both mobile and desktop.

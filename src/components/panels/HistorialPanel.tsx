@@ -5,6 +5,8 @@ import {
   type HistoryEntry,
   type VictoryBadge,
   getEventById,
+  resolvePartnerName,
+  substitutePartnerName,
 } from "../../engine/index.ts";
 import { getLocalizedAchievementCatalog } from "../../services/achievements/definitions.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
@@ -39,18 +41,21 @@ function describeHistoryEntry(entry: HistoryEntry, state: GameState, locale: str
     case "month_start":
       return ui.historial.entryMonthStart;
     case "event_choice": {
+      const partnerName = resolvePartnerName(state);
       if (!isEn || !entry.event_id) {
-        return entry.title
+        const rawLine = entry.title
           ? `${entry.title}: ${entry.summary ?? ui.historial.entryDecisionFallback}`
           : (entry.summary ?? ui.historial.entryDecisionRecordedFallback);
+        return substitutePartnerName(rawLine, partnerName);
       }
       const ev = getEventById(compiledCatalog, entry.event_id);
       if (!ev) {
-        return entry.title
+        const rawLine = entry.title
           ? `${entry.title}: ${entry.summary ?? ui.historial.entryDecisionFallback}`
           : (entry.summary ?? ui.historial.entryDecisionRecordedFallback);
+        return substitutePartnerName(rawLine, partnerName);
       }
-      const localizedTitle = resolveEventTitle(ev, locale);
+      const localizedTitle = resolveEventTitle(ev, locale, partnerName);
       const choiceObj = entry.choice_id
         ? ev.choices.find((c) => c.id === entry.choice_id)
         : undefined;
@@ -61,10 +66,15 @@ function describeHistoryEntry(entry: HistoryEntry, state: GameState, locale: str
             entry.outcome_id ?? null,
             entry.summary ?? null,
             locale,
-          ) ?? (choiceObj ? resolveChoiceLabel(ev.id, choiceObj, locale) : entry.summary))
+            partnerName,
+          ) ??
+          (choiceObj ? resolveChoiceLabel(ev.id, choiceObj, locale, partnerName) : entry.summary))
         : entry.summary;
 
-      return `${localizedTitle}: ${localizedSummary ?? ui.historial.entryDecisionFallback}`;
+      return substitutePartnerName(
+        `${localizedTitle}: ${localizedSummary ?? ui.historial.entryDecisionFallback}`,
+        partnerName,
+      );
     }
     case "invoice_paid":
       return ui.historial.entryInvoicePaid;
@@ -90,7 +100,7 @@ function describeHistoryEntry(entry: HistoryEntry, state: GameState, locale: str
         return ui.historial.entryGameOverFallback;
       }
       if (!isEn) {
-        return entry.summary;
+        return substitutePartnerName(entry.summary, resolvePartnerName(state));
       }
       if (state.ending) {
         return resolveLocalizedEndingQuote(state.ending.id, entry.summary, locale, state);

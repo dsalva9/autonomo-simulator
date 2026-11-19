@@ -26,7 +26,7 @@ import {
 } from "../../src/services/i18n/resolveEventText.ts";
 
 describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML content catalog contracts", () => {
-  it("validates assets/manifest.json with 60 entries (51 WebP + 9 SVG, all 60 ready)", () => {
+  it("validates assets/manifest.json with 61 entries (52 WebP + 9 SVG, all 61 ready)", () => {
     const result = validateAssets(process.cwd());
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
@@ -34,16 +34,16 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
 
     const manifest = result.manifest!;
     const entries = Object.entries(manifest.assets);
-    expect(entries).toHaveLength(60);
+    expect(entries).toHaveLength(61);
 
     const webpEntries = entries.filter(([, a]) => a.path.endsWith(".webp"));
     const svgEntries = entries.filter(([, a]) => a.path.endsWith(".svg"));
-    expect(webpEntries).toHaveLength(51);
+    expect(webpEntries).toHaveLength(52);
     expect(svgEntries).toHaveLength(9);
 
     const nonFallbackEntries = entries.filter(([id]) => !id.startsWith("ui_fallback_"));
     const fallbackEntries = entries.filter(([id]) => id.startsWith("ui_fallback_"));
-    expect(nonFallbackEntries).toHaveLength(55);
+    expect(nonFallbackEntries).toHaveLength(56);
     expect(fallbackEntries).toHaveLength(5);
 
     for (const [id, asset] of entries) {
@@ -58,7 +58,7 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
       ui: entries.filter(([, a]) => a.category === "ui"),
     };
     expect(byCategory.background).toHaveLength(4);
-    expect(byCategory.illustration).toHaveLength(25);
+    expect(byCategory.illustration).toHaveLength(26);
     expect(byCategory.character).toHaveLength(22);
     expect(byCategory.ui).toHaveLength(9);
   });
@@ -333,7 +333,7 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
     // Compiled bundle parity check
     expect(Object.keys(compiledCatalog.characters)).toHaveLength(8);
     expect(compiledCatalog.events).toHaveLength(300);
-    expect(Object.keys(compiledCatalog.manifest.assets)).toHaveLength(60);
+    expect(Object.keys(compiledCatalog.manifest.assets)).toHaveLength(61);
     expect(compiledCatalog.balance).toEqual(result.balance);
   });
 

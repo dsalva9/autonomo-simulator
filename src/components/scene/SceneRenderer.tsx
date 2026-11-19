@@ -1,11 +1,12 @@
 import { LampDesk } from "lucide-react";
 import type { SyntheticEvent } from "react";
-import type {
-  CharacterDef,
-  EventCategory,
-  EventDef,
-  GameState,
-  RenderMode,
+import {
+  type CharacterDef,
+  type EventCategory,
+  type EventDef,
+  type GameState,
+  type RenderMode,
+  resolvePartnerName,
 } from "../../engine/index.ts";
 import {
   compiledCatalog,
@@ -97,7 +98,7 @@ export function SceneRenderer({
 
   const subjectArt = portraitAsset ?? bespokeIllustration ?? fallbackAsset;
   const subjectLabel = character
-    ? translateCharacterName(character, locale)
+    ? translateCharacterName(character, locale, resolvePartnerName(state))
     : translateCategoryLabel(fallbackCategory, locale);
   const subjectSubLabel = character
     ? resolveSceneCharacterRoleLabel(character.role, locale)

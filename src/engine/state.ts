@@ -1,4 +1,4 @@
-import { createPrng } from "./prng.ts";
+import { createPrng, nextFloat } from "./prng.ts";
 import type {
   AnnualAccumulator,
   AnnualSummary,
@@ -6,6 +6,51 @@ import type {
   GameState,
   HistoryEntry,
 } from "./types.ts";
+
+export const CANONICAL_PARTNER_NAME = "Álex";
+
+export const PARTNER_NAME_POOL = ["Álex", "Cris", "Gabi", "Noa", "Clara"] as const;
+export type PartnerName = (typeof PARTNER_NAME_POOL)[number];
+
+/**
+ * Deterministically selects a partner name from `PARTNER_NAME_POOL` for a given run seed
+ * using an isolated PRNG namespace so the main gameplay `state.prng` stream is untouched.
+ */
+export function pickPartnerNameForSeed(seed?: string | null): PartnerName {
+  const normalized = seed?.trim() ? seed.trim() : "AUT-2026-SEED";
+  const { value } = nextFloat(createPrng(`partner_name:${normalized}`));
+  const index = Math.floor(value * PARTNER_NAME_POOL.length);
+  return PARTNER_NAME_POOL[index] ?? CANONICAL_PARTNER_NAME;
+}
+
+export function resolvePartnerName(
+  state?: {
+    family?: { partner_name?: string | null } | null;
+    prng?: { seed?: string | null } | null;
+  } | null,
+): string {
+  const explicit = state?.family?.partner_name?.trim();
+  if (explicit) {
+    return explicit;
+  }
+  if (state?.prng?.seed) {
+    return pickPartnerNameForSeed(state.prng.seed);
+  }
+  return CANONICAL_PARTNER_NAME;
+}
+
+export function substitutePartnerName(text: string, partnerName?: string | null): string {
+  const trimmed = partnerName?.trim();
+  if (
+    !trimmed ||
+    trimmed === CANONICAL_PARTNER_NAME ||
+    !text ||
+    !text.includes(CANONICAL_PARTNER_NAME)
+  ) {
+    return text;
+  }
+  return text.replaceAll(CANONICAL_PARTNER_NAME, trimmed);
+}
 
 export interface CreateGameStateOptions {
   seed?: string;
@@ -70,6 +115,7 @@ export function createInitialGameState(
     family: {
       status: "single",
       partner_character_id: null,
+      partner_name: pickPartnerNameForSeed(seed),
       children_count: 0,
       monthly_cost: 0,
       support_modifier: 0,

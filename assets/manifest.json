@@ -186,6 +186,14 @@
       "render_mode": "vector_hd",
       "status": "ready"
     },
+    "illus_portada_landing": {
+      "path": "illustrations/illus_portada_landing.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
     "illus_hito_primer_trimestre": {
       "path": "illustrations/illus_hito_primer_trimestre.webp",
       "category": "illustration",

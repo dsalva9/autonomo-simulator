@@ -1069,9 +1069,14 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       bounds,
       "VictoryModal victory-retire-btn",
     );
+    await assertVisibleInViewportWithoutScroll(
+      page.getByTestId("kofi-victory-banner-link"),
+      bounds,
+      "VictoryModal kofi-victory-banner-link",
+    );
 
     await expect(page.getByTestId("victory-continue-btn")).toBeFocused();
-    for (let t = 0; t < 4; t += 1) {
+    for (let t = 0; t < 3; t += 1) {
       await page.keyboard.press("Tab");
       const insideVictory = await page.evaluate(
         () => document.activeElement?.closest('[data-testid="victory-modal"]') !== null,
@@ -2307,5 +2312,174 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
         `EndRunScreen end-return-title-btn with toast (${vp.label})`,
       );
     }
+  });
+
+  test("QA-34: Illustrated Landing Balance, Mobile & Desktop Ko-fi Support Links (Landing, EndRun, Millionaire & Year 15) & Full Technical/On-Page SEO", async ({
+    page,
+  }, testInfo) => {
+    const isMobile = testInfo.project.name === "mobile-chromium";
+    const vp = isMobile ? { width: 390, height: 844 } : { width: 1440, height: 900 };
+    await page.setViewportSize(vp);
+    await page.goto("./");
+
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+
+    // 1. SEO Verification: robots.txt, sitemap.xml, Schema.org JSON-LD, canonical & dynamic page titles
+    const robotsRes = await page.request.get(new URL("./robots.txt", page.url()).toString());
+    expect(robotsRes.status()).toBe(200);
+    expect(await robotsRes.text()).toContain(
+      "Sitemap: https://autonomo-simulator.vercel.app/sitemap.xml",
+    );
+
+    const sitemapRes = await page.request.get(new URL("./sitemap.xml", page.url()).toString());
+    expect(sitemapRes.status()).toBe(200);
+    const sitemapXml = await sitemapRes.text();
+    expect(sitemapXml).toContain("<urlset");
+    expect(sitemapXml).toContain('hreflang="en"');
+
+    const promoRes = await page.request.get(new URL("./promo-portada.jpg", page.url()).toString());
+    expect(promoRes.status()).toBe(200);
+
+    const seoHead = await page.evaluate(() => {
+      const jsonLdRaw =
+        document.querySelector('script[type="application/ld+json"]')?.textContent ?? "";
+      const parsedLd = JSON.parse(jsonLdRaw);
+      return {
+        title: document.title,
+        description:
+          document.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
+        canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? "",
+        hreflangEn:
+          document.querySelector('link[rel="alternate"][hreflang="en"]')?.getAttribute("href") ??
+          "",
+        hasGraph: Array.isArray(parsedLd["@graph"]) && parsedLd["@graph"].length >= 2,
+      };
+    });
+    expect(seoHead.title).toContain("Autónomo Simulator");
+    expect(seoHead.description.length).toBeGreaterThanOrEqual(80);
+    expect(seoHead.canonical).toBe("https://autonomo-simulator.vercel.app/");
+    expect(seoHead.hreflangEn).toBe("https://autonomo-simulator.vercel.app/?lang=en");
+    expect(seoHead.hasGraph).toBe(true);
+
+    // 2. Illustrated Landing Card & Ko-fi Link on both Mobile & Desktop
+    const landingIllus = page.getByTestId("landing-hero-illustration");
+    await expect(landingIllus).toBeVisible();
+    await expect
+      .poll(async () =>
+        landingIllus.evaluate((el) => {
+          const img = el as HTMLImageElement;
+          return img.complete && img.naturalWidth === 960 && img.naturalHeight === 540;
+        }),
+      )
+      .toBe(true);
+
+    const landingKofi = page.getByTestId("kofi-landing-banner-link");
+    await expect(landingKofi).toBeVisible();
+    await expect(landingKofi).toHaveAttribute("href", "https://ko-fi.com/dsal80");
+    await expect(landingKofi).toHaveAttribute("target", "_blank");
+    await landingKofi.scrollIntoViewIfNeeded();
+    await assertCenterHitTargetUnoccluded(
+      landingKofi,
+      `Landing Ko-fi CTA (${testInfo.project.name})`,
+    );
+    await assertReadableTextContrast(landingKofi, `Landing Ko-fi CTA (${testInfo.project.name})`);
+
+    if (!isMobile) {
+      // Verify desktop Left & Right columns share symmetrical top & bottom baselines (<= 2px delta) even on 1440x900 & 1920x1080
+      for (const deskVp of [
+        { label: "1440x900", width: 1440, height: 900 },
+        { label: "1920x1080", width: 1920, height: 1080 },
+      ] as const) {
+        await page.setViewportSize({ width: deskVp.width, height: deskVp.height });
+        const balance = await page.evaluate(() => {
+          const leftCol = document.querySelector(".title-left-stack")!;
+          const rightCol = leftCol.nextElementSibling!;
+          const lr = leftCol.getBoundingClientRect();
+          const rr = rightCol.getBoundingClientRect();
+          return {
+            topDelta: Math.abs(lr.top - rr.top),
+            bottomDelta: Math.abs(lr.bottom - rr.bottom),
+            rightHeight: rr.height,
+          };
+        });
+        expect(balance.topDelta, `Landing top delta on ${deskVp.label}`).toBeLessThanOrEqual(2);
+        expect(balance.bottomDelta, `Landing bottom delta on ${deskVp.label}`).toBeLessThanOrEqual(
+          2,
+        );
+        expect(
+          balance.rightHeight,
+          `Right column bounded height on ${deskVp.label} so it never over-stretches`,
+        ).toBeLessThanOrEqual(720);
+      }
+      await page.setViewportSize(vp);
+    }
+
+    // 3. ?lang=en URL query parameter loads English SEO + English UI directly
+    await page.goto("./?lang=en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect.poll(async () => page.title()).toContain("Spanish Freelancer Survival Game");
+    await expect(page.getByTestId("kofi-landing-banner-link")).toContainText("Buy me a coffee");
+
+    // 4. Start run -> verify GameScreen dynamic SEO title -> stage 150k Ricachón VictoryModal & Year 15 AnnualSummaryModal + EndRunScreen Ko-fi
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await expect.poll(async () => page.title()).toContain("Year 1 · Month 1");
+
+    // Stage Year 15 (Month 180) Annual Summary followed by Ricachón 150k VictoryModal in IndexedDB
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.month = 180;
+            envelope.state.endless_mode = true;
+            envelope.state.earned_victories = ["hero_120m", "rich_150k"];
+            envelope.state.pending_victory_badge = "rich_150k";
+            envelope.state.phase = "annual_summary";
+            envelope.state.indicators.money = 162000;
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.goto("./");
+    await page.getByTestId("continue-run-btn").click();
+
+    // Year 15 (180m) Endless AnnualSummaryModal displays Ko-fi link
+    await expect(page.getByTestId("annual-summary-modal")).toBeVisible();
+    const annualKofi = page.getByTestId("kofi-annual-banner-link");
+    await expect(annualKofi).toBeVisible();
+    await expect(annualKofi).toHaveAttribute("href", "https://ko-fi.com/dsal80");
+    await page.getByTestId("annual-summary-close-btn").click();
+
+    // Millionaire / Ricachón (150k €) VictoryModal displays Ko-fi link
+    await expect(page.getByTestId("victory-modal")).toBeVisible();
+    const victoryKofi = page.getByTestId("kofi-victory-banner-link");
+    await expect(victoryKofi).toBeVisible();
+    await expect(victoryKofi).toHaveAttribute("href", "https://ko-fi.com/dsal80");
+    await assertCenterHitTargetUnoccluded(victoryKofi, "VictoryModal Ko-fi link");
+
+    // Retire -> EndRunScreen displays Ko-fi link & updates SEO title to Form 036 Certificate
+    await page.getByTestId("victory-retire-btn").click();
+    await expect(page.getByTestId("end-run-screen")).toBeVisible();
+    await expect.poll(async () => page.title()).toContain("Form 036 Certificate");
+    const endRunKofi = page.getByTestId("kofi-endrun-banner-link");
+    await expect(endRunKofi).toBeVisible();
+    await expect(endRunKofi).toHaveAttribute("href", "https://ko-fi.com/dsal80");
+    await endRunKofi.scrollIntoViewIfNeeded();
+    await assertCenterHitTargetUnoccluded(endRunKofi, "EndRunScreen Ko-fi link");
   });
 });

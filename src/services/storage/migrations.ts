@@ -119,6 +119,12 @@ export function isValidGameStateShape(candidate: unknown): candidate is GameStat
     return false;
   }
   if (
+    candidate.family.partner_name !== undefined &&
+    typeof candidate.family.partner_name !== "string"
+  ) {
+    return false;
+  }
+  if (
     !Array.isArray(candidate.current_turn_events) ||
     !Array.isArray(candidate.scheduled_queue) ||
     !Array.isArray(candidate.modifiers) ||

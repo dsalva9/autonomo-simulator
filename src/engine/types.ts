@@ -78,6 +78,7 @@ export interface GestorState {
 export interface FamilyState {
   status: "single" | "dating" | "cohabiting" | "separated";
   partner_character_id: string | null;
+  partner_name?: string;
   children_count: number;
   monthly_cost: number;
   support_modifier: number;

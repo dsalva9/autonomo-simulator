@@ -1,4 +1,11 @@
-import type { EndingId, GameState, VictoryBadge } from "../../engine/index.ts";
+import {
+  type EndingId,
+  type GameState,
+  type VictoryBadge,
+  pickPartnerNameForSeed,
+  resolvePartnerName,
+  substitutePartnerName,
+} from "../../engine/index.ts";
 import {
   type SupportedLocale,
   normalizeLocale,
@@ -272,9 +279,15 @@ export function resolveLocalizedEndingQuote(
   rawQuote: string,
   locale: SupportedLocale = "es-ES",
   state?: GameState | null,
+  seed?: string | null,
 ): string {
+  const partnerName = state
+    ? resolvePartnerName(state)
+    : seed
+      ? pickPartnerNameForSeed(seed)
+      : undefined;
   if (normalizeLocale(locale) !== "en") {
-    return rawQuote;
+    return substitutePartnerName(rawQuote, partnerName);
   }
   const canonicalEnFallback =
     ENDING_METADATA_EN[endingId]?.defaultQuote ??
@@ -299,10 +312,10 @@ export function resolveLocalizedEndingQuote(
         "",
       );
       if (fromOverlay && fromOverlay.trim().length > 0) {
-        return fromOverlay;
+        return substitutePartnerName(fromOverlay, partnerName);
       }
     }
-    return exactKnownAbandon;
+    return substitutePartnerName(exactKnownAbandon, partnerName);
   }
 
   if (state?.history && state.history.length > 0) {
@@ -315,6 +328,7 @@ export function resolveLocalizedEndingQuote(
           entry.outcome_id ?? null,
           rawQuote,
           "en",
+          partnerName,
         );
         if (resolved && resolved !== rawQuote) {
           return resolved;

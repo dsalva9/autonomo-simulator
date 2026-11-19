@@ -1,6 +1,11 @@
 import { Briefcase, CheckCircle2, FileSpreadsheet, Heart, ShieldCheck } from "lucide-react";
 import { useRef } from "react";
-import { type GameState, buildAnnualSummary, getEventById } from "../../engine/index.ts";
+import {
+  type GameState,
+  buildAnnualSummary,
+  getEventById,
+  resolvePartnerName,
+} from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
 import {
   formatEuros,
@@ -13,6 +18,7 @@ import {
 } from "../../services/i18n/resolveEventText.ts";
 import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 import { useGameStore } from "../../store/gameStore.ts";
+import { KofiSupportBanner } from "../common/KofiSupportBanner.tsx";
 import { useModalKeyboard } from "./useModalKeyboard.ts";
 
 export interface AnnualSummaryModalProps {
@@ -145,7 +151,7 @@ export function AnnualSummaryModal({
                 </span>
                 <p className="font-bold text-[#1f2421] leading-snug break-words">
                   {partnerChar
-                    ? translateCharacterName(partnerChar, locale)
+                    ? translateCharacterName(partnerChar, locale, resolvePartnerName(state))
                     : translateFamilyStatus(state.family.status, locale)}
                 </p>
                 <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums">
@@ -184,10 +190,18 @@ export function AnnualSummaryModal({
               <ul className="space-y-0.5 text-xs text-[#373f3a] list-disc list-inside">
                 {summary.highlight_event_ids.map((eventId) => {
                   const ev = getEventById(compiledCatalog, eventId);
-                  return <li key={eventId}>{ev ? resolveEventTitle(ev, locale) : eventId}</li>;
+                  return (
+                    <li key={eventId}>
+                      {ev ? resolveEventTitle(ev, locale, resolvePartnerName(state)) : eventId}
+                    </li>
+                  );
                 })}
               </ul>
             </div>
+          )}
+
+          {(state.endless_mode || state.earned_victories.length > 0 || state.month >= 120) && (
+            <KofiSupportBanner locale={locale} context="milestone" testId="kofi-annual-banner" />
           )}
         </div>
 

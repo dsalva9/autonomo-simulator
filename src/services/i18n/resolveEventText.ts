@@ -1,12 +1,14 @@
-import type {
-  CharacterDef,
-  ChoiceSpec,
-  EventDef,
-  FamilyStatus,
-  GameState,
-  GestorTier,
-  RequirementsSpec,
-  TemporalModifier,
+import {
+  type CharacterDef,
+  type ChoiceSpec,
+  type EventDef,
+  type FamilyStatus,
+  type GameState,
+  type GestorTier,
+  type RequirementsSpec,
+  type TemporalModifier,
+  resolvePartnerName,
+  substitutePartnerName,
 } from "../../engine/index.ts";
 
 export type UILocale = "es-ES" | "en";
@@ -71,20 +73,35 @@ export function resolveEventText(
   return fallbackText;
 }
 
-export function resolveEventTitle(event: EventDef, locale: SupportedLocale = "es-ES"): string {
-  return resolveEventText(locale, event.id, "title", event.title);
+export function resolveEventTitle(
+  event: EventDef,
+  locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
+): string {
+  return substitutePartnerName(
+    resolveEventText(locale, event.id, "title", event.title),
+    partnerName,
+  );
 }
 
-export function resolveEventBody(event: EventDef, locale: SupportedLocale = "es-ES"): string {
-  return resolveEventText(locale, event.id, "body", event.body);
+export function resolveEventBody(
+  event: EventDef,
+  locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
+): string {
+  return substitutePartnerName(resolveEventText(locale, event.id, "body", event.body), partnerName);
 }
 
 export function resolveChoiceLabel(
   eventId: string,
   choice: ChoiceSpec,
   locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
 ): string {
-  return resolveEventText(locale, eventId, `choices.${choice.id}.label`, choice.label);
+  return substitutePartnerName(
+    resolveEventText(locale, eventId, `choices.${choice.id}.label`, choice.label),
+    partnerName,
+  );
 }
 
 export function resolveChoiceResultText(
@@ -93,6 +110,7 @@ export function resolveChoiceResultText(
   outcomeId: string | null,
   fallbackText: string | null,
   locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
 ): string | null {
   if (!fallbackText) {
     return null;
@@ -100,7 +118,7 @@ export function resolveChoiceResultText(
   const path = outcomeId
     ? `choices.${choiceId}.outcomes.${outcomeId}.result_text`
     : `choices.${choiceId}.result_text`;
-  return resolveEventText(locale, eventId, path, fallbackText);
+  return substitutePartnerName(resolveEventText(locale, eventId, path, fallbackText), partnerName);
 }
 
 /**
@@ -571,11 +589,15 @@ export const MODIFIER_LABELS_EN: Readonly<Record<string, string>> = {
 export function translateCharacterName(
   character: Pick<CharacterDef, "id" | "name">,
   locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
 ): string {
-  if (normalizeLocale(locale) === "en") {
-    return CHARACTER_NAMES_EN[character.id] ?? character.name;
+  if (character.id === "pareja_alex" && partnerName?.trim()) {
+    return partnerName.trim();
   }
-  return character.name;
+  if (normalizeLocale(locale) === "en") {
+    return substitutePartnerName(CHARACTER_NAMES_EN[character.id] ?? character.name, partnerName);
+  }
+  return substitutePartnerName(character.name, partnerName);
 }
 
 export function translateCharacterBio(
@@ -611,24 +633,27 @@ export function translateEmployeeRoleLabel(
 export function translateModifierLabel(
   modifierOrLabel: string | Pick<TemporalModifier, "id" | "label">,
   locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
 ): string {
   const fallbackLabel =
     typeof modifierOrLabel === "string" ? modifierOrLabel : modifierOrLabel.label;
   if (normalizeLocale(locale) === "en") {
     if (typeof modifierOrLabel !== "string") {
-      return (
+      return substitutePartnerName(
         MODIFIER_LABELS_BY_ID_EN[modifierOrLabel.id] ??
-        MODIFIER_LABELS_EN[modifierOrLabel.label] ??
-        fallbackLabel
+          MODIFIER_LABELS_EN[modifierOrLabel.label] ??
+          fallbackLabel,
+        partnerName,
       );
     }
-    return (
+    return substitutePartnerName(
       MODIFIER_LABELS_BY_ID_EN[modifierOrLabel] ??
-      MODIFIER_LABELS_EN[modifierOrLabel] ??
-      fallbackLabel
+        MODIFIER_LABELS_EN[modifierOrLabel] ??
+        fallbackLabel,
+      partnerName,
     );
   }
-  return fallbackLabel;
+  return substitutePartnerName(fallbackLabel, partnerName);
 }
 
 const STAT_LABELS_ES: Record<keyof NonNullable<RequirementsSpec["stats"]>, string> = {
@@ -918,19 +943,26 @@ const CALENDAR_MONTH_NAMES_EN = [
   "December",
 ] as const;
 
-export function humanizeFlag(flag: string, locale: SupportedLocale = "es-ES"): string {
+export function humanizeFlag(
+  flag: string,
+  locale: SupportedLocale = "es-ES",
+  partnerName?: string | null,
+): string {
   if (normalizeLocale(locale) === "en") {
     const exact = EXACT_FLAG_LABELS_EN[flag];
     if (exact) {
-      return exact;
+      return substitutePartnerName(exact, partnerName);
     }
-    return flag
-      .split("_")
-      .filter(Boolean)
-      .map((token) => FLAG_WORD_GLOSSARY_EN[token] ?? token)
-      .join(" ");
+    return substitutePartnerName(
+      flag
+        .split("_")
+        .filter(Boolean)
+        .map((token) => FLAG_WORD_GLOSSARY_EN[token] ?? token)
+        .join(" "),
+      partnerName,
+    );
   }
-  return EXACT_FLAG_LABELS_ES[flag] ?? flag.replace(/_/g, " ");
+  return substitutePartnerName(EXACT_FLAG_LABELS_ES[flag] ?? flag.replace(/_/g, " "), partnerName);
 }
 
 /**
@@ -947,6 +979,7 @@ export function explainChoiceLockReasons(
   }
 
   const isEn = normalizeLocale(locale) === "en";
+  const partnerName = resolvePartnerName(state);
   const reasons: string[] = [];
 
   if (requirements.min_month != null && state.month < requirements.min_month) {
@@ -997,7 +1030,7 @@ export function explainChoiceLockReasons(
   if (requirements.required_flags) {
     for (const flag of requirements.required_flags) {
       if (!state.flags[flag]) {
-        const humanized = humanizeFlag(flag, locale);
+        const humanized = humanizeFlag(flag, locale, partnerName);
         reasons.push(isEn ? `Requires "${humanized}"` : `Requiere «${humanized}»`);
       }
     }
@@ -1006,7 +1039,7 @@ export function explainChoiceLockReasons(
   if (requirements.forbidden_flags) {
     for (const flag of requirements.forbidden_flags) {
       if (state.flags[flag]) {
-        const humanized = humanizeFlag(flag, locale);
+        const humanized = humanizeFlag(flag, locale, partnerName);
         reasons.push(isEn ? `Unavailable with "${humanized}"` : `No disponible con «${humanized}»`);
       }
     }

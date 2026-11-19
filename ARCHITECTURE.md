@@ -37,7 +37,7 @@ flowchart TB
     subgraph BuildTime["Build & Validation Pipeline (Node / Scripts)"]
         YAML["content/**/*.yaml\n(300 Events, 8 Characters, Balance)"]
         LOC["content/locales/en/*.yaml\n(2,502 English Event Copy Keys)"]
-        MAN["assets/manifest.json\n(60 Logical IDs & Fallbacks)"]
+        MAN["assets/manifest.json\n(61 Logical IDs & Fallbacks)"]
         ZOD["src/engine/schemas/\n(Authoritative Zod Schemas)"]
         JSONS["schemas/*.schema.json\n(Emitted JSON Schemas)"]
         BUNDLE["src/generated/content-bundle.json\n(Validated Static Catalog)"]
@@ -100,7 +100,7 @@ autonomo-simulator/
 │       ├── empleados/               # 48 events
 │       └── gestor/                  # 49 events
 ├── assets/
-│   ├── manifest.json                # Logical asset registry (60 assets, status: placeholder | ready)
+│   ├── manifest.json                # Logical asset registry (61 assets, status: placeholder | ready)
 │   ├── characters/
 │   ├── backgrounds/
 │   ├── illustrations/
@@ -125,6 +125,7 @@ autonomo-simulator/
 │   ├── services/
 │   │   ├── storage/                 # StoragePort + IndexedDB adapter + save migrations
 │   │   ├── share/                   # Canvas PNG renderer + Web Share / Clipboard adapter
+│   │   ├── seo/                     # Dynamic per-screen & bilingual SEO metadata manager
 │   │   ├── i18n/                    # Bilingual string & event resolver (es-ES + compiled en overlays)
 │   │   └── platform/                # Capacitor / Tauri / Web runtime capability detection
 │   ├── components/
@@ -218,6 +219,7 @@ export interface GestorState {
 export interface FamilyState {
   status: "single" | "dating" | "cohabiting" | "separated";
   partner_character_id: string | null;
+  partner_name?: string;               // Seeded per-run partner name from PARTNER_NAME_POOL ("Álex" | "Cris" | "Gabi" | "Noa" | "Clara")
   children_count: number;
   monthly_cost: number;
   support_modifier: number;            // Modulates stress recovery / emergency family support

@@ -32,11 +32,17 @@ export {
   type DrawTurnEventsResult,
 } from "./selector.ts";
 export {
+  CANONICAL_PARTNER_NAME,
+  PARTNER_NAME_POOL,
   appendHistory,
   buildAnnualSummary,
   createInitialAnnualAccumulator,
   createInitialGameState,
+  pickPartnerNameForSeed,
+  resolvePartnerName,
+  substitutePartnerName,
   type CreateGameStateOptions,
+  type PartnerName,
 } from "./state.ts";
 export {
   applyPlayerChoice,

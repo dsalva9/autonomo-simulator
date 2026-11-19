@@ -1,5 +1,6 @@
 import { Award, Copy, Download, Home, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { KofiSupportBanner } from "../components/common/KofiSupportBanner.tsx";
 import type { GameState } from "../engine/index.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
 import { compiledCatalog, resolveEndingIllustrationAsset } from "../services/content/catalog.ts";
@@ -309,7 +310,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   width={endingIllustration.width}
                   height={endingIllustration.height}
                   decoding="async"
-                  className={`end-run-illustration w-full h-28 sm:h-36 lg:h-36 xl:h-44 object-cover rounded-xl border-2 border-[#1f2421] bg-[#f6efe0] shadow-[3px_3px_0px_0px_rgba(31,36,33,0.88)] ${
+                  className={`end-run-illustration w-full h-24 sm:h-32 lg:h-28 xl:h-36 object-cover rounded-xl border-2 border-[#1f2421] bg-[#f6efe0] shadow-[3px_3px_0px_0px_rgba(31,36,33,0.88)] ${
                     endingIllustration.render_mode === "pixel_art"
                       ? "render-pixel-art"
                       : "render-vector-hd"
@@ -482,6 +483,8 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                   {feedback}
                 </p>
               )}
+
+              <KofiSupportBanner locale={locale} context="end_run" testId="kofi-endrun-banner" />
             </div>
           </div>
 

@@ -1,7 +1,7 @@
 import { clampStat, enqueueScheduledEvent, resolveEndingQuote } from "./economy.ts";
 import { nextFloat, pickWeighted } from "./prng.ts";
 import type { ChoiceSpec, EffectsSpec, EventDef } from "./schemas/index.ts";
-import { appendHistory } from "./state.ts";
+import { appendHistory, resolvePartnerName, substitutePartnerName } from "./state.ts";
 import type {
   ChoiceOutcomeSummary,
   ContentCatalog,
@@ -213,6 +213,7 @@ export function resolveChoiceEffects(
       family = {
         status,
         partner_character_id: null,
+        partner_name: family.partner_name,
         children_count: family.children_count,
         monthly_cost: family.children_count * balance.child_monthly_cost,
         support_modifier: 0,
@@ -233,6 +234,7 @@ export function resolveChoiceEffects(
       family = {
         status,
         partner_character_id: resolvedPartnerId,
+        partner_name: family.partner_name,
         children_count: family.children_count,
         monthly_cost: partnerCost + family.children_count * balance.child_monthly_cost,
         support_modifier: supportMod,
@@ -298,6 +300,12 @@ export function resolveChoiceEffects(
     cooldowns[event.id] = state.month + event.cooldown_months + 1;
   }
 
+  const partnerName = resolvePartnerName(state);
+  const personalizedResultText =
+    resultText !== null ? substitutePartnerName(resultText, partnerName) : null;
+  const personalizedEventTitle = substitutePartnerName(event.title, partnerName);
+  const personalizedChoiceLabel = substitutePartnerName(choice.label, partnerName);
+
   const moneyDelta = Math.round(money) - startMoney;
 
   let history = appendHistory(
@@ -309,8 +317,8 @@ export function resolveChoiceEffects(
       event_id: event.id,
       choice_id: choice.id,
       outcome_id: outcomeId ?? undefined,
-      title: event.title,
-      summary: resultText ?? choice.label,
+      title: personalizedEventTitle,
+      summary: personalizedResultText ?? personalizedChoiceLabel,
       money_delta: moneyDelta,
     },
     balance.max_history_entries,
@@ -321,7 +329,10 @@ export function resolveChoiceEffects(
 
   if (effects.trigger_ending) {
     const endingId = effects.trigger_ending;
-    const quote = resolveEndingQuote(catalog, endingId, resultText);
+    const quote = substitutePartnerName(
+      resolveEndingQuote(catalog, endingId, personalizedResultText),
+      partnerName,
+    );
     ending = {
       id: endingId,
       month: state.month,
@@ -386,7 +397,7 @@ export function resolveChoiceEffects(
       event_id: event.id,
       choice_id: choice.id,
       outcome_id: outcomeId,
-      result_text: resultText,
+      result_text: personalizedResultText,
       money_delta: moneyDelta,
       moral_delta: moral - startMoral,
       stress_delta: stress - startStress,

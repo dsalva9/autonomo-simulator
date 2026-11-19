@@ -14,6 +14,7 @@ import {
   dismissAnnualSummary,
   getActiveEvent,
   resolveEndingQuote,
+  resolvePartnerName,
   resolveVictoryPrompt,
   retireFromRun,
   settleQuarter,
@@ -362,7 +363,12 @@ export const useGameStore = create<GameStoreState>((set, get) => {
           event: catalogEvent,
           choiceId: rawPending.choiceId,
           choiceLabel: matchedChoiceObj
-            ? resolveChoiceLabel(catalogEvent.id, matchedChoiceObj, resolvedProfile.settings.locale)
+            ? resolveChoiceLabel(
+                catalogEvent.id,
+                matchedChoiceObj,
+                resolvedProfile.settings.locale,
+                resolvePartnerName(hydratedRun),
+              )
             : rawPending.choiceLabel,
           outcome: rawPending.outcome,
         };
@@ -485,7 +491,12 @@ export const useGameStore = create<GameStoreState>((set, get) => {
           ? {
               event: activeView.event,
               choiceId,
-              choiceLabel: resolveChoiceLabel(activeView.event.id, matchedChoice.choice, locale),
+              choiceLabel: resolveChoiceLabel(
+                activeView.event.id,
+                matchedChoice.choice,
+                locale,
+                resolvePartnerName(current),
+              ),
               outcome: resolution.choiceOutcome,
             }
           : null;

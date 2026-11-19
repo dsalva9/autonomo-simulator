@@ -83,6 +83,9 @@ describe("itch.io portable packager (scripts/package-itch.ts)", () => {
     expect(shouldIncludeInItchArchive("_bundle/index-abc123.js")).toBe(true);
     expect(shouldIncludeInItchArchive("assets/manifest.json")).toBe(true);
     expect(shouldIncludeInItchArchive("og-preview.png")).toBe(false);
+    expect(shouldIncludeInItchArchive("promo-portada.jpg")).toBe(false);
+    expect(shouldIncludeInItchArchive("robots.txt")).toBe(false);
+    expect(shouldIncludeInItchArchive("sitemap.xml")).toBe(false);
     expect(shouldIncludeInItchArchive("_bundle/index-abc123.js.map")).toBe(false);
     expect(shouldIncludeInItchArchive(".DS_Store")).toBe(false);
     expect(shouldIncludeInItchArchive("assets/Thumbs.db")).toBe(false);

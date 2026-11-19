@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { type Locator, type Page, expect, test } from "@playwright/test";
+import { PARTNER_NAME_POOL, pickPartnerNameForSeed } from "../../src/engine/index.ts";
 
 const SCREENSHOT_DIR = resolve(process.cwd(), "test-results", "qa-screenshots");
 
@@ -280,12 +281,19 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
       "data-event-id",
       "familia_cita_con_alex",
     );
+    const expectedPartnerName = pickPartnerNameForSeed("P36-ALEX-24");
+    expect(PARTNER_NAME_POOL).toContain(expectedPartnerName);
+    await expect(page.getByTestId("event-title")).toContainText(expectedPartnerName);
+    await expect(page.getByTestId("event-body")).toContainText(expectedPartnerName);
+    await expect(page.getByTestId("event-character-polaroid")).toContainText(expectedPartnerName);
+
     await selectChoiceAndAcknowledge(page, "apostar_por_citas_con_alex");
 
     await withDeskSceneVisible(page, async () => {
       const propFamilia = page.getByTestId("scene-prop-familia");
       const familiaDims = await waitForImageDimensions(propFamilia);
       expect(familiaDims).toEqual({ naturalWidth: 256, naturalHeight: 256 });
+      await expect(page.locator("body")).toContainText(expectedPartnerName);
     });
   });
 

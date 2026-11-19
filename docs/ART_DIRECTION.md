@@ -159,8 +159,9 @@ Rendered on `EndRunScreen` (`960×540`, `16:9`, first-person / environmental sto
 - `prop_numeros_rojos` (`256×256` SVG) — Tilted red warning emblem (`€` + downward arrow, wordless or graphic stamp).
 - `prop_foto_familia` (`256×256` SVG) — Small wooden tabletop photo frame with warm abstract couple/family silhouette when `family.status !== "single"`.
 
-### 6.6 Bespoke Career & Life Milestone Panels (`assets/illustrations/illus_hito_*.webp`)
-Rendered on `EventStage` (`960×540`, `16:9`, `<= 120 KB`, first-person / environmental storytelling, zero text, zero protagonist face) when `event.illustration_id` is set on major narrative milestones:
+### 6.6 Bespoke Landing, Career & Life Milestone Panels (`assets/illustrations/illus_*.webp`)
+Rendered on `TitleScreen` (`illus_portada_landing`) and `EventStage` (`960×540`, `16:9`, `<= 120 KB`, first-person / environmental storytelling, zero text, zero protagonist face):
+0. `illus_portada_landing` — Unified landing cover scene: empty-chair POV across a sunlit Spanish freelance desk with wooden *persiana* light stripes on the left (open laptop with geometric chart blocks, steaming *cafetera italiana*, ceramic mug) and brass desk-lamp paperwork on the right (color-tabbed folders, blank-key calculator, wooden rubber stamp beside a wordless red ink circle, sealed kraft envelope, and potted plant).
 1. `illus_hito_primer_trimestre` — First quarterly tax reckoning: desktop calculator with blank keys, stack of color-tabbed folders, wordless calendar grid with one red-circled box, steaming espresso under dramatic desk lamp light.
 2. `illus_hito_inspeccion_hacienda` — Tax inspection across an austere official desk: civil-servant hands holding a magnifying glass over spread ledger sheets and a red fountain pen.
 3. `illus_hito_primer_empleado` — Sunlit studio onboarding milestone: setting up a second workstation with monitor, welcome mug, headphones, and cropped hands shaking in foreground.

@@ -99,7 +99,13 @@ export function buildShareText(
   const quote = stripOuterQuotes(
     isEn && summary.localizedQuoteEn
       ? summary.localizedQuoteEn
-      : resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale),
+      : resolveLocalizedEndingQuote(
+          summary.endingId,
+          summary.summaryQuote,
+          locale,
+          undefined,
+          summary.seed,
+        ),
   );
 
   if (isEn) {
@@ -261,7 +267,13 @@ export function renderShareCardToCanvas(
   const localizedQuote =
     isEn && summary.localizedQuoteEn
       ? summary.localizedQuoteEn
-      : resolveLocalizedEndingQuote(summary.endingId, summary.summaryQuote, locale);
+      : resolveLocalizedEndingQuote(
+          summary.endingId,
+          summary.summaryQuote,
+          locale,
+          undefined,
+          summary.seed,
+        );
   const stampPrimary =
     meta.tone === "victory" ? "#1F5C53" : meta.tone === "abandon" ? "#264E7A" : "#B42B24";
   const stampFill =

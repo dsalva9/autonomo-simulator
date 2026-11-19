@@ -15,6 +15,22 @@ export interface EmptyHallGoalItem {
   desc: string;
 }
 
+export interface LandingHowToStep {
+  step: string;
+  title: string;
+  desc: string;
+}
+
+export interface KofiSupportStrings {
+  url: string;
+  badge: string;
+  landingPrompt: string;
+  endRunPrompt: string;
+  milestonePrompt: string;
+  ctaLabel: string;
+  ariaLabel: string;
+}
+
 export interface UiStrings {
   locale: UILocale;
   retireHonorablyBtn: string;
@@ -94,8 +110,13 @@ export interface UiStrings {
     viewCertTitle: string;
     achievementUnlockedBadge: string;
     achievementPendingBadge: string;
+    landingGuideBadge: string;
+    landingIllustrationAlt: string;
+    landingIllustrationCaption: string;
+    landingSteps: LandingHowToStep[];
     confirmOverwriteRun: ConfirmOverwriteRunStrings;
   };
+  kofi: KofiSupportStrings;
   hud: {
     liveMoney: string;
     liveMoral: string;
@@ -446,7 +467,7 @@ const ES_STRINGS: UiStrings = {
     seedInputLabel: "Semilla reproducible (opcional)",
     seedInlineLabel: "Semilla",
     seedPlaceholder: "Ej. AUT-2026-PACO (vacío = aleatoria)",
-    startRunBtn: "Nueva alta en el RETA",
+    startRunBtn: "¡Jugar ahora! · Nueva alta en el RETA",
     startRunTitle: "Iniciar nueva partida en el RETA (N)",
     replaceActiveNote:
       "Nota: iniciar una nueva alta reemplazará el expediente actualmente en curso.",
@@ -508,7 +529,37 @@ const ES_STRINGS: UiStrings = {
     viewCertTitle: "Abrir certificado y tarjeta PNG de este expediente",
     achievementUnlockedBadge: "SELLADO",
     achievementPendingBadge: "PENDIENTE",
+    landingGuideBadge: "GUÍA RÁPIDA · CÓMO SE JUEGA",
+    landingIllustrationAlt:
+      "Ilustración de escritorio de autónomo en España con portátil, cafetera italiana, carpetas trimestrales, sello y calculadora",
+    landingIllustrationCaption: "100% gratis en navegador · Sin registro · Guardado automático",
+    landingSteps: [
+      {
+        step: "01",
+        title: "Decide cada mes",
+        desc: "Clientes, cobros en B, gestoría, familia y salud mental.",
+      },
+      {
+        step: "02",
+        title: "Pasa el Trimestre",
+        desc: "Liquida o aplaza IVA e IRPF cada 3 meses sin quebrar.",
+      },
+      {
+        step: "03",
+        title: "120 meses o 150k €",
+        desc: "Aguanta 10 años cotizando o fórrete antes de quemarte.",
+      },
+    ],
     confirmOverwriteRun: ES_CONFIRM_OVERWRITE_RUN,
+  },
+  kofi: {
+    url: "https://ko-fi.com/dsal80",
+    badge: "PROPINA SIN IVA",
+    landingPrompt: "¿Te saca unas risas (o sudores fríos con Hacienda)?",
+    endRunPrompt: "¿Te ha gustado la partida? Apoya el desarrollo indie:",
+    milestonePrompt: "¡Hito histórico superado! Si estás disfrutando el vicio:",
+    ctaLabel: "Invítame a un café en Ko-fi",
+    ariaLabel: "Invítame a un café en Ko-fi (abre ko-fi.com/dsal80 en una pestaña nueva)",
   },
   hud: {
     liveMoney: "Dinero",
@@ -858,7 +909,7 @@ const EN_STRINGS: UiStrings = {
     seedInputLabel: "Reproducible seed (optional)",
     seedInlineLabel: "Seed",
     seedPlaceholder: "e.g. AUT-2026-PACO (blank = random)",
-    startRunBtn: "Register as Self-Employed",
+    startRunBtn: "Play Now! · Register as Self-Employed",
     startRunTitle: "Start a new self-employed run (N)",
     replaceActiveNote: "Note: starting a new registration will replace your active dossier.",
     settingsHeading: "Office settings",
@@ -918,7 +969,37 @@ const EN_STRINGS: UiStrings = {
     viewCertTitle: "Open certificate & PNG card for this dossier",
     achievementUnlockedBadge: "SEALED",
     achievementPendingBadge: "LOCKED",
+    landingGuideBadge: "QUICK BRIEF · HOW TO PLAY",
+    landingIllustrationAlt:
+      "Editorial comic illustration of a Spanish freelancer desk with laptop, moka pot, tax folders, rubber stamp, and calculator",
+    landingIllustrationCaption: "100% free in browser · No sign-up · Automatic local save",
+    landingSteps: [
+      {
+        step: "01",
+        title: "Decide each month",
+        desc: "Clients, cash gigs, tax advisor, family, and sanity.",
+      },
+      {
+        step: "02",
+        title: "Survive Tax Day",
+        desc: "Pay or defer quarterly VAT & income tax every 3 months.",
+      },
+      {
+        step: "03",
+        title: "120 mos or 150k €",
+        desc: "Last 10 full years or bank 150,000 € before burnout.",
+      },
+    ],
     confirmOverwriteRun: EN_CONFIRM_OVERWRITE_RUN,
+  },
+  kofi: {
+    url: "https://ko-fi.com/dsal80",
+    badge: "TAX-FREE TIP",
+    landingPrompt: "Giving you a laugh (or cold sweats about taxes)?",
+    endRunPrompt: "Enjoyed this run? Support indie development:",
+    milestonePrompt: "Major milestone unlocked! Enjoying the ride?",
+    ctaLabel: "Buy me a coffee on Ko-fi",
+    ariaLabel: "Buy me a coffee on Ko-fi (opens ko-fi.com/dsal80 in a new tab)",
   },
   hud: {
     liveMoney: "Cash",

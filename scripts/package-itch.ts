@@ -25,7 +25,14 @@ const REQUIRED_DIST_PATHS = [
   "assets/manifest.json",
 ] as const;
 
-const EXCLUDED_ITCH_FILENAMES = new Set(["og-preview.png", ".DS_Store", "Thumbs.db"]);
+const EXCLUDED_ITCH_FILENAMES = new Set([
+  "og-preview.png",
+  "promo-portada.jpg",
+  "robots.txt",
+  "sitemap.xml",
+  ".DS_Store",
+  "Thumbs.db",
+]);
 
 const CRC32_TABLE = (() => {
   const table = new Uint32Array(256);
