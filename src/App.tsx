@@ -2,11 +2,13 @@ import { useEffect, useRef } from "react";
 import { AchievementToast } from "./components/hud/AchievementToast.tsx";
 import { EndRunScreen } from "./screens/EndRunScreen.tsx";
 import { GameScreen } from "./screens/GameScreen.tsx";
+import { LandingScreen } from "./screens/LandingScreen.tsx";
 import { TitleScreen } from "./screens/TitleScreen.tsx";
 import { normalizeLocale } from "./services/i18n/resolveEventText.ts";
 import { getUiStrings } from "./services/i18n/uiStrings.ts";
 import {
   type SeoPageView,
+  parseUrlInitialViewParam,
   parseUrlLocaleParam,
   syncDocumentSeo,
 } from "./services/seo/documentSeo.ts";
@@ -24,6 +26,7 @@ export function App() {
   const setLocalePreference = useGameStore((s) => s.setLocalePreference);
 
   const screenView = useUIStore((s) => s.screenView);
+  const setScreenView = useUIStore((s) => s.setScreenView);
   const confirmOverwriteOpen = useUIStore((s) => s.confirmOverwriteOpen);
   const reducedMotionOverride = useUIStore((s) => s.reducedMotionOverride);
 
@@ -37,28 +40,40 @@ export function App() {
   });
   const isViewingArchivedCertificate = viewingCertificateRun !== null;
   const inGameView = hydrated && screenView === "game" && visibleState !== null;
+  const inLandingView = hydrated && screenView === "landing";
+  const inDashboardView = hydrated && !inLandingView && !inGameView;
   const isEndRunView =
     inGameView &&
     visibleState.ending !== null &&
     (isViewingArchivedCertificate || pendingOutcome === null);
-  const seoView: SeoPageView = !inGameView ? "title" : isEndRunView ? "end_run" : "game";
+  const seoView: SeoPageView = inLandingView
+    ? "landing"
+    : !inGameView
+      ? "title"
+      : isEndRunView
+        ? "end_run"
+        : "game";
   const handlingPopStateRef = useRef(false);
-  const appliedUrlLangRef = useRef(false);
+  const appliedUrlParamsRef = useRef(false);
 
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
 
   useEffect(() => {
-    if (!hydrated || appliedUrlLangRef.current || typeof window === "undefined") {
+    if (!hydrated || appliedUrlParamsRef.current || typeof window === "undefined") {
       return;
     }
-    appliedUrlLangRef.current = true;
+    appliedUrlParamsRef.current = true;
     const requestedLocale = parseUrlLocaleParam(window.location.search);
     if (requestedLocale && normalizeLocale(locale) !== normalizeLocale(requestedLocale)) {
       void setLocalePreference(requestedLocale);
     }
-  }, [hydrated, locale, setLocalePreference]);
+    const requestedView = parseUrlInitialViewParam(window.location.search);
+    if (requestedView && requestedView !== useUIStore.getState().screenView) {
+      setScreenView(requestedView);
+    }
+  }, [hydrated, locale, setLocalePreference, setScreenView]);
 
   useEffect(() => {
     syncDocumentSeo({
@@ -67,6 +82,16 @@ export function App() {
       state: visibleState,
     });
   }, [seoView, normalizedLocale, visibleState]);
+
+  const prevSeoViewRef = useRef<SeoPageView>(seoView);
+  useEffect(() => {
+    if (prevSeoViewRef.current !== seoView) {
+      prevSeoViewRef.current = seoView;
+      if (typeof window !== "undefined" && window.scrollY > 0) {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+    }
+  }, [seoView]);
 
   useEffect(() => {
     if (!hydrated || typeof window === "undefined" || !window.history) {
@@ -84,17 +109,39 @@ export function App() {
           ? (window.history.state as Record<string, unknown>)
           : {};
 
-      if (currentHistState.autonomoSlot !== "root" && currentHistState.autonomoSlot !== "leaf") {
+      const activeView = inGameView ? "game" : inDashboardView ? "title" : "landing";
+      const activeModal = inDashboardView && confirmOverwriteOpen ? "confirm-overwrite" : null;
+      const activeSlot =
+        activeView === "game" || activeModal !== null
+          ? "leaf"
+          : activeView === "title"
+            ? "dashboard"
+            : "root";
+
+      const curSlot = currentHistState.autonomoSlot;
+      const curView = currentHistState.autonomoView;
+      const curModal = currentHistState.autonomoModal ?? null;
+
+      if (curSlot !== "root" && curSlot !== "dashboard" && curSlot !== "leaf") {
         window.history.replaceState(
           {
             ...currentHistState,
-            autonomoView: "title",
+            autonomoView: "landing",
             autonomoSlot: "root",
             autonomoModal: null,
           },
           "",
         );
-        if (inGameView) {
+        if (activeView === "title") {
+          window.history.pushState(
+            {
+              autonomoView: "title",
+              autonomoSlot: activeModal ? "leaf" : "dashboard",
+              autonomoModal: activeModal,
+            },
+            "",
+          );
+        } else if (activeView === "game") {
           window.history.pushState(
             {
               autonomoView: "game",
@@ -103,68 +150,31 @@ export function App() {
             },
             "",
           );
-        } else if (confirmOverwriteOpen) {
-          window.history.pushState(
-            {
-              autonomoView: "title",
-              autonomoSlot: "leaf",
-              autonomoModal: "confirm-overwrite",
-            },
-            "",
-          );
         }
         return;
       }
 
-      if (inGameView) {
-        const nextGameState = {
-          ...currentHistState,
-          autonomoView: "game",
-          autonomoSlot: "leaf",
-          autonomoModal: null,
-        };
-        if (currentHistState.autonomoSlot === "leaf") {
-          if (currentHistState.autonomoView !== "game" || currentHistState.autonomoModal !== null) {
-            window.history.replaceState(nextGameState, "");
-          }
-        } else {
-          window.history.pushState(nextGameState, "");
-        }
-      } else if (confirmOverwriteOpen) {
-        const nextModalState = {
-          ...currentHistState,
-          autonomoView: "title",
-          autonomoSlot: "leaf",
-          autonomoModal: "confirm-overwrite",
-        };
-        if (currentHistState.autonomoSlot === "leaf") {
-          if (
-            currentHistState.autonomoView !== "title" ||
-            currentHistState.autonomoModal !== "confirm-overwrite"
-          ) {
-            window.history.replaceState(nextModalState, "");
-          }
-        } else {
-          window.history.pushState(nextModalState, "");
-        }
-      } else if (
-        currentHistState.autonomoSlot === "leaf" &&
-        (currentHistState.autonomoView !== "title" || currentHistState.autonomoModal !== null)
-      ) {
-        window.history.replaceState(
-          {
-            ...currentHistState,
-            autonomoView: "title",
-            autonomoSlot: "leaf",
-            autonomoModal: null,
-          },
-          "",
-        );
+      if (curView === activeView && curModal === activeModal) {
+        return;
+      }
+
+      const nextHistState = {
+        ...currentHistState,
+        autonomoView: activeView,
+        autonomoSlot: activeSlot,
+        autonomoModal: activeModal,
+      };
+
+      const rank = (slot: unknown) => (slot === "leaf" ? 2 : slot === "dashboard" ? 1 : 0);
+      if (rank(activeSlot) > rank(curSlot)) {
+        window.history.pushState(nextHistState, "");
+      } else {
+        window.history.replaceState(nextHistState, "");
       }
     } catch {
       // Ignore history API restrictions in restricted frames/environments
     }
-  }, [hydrated, inGameView, confirmOverwriteOpen]);
+  }, [hydrated, inGameView, inDashboardView, confirmOverwriteOpen]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -206,10 +216,28 @@ export function App() {
       if (uiState.screenView === "game" && targetHistState.autonomoView !== "game") {
         handlingPopStateRef.current = true;
         gameState.returnToTitle();
+        if (targetHistState.autonomoView === "landing") {
+          uiState.setScreenView("landing");
+        }
         return;
       }
 
-      if (uiState.screenView === "title" && targetHistState.autonomoView === "game") {
+      if (uiState.screenView === "title" && targetHistState.autonomoView === "landing") {
+        handlingPopStateRef.current = true;
+        uiState.setScreenView("landing");
+        return;
+      }
+
+      if (uiState.screenView === "landing" && targetHistState.autonomoView === "title") {
+        handlingPopStateRef.current = true;
+        uiState.setScreenView("title");
+        return;
+      }
+
+      if (
+        (uiState.screenView === "title" || uiState.screenView === "landing") &&
+        targetHistState.autonomoView === "game"
+      ) {
         if (gameState.activeRun !== null) {
           handlingPopStateRef.current = true;
           gameState.continueRun();
@@ -241,6 +269,8 @@ export function App() {
             <h1 className="font-editorial text-xl font-bold">{ui.app.loadingTitle}</h1>
           </div>
         </main>
+      ) : screenView === "landing" ? (
+        <LandingScreen />
       ) : screenView === "title" || !visibleState ? (
         <TitleScreen />
       ) : visibleState.ending !== null &&

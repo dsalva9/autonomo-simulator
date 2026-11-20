@@ -6,7 +6,7 @@ import {
   normalizeLocale,
 } from "../i18n/resolveEventText.ts";
 
-export type SeoPageView = "title" | "game" | "end_run";
+export type SeoPageView = "landing" | "title" | "game" | "end_run";
 
 export interface DocumentSeoSnapshot {
   lang: "es" | "en";
@@ -32,6 +32,21 @@ export function parseUrlLocaleParam(search: string): "es-ES" | "en" | null {
   }
   if (raw === "es" || raw.startsWith("es-")) {
     return "es-ES";
+  }
+  return null;
+}
+
+export function parseUrlInitialViewParam(search: string): "landing" | "title" | null {
+  if (!search) {
+    return null;
+  }
+  const params = new URLSearchParams(search);
+  const raw = params.get("view")?.trim().toLowerCase();
+  if (raw === "panel" || raw === "dashboard" || raw === "title") {
+    return "title";
+  }
+  if (raw === "landing" || raw === "portada") {
+    return "landing";
   }
   return null;
 }
@@ -84,6 +99,26 @@ export function buildDocumentSeoSnapshot(options: {
           title: `${cal.label} · Despacho en curso — Autónomo Simulator`,
           description:
             "Gestiona clientes, cuota mensual del RETA, estrés y cierres trimestrales de IVA e IRPF en Autónomo Simulator, el juego satírico sobre ser autónomo en España.",
+        };
+  }
+
+  if (options.view === "title") {
+    return isEn
+      ? {
+          lang,
+          ogLocale,
+          canonicalUrl,
+          title: "Dossier Dashboard · Hall of the Fallen & Achievements — Autónomo Simulator",
+          description:
+            "Start a new seeded run, resume your active dossier, browse your Hall of the Fallen certificates, and track all 15 achievements in Autónomo Simulator.",
+        }
+      : {
+          lang,
+          ogLocale,
+          canonicalUrl,
+          title: "Panel de Expedientes · Salón de Caídos y Logros — Autónomo Simulator",
+          description:
+            "Inicia una nueva alta en el RETA con semilla, reanuda tu partida, consulta el Salón de Caídos y sigue tus 15 logros en Autónomo Simulator.",
         };
   }
 

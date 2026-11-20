@@ -9,6 +9,12 @@ function screenshotPath(filename: string): string {
   return resolve(SCREENSHOT_DIR, filename);
 }
 
+async function openDashboardFromLanding(page: Page): Promise<void> {
+  await expect(page.getByTestId("landing-screen")).toBeVisible();
+  await page.getByTestId("landing-enter-btn").click();
+  await expect(page.getByTestId("title-screen")).toBeVisible();
+}
+
 const PHASE2_ACHIEVEMENT_IDS = [
   "primer_trimestre",
   "primer_ano",
@@ -165,6 +171,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     page,
   }) => {
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("P35-CASH-158");
     await page.getByTestId("start-run-btn").click();
 
@@ -253,7 +260,13 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
 
-      // 1. TitleScreen zero horizontal overflow + hero stamp containment
+      // 1. LandingScreen & TitleScreen (Dashboard) zero horizontal overflow + hero stamp containment
+      await expect(page.getByTestId("landing-screen")).toBeVisible();
+      await assertZeroHorizontalOverflow(page, vp.width, `LandingScreen (${vp.label})`);
+      const landingStamp = page.getByText("VENTANILLA ÚNICA").locator("..");
+      await assertBoxContainedInViewport(landingStamp, vp.width, "LandingScreen hero stamp");
+
+      await page.getByTestId("landing-enter-btn").click();
       await expect(page.getByTestId("title-screen")).toBeVisible();
       await assertZeroHorizontalOverflow(page, vp.width, `TitleScreen (${vp.label})`);
 
@@ -422,6 +435,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("./");
+    await openDashboardFromLanding(page);
 
     await page.getByTestId("seed-input").fill("P35-BANNER-139");
     await page.getByTestId("start-run-btn").click();
@@ -498,6 +512,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     page,
   }) => {
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await expect(page.getByTestId("title-screen")).toBeVisible();
 
     // 1. Verify HTML head manifest + OpenGraph tags & live HTTP 200 static PWA/social endpoints

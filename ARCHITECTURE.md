@@ -134,9 +134,10 @@ autonomo-simulator/
 │   │   ├── scene/                   # Style-agnostic office scene renderer & asset resolver
 │   │   └── modals/                  # Quarterly Trimestre, Annual Summary, Victory, Game Over
 │   └── screens/
-│       ├── TitleScreen.tsx          # New run, continue active run, Hall of Fame, Achievements
+│       ├── LandingScreen.tsx        # Clean separated landing overview, Guía Rápida, Ko-fi & future social slot
+│       ├── TitleScreen.tsx          # Balanced dossier dashboard: Continue, New Run/Seed, Career Summary, Hall of Fame, Achievements
 │       ├── GameScreen.tsx           # Adaptive mobile (tabbed) / desktop (multi-panel) workspace
-│       └── EndRunScreen.tsx         # Epitaph summary + Canvas card preview + Share actions
+│       └── EndRunScreen.tsx         # Epitaph summary + Canvas card preview + Share & Ko-fi actions
 ├── scripts/
 │   ├── emit-schemas.ts              # Exports Zod schemas -> schemas/*.schema.json
 │   ├── validate-content.ts          # Schema + semantic graph + asset manifest validator

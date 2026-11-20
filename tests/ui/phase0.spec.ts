@@ -9,6 +9,12 @@ function screenshotPath(filename: string): string {
   return resolve(SCREENSHOT_DIR, filename);
 }
 
+async function openDashboardFromLanding(page: Page): Promise<void> {
+  await expect(page.getByTestId("landing-screen")).toBeVisible();
+  await page.getByTestId("landing-enter-btn").click();
+  await expect(page.getByTestId("title-screen")).toBeVisible();
+}
+
 async function pickFirstEligibleChoice(page: Page): Promise<number> {
   const buttons = page.locator('[data-testid^="choice-btn-"]');
   const count = await buttons.count();
@@ -96,10 +102,17 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
 
     await page.goto("./");
 
-    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
     await expect(page.locator("blockquote")).toContainText(
       "Sé tu propio jefe. Descubre por qué era mala idea.",
     );
+    await page.screenshot({
+      path: screenshotPath(`00-landing-${profileTag}.png`),
+      fullPage: false,
+    });
+
+    await page.getByTestId("landing-enter-btn").click();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
 
     await page.getByTestId("seed-input").fill("FASE0-QA-2026");
     await page.screenshot({
@@ -188,6 +201,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
       testInfo.project.name === "mobile-chromium" ? "mobile-390x844" : "desktop-1440x900";
 
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("FASE0-TRIMESTRE-PAY");
     await page.getByTestId("start-run-btn").click();
 
@@ -230,6 +244,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     page,
   }) => {
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("FASE0-RELOAD-PERSIST");
     await page.getByTestId("start-run-btn").click();
 
@@ -251,6 +266,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
     // Allow IndexedDB transaction to flush cleanly before reload
     await page.waitForTimeout(120);
     await page.reload();
+    await openDashboardFromLanding(page);
 
     // TitleScreen shows Continuar partida with saved calendar & money
     await expect(page.getByTestId("continue-run-card")).toBeVisible();
@@ -277,6 +293,7 @@ test.describe("Autónomo Simulator — Phase 0 E2E & Responsive QA Suite", () =>
       testInfo.project.name === "mobile-chromium" ? "mobile-390x844" : "desktop-1440x900";
 
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("FASE0-KEYBOARD-END");
     await page.getByTestId("start-run-btn").click();
 

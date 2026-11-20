@@ -9,6 +9,12 @@ function screenshotPath(filename: string): string {
   return resolve(SCREENSHOT_DIR, filename);
 }
 
+async function openDashboardFromLanding(page: Page): Promise<void> {
+  await expect(page.getByTestId("landing-screen")).toBeVisible();
+  await page.getByTestId("landing-enter-btn").click();
+  await expect(page.getByTestId("title-screen")).toBeVisible();
+}
+
 const DESKTOP_UX_VIEWPORTS = [
   { label: "laptop-1366x768", width: 1366, height: 768 },
   { label: "desktop-1440x900", width: 1440, height: 900 },
@@ -342,6 +348,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
+      await openDashboardFromLanding(page);
       await page.getByTestId("seed-input").fill("P35-M4-HITO-72");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -474,7 +481,20 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       const fullViewportBounds = { minTop: 0, maxBottom: vp.height, viewportWidth: vp.width };
 
-      // 1. Fresh TitleScreen
+      // 0. Separated LandingScreen above-the-fold CTA & Ko-fi check
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("landing-enter-btn"),
+        fullViewportBounds,
+        `LandingScreen landing-enter-btn (${vp.label})`,
+      );
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("kofi-landing-banner-link"),
+        fullViewportBounds,
+        `LandingScreen kofi-landing-banner-link (${vp.label})`,
+      );
+      await page.getByTestId("landing-enter-btn").click();
+
+      // 1. Fresh Dashboard (TitleScreen)
       await assertVisibleInViewportWithoutScroll(
         page.getByTestId("seed-input"),
         fullViewportBounds,
@@ -583,6 +603,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
+      await openDashboardFromLanding(page);
       await page.getByTestId("seed-input").fill("P35-BANNER-139");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -650,6 +671,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       isMobile ? { width: 390, height: 844 } : { width: 1366, height: 768 },
     );
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("P35-BANNER-139");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -786,6 +808,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.goto("./");
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
+    await page.keyboard.press("Enter");
     await expect(page.getByTestId("title-screen")).toBeVisible();
 
     // 1. TitleScreen shortcuts: switch archive tabs (2 / 1) & WAI-ARIA ArrowRight/ArrowLeft on tablist
@@ -1010,6 +1034,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.goto("./");
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
+    await page.keyboard.press("Enter");
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -1045,6 +1071,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     });
 
     await page.reload();
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
+    await page.keyboard.press("Enter");
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await page.keyboard.press("Enter");
 
@@ -1099,6 +1127,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     const vp = isMobile ? { width: 360, height: 780 } : { width: 1366, height: 768 };
     await page.setViewportSize(vp);
     await page.goto("./");
+    await openDashboardFromLanding(page);
 
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
@@ -1280,6 +1309,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     // 3. Reload persistence: locale 'en' and active run survive browser reload
     await page.waitForTimeout(120);
     await page.reload();
+    await openDashboardFromLanding(page);
 
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
@@ -1335,6 +1365,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       await page.setViewportSize({ width: compactVp.width, height: compactVp.height });
       await page.goto("./");
+      await openDashboardFromLanding(page);
       await page.getByTestId("seed-input").fill("P35-M4-HITO-72");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -1450,6 +1481,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       });
 
       await page.reload();
+      await openDashboardFromLanding(page);
       await page.getByTestId("continue-run-btn").click();
       await expect(page.getByTestId("event-card")).toHaveAttribute(
         "data-event-id",
@@ -1484,6 +1516,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     // 1. 1024x768: 2-column desktop workspace (event-card >= 500px, mobile bottom nav hidden, Right folder visible)
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("P35-BANNER-139");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -1553,6 +1586,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
   }) => {
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("P35-AGIL-1");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -1604,6 +1638,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
   }) => {
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.goto("./");
+    await openDashboardFromLanding(page);
 
     // 1. Start active run, verify TitleScreen <kbd> WCAG contrast, humanized flag pill, and overwrite guard
     await assertReadableTextContrast(
@@ -1669,6 +1704,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     });
 
     await page.reload();
+    await openDashboardFromLanding(page);
     await page.getByTestId("continue-run-btn").click();
     // Month 128 (Year 11, tapered 0.5x post-M120): effectiveLivingCost = 1,405 + 9.5 * 64 = 2,013 €/mo
     await expect(page.getByTestId("panel-cuentas")).toContainText(/2\.?013\s*€/);
@@ -1720,6 +1756,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     });
 
     await page.reload();
+    await openDashboardFromLanding(page);
     await page.getByTestId("continue-run-btn").click();
     await page.locator('[data-choice-id="entrega_express_contado"]').click();
 
@@ -1728,6 +1765,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("outcome-continue-btn")).toContainText("Ver certificado final");
     await page.waitForTimeout(120);
     await page.reload();
+    await openDashboardFromLanding(page);
 
     // Resuming after reload restores the exact pending fatal outcome-panel first, then opens EndRunScreen on acknowledge
     await expect(page.getByTestId("continue-run-card")).toContainText("Año 1 · Mes 1");
@@ -1765,9 +1803,38 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     await page.setViewportSize({ width: 1366, height: 768 });
     await page.goto("./");
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
+
+    // 0. Separated LandingScreen zero-scroll check across all 6 desktop viewports
+    for (const vp of desktopMatrix) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      const metrics = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        innerHeight: window.innerHeight,
+      }));
+      expect(metrics.scrollY).toBe(0);
+      expect(
+        metrics.scrollHeight,
+        `LandingScreen overflow on ${vp.label} (${metrics.scrollHeight} > ${metrics.innerHeight + 2})`,
+      ).toBeLessThanOrEqual(metrics.innerHeight + 2);
+      const bounds = { minTop: 0, maxBottom: vp.height, viewportWidth: vp.width };
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("landing-enter-btn"),
+        bounds,
+        `LandingScreen landing-enter-btn (${vp.label})`,
+      );
+      await assertVisibleInViewportWithoutScroll(
+        page.getByTestId("kofi-landing-banner-link"),
+        bounds,
+        `LandingScreen kofi-landing-banner-link (${vp.label})`,
+      );
+    }
+
+    await page.getByTestId("landing-enter-btn").click();
     await expect(page.getByTestId("title-screen")).toBeVisible();
 
-    // 1. Fresh (0-run) TitleScreen zero-scroll check across all 6 desktop viewports
+    // 1. Fresh (0-run) Dashboard (TitleScreen) zero-scroll check across all 6 desktop viewports
     for (const vp of desktopMatrix) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       const metrics = await page.evaluate(() => ({
@@ -2060,6 +2127,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     for (const vp of mobileMatrix) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
+      await openDashboardFromLanding(page);
 
       // Start fresh seeded run (handle overwrite modal if active run exists from previous iteration)
       await page.getByTestId("seed-input").fill("P35-EN-LOCALE-134");
@@ -2149,6 +2217,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     // 1. H2-06 Repeat-Key Guard: synthetic keydown with repeat: true MUST NOT trigger choice or advance outcome
     await page.setViewportSize(targetViewports[0]);
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("P35-CASH-158");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
@@ -2266,6 +2335,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
         });
       });
       await page.reload();
+      await openDashboardFromLanding(page);
 
       await page.getByTestId("seed-input").fill("P35-BANNER-139");
       await page.getByTestId("start-run-btn").click();
@@ -2314,7 +2384,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     }
   });
 
-  test("QA-34: Illustrated Landing Balance, Mobile & Desktop Ko-fi Support Links (Landing, EndRun, Millionaire & Year 15) & Full Technical/On-Page SEO", async ({
+  test("QA-34: Separated Landing & Balanced Dashboard, Mobile & Desktop Ko-fi Links (Landing, EndRun, Millionaire & Year 15) & Full Technical/On-Page SEO", async ({
     page,
   }, testInfo) => {
     const isMobile = testInfo.project.name === "mobile-chromium";
@@ -2322,7 +2392,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.setViewportSize(vp);
     await page.goto("./");
 
-    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
+    await expect(page.getByTestId("title-screen")).toHaveCount(0);
 
     // 1. SEO Verification: robots.txt, sitemap.xml, Schema.org JSON-LD, canonical & dynamic page titles
     const robotsRes = await page.request.get(new URL("./robots.txt", page.url()).toString());
@@ -2361,7 +2432,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     expect(seoHead.hreflangEn).toBe("https://autonomo-simulator.vercel.app/?lang=en");
     expect(seoHead.hasGraph).toBe(true);
 
-    // 2. Illustrated Landing Card & Ko-fi Link on both Mobile & Desktop
+    // 2. Clean Separated Landing Screen: Guía Rápida illustration, CTA, Ko-fi & reserved social slot
     const landingIllus = page.getByTestId("landing-hero-illustration");
     await expect(landingIllus).toBeVisible();
     await expect
@@ -2383,9 +2454,17 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       `Landing Ko-fi CTA (${testInfo.project.name})`,
     );
     await assertReadableTextContrast(landingKofi, `Landing Ko-fi CTA (${testInfo.project.name})`);
+    await expect(page.getByTestId("landing-social-slot")).toBeAttached();
+
+    // 3. Enter Dashboard -> Career Summary Card, Balanced Desktop Columns, NO Ko-fi on Dashboard, and Portada return button
+    await page.getByTestId("landing-enter-btn").click();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect.poll(async () => page.title()).toContain("Panel de Expedientes");
+    await expect(page.getByTestId("career-summary-card")).toBeVisible();
+    await expect(page.getByTestId("kofi-landing-banner")).toHaveCount(0);
 
     if (!isMobile) {
-      // Verify desktop Left & Right columns share symmetrical top & bottom baselines (<= 2px delta) even on 1440x900 & 1920x1080
+      // Verify Dashboard Left (Actions + Career Summary) & Right (Hall of Fame / Logros) align symmetrically (<= 2px) and stay bounded
       for (const deskVp of [
         { label: "1440x900", width: 1440, height: 900 },
         { label: "1920x1080", width: 1920, height: 1080 },
@@ -2402,25 +2481,35 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
             rightHeight: rr.height,
           };
         });
-        expect(balance.topDelta, `Landing top delta on ${deskVp.label}`).toBeLessThanOrEqual(2);
-        expect(balance.bottomDelta, `Landing bottom delta on ${deskVp.label}`).toBeLessThanOrEqual(
-          2,
-        );
+        expect(balance.topDelta, `Dashboard top delta on ${deskVp.label}`).toBeLessThanOrEqual(2);
+        expect(
+          balance.bottomDelta,
+          `Dashboard bottom delta on ${deskVp.label}`,
+        ).toBeLessThanOrEqual(2);
         expect(
           balance.rightHeight,
-          `Right column bounded height on ${deskVp.label} so it never over-stretches`,
-        ).toBeLessThanOrEqual(720);
+          `Dashboard right column bounded height on ${deskVp.label}`,
+        ).toBeLessThanOrEqual(620);
       }
       await page.setViewportSize(vp);
     }
 
-    // 3. ?lang=en URL query parameter loads English SEO + English UI directly
+    // Return to Landing via Portada button in Dashboard header
+    await page.getByTestId("open-landing-btn").click();
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
+
+    // 4. ?lang=en URL query parameter loads English SEO + English Landing directly
     await page.goto("./?lang=en");
+    await expect(page.getByTestId("landing-screen")).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect.poll(async () => page.title()).toContain("Spanish Freelancer Survival Game");
     await expect(page.getByTestId("kofi-landing-banner-link")).toContainText("Buy me a coffee");
 
-    // 4. Start run -> verify GameScreen dynamic SEO title -> stage 150k Ricachón VictoryModal & Year 15 AnnualSummaryModal + EndRunScreen Ko-fi
+    // Enter English Dashboard -> Start run -> verify GameScreen dynamic SEO title -> Year 15 Endless & 150k VictoryModal + EndRunScreen Ko-fi
+    await page.getByTestId("landing-enter-btn").click();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect.poll(async () => page.title()).toContain("Dossier Dashboard");
+
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
     await expect.poll(async () => page.title()).toContain("Year 1 · Month 1");
@@ -2456,7 +2545,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     });
 
     await page.goto("./");
-    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("landing-continue-btn")).toBeVisible();
+    await page.getByTestId("landing-continue-btn").click();
 
     // Year 15 (180m) Endless AnnualSummaryModal displays Ko-fi link
     await expect(page.getByTestId("annual-summary-modal")).toBeVisible();
@@ -2481,5 +2571,10 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(endRunKofi).toHaveAttribute("href", "https://ko-fi.com/dsal80");
     await endRunKofi.scrollIntoViewIfNeeded();
     await assertCenterHitTargetUnoccluded(endRunKofi, "EndRunScreen Ko-fi link");
+
+    // Returning from EndRunScreen goes straight to the Dashboard (not Landing) and updates Career Summary
+    await page.getByTestId("end-return-title-btn").click();
+    await expect(page.getByTestId("title-screen")).toBeVisible();
+    await expect(page.getByTestId("career-summary-runs")).toHaveText("1");
   });
 });

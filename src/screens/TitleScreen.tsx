@@ -1,7 +1,9 @@
 import {
   AlertCircle,
   AlertTriangle,
+  ArrowLeft,
   Award,
+  BarChart3,
   CheckCircle2,
   FileCheck2,
   FilePlus2,
@@ -21,11 +23,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { KofiSupportBanner } from "../components/common/KofiSupportBanner.tsx";
 import { useModalKeyboard } from "../components/modals/useModalKeyboard.ts";
 import { getLocalizedAchievementCatalog } from "../services/achievements/definitions.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
-import { compiledCatalog, resolveManifestAsset } from "../services/content/catalog.ts";
 import {
   getEndingMetadata,
   getVictoryBadgeLabel,
@@ -154,6 +154,7 @@ export function TitleScreen() {
   const setReducedMotionPreference = useGameStore((s) => s.setReducedMotionPreference);
   const toggleLocalePreference = useGameStore((s) => s.toggleLocalePreference);
 
+  const setScreenView = useUIStore((s) => s.setScreenView);
   const activeTitleTab = useUIStore((s) => s.activeTitleTab);
   const setActiveTitleTab = useUIStore((s) => s.setActiveTitleTab);
   const confirmOverwriteOpen = useUIStore((s) => s.confirmOverwriteOpen);
@@ -233,6 +234,11 @@ export function TitleScreen() {
     void toggleLocalePreference();
   };
 
+  const handleOpenLanding = () => {
+    playUiSound("paper_choice", { muted: sfxMuted });
+    setScreenView("landing");
+  };
+
   const handleArchiveTabKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (
       event.key !== "ArrowLeft" &&
@@ -269,6 +275,7 @@ export function TitleScreen() {
     handleToggleSfx,
     handleToggleFastPacing,
     handleToggleLocale,
+    handleOpenLanding,
     setActiveTitleTab,
     dismissCorruptNotice,
   });
@@ -282,6 +289,7 @@ export function TitleScreen() {
     handleToggleSfx,
     handleToggleFastPacing,
     handleToggleLocale,
+    handleOpenLanding,
     setActiveTitleTab,
     dismissCorruptNotice,
   };
@@ -370,6 +378,9 @@ export function TitleScreen() {
       } else if (key === "l") {
         event.preventDefault();
         actions.handleToggleLocale();
+      } else if (key === "p") {
+        event.preventDefault();
+        actions.handleOpenLanding();
       }
     };
 
@@ -380,10 +391,23 @@ export function TitleScreen() {
   const unlockedCount = localizedAchievements.filter((ach) =>
     Boolean(profile.achievements[ach.id]),
   ).length;
-  const landingIllustration = resolveManifestAsset(
-    compiledCatalog.manifest,
-    "illus_portada_landing",
+  const totalClosedRuns = profile.hall_of_fame.length;
+  const bestSurvivalMonths = profile.hall_of_fame.reduce(
+    (max, run) => Math.max(max, run.months_survived),
+    0,
   );
+  const peakLifetimeBilled = profile.hall_of_fame.reduce(
+    (max, run) => Math.max(max, run.lifetime_billed),
+    0,
+  );
+  const totalVictorySealsEarned = profile.hall_of_fame.reduce(
+    (acc, run) => acc + run.earned_victories.length,
+    0,
+  );
+  const sealProgressPct =
+    localizedAchievements.length > 0
+      ? Math.round((unlockedCount / localizedAchievements.length) * 100)
+      : 0;
 
   return (
     <main
@@ -392,7 +416,7 @@ export function TitleScreen() {
     >
       <div
         inert={confirmOverwriteOpen}
-        className="w-full flex-1 lg:max-h-[820px] min-h-0 flex flex-col gap-2 sm:gap-2.5"
+        className="w-full flex-1 lg:max-h-[700px] min-h-0 flex flex-col gap-2 sm:gap-2.5"
       >
         {/* Compact Corrupt Save Recovery Banner */}
         {corruptedSaveNotice && (
@@ -423,7 +447,7 @@ export function TitleScreen() {
           <div className="bg-[#1f2421] text-[#fffdf8] px-3 sm:px-5 py-1.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 border-b-2 border-[#1f2421]">
             <div className="flex items-center gap-2 min-w-0">
               <span className="stamp-badge text-[10px] sm:text-xs text-[#fce592] leading-tight">
-                {ui.title.headerFormBadge}
+                {ui.title.dashboardHeaderBadge}
               </span>
               <span className="hidden xl:inline font-bureau text-[11px] text-[#efe4ce] shrink-0">
                 · {ui.title.headerCountryBadge}
@@ -431,6 +455,16 @@ export function TitleScreen() {
             </div>
 
             <div className="flex flex-wrap items-center gap-1.5 ml-auto">
+              <button
+                type="button"
+                data-testid="open-landing-btn"
+                title={ui.title.openLandingTitle}
+                onClick={handleOpenLanding}
+                className="h-7 px-2 rounded-md border border-[#efe4ce]/45 bg-[#2d3430] hover:bg-[#3a433e] text-[#fce592] font-bureau text-[11px] font-bold inline-flex items-center gap-1 shrink-0 cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>{ui.title.openLandingBtn}</span>
+              </button>
               <button
                 type="button"
                 data-testid="toggle-reduced-motion"
@@ -516,92 +550,35 @@ export function TitleScreen() {
             </div>
           </div>
 
-          <div className="title-hero-body px-3.5 sm:px-5 py-2.5 sm:py-3.5 bg-gradient-to-br from-[#fffdf8] via-[#fffdf8] to-[#f6efe0] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5 sm:gap-3.5">
-            <div className="space-y-1 max-w-3xl">
-              <h1 className="title-hero-title font-editorial text-xl sm:text-3xl font-bold text-[#1f2421] tracking-tight leading-tight">
+          <div className="title-hero-body px-3.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-br from-[#fffdf8] via-[#fffdf8] to-[#f6efe0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3.5">
+            <div className="space-y-0.5 max-w-3xl">
+              <h1 className="title-hero-title font-editorial text-xl sm:text-2xl font-bold text-[#1f2421] tracking-tight leading-tight">
                 Autónomo Simulator
               </h1>
-              <blockquote className="border-l-4 border-[#b42b24] pl-2.5 py-0.5 font-editorial italic text-xs sm:text-base text-[#373f3a]">
+              <blockquote className="border-l-4 border-[#b42b24] pl-2.5 py-0.5 font-editorial italic text-xs sm:text-sm text-[#373f3a]">
                 {ui.title.taglineQuote}
               </blockquote>
-              <p className="text-[11.5px] sm:text-xs lg:text-[13px] text-[#4a524e] leading-snug">
-                {ui.title.heroLeadBeforeAmount}
-                <strong className="font-bureau text-[#1f5c53] tabular-nums">
-                  {formatEuros(150_000, locale)}
-                </strong>
-                {ui.title.heroLeadAfterAmount}
-              </p>
             </div>
 
             {/* Official Tilted Rubber Stamp — safe margin prevents clipping on narrow 360px phones */}
-            <div className="self-start lg:self-center shrink-0 mx-1.5 my-0.5 rotate-[-2.5deg] rounded-xl border-3 sm:border-4 border-[#9e221b] bg-[#fdf0ef] px-3 sm:px-4 py-1 sm:py-1.5 text-center shadow-xs">
-              <p className="stamp-badge text-[10px] sm:text-[11px] text-[#9e221b]">
+            <div className="self-start sm:self-center shrink-0 mx-1.5 my-0.5 rotate-[-2.5deg] rounded-xl border-3 border-[#9e221b] bg-[#fdf0ef] px-3 py-1 text-center shadow-xs">
+              <p className="stamp-badge text-[9.5px] sm:text-[10px] text-[#9e221b]">
                 {ui.title.stampTop}
               </p>
-              <p className="font-bureau text-sm sm:text-lg font-black text-[#9e221b] tabular-nums leading-tight">
+              <p className="font-bureau text-sm sm:text-base font-black text-[#9e221b] tabular-nums leading-tight">
                 {ui.title.stampMain}
               </p>
-              <p className="font-bureau text-[10px] sm:text-[11px] font-bold text-[#373f3a]">
+              <p className="font-bureau text-[9.5px] sm:text-[10px] font-bold text-[#373f3a]">
                 {ui.title.stampBottom}
               </p>
             </div>
           </div>
         </section>
 
-        {/* Main 12-Column Workspace Grid: Illustrated Landing + Play + Ko-fi (Left 7) & Balanced Provincial Archive (Right 5) */}
+        {/* Main 12-Column Balanced Dashboard Grid: Play Actions + Career Summary (Left 5) & Provincial Archive (Right 7) */}
         <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 lg:items-stretch gap-2.5 sm:gap-3.5">
-          {/* Left Column: Illustrated Brief & How-to-Play + Play CTAs + Ko-fi Support */}
-          <div className="title-left-stack lg:col-span-7 flex flex-col gap-2 min-h-0">
-            <section
-              data-testid="landing-guide-card"
-              className="paper-dossier lg:flex-1 lg:min-h-0 rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col"
-            >
-              <div className="title-guide-header dossier-header !min-h-[30px] !py-1 !px-3 shrink-0">
-                <span className="stamp-badge text-[10px] text-[#7a4308]">
-                  {ui.title.landingGuideBadge}
-                </span>
-                <span className="hidden sm:inline font-bureau text-[10.5px] font-bold text-[#4a524e] truncate">
-                  {ui.title.landingIllustrationCaption}
-                </span>
-              </div>
-
-              <div className="title-guide-body flex-1 min-h-0 p-2 sm:p-2.5 flex flex-col gap-2">
-                {landingIllustration && (
-                  <div className="title-guide-illus-wrap relative h-32 sm:h-48 lg:h-auto lg:flex-1 lg:min-h-[52px] rounded-lg border-2 border-[#1f2421] overflow-hidden bg-[#f6efe0]">
-                    <img
-                      data-testid="landing-hero-illustration"
-                      data-asset-id={landingIllustration.id}
-                      src={landingIllustration.url}
-                      alt={ui.title.landingIllustrationAlt}
-                      width={landingIllustration.width}
-                      height={landingIllustration.height}
-                      decoding="async"
-                      className="w-full h-full lg:absolute lg:inset-0 object-cover object-center render-vector-hd"
-                    />
-                  </div>
-                )}
-
-                <div className="title-guide-steps shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2">
-                  {ui.title.landingSteps.map((item) => (
-                    <div
-                      key={item.step}
-                      className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5 space-y-0.5"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span className="stamp-badge text-[9.5px] px-1.5 py-0.5 rounded bg-[#1f2421] text-[#fce592] shrink-0">
-                          {item.step}
-                        </span>
-                        <h2 className="font-editorial text-xs sm:text-[13px] font-bold text-[#1f2421] leading-tight">
-                          {item.title}
-                        </h2>
-                      </div>
-                      <p className="text-[11px] text-[#373f3a] leading-snug">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
+          {/* Left Column: Active Run + New Run + Flex-Filled Career Summary */}
+          <div className="title-left-stack lg:col-span-5 flex flex-col gap-2.5 min-h-0">
             {hasResumableRun && activeRun && resumableCalendar && (
               <section
                 data-testid="continue-run-card"
@@ -616,9 +593,9 @@ export function TitleScreen() {
                   </span>
                 </div>
 
-                <div className="title-card-body p-2 sm:p-2.5 flex flex-col sm:flex-row sm:items-center gap-2">
-                  <div className="flex-1 grid grid-cols-2 divide-x divide-[#1f2421]/14 rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] text-xs">
-                    <div className="px-2.5 py-1">
+                <div className="title-card-body p-2.5 space-y-2">
+                  <div className="grid grid-cols-2 divide-x divide-[#1f2421]/14 rounded-lg border border-[#1f2421]/25 bg-[#fffdf8] text-xs">
+                    <div className="px-2.5 py-1.5">
                       <span className="text-[#4a524e] block text-[10px] leading-tight">
                         {ui.title.calendarLabel}
                       </span>
@@ -629,7 +606,7 @@ export function TitleScreen() {
                         {resumableCalendar.label}
                       </strong>
                     </div>
-                    <div className="px-2.5 py-1">
+                    <div className="px-2.5 py-1.5">
                       <span className="text-[#4a524e] block text-[10px] leading-tight">
                         {ui.title.cashInHandLabel}
                       </span>
@@ -649,7 +626,7 @@ export function TitleScreen() {
                     data-testid="continue-run-btn"
                     title={ui.title.continueTitle}
                     onClick={handleContinueRun}
-                    className="sm:w-auto min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-sm sm:text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors shrink-0"
+                    className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#1f5c53] hover:bg-[#174740] text-[#fffdf8] font-bold text-sm sm:text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors"
                   >
                     <Play
                       className="w-4 h-4 sm:w-5 sm:h-5 fill-current shrink-0"
@@ -664,7 +641,7 @@ export function TitleScreen() {
               </section>
             )}
 
-            {/* New Run Card with Big Play CTA + Single-Row Inline Seed Field */}
+            {/* New Run Card with Single-Row Inline Seed Field */}
             <form
               onSubmit={handleStartFormSubmit}
               className="paper-dossier shrink-0 rounded-xl overflow-hidden bg-[#fffdf8]"
@@ -679,7 +656,7 @@ export function TitleScreen() {
                 </span>
               </div>
 
-              <div className="title-card-body p-2 sm:p-2.5 space-y-2">
+              <div className="title-card-body p-2.5 space-y-2">
                 <div className="flex items-center gap-2">
                   <label
                     htmlFor="seed-input"
@@ -709,7 +686,7 @@ export function TitleScreen() {
                   type="submit"
                   data-testid="start-run-btn"
                   title={ui.title.startRunTitle}
-                  className="w-full min-h-12 sm:min-h-13 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm sm:text-base lg:text-lg px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-[2px_2px_0px_0px_rgba(31,36,33,0.9)]"
+                  className="w-full min-h-12 rounded-lg border-2 border-[#1f2421] bg-[#b42b24] hover:bg-[#96221c] text-[#fffdf8] font-bold text-sm sm:text-base px-4 py-2 flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-[2px_2px_0px_0px_rgba(31,36,33,0.9)]"
                 >
                   <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" aria-hidden="true" />
                   <span>{ui.title.startRunBtn}</span>
@@ -726,17 +703,93 @@ export function TitleScreen() {
               </div>
             </form>
 
-            {/* Ko-fi Support Banner (visible on both Mobile & Desktop) */}
-            <KofiSupportBanner
-              locale={locale}
-              context="landing"
-              testId="kofi-landing-banner"
-              className="shrink-0"
-            />
+            {/* Compact Career Summary Card — flex-fills left column to balance Hall of Fame / Achievements */}
+            <section
+              data-testid="career-summary-card"
+              className="paper-dossier lg:flex-1 lg:min-h-0 rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col"
+            >
+              <div className="dossier-header !min-h-[28px] !py-1 !px-3 shrink-0">
+                <h2 className="font-editorial text-sm font-bold text-[#1f2421] flex items-center gap-1.5">
+                  <BarChart3 className="w-4 h-4 text-[#1f5c53] shrink-0" aria-hidden="true" />
+                  {ui.title.careerSummaryHeading}
+                </h2>
+                <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#e8f5f1] text-[#1f5c53] shrink-0">
+                  {ui.title.careerSummaryBadge}
+                </span>
+              </div>
+
+              <div className="career-summary-body flex-1 min-h-0 p-2.5 sm:p-3 flex flex-col justify-between gap-2">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5 min-w-0">
+                    <span className="text-[#4a524e] block text-[10px] leading-tight">
+                      {ui.title.careerRunsLabel}
+                    </span>
+                    <strong
+                      data-testid="career-summary-runs"
+                      className="font-bureau text-sm font-black text-[#1f2421] tabular-nums"
+                    >
+                      {totalClosedRuns}
+                    </strong>
+                  </div>
+
+                  <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5 min-w-0">
+                    <span className="text-[#4a524e] block text-[10px] leading-tight">
+                      {ui.title.careerBestSurvivalLabel}
+                    </span>
+                    <strong
+                      data-testid="career-summary-best-survival"
+                      className="font-bureau text-xs sm:text-[13px] font-black text-[#1f5c53] tabular-nums leading-snug block truncate"
+                    >
+                      {bestSurvivalMonths > 0
+                        ? formatDurationMonthsEs(bestSurvivalMonths, locale)
+                        : ui.title.careerZeroMonths}
+                    </strong>
+                  </div>
+
+                  <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5 min-w-0">
+                    <span className="text-[#4a524e] block text-[10px] leading-tight">
+                      {ui.title.careerPeakBilledLabel}
+                    </span>
+                    <strong
+                      data-testid="career-summary-peak-billed"
+                      className="font-bureau text-sm font-black text-[#264e7a] tabular-nums whitespace-nowrap"
+                    >
+                      {formatEuros(peakLifetimeBilled, locale)}
+                    </strong>
+                  </div>
+
+                  <div className="rounded-lg border border-[#1f2421]/20 bg-[#f6efe0] px-2.5 py-1.5 min-w-0">
+                    <span className="text-[#4a524e] block text-[10px] leading-tight">
+                      {ui.title.careerSealsLabel}
+                    </span>
+                    <strong
+                      data-testid="career-summary-seals"
+                      className="font-bureau text-sm font-black text-[#7a4308] tabular-nums"
+                    >
+                      {unlockedCount}/{localizedAchievements.length}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="w-full h-2 rounded-full bg-[#efe4ce] border border-[#1f2421]/25 overflow-hidden">
+                    <div
+                      className="h-full bg-[#1f5c53] transition-[width] duration-300"
+                      style={{ width: `${sealProgressPct}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-[#4a524e] leading-snug">
+                    {totalClosedRuns === 0
+                      ? ui.title.careerEmptyHint
+                      : ui.title.careerVeteranHint(totalVictorySealsEarned)}
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
 
-          {/* Right Column: Salón de Caídos & 15 Logros (Balanced 5-col Dossier Matching Left Height) */}
-          <section className="lg:col-span-5 paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col min-h-0">
+          {/* Right Column: Salón de Caídos & 15 Logros (Balanced 7-col Dossier Matching Left Height) */}
+          <section className="lg:col-span-7 paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col min-h-0">
             <div
               role="tablist"
               aria-label={ui.title.archiveTablistAria}
@@ -831,7 +884,7 @@ export function TitleScreen() {
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {ui.title.emptyHallGoals.map((goal) => (
                           <div
                             key={goal.code}

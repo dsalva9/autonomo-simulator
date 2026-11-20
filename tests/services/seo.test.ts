@@ -3,11 +3,12 @@ import { type GameState, startNewRun } from "../../src/engine/index.ts";
 import { compiledCatalog } from "../../src/services/content/catalog.ts";
 import {
   buildDocumentSeoSnapshot,
+  parseUrlInitialViewParam,
   parseUrlLocaleParam,
 } from "../../src/services/seo/documentSeo.ts";
 
 describe("Per-Page & Bilingual SEO Metadata Builder (documentSeo.ts)", () => {
-  it("parses ?lang=es / ?lang=en URL query parameters safely", () => {
+  it("parses ?lang=es / ?lang=en and ?view=panel / ?view=landing URL query parameters safely", () => {
     expect(parseUrlLocaleParam("")).toBeNull();
     expect(parseUrlLocaleParam("?seed=FOO")).toBeNull();
     expect(parseUrlLocaleParam("?lang=fr")).toBeNull();
@@ -15,22 +16,35 @@ describe("Per-Page & Bilingual SEO Metadata Builder (documentSeo.ts)", () => {
     expect(parseUrlLocaleParam("?lang=en-US")).toBe("en");
     expect(parseUrlLocaleParam("?lang=es")).toBe("es-ES");
     expect(parseUrlLocaleParam("?lang=es-ES")).toBe("es-ES");
+
+    expect(parseUrlInitialViewParam("")).toBeNull();
+    expect(parseUrlInitialViewParam("?view=panel")).toBe("title");
+    expect(parseUrlInitialViewParam("?view=dashboard")).toBe("title");
+    expect(parseUrlInitialViewParam("?view=landing")).toBe("landing");
+    expect(parseUrlInitialViewParam("?view=unknown")).toBeNull();
   });
 
-  it("builds distinct, localized SEO snapshots across TitleScreen, GameScreen & EndRunScreen", () => {
-    const titleEs = buildDocumentSeoSnapshot({ view: "title", locale: "es-ES" });
-    const titleEn = buildDocumentSeoSnapshot({ view: "title", locale: "en" });
+  it("builds distinct, localized SEO snapshots across Landing, Dashboard, GameScreen & EndRunScreen", () => {
+    const landingEs = buildDocumentSeoSnapshot({ view: "landing", locale: "es-ES" });
+    const landingEn = buildDocumentSeoSnapshot({ view: "landing", locale: "en" });
 
-    expect(titleEs.lang).toBe("es");
-    expect(titleEs.ogLocale).toBe("es_ES");
-    expect(titleEs.canonicalUrl).toBe("https://autonomo-simulator.vercel.app/");
-    expect(titleEs.title).toContain("Autónomo Simulator");
-    expect(titleEs.description).toContain("autónomo en España");
+    expect(landingEs.lang).toBe("es");
+    expect(landingEs.ogLocale).toBe("es_ES");
+    expect(landingEs.canonicalUrl).toBe("https://autonomo-simulator.vercel.app/");
+    expect(landingEs.title).toContain("Autónomo Simulator");
+    expect(landingEs.description).toContain("autónomo en España");
 
-    expect(titleEn.lang).toBe("en");
-    expect(titleEn.ogLocale).toBe("en_US");
-    expect(titleEn.canonicalUrl).toBe("https://autonomo-simulator.vercel.app/?lang=en");
-    expect(titleEn.title).toContain("Spanish Freelancer Survival Game");
+    expect(landingEn.lang).toBe("en");
+    expect(landingEn.ogLocale).toBe("en_US");
+    expect(landingEn.canonicalUrl).toBe("https://autonomo-simulator.vercel.app/?lang=en");
+    expect(landingEn.title).toContain("Spanish Freelancer Survival Game");
+
+    const dashEs = buildDocumentSeoSnapshot({ view: "title", locale: "es-ES" });
+    const dashEn = buildDocumentSeoSnapshot({ view: "title", locale: "en" });
+    expect(dashEs.title).toContain("Panel de Expedientes");
+    expect(dashEn.title).toContain("Dossier Dashboard");
+    expect(dashEs.title).not.toBe(landingEs.title);
+    expect(dashEn.title).not.toBe(landingEn.title);
 
     const { state } = startNewRun(compiledCatalog, { seed: "SEO-TEST-01" });
     const gameEs = buildDocumentSeoSnapshot({ view: "game", locale: "es-ES", state });
@@ -52,7 +66,7 @@ describe("Per-Page & Bilingual SEO Metadata Builder (documentSeo.ts)", () => {
 
     expect(endEs.title).toContain("Certificado Modelo 036");
     expect(endEn.title).toContain("Form 036 Certificate");
-    expect(endEs.title).not.toBe(titleEs.title);
-    expect(endEn.title).not.toBe(titleEn.title);
+    expect(endEs.title).not.toBe(dashEs.title);
+    expect(endEn.title).not.toBe(dashEn.title);
   });
 });

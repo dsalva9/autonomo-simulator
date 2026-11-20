@@ -114,6 +114,22 @@ export interface UiStrings {
     landingIllustrationAlt: string;
     landingIllustrationCaption: string;
     landingSteps: LandingHowToStep[];
+    landingEnterBtn: string;
+    landingEnterTitle: string;
+    landingContinueBtn: (calendarLabel: string) => string;
+    landingContinueTitle: string;
+    dashboardHeaderBadge: string;
+    openLandingBtn: string;
+    openLandingTitle: string;
+    careerSummaryHeading: string;
+    careerSummaryBadge: string;
+    careerRunsLabel: string;
+    careerBestSurvivalLabel: string;
+    careerPeakBilledLabel: string;
+    careerSealsLabel: string;
+    careerZeroMonths: string;
+    careerEmptyHint: string;
+    careerVeteranHint: (victories: number) => string;
     confirmOverwriteRun: ConfirmOverwriteRunStrings;
   };
   kofi: KofiSupportStrings;
@@ -467,7 +483,7 @@ const ES_STRINGS: UiStrings = {
     seedInputLabel: "Semilla reproducible (opcional)",
     seedInlineLabel: "Semilla",
     seedPlaceholder: "Ej. AUT-2026-PACO (vacío = aleatoria)",
-    startRunBtn: "¡Jugar ahora! · Nueva alta en el RETA",
+    startRunBtn: "Nueva alta en el RETA",
     startRunTitle: "Iniciar nueva partida en el RETA (N)",
     replaceActiveNote:
       "Nota: iniciar una nueva alta reemplazará el expediente actualmente en curso.",
@@ -550,6 +566,26 @@ const ES_STRINGS: UiStrings = {
         desc: "Aguanta 10 años cotizando o fórrete antes de quemarte.",
       },
     ],
+    landingEnterBtn: "¡Jugar! · Entrar al despacho",
+    landingEnterTitle: "Abrir el panel de expedientes, Salón de Caídos y nueva partida (Intro)",
+    landingContinueBtn: (calendarLabel) => `Continuar (${calendarLabel})`,
+    landingContinueTitle: "Reanudar expediente activo directamente (C)",
+    dashboardHeaderBadge: "MODELO 036 · PANEL DE EXPEDIENTES",
+    openLandingBtn: "Portada",
+    openLandingTitle: "Volver a la portada e información del juego (P)",
+    careerSummaryHeading: "Resumen de carrera",
+    careerSummaryBadge: "HISTÓRICO",
+    careerRunsLabel: "Expedientes cerrados",
+    careerBestSurvivalLabel: "Récord de aguante",
+    careerPeakBilledLabel: "Mayor facturación",
+    careerSealsLabel: "Sellos oficiales",
+    careerZeroMonths: "0 meses",
+    careerEmptyHint:
+      "Cierra tu primera partida para registrar marcas oficiales y desbloquear los 15 sellos del RETA.",
+    careerVeteranHint: (victories) =>
+      victories > 0
+        ? `Has conquistado ${victories} ${victories === 1 ? "sello de victoria" : "sellos de victoria"} en tu trayectoria como autónomo.`
+        : "Sigue afinando tu margen trimestral para alcanzar los 120 meses o los 150.000 € limpios.",
     confirmOverwriteRun: ES_CONFIRM_OVERWRITE_RUN,
   },
   kofi: {
@@ -909,7 +945,7 @@ const EN_STRINGS: UiStrings = {
     seedInputLabel: "Reproducible seed (optional)",
     seedInlineLabel: "Seed",
     seedPlaceholder: "e.g. AUT-2026-PACO (blank = random)",
-    startRunBtn: "Play Now! · Register as Self-Employed",
+    startRunBtn: "Register as Self-Employed",
     startRunTitle: "Start a new self-employed run (N)",
     replaceActiveNote: "Note: starting a new registration will replace your active dossier.",
     settingsHeading: "Office settings",
@@ -990,6 +1026,26 @@ const EN_STRINGS: UiStrings = {
         desc: "Last 10 full years or bank 150,000 € before burnout.",
       },
     ],
+    landingEnterBtn: "Play! · Enter the Desk",
+    landingEnterTitle: "Open the dossier dashboard, Hall of the Fallen, and new run setup (Enter)",
+    landingContinueBtn: (calendarLabel) => `Continue (${calendarLabel})`,
+    landingContinueTitle: "Resume your active saved run immediately (C)",
+    dashboardHeaderBadge: "FORM 036 · DOSSIER DASHBOARD",
+    openLandingBtn: "Home",
+    openLandingTitle: "Return to the landing overview & how-to-play page (P)",
+    careerSummaryHeading: "Career summary",
+    careerSummaryBadge: "RECORDS",
+    careerRunsLabel: "Closed dossiers",
+    careerBestSurvivalLabel: "Best survival",
+    careerPeakBilledLabel: "Peak billing",
+    careerSealsLabel: "Career seals",
+    careerZeroMonths: "0 months",
+    careerEmptyHint:
+      "Finish your first run to log personal survival records and unlock all 15 official seals.",
+    careerVeteranHint: (victories) =>
+      victories > 0
+        ? `You have earned ${victories} victory ${victories === 1 ? "seal" : "seals"} across your self-employed career.`
+        : "Keep sharpening your quarterly margin to reach 120 months or 150,000 € net cash.",
     confirmOverwriteRun: EN_CONFIRM_OVERWRITE_RUN,
   },
   kofi: {

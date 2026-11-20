@@ -10,6 +10,12 @@ function screenshotPath(filename: string): string {
   return resolve(SCREENSHOT_DIR, filename);
 }
 
+async function openDashboardFromLanding(page: Page): Promise<void> {
+  await expect(page.getByTestId("landing-screen")).toBeVisible();
+  await page.getByTestId("landing-enter-btn").click();
+  await expect(page.getByTestId("title-screen")).toBeVisible();
+}
+
 const PHASE1_ACHIEVEMENT_IDS = [
   "primer_trimestre",
   "primer_ano",
@@ -173,6 +179,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("./");
+    await openDashboardFromLanding(page);
 
     await page.getByTestId("seed-input").fill("P35-PACO-493");
     await page.getByTestId("start-run-btn").click();
@@ -248,6 +255,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
   }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("./");
+    await openDashboardFromLanding(page);
 
     // 1. Verify Phase 1 achievements remain present in expanded 15-achievement Logros tab
     const achievementsTab = page.getByTestId("title-tab-achievements");
@@ -304,6 +312,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
       testInfo.project.name === "mobile-chromium" ? "mobile-390x844" : "desktop-1440x900";
 
     await page.goto("./");
+    await openDashboardFromLanding(page);
     await page.getByTestId("seed-input").fill("P36-BURN-35");
     await page.getByTestId("start-run-btn").click();
 

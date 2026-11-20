@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type MobileWorkspaceTab = "despacho" | "cuentas" | "entorno" | "historial";
 export type TitleSubTab = "hall_of_fame" | "achievements";
-export type ScreenView = "title" | "game";
+export type ScreenView = "landing" | "title" | "game";
 
 export const SFX_MUTED_STORAGE_KEY = "autonomo:sfx_muted";
 export const FAST_PACING_STORAGE_KEY = "autonomo:fast_pacing";
@@ -68,7 +68,7 @@ export interface UIStoreState {
 }
 
 export const useUIStore = create<UIStoreState>((set) => ({
-  screenView: "title",
+  screenView: "landing",
   activeMobileTab: "despacho",
   activeTitleTab: "hall_of_fame",
   abandonModalOpen: false,
