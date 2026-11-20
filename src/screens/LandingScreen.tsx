@@ -201,6 +201,8 @@ export function LandingScreen() {
                   alt={ui.title.landingIllustrationAlt}
                   width={landingIllustration.width}
                   height={landingIllustration.height}
+                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
                   className="w-full h-full lg:absolute lg:inset-0 object-cover object-center render-vector-hd"
                 />

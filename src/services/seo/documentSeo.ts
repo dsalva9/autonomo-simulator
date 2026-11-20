@@ -18,21 +18,24 @@ export interface DocumentSeoSnapshot {
 
 const BASE_SITE_URL = "https://autonomo-simulator.vercel.app/";
 
-export function parseUrlLocaleParam(search: string): "es-ES" | "en" | null {
-  if (!search) {
-    return null;
+export function parseUrlLocaleParam(search: string, pathname = ""): "es-ES" | "en" | null {
+  if (search) {
+    const params = new URLSearchParams(search);
+    const raw = params.get("lang")?.trim().toLowerCase();
+    if (raw) {
+      if (raw === "en" || raw.startsWith("en-")) {
+        return "en";
+      }
+      if (raw === "es" || raw.startsWith("es-")) {
+        return "es-ES";
+      }
+    }
   }
-  const params = new URLSearchParams(search);
-  const raw = params.get("lang")?.trim().toLowerCase();
-  if (!raw) {
-    return null;
-  }
-  if (raw === "en" || raw.startsWith("en-")) {
+
+  if (pathname && /\/en(?:\/(?:index\.html)?)?$/i.test(pathname.trim())) {
     return "en";
   }
-  if (raw === "es" || raw.startsWith("es-")) {
-    return "es-ES";
-  }
+
   return null;
 }
 
@@ -60,7 +63,7 @@ export function buildDocumentSeoSnapshot(options: {
   const isEn = normalized === "en";
   const lang = isEn ? "en" : "es";
   const ogLocale = isEn ? "en_US" : "es_ES";
-  const canonicalUrl = isEn ? `${BASE_SITE_URL}?lang=en` : BASE_SITE_URL;
+  const canonicalUrl = isEn ? `${BASE_SITE_URL}en/` : BASE_SITE_URL;
 
   if (options.view === "end_run" && options.state?.ending) {
     const endingMeta = getEndingMetadata(options.state.ending.id, normalized);
@@ -108,7 +111,7 @@ export function buildDocumentSeoSnapshot(options: {
           lang,
           ogLocale,
           canonicalUrl,
-          title: "Dossier Dashboard · Hall of the Fallen & Achievements — Autónomo Simulator",
+          title: "Dossier Dashboard · Achievements — Autónomo Simulator",
           description:
             "Start a new seeded run, resume your active dossier, browse your Hall of the Fallen certificates, and track all 15 achievements in Autónomo Simulator.",
         }
@@ -116,7 +119,7 @@ export function buildDocumentSeoSnapshot(options: {
           lang,
           ogLocale,
           canonicalUrl,
-          title: "Panel de Expedientes · Salón de Caídos y Logros — Autónomo Simulator",
+          title: "Panel de Expedientes · Logros — Autónomo Simulator",
           description:
             "Inicia una nueva alta en el RETA con semilla, reanuda tu partida, consulta el Salón de Caídos y sigue tus 15 logros en Autónomo Simulator.",
         };
@@ -129,7 +132,7 @@ export function buildDocumentSeoSnapshot(options: {
         canonicalUrl,
         title: "Autónomo Simulator — Spanish Freelancer Survival Game",
         description:
-          "Free satirical survival game about self-employment in Spain. Balance clients, monthly fees, stress, and quarterly VAT/income taxes for 10 years (120 months) or bank 150,000 €.",
+          "Free satirical survival game about freelancing in Spain. Balance clients, monthly fees, stress, and quarterly VAT & IRPF for 10 years or bank 150,000 €.",
       }
     : {
         lang,

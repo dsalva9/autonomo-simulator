@@ -41,12 +41,28 @@ export const ENDING_ILLUSTRATION_IDS: Record<EndingId, string> = {
   retired_rich: "illus_final_ricachon",
 };
 
+export function getAppRootPrefix(): "." | ".." {
+  if (typeof document !== "undefined") {
+    const explicitRoot = document.documentElement?.dataset?.appRoot;
+    if (explicitRoot === "..") {
+      return "..";
+    }
+  }
+  if (typeof window !== "undefined") {
+    const pathname = window.location?.pathname ?? "";
+    if (/\/en(?:\/(?:index\.html)?)?$/i.test(pathname)) {
+      return "..";
+    }
+  }
+  return ".";
+}
+
 export function normalizeAssetUrl(relativeAssetPath: string): string {
   const trimmed = relativeAssetPath
     .trim()
     .replace(/^\.?\//, "")
     .replace(/^assets\//, "");
-  return `./assets/${trimmed}`;
+  return `${getAppRootPrefix()}/assets/${trimmed}`;
 }
 
 export function resolveManifestAsset(

@@ -2406,10 +2406,22 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     expect(sitemapRes.status()).toBe(200);
     const sitemapXml = await sitemapRes.text();
     expect(sitemapXml).toContain("<urlset");
-    expect(sitemapXml).toContain('hreflang="en"');
+    expect(sitemapXml).toContain("<lastmod>");
+    expect(sitemapXml).toContain('hreflang="en" href="https://autonomo-simulator.vercel.app/en/"');
 
     const promoRes = await page.request.get(new URL("./promo-portada.jpg", page.url()).toString());
     expect(promoRes.status()).toBe(200);
+
+    // Verify static pre-JS English HTML entry (/en/) serves native EN canonical, OG, Twitter & JSON-LD
+    const staticEnRes = await page.request.get(new URL("./en/", page.url()).toString());
+    expect(staticEnRes.status()).toBe(200);
+    const staticEnHtml = await staticEnRes.text();
+    expect(staticEnHtml).toContain('<html lang="en"');
+    expect(staticEnHtml).toContain(
+      '<link rel="canonical" href="https://autonomo-simulator.vercel.app/en/"',
+    );
+    expect(staticEnHtml).toContain('<meta property="og:locale" content="en_US"');
+    expect(staticEnHtml).toContain("Spanish Freelancer Survival Game");
 
     const seoHead = await page.evaluate(() => {
       const jsonLdRaw =
@@ -2423,18 +2435,24 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
         hreflangEn:
           document.querySelector('link[rel="alternate"][hreflang="en"]')?.getAttribute("href") ??
           "",
+        heroPreloadPriority:
+          document
+            .querySelector('link[rel="preload"][as="image"][href*="illus_portada_landing"]')
+            ?.getAttribute("fetchpriority") ?? "",
         hasGraph: Array.isArray(parsedLd["@graph"]) && parsedLd["@graph"].length >= 2,
       };
     });
     expect(seoHead.title).toContain("Autónomo Simulator");
     expect(seoHead.description.length).toBeGreaterThanOrEqual(80);
     expect(seoHead.canonical).toBe("https://autonomo-simulator.vercel.app/");
-    expect(seoHead.hreflangEn).toBe("https://autonomo-simulator.vercel.app/?lang=en");
+    expect(seoHead.hreflangEn).toBe("https://autonomo-simulator.vercel.app/en/");
+    expect(seoHead.heroPreloadPriority).toBe("high");
     expect(seoHead.hasGraph).toBe(true);
 
-    // 2. Clean Separated Landing Screen: Guía Rápida illustration, CTA, Ko-fi & reserved social slot
+    // 2. Clean Separated Landing Screen: Guía Rápida illustration (LCP fetchpriority=high), CTA, Ko-fi & reserved social slot
     const landingIllus = page.getByTestId("landing-hero-illustration");
     await expect(landingIllus).toBeVisible();
+    await expect(landingIllus).toHaveAttribute("fetchpriority", "high");
     await expect
       .poll(async () =>
         landingIllus.evaluate((el) => {
@@ -2498,14 +2516,26 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.getByTestId("open-landing-btn").click();
     await expect(page.getByTestId("landing-screen")).toBeVisible();
 
-    // 4. ?lang=en URL query parameter loads English SEO + English Landing directly
-    await page.goto("./?lang=en");
+    // 4. Dedicated static /en/ route loads English SEO, English Landing, and relative ../assets/ cleanly
+    await page.goto("./en/");
     await expect(page.getByTestId("landing-screen")).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect.poll(async () => page.title()).toContain("Spanish Freelancer Survival Game");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://autonomo-simulator.vercel.app/en/",
+    );
+    await expect
+      .poll(async () =>
+        page.getByTestId("landing-hero-illustration").evaluate((el) => {
+          const img = el as HTMLImageElement;
+          return img.complete && img.naturalWidth === 960 && img.naturalHeight === 540;
+        }),
+      )
+      .toBe(true);
     await expect(page.getByTestId("kofi-landing-banner-link")).toContainText("Buy me a coffee");
 
-    // Enter English Dashboard -> Start run -> verify GameScreen dynamic SEO title -> Year 15 Endless & 150k VictoryModal + EndRunScreen Ko-fi
+    // Enter English Dashboard -> Start run -> verify GameScreen dynamic SEO title & asset loading from /en/
     await page.getByTestId("landing-enter-btn").click();
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await expect.poll(async () => page.title()).toContain("Dossier Dashboard");
@@ -2544,7 +2574,12 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       });
     });
 
-    await page.goto("./");
+    // Also verify legacy ./?lang=en query deep link still resolves to English Landing + /en/ canonical
+    await page.goto("./?lang=en");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      "https://autonomo-simulator.vercel.app/en/",
+    );
     await expect(page.getByTestId("landing-continue-btn")).toBeVisible();
     await page.getByTestId("landing-continue-btn").click();
 

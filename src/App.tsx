@@ -65,7 +65,7 @@ export function App() {
       return;
     }
     appliedUrlParamsRef.current = true;
-    const requestedLocale = parseUrlLocaleParam(window.location.search);
+    const requestedLocale = parseUrlLocaleParam(window.location.search, window.location.pathname);
     if (requestedLocale && normalizeLocale(locale) !== normalizeLocale(requestedLocale)) {
       void setLocalePreference(requestedLocale);
     }

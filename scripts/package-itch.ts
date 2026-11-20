@@ -201,7 +201,7 @@ export function shouldIncludeInItchArchive(relPosixPath: string): boolean {
   if (EXCLUDED_ITCH_FILENAMES.has(base)) {
     return false;
   }
-  if (normalized.endsWith(".map")) {
+  if (normalized.endsWith(".map") || normalized.startsWith("en/")) {
     return false;
   }
   return true;

@@ -40,6 +40,29 @@ function collectDistFiles(dirPath: string, distRoot: string, acc: string[] = [])
 function copyStaticGameAssetsAndInjectSw(): Plugin {
   return {
     name: "copy-static-game-assets-and-inject-sw",
+    transformIndexHtml: {
+      order: "post",
+      handler(html, ctx) {
+        const isNestedLocale = /(?:^|[\\/])en[\\/]index\.html$/i.test(ctx.filename);
+        const preloadHref = `${isNestedLocale ? ".." : "."}/assets/illustrations/illus_portada_landing.webp`;
+        return {
+          html,
+          tags: [
+            {
+              tag: "link",
+              attrs: {
+                rel: "preload",
+                as: "image",
+                type: "image/webp",
+                href: preloadHref,
+                fetchpriority: "high",
+              },
+              injectTo: "head",
+            },
+          ],
+        };
+      },
+    },
     closeBundle() {
       const distRoot = resolve(process.cwd(), "dist");
       const srcAssets = resolve(process.cwd(), "assets");
@@ -86,5 +109,11 @@ export default defineConfig({
     assetsDir: "_bundle",
     sourcemap: false,
     target: "es2022",
+    rollupOptions: {
+      input: {
+        main: resolve(process.cwd(), "index.html"),
+        en: resolve(process.cwd(), "en/index.html"),
+      },
+    },
   },
 });

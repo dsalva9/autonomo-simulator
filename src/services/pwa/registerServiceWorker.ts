@@ -1,3 +1,5 @@
+import { getAppRootPrefix } from "../content/catalog.ts";
+
 export interface RegisterServiceWorkerOptions {
   swUrl?: string;
   scope?: string;
@@ -66,8 +68,9 @@ export async function registerServiceWorker(
     return null;
   }
 
-  const swUrl = options.swUrl ?? "./sw.js";
-  const scope = options.scope ?? "./";
+  const rootPrefix = getAppRootPrefix();
+  const swUrl = options.swUrl ?? `${rootPrefix}/sw.js`;
+  const scope = options.scope ?? `${rootPrefix}/`;
 
   const performRegister = async (): Promise<ServiceWorkerRegistration | null> => {
     try {
