@@ -195,12 +195,12 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
       await expect(page.getByTestId("scene-prop-facturas")).toHaveCount(0);
     });
 
-    // 2. Modular 8:3 category banner on Month 1 (gestor_oferta_servicios)
+    // 2. Modular 16:9 category banner on Month 1 (gestor_oferta_servicios)
     const bannerArt = page.getByTestId("event-banner-art");
     await expect(bannerArt).toHaveAttribute("data-banner-kind", "banner");
     await expect(bannerArt).toHaveAttribute("data-asset-id", "banner_gestor_base");
     const bannerDims = await waitForImageDimensions(bannerArt);
-    expect(bannerDims).toEqual({ naturalWidth: 960, naturalHeight: 360 });
+    expect(bannerDims).toEqual({ naturalWidth: 960, naturalHeight: 540 });
 
     // Hire Paco -> verify Entorno miniature CSS Polaroid loads cleanly & reactive invoice prop appears once accrued tax >= 1,200 €
     await selectChoiceAndAcknowledge(page, "contratar_paco_barato");

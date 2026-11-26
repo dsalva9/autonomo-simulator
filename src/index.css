@@ -261,6 +261,100 @@ body {
   }
 }
 
+/* Spacious Desktop Proportions (>= 1024px width & >= 831px height: 1440×900, 1920×1080, 1440p) */
+@media (min-width: 1024px) and (min-height: 831px) {
+  .scene-stage-frame {
+    height: clamp(190px, 22dvh, 224px);
+  }
+
+  .entorno-body > div:not([data-testid="entorno-status-summary"]) {
+    flex: 1 0 auto;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .event-stage-stack > .paper-dossier > .event-card-body,
+  .event-stage-stack > .paper-dossier > .outcome-card-body {
+    flex: 1 1 0%;
+    min-height: 0;
+    gap: 0.75rem;
+  }
+
+  .event-card-body > * + *,
+  .outcome-card-body > * + * {
+    margin-top: 0 !important;
+  }
+
+  .event-banner-wrap {
+    flex: 1 1 0%;
+    min-height: 164px;
+    max-height: 410px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-banner-frame {
+    flex: 1 1 0%;
+    min-height: 0;
+  }
+
+  .event-banner-img,
+  .event-banner-img[data-banner-kind="milestone"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .outcome-banner-wrap {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+    min-height: 164px;
+    max-height: 410px;
+  }
+
+  .outcome-banner-frame {
+    flex: 1 1 0%;
+    min-height: 0;
+  }
+
+  .outcome-banner-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .event-stage-stack > .paper-dossier > .event-card-body > .event-choices-grid {
+    margin-top: 0;
+  }
+
+  .event-stage-stack > .paper-dossier > .outcome-card-body > div:last-child {
+    margin-top: auto !important;
+  }
+
+  .event-polaroid-desktop {
+    width: 6rem;
+  }
+}
+
+@media (min-width: 1280px) and (min-height: 831px) {
+  [data-testid="event-title"] {
+    font-size: 1.325rem;
+    line-height: 1.25;
+  }
+
+  [data-testid="event-body"] {
+    font-size: 0.95rem;
+    line-height: 1.48;
+  }
+
+  .event-polaroid-desktop {
+    width: 6.4rem;
+  }
+}
+
 /* Tier 1 Compact Laptop Height (1024×768, 1366×768, 1536×800) */
 @media (min-width: 1024px) and (max-height: 830px) {
   .dossier-header {

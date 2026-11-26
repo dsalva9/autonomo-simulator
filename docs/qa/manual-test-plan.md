@@ -402,6 +402,7 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 - **Expected Result**:
   - `scrollHeight <= innerHeight + 2` on both Fresh/Veteran `TitleScreen` and `GameScreen` across all 6 desktop viewports, with `start-run-btn` and `continue-run-btn` 100% above the fold.
   - Visible workspace columns align within `<= 2px` at both top and bottom baselines, `event-card` → `outcome-panel` top-edge jump is `<= 2px`, and `1920×1080` keeps HUD Command Band 1 on a single non-wrapping horizontal row.
+  - On spacious desktops (`1440×900`, `1920×1080`), all 15 `16:9` (`960×540`) category banners expand fluidly (`>= 180px` on `EventCard`, `>= 150px` on `OutcomePanel`) with `<= 48px` body-to-choices gap, bounded `<= 824px` 3-column desk height, and `entorno-status-summary` (Career Objectives & live desk status) balancing `Red de Apoyo`.
 
 ---
 

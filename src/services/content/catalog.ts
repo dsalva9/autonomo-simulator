@@ -163,6 +163,30 @@ export function resolveCharacterPortraitAsset(
   return null;
 }
 
+const CLIENTES_CORPORATIVO_TAGS = new Set([
+  "corporativo",
+  "iguala",
+  "internacional",
+  "agencia",
+  "tarifas",
+  "acuerdo_marco",
+  "largo_plazo",
+  "ia",
+]);
+
+const HACIENDA_TRIMESTRE_TAGS = new Set([
+  "deducciones",
+  "irpf",
+  "bancos",
+  "retenciones",
+  "intracomunitario",
+  "devolucion",
+  "dehu",
+  "burocracia",
+  "plazos",
+  "facturacion",
+]);
+
 const FAMILIA_TENSION_TAGS = new Set([
   "urgencias",
   "averia",
@@ -170,6 +194,18 @@ const FAMILIA_TENSION_TAGS = new Set([
   "crisis_familiar",
   "gastos_imprevistos",
   "mudanza",
+]);
+
+const FAMILIA_HOGAR_TAGS = new Set([
+  "descanso",
+  "salud",
+  "salud_mental",
+  "desconexion",
+  "vivienda",
+  "hogar",
+  "hijos",
+  "padres",
+  "conciliacion",
 ]);
 
 const EMPLEADOS_TENSION_TAGS = new Set([
@@ -182,6 +218,17 @@ const EMPLEADOS_TENSION_TAGS = new Set([
   "inspeccion",
 ]);
 
+const EMPLEADOS_ESTUDIO_TAGS = new Set([
+  "formacion",
+  "retencion",
+  "senior",
+  "colaboradores",
+  "conciliacion_laboral",
+  "crecimiento",
+  "estudio",
+  "veterania",
+]);
+
 const GESTOR_URGENCIA_TAGS = new Set([
   "chapuza",
   "chapuza_digital",
@@ -190,6 +237,16 @@ const GESTOR_URGENCIA_TAGS = new Set([
   "certificado_digital",
   "requerimiento",
   "contraste_censal",
+]);
+
+const GESTOR_ESTRATEGIA_TAGS = new Set([
+  "elena",
+  "optimizacion_fiscal",
+  "estrategia",
+  "amortizacion",
+  "cierre_anual",
+  "largo_plazo",
+  "veterania",
 ]);
 
 function hasMatchingTag(tags: readonly string[] | undefined, targetSet: ReadonlySet<string>): boolean {
@@ -202,6 +259,7 @@ function hasMatchingTag(tags: readonly string[] | undefined, targetSet: Readonly
 export function resolveEventBannerAsset(
   manifest: AssetManifest,
   event: Pick<EventDef, "category" | "illustration_id" | "character_expression"> & {
+    character_id?: EventDef["character_id"];
     tags?: readonly string[];
   },
   state: Pick<GameState, "indicators" | "fiscal_risk" | "flags">,
@@ -221,7 +279,14 @@ export function resolveEventBannerAsset(
         event.character_expression === "angry" ||
         event.character_expression === "stressed" ||
         state.indicators.money < 0;
-      bannerId = isTense ? "banner_clientes_tension" : baseBannerId;
+      const isCorporate =
+        event.character_id === "cliente_corporativo_marta" ||
+        hasMatchingTag(event.tags, CLIENTES_CORPORATIVO_TAGS);
+      bannerId = isTense
+        ? "banner_clientes_tension"
+        : isCorporate
+          ? "banner_clientes_corporativo"
+          : baseBannerId;
       break;
     }
     case "hacienda": {
@@ -229,7 +294,12 @@ export function resolveEventBannerAsset(
         state.fiscal_risk >= 40 ||
         Boolean(state.flags.inspeccion_en_curso) ||
         event.character_expression === "angry";
-      bannerId = isInspection ? "banner_hacienda_inspeccion" : baseBannerId;
+      const isTrimestre = hasMatchingTag(event.tags, HACIENDA_TRIMESTRE_TAGS);
+      bannerId = isInspection
+        ? "banner_hacienda_inspeccion"
+        : isTrimestre
+          ? "banner_hacienda_trimestre"
+          : baseBannerId;
       break;
     }
     case "familia": {
@@ -239,7 +309,12 @@ export function resolveEventBannerAsset(
         state.indicators.stress >= 70 ||
         state.indicators.personal_life <= 30 ||
         hasMatchingTag(event.tags, FAMILIA_TENSION_TAGS);
-      bannerId = isTense ? "banner_familia_tension" : baseBannerId;
+      const isHogar = hasMatchingTag(event.tags, FAMILIA_HOGAR_TAGS);
+      bannerId = isTense
+        ? "banner_familia_tension"
+        : isHogar
+          ? "banner_familia_hogar"
+          : baseBannerId;
       break;
     }
     case "empleados": {
@@ -249,7 +324,14 @@ export function resolveEventBannerAsset(
         Boolean(state.flags.desgaste_plantilla) ||
         state.indicators.stress >= 70 ||
         hasMatchingTag(event.tags, EMPLEADOS_TENSION_TAGS);
-      bannerId = isTense ? "banner_empleados_tension" : baseBannerId;
+      const isEstudio =
+        event.character_id === "empleada_senior_laura" ||
+        hasMatchingTag(event.tags, EMPLEADOS_ESTUDIO_TAGS);
+      bannerId = isTense
+        ? "banner_empleados_tension"
+        : isEstudio
+          ? "banner_empleados_estudio"
+          : baseBannerId;
       break;
     }
     case "gestor": {
@@ -260,7 +342,14 @@ export function resolveEventBannerAsset(
         Boolean(state.flags.inspeccion_en_curso) ||
         Boolean(state.flags.certificado_digital_caducado) ||
         hasMatchingTag(event.tags, GESTOR_URGENCIA_TAGS);
-      bannerId = isUrgent ? "banner_gestor_urgencia" : baseBannerId;
+      const isEstrategia =
+        event.character_id === "gestor_premium_elena" ||
+        hasMatchingTag(event.tags, GESTOR_ESTRATEGIA_TAGS);
+      bannerId = isUrgent
+        ? "banner_gestor_urgencia"
+        : isEstrategia
+          ? "banner_gestor_estrategia"
+          : baseBannerId;
       break;
     }
   }

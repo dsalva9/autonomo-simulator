@@ -110,7 +110,7 @@
       "path": "illustrations/banner_clientes_base.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -118,7 +118,15 @@
       "path": "illustrations/banner_clientes_tension.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_clientes_corporativo": {
+      "path": "illustrations/banner_clientes_corporativo.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -126,7 +134,7 @@
       "path": "illustrations/banner_hacienda_base.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -134,7 +142,15 @@
       "path": "illustrations/banner_hacienda_inspeccion.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_hacienda_trimestre": {
+      "path": "illustrations/banner_hacienda_trimestre.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -142,23 +158,7 @@
       "path": "illustrations/banner_familia_base.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
-      "render_mode": "vector_hd",
-      "status": "ready"
-    },
-    "banner_empleados_base": {
-      "path": "illustrations/banner_empleados_base.webp",
-      "category": "illustration",
-      "width": 960,
-      "height": 360,
-      "render_mode": "vector_hd",
-      "status": "ready"
-    },
-    "banner_gestor_base": {
-      "path": "illustrations/banner_gestor_base.webp",
-      "category": "illustration",
-      "width": 960,
-      "height": 360,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -166,7 +166,23 @@
       "path": "illustrations/banner_familia_tension.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_familia_hogar": {
+      "path": "illustrations/banner_familia_hogar.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_empleados_base": {
+      "path": "illustrations/banner_empleados_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -174,7 +190,23 @@
       "path": "illustrations/banner_empleados_tension.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_empleados_estudio": {
+      "path": "illustrations/banner_empleados_estudio.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_gestor_base": {
+      "path": "illustrations/banner_gestor_base.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },
@@ -182,7 +214,15 @@
       "path": "illustrations/banner_gestor_urgencia.webp",
       "category": "illustration",
       "width": 960,
-      "height": 360,
+      "height": 540,
+      "render_mode": "vector_hd",
+      "status": "ready"
+    },
+    "banner_gestor_estrategia": {
+      "path": "illustrations/banner_gestor_estrategia.webp",
+      "category": "illustration",
+      "width": 960,
+      "height": 540,
       "render_mode": "vector_hd",
       "status": "ready"
     },

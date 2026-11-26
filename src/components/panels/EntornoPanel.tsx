@@ -1,8 +1,9 @@
-import { Briefcase, Heart, ShieldCheck, Users } from "lucide-react";
+import { Briefcase, Heart, ShieldCheck, Target, Users } from "lucide-react";
 import { type GameState, type RenderMode, resolvePartnerName } from "../../engine/index.ts";
 import { compiledCatalog, resolveCharacterPortraitAsset } from "../../services/content/catalog.ts";
 import {
   formatEuros,
+  humanizeFlag,
   normalizeLocale,
   translateCharacterName,
   translateEmployeeRoleLabel,
@@ -79,6 +80,73 @@ export function EntornoPanel({
         ? "text-[#7a4308]"
         : "text-[#9e221b]";
 
+  const survivalTargetMonths = compiledCatalog.balance.victory_month;
+  const wealthTargetMoney = compiledCatalog.balance.victory_money;
+  const survivalPct = Math.min(100, Math.round((state.month / survivalTargetMonths) * 100));
+  const wealthPct = Math.min(
+    100,
+    Math.max(0, Math.round((state.indicators.money / wealthTargetMoney) * 100)),
+  );
+
+  const statusChips: { key: string; label: string; tone: string }[] = [];
+  if (state.indicators.money < 0) {
+    statusChips.push({
+      key: "overdraft",
+      label: isEn ? "🚨 Overdraft" : "🚨 Números rojos",
+      tone: "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/40",
+    });
+  }
+  if (state.finances.accrued_tax_liability >= 1200) {
+    statusChips.push({
+      key: "facturas",
+      label: isEn ? "📄 Tax accrued" : "📄 Impuestos acum.",
+      tone: "bg-[#fcf4df] text-[#7a4308] border-[#7a4308]/35",
+    });
+  }
+  if (state.fiscal_risk >= 25 || state.phase === "quarterly_tax") {
+    statusChips.push({
+      key: "hacienda",
+      label: isEn ? "📨 Tax Office alert" : "📨 Ojo con Hacienda",
+      tone: "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/35",
+    });
+  }
+  if (state.indicators.stress >= 75) {
+    statusChips.push({
+      key: "burnout",
+      label: "🔥 Burnout",
+      tone: "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/40",
+    });
+  } else if (state.indicators.stress >= 50) {
+    statusChips.push({
+      key: "cafe",
+      label: isEn ? "☕ Double shift" : "☕ Doble jornada",
+      tone: "bg-[#fcf4df] text-[#7a4308] border-[#7a4308]/35",
+    });
+  }
+  if (
+    state.employee ||
+    state.flags?.estudio_calle_alquilado ||
+    state.flags?.estudio_propio_activo
+  ) {
+    statusChips.push({
+      key: "equipo",
+      label: isEn ? "💻 Studio" : "💻 Estudio",
+      tone: "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40",
+    });
+  }
+  if (statusChips.length === 0) {
+    statusChips.push({
+      key: "calm",
+      label: isEn ? "🪴 Desk in order" : "🪴 Mesa en orden",
+      tone: "bg-[#efe4ce] text-[#373f3a] border-[#1f2421]/20",
+    });
+  }
+
+  const activeFlagLabels = Object.entries(state.flags)
+    .filter(([, active]) => Boolean(active))
+    .map(([flagId]) => ({ id: flagId, label: humanizeFlag(flagId, locale) }))
+    .slice(0, 4);
+
   return (
     <section
       data-testid="panel-entorno"
@@ -105,7 +173,7 @@ export function EntornoPanel({
         <h2 className="sr-only">{ui.entorno.heading}</h2>
       )}
 
-      <div className="entorno-body flex-1 min-h-0 overflow-y-auto dossier-scroll divide-y md:max-lg:grid md:max-lg:grid-cols-3 md:max-lg:divide-y-0 md:max-lg:divide-x divide-[#1f2421]/14">
+      <div className="entorno-body flex-1 min-h-0 overflow-y-auto dossier-scroll flex flex-col divide-y md:max-lg:grid md:max-lg:grid-cols-3 md:max-lg:divide-y-0 md:max-lg:divide-x divide-[#1f2421]/14">
         {/* Row 1: Gestoría */}
         <div className="px-3 py-2 flex items-center gap-2.5">
           <div className="w-10 shrink-0 flex items-center justify-center">
@@ -266,6 +334,100 @@ export function EntornoPanel({
             )}
           </div>
         </div>
+
+        {/* Desktop Career Objectives & Live Situation Summary (fills vertical space cleanly on tall screens) */}
+        {!embeddedInFolder && (
+          <div
+            data-testid="entorno-status-summary"
+            className="hidden lg:flex flex-col mt-auto border-t border-[#1f2421]/14 bg-[#f6efe0]/70 px-3 py-2.5 gap-2"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <Target className="w-3.5 h-3.5 text-[#1f5c53] shrink-0" aria-hidden="true" />
+                <span className="stamp-badge text-[10px] text-[#373f3a] leading-none truncate">
+                  {isEn ? "Career Objectives" : "Objetivos del Alta"}
+                </span>
+              </div>
+              {state.endless_mode && (
+                <span className="stamp-badge text-[9.5px] px-1.5 py-0.5 rounded bg-[#e8f5f1] text-[#1f5c53] border border-[#1f5c53]/35 shrink-0">
+                  {isEn ? "Endless" : "Infinito"}
+                </span>
+              )}
+            </div>
+
+            {/* Dual Victory Progress Bars */}
+            <div className="space-y-1.5 font-bureau text-[10.5px] tabular-nums">
+              <div className="space-y-0.5">
+                <div className="flex items-center justify-between gap-2 text-[#373f3a]">
+                  <span className="font-semibold">
+                    {isEn ? "10-year survival" : "Resistencia 10 años"}
+                  </span>
+                  <span className="font-bold text-[#1f2421]">
+                    {Math.min(state.month, survivalTargetMonths)}/{survivalTargetMonths}{" "}
+                    {isEn ? "mo" : "m"}
+                  </span>
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="h-1.5 rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
+                >
+                  <div
+                    className="h-full bg-[#264e7a] transition-all duration-200"
+                    style={{ width: `${survivalPct}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-0.5">
+                <div className="flex items-center justify-between gap-2 text-[#373f3a]">
+                  <span className="font-semibold">
+                    {isEn ? "Net cash target" : "Meta solvencia"}
+                  </span>
+                  <span className="font-bold text-[#1f5c53]">
+                    {formatEuros(Math.max(0, state.indicators.money), locale)} /{" "}
+                    {formatEuros(wealthTargetMoney, locale)}
+                  </span>
+                </div>
+                <div
+                  aria-hidden="true"
+                  className="h-1.5 rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
+                >
+                  <div
+                    className="h-full bg-[#1f5c53] transition-all duration-200"
+                    style={{ width: `${wealthPct}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Active Desk Climate & Narrative Conditions */}
+            <div className="pt-1 border-t border-[#1f2421]/12 space-y-1.5">
+              <div className="flex flex-wrap items-center gap-1">
+                {statusChips.map((chip) => (
+                  <span
+                    key={chip.key}
+                    className={`font-bureau text-[10px] font-bold leading-none px-1.5 py-1 rounded border ${chip.tone}`}
+                  >
+                    {chip.label}
+                  </span>
+                ))}
+              </div>
+
+              {activeFlagLabels.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1">
+                  {activeFlagLabels.map((flag) => (
+                    <span
+                      key={flag.id}
+                      className="text-[10px] font-semibold leading-tight px-1.5 py-0.5 rounded bg-[#fffdf8] text-[#373f3a] border border-[#1f2421]/22 break-words"
+                    >
+                      · {flag.label}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

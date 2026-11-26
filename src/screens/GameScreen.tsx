@@ -415,7 +415,7 @@ export function GameScreen({ state }: GameScreenProps) {
             - < 1024px: Focused Tabbed Workspace (pure card stage on Despacho; diorama showcase in Entorno)
             - 1024px–1119px: 2-Column Symmetric Desk (Stage + [Despacho | Cuentas | Diario] folder)
             - >= 1120px: 3-Column Symmetric Desk (Left: Scene+Entorno | Center: Stage | Right: Cuentas+Diario) */}
-        <main className="game-main flex-1 min-h-0 w-full max-w-3xl lg:max-w-none xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-3 xl:px-4 2xl:px-5 pt-2 pb-[calc(4.75rem+env(safe-area-inset-bottom))] lg:py-2 lg:flex lg:flex-col">
+        <main className="game-main flex-1 min-h-0 w-full max-w-3xl lg:max-w-none xl:max-w-[1440px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-3 xl:px-4 2xl:px-5 pt-2 pb-[calc(4.75rem+env(safe-area-inset-bottom))] lg:py-2 lg:flex lg:flex-col lg:justify-center">
           {!isDesktop ? (
             <div className="w-full">
               {/* Mobile Tab 1: Pure, distraction-free Decision Stage (no SceneRenderer above card!) */}
@@ -458,7 +458,7 @@ export function GameScreen({ state }: GameScreenProps) {
             </div>
           ) : isTwoColDesktop ? (
             /* 1024px–1119px (1024×768, 1093×614 1366@125% DPI): 2-Column Symmetric Desk */
-            <div className="game-desk-grid flex-1 h-full min-h-0 grid grid-cols-[minmax(0,1fr)_308px] gap-3 items-stretch">
+            <div className="game-desk-grid flex-1 h-full lg:max-h-[820px] min-h-0 grid grid-cols-[minmax(0,1fr)_308px] gap-3 items-stretch">
               <section
                 id="mobile-tabpanel-despacho"
                 aria-label={ui.game.decisionDeskAria}
@@ -548,7 +548,7 @@ export function GameScreen({ state }: GameScreenProps) {
             </div>
           ) : (
             /* >= 1120px: 3-Column Symmetric Desk (1120-1279 compact | 1280-1535 standard | >=1536 wide) */
-            <div className="game-desk-grid flex-1 h-full min-h-0 grid min-[1120px]:grid-cols-[256px_minmax(0,1fr)_276px] xl:grid-cols-[296px_minmax(0,1fr)_320px] 2xl:grid-cols-[328px_minmax(0,1fr)_352px] gap-3 xl:gap-4 2xl:gap-5 items-stretch">
+            <div className="game-desk-grid flex-1 h-full lg:max-h-[820px] min-h-0 grid min-[1120px]:grid-cols-[256px_minmax(0,1fr)_276px] xl:grid-cols-[296px_minmax(0,1fr)_320px] 2xl:grid-cols-[328px_minmax(0,1fr)_352px] gap-3 xl:gap-4 2xl:gap-5 items-stretch">
               {/* Left Column: Live Office Diorama + Red de Apoyo stretched to bottom baseline */}
               <aside className="h-full min-h-0 flex flex-col gap-2.5">
                 <SceneRenderer state={state} activeEvent={sceneEvent} locale={locale} />

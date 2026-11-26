@@ -2008,6 +2008,42 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
           )
           .toBeLessThanOrEqual(2);
 
+        if (vp.height >= 900) {
+          // Spacious tall desktop (1440x900 & 1920x1080): full 16:9 banner expands cleanly with zero white chasm,
+          // left Red de Apoyo displays Career Objectives summary, and 1920x1080 grid stays bounded (<= 822px)
+          const density = await page.evaluate(() => {
+            const banner = document
+              .querySelector('[data-testid="event-banner-art"]')
+              ?.getBoundingClientRect();
+            const body = document
+              .querySelector('[data-testid="event-body"]')
+              ?.getBoundingClientRect();
+            const firstChoice = document
+              .querySelector('[data-testid="choice-btn-0"]')
+              ?.getBoundingClientRect();
+            const deskGrid = document.querySelector(".game-desk-grid")?.getBoundingClientRect();
+            return {
+              bannerHeight: banner?.height ?? 0,
+              bodyToChoiceGap:
+                body && firstChoice ? Math.round(firstChoice.top - body.bottom) : 999,
+              deskGridHeight: deskGrid?.height ?? 9999,
+            };
+          });
+          expect(
+            density.bannerHeight,
+            `Expected expanded 16:9 banner >= 180px on ${vp.label}`,
+          ).toBeGreaterThanOrEqual(180);
+          expect(
+            density.bodyToChoiceGap,
+            `Expected no blank white chasm between event-body and choice-btn-0 on ${vp.label} (${density.bodyToChoiceGap}px)`,
+          ).toBeLessThanOrEqual(48);
+          expect(
+            density.deskGridHeight,
+            `Expected bounded desk grid height <= 824px on ${vp.label}`,
+          ).toBeLessThanOrEqual(824);
+          await expect(page.getByTestId("entorno-status-summary")).toBeVisible();
+        }
+
         if (vp.width === 1920) {
           // Verify single-row Command Band 1 (Calendar, Treasury, Toolbar never wrap) & compact HUD height
           const hudMetrics = await page.evaluate(() => {
@@ -2030,6 +2066,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
           expect(hudMetrics.band1Height).toBeLessThanOrEqual(40);
           expect(hudMetrics.rowCenterDelta).toBeLessThanOrEqual(4);
           expect(hudMetrics.headerHeight).toBeLessThanOrEqual(90);
+
+          await page.screenshot({
+            path: screenshotPath("10-game-desktop-1920x1080.png"),
+            fullPage: false,
+          });
         }
       }
 
@@ -2065,6 +2106,19 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
         { message: "Expected <= 2px Event->Outcome top/bottom jump on 1366x768" },
       )
       .toBeLessThanOrEqual(2);
+
+    // Verify tall 1920x1080 OutcomePanel displays expanded 16:9 comic art without blank chasm
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    const outcomeBanner = page.getByTestId("outcome-banner-art");
+    await expect(outcomeBanner).toBeVisible();
+    const outcomeBannerBox = await outcomeBanner.boundingBox();
+    expect(outcomeBannerBox).not.toBeNull();
+    expect(outcomeBannerBox!.height).toBeGreaterThanOrEqual(150);
+    await page.screenshot({
+      path: screenshotPath("11-outcome-desktop-1920x1080.png"),
+      fullPage: false,
+    });
+    await page.setViewportSize({ width: 1366, height: 768 });
 
     // Explicit DEF-P36-01 & DEF-P36-02 regression check on Borja «El de la Visibilidad» (ES & EN) across tight desktop widths
     await page.getByTestId("return-title-btn").click();

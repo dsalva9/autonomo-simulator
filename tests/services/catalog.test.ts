@@ -79,7 +79,7 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_clientes_base.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -87,7 +87,15 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_clientes_tension.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
+      banner_clientes_corporativo: {
+        path: "illustrations/banner_clientes_corporativo.webp",
+        category: "illustration",
+        width: 960,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -95,7 +103,7 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_hacienda_base.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -103,7 +111,15 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_hacienda_inspeccion.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
+      banner_hacienda_trimestre: {
+        path: "illustrations/banner_hacienda_trimestre.webp",
+        category: "illustration",
+        width: 960,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -111,7 +127,7 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_familia_base.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -119,7 +135,15 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_familia_tension.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
+      banner_familia_hogar: {
+        path: "illustrations/banner_familia_hogar.webp",
+        category: "illustration",
+        width: 960,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -127,7 +151,7 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_empleados_base.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -135,7 +159,15 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_empleados_tension.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
+      banner_empleados_estudio: {
+        path: "illustrations/banner_empleados_estudio.webp",
+        category: "illustration",
+        width: 960,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -143,7 +175,7 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_gestor_base.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -151,7 +183,15 @@ function buildPhase1Manifest(): AssetManifest {
         path: "illustrations/banner_gestor_urgencia.webp",
         category: "illustration",
         width: 960,
-        height: 360,
+        height: 540,
+        render_mode: "vector_hd",
+        status: "ready",
+      },
+      banner_gestor_estrategia: {
+        path: "illustrations/banner_gestor_estrategia.webp",
+        category: "illustration",
+        width: 960,
+        height: 540,
         render_mode: "vector_hd",
         status: "ready",
       },
@@ -558,6 +598,68 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
           baseState,
         ).asset.id,
       ).toBe("banner_gestor_urgencia");
+
+      // New 16:9 3rd-variant thematic banners across all 5 categories
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "clientes",
+            illustration_id: null,
+            character_expression: "neutral",
+            tags: ["corporativo"],
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_clientes_corporativo");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "hacienda",
+            illustration_id: null,
+            character_expression: "neutral",
+            tags: ["deducciones"],
+          },
+          { ...baseState, fiscal_risk: 10, flags: {} },
+        ).asset.id,
+      ).toBe("banner_hacienda_trimestre");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "familia",
+            illustration_id: null,
+            character_expression: "neutral",
+            tags: ["descanso"],
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_familia_hogar");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "empleados",
+            illustration_id: null,
+            character_expression: "neutral",
+            tags: ["retencion"],
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_empleados_estudio");
+      expect(
+        resolveEventBannerAsset(
+          manifest,
+          {
+            category: "gestor",
+            illustration_id: null,
+            character_expression: "neutral",
+            character_id: "gestor_premium_elena",
+          },
+          baseState,
+        ).asset.id,
+      ).toBe("banner_gestor_estrategia");
     });
 
     it("falls back to resolveCategoryFallbackAsset when banner_* is absent from manifest", () => {

@@ -503,9 +503,14 @@ export function EventStage({
   const bannerResolution = activeEventView
     ? resolveEventBannerAsset(compiledCatalog.manifest, activeEventView.event, state)
     : null;
+  const outcomeBannerResolution = pendingOutcome
+    ? resolveEventBannerAsset(compiledCatalog.manifest, pendingOutcome.event, state)
+    : null;
   const categoryFallbackAsset = activeEventView
     ? resolveCategoryFallbackAsset(compiledCatalog.manifest, activeEventView.event.category)
-    : null;
+    : pendingOutcome
+      ? resolveCategoryFallbackAsset(compiledCatalog.manifest, pendingOutcome.event.category)
+      : null;
 
   const handleCategoryArtError = (event: SyntheticEvent<HTMLImageElement>) => {
     if (!categoryFallbackAsset) {
@@ -785,6 +790,29 @@ export function EventStage({
           {renderDockedEconomyStrip()}
 
           <div className="outcome-card-body p-3.5 sm:p-4 space-y-3">
+            {outcomeBannerResolution && (
+              <div className="outcome-banner-wrap hidden relative">
+                <div className="outcome-banner-frame relative w-full h-full">
+                  <img
+                    data-testid="outcome-banner-art"
+                    data-banner-kind={outcomeBannerResolution.kind}
+                    data-asset-id={outcomeBannerResolution.asset.id}
+                    src={outcomeBannerResolution.asset.url}
+                    alt={ui.eventStage.sceneAltPrefix(
+                      translateCategoryLabel(pendingOutcome.event.category, locale),
+                    )}
+                    width={outcomeBannerResolution.asset.width}
+                    height={outcomeBannerResolution.asset.height}
+                    decoding="async"
+                    onError={handleCategoryArtError}
+                    className={`outcome-banner-img w-full h-full object-cover rounded-lg border-2 border-[#1f2421] bg-[#f6efe0] shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] ${renderModeClass(
+                      outcomeBannerResolution.asset.render_mode,
+                    )}`}
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="rounded-lg bg-[#f6efe0] border border-[#1f2421]/20 px-3 py-2 text-xs text-[#373f3a]">
               <span className="font-bold text-[#1f2421]">{ui.eventStage.decisionTakenLabel}</span>
               <span>{displayedChoiceLabel}</span>
@@ -1093,26 +1121,28 @@ export function EventStage({
                   activeCharacter && activeCharacterPortrait ? "sm:pb-2" : ""
                 }`}
               >
-                <img
-                  data-testid="event-banner-art"
-                  data-banner-kind={bannerResolution.kind}
-                  data-asset-id={bannerResolution.asset.id}
-                  src={bannerResolution.asset.url}
-                  alt={ui.eventStage.sceneAltPrefix(
-                    translateCategoryLabel(activeEventView.event.category, locale),
-                  )}
-                  width={bannerResolution.asset.width}
-                  height={bannerResolution.asset.height}
-                  decoding="async"
-                  onError={handleCategoryArtError}
-                  className={`event-banner-img w-full ${
-                    bannerResolution.kind === "milestone"
-                      ? "[@media(max-width:767px)_and_(min-height:801px)]:h-[96px] [@media(max-width:767px)_and_(max-height:800px)]:h-[76px] [@media(max-width:767px)_and_(max-height:690px)]:h-[56px] [@media(max-width:1023px)_and_(max-height:500px)]:hidden sm:h-36"
-                      : "[@media(max-width:767px)_and_(min-height:801px)]:h-[88px] [@media(max-width:767px)_and_(max-height:800px)]:h-[68px] [@media(max-width:767px)_and_(max-height:690px)]:h-[52px] [@media(max-width:1023px)_and_(max-height:500px)]:hidden sm:h-32"
-                  } object-cover rounded-lg border-2 border-[#1f2421] bg-[#f6efe0] shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] ${renderModeClass(
-                    bannerResolution.asset.render_mode,
-                  )}`}
-                />
+                <div className="event-banner-frame relative w-full">
+                  <img
+                    data-testid="event-banner-art"
+                    data-banner-kind={bannerResolution.kind}
+                    data-asset-id={bannerResolution.asset.id}
+                    src={bannerResolution.asset.url}
+                    alt={ui.eventStage.sceneAltPrefix(
+                      translateCategoryLabel(activeEventView.event.category, locale),
+                    )}
+                    width={bannerResolution.asset.width}
+                    height={bannerResolution.asset.height}
+                    decoding="async"
+                    onError={handleCategoryArtError}
+                    className={`event-banner-img w-full ${
+                      bannerResolution.kind === "milestone"
+                        ? "[@media(max-width:767px)_and_(min-height:801px)]:h-[96px] [@media(max-width:767px)_and_(max-height:800px)]:h-[76px] [@media(max-width:767px)_and_(max-height:690px)]:h-[56px] [@media(max-width:1023px)_and_(max-height:500px)]:hidden sm:h-36"
+                        : "[@media(max-width:767px)_and_(min-height:801px)]:h-[88px] [@media(max-width:767px)_and_(max-height:800px)]:h-[68px] [@media(max-width:767px)_and_(max-height:690px)]:h-[52px] [@media(max-width:1023px)_and_(max-height:500px)]:hidden sm:h-32"
+                    } object-cover rounded-lg border-2 border-[#1f2421] bg-[#f6efe0] shadow-[2px_2px_0px_0px_rgba(31,36,33,0.85)] ${renderModeClass(
+                      bannerResolution.asset.render_mode,
+                    )}`}
+                  />
+                </div>
 
                 {activeCharacter && activeCharacterPortrait && (
                   <figure
