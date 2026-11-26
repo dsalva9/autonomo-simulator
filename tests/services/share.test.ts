@@ -130,9 +130,9 @@ describe("Share Summary & i18n Helpers", () => {
     expect(text).toContain("https://autonomo.example/juego");
   });
 
-  it("resolves canonical Vercel game URL by default, on localhost, and in non-browser contexts", () => {
-    expect(CANONICAL_GAME_URL).toBe("https://autonomo-simulator.vercel.app/");
-    expect(resolveShareUrl()).toBe("https://autonomo-simulator.vercel.app/");
+  it("resolves canonical production domain by default, on localhost, on legacy vercel.app host, and in non-browser contexts", () => {
+    expect(CANONICAL_GAME_URL).toBe("https://autonomo-simulator.com/");
+    expect(resolveShareUrl()).toBe("https://autonomo-simulator.com/");
     expect(resolveShareUrl("  https://autonomo.example/custom  ")).toBe(
       "https://autonomo.example/custom",
     );
@@ -151,7 +151,7 @@ describe("Share Summary & i18n Helpers", () => {
           },
         },
       });
-      expect(resolveShareUrl()).toBe("https://autonomo-simulator.vercel.app/");
+      expect(resolveShareUrl()).toBe("https://autonomo-simulator.com/");
 
       Object.defineProperty(globalThis, "window", {
         configurable: true,
@@ -165,7 +165,21 @@ describe("Share Summary & i18n Helpers", () => {
           },
         },
       });
-      expect(resolveShareUrl()).toBe("https://autonomo-simulator.vercel.app/");
+      expect(resolveShareUrl()).toBe("https://autonomo-simulator.com/");
+
+      Object.defineProperty(globalThis, "window", {
+        configurable: true,
+        value: {
+          location: {
+            href: "https://autonomo-simulator.com/",
+            protocol: "https:",
+            hostname: "autonomo-simulator.com",
+            origin: "https://autonomo-simulator.com",
+            pathname: "/",
+          },
+        },
+      });
+      expect(resolveShareUrl()).toBe("https://autonomo-simulator.com/");
     } finally {
       Object.defineProperty(globalThis, "window", {
         configurable: true,

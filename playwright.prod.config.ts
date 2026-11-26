@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-export const PRODUCTION_BASE_URL = "https://autonomo-simulator.vercel.app";
+export const PRODUCTION_BASE_URL = "https://autonomo-simulator.com";
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? PRODUCTION_BASE_URL;
 const localChannel = process.env.PLAYWRIGHT_CHANNEL ?? (process.env.CI ? undefined : "chrome");

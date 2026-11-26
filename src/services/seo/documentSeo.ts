@@ -16,7 +16,7 @@ export interface DocumentSeoSnapshot {
   description: string;
 }
 
-const BASE_SITE_URL = "https://autonomo-simulator.vercel.app/";
+const BASE_SITE_URL = "https://autonomo-simulator.com/";
 
 export function parseUrlLocaleParam(search: string, pathname = ""): "es-ES" | "en" | null {
   if (search) {

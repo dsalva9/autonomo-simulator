@@ -35,13 +35,13 @@ describe("Per-Page & Bilingual SEO Metadata Builder (documentSeo.ts)", () => {
 
     expect(landingEs.lang).toBe("es");
     expect(landingEs.ogLocale).toBe("es_ES");
-    expect(landingEs.canonicalUrl).toBe("https://autonomo-simulator.vercel.app/");
+    expect(landingEs.canonicalUrl).toBe("https://autonomo-simulator.com/");
     expect(landingEs.title).toContain("Autónomo Simulator");
     expect(landingEs.description).toContain("autónomo en España");
 
     expect(landingEn.lang).toBe("en");
     expect(landingEn.ogLocale).toBe("en_US");
-    expect(landingEn.canonicalUrl).toBe("https://autonomo-simulator.vercel.app/en/");
+    expect(landingEn.canonicalUrl).toBe("https://autonomo-simulator.com/en/");
     expect(landingEn.title).toContain("Spanish Freelancer Survival Game");
 
     const dashEs = buildDocumentSeoSnapshot({ view: "title", locale: "es-ES" });

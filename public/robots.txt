@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://autonomo-simulator.vercel.app/sitemap.xml
+Sitemap: https://autonomo-simulator.com/sitemap.xml

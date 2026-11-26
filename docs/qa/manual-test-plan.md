@@ -12,7 +12,7 @@ All targets below are **mandatory** verification gates for user-facing releases 
 |---|---|---|---|
 | **Local Preview (`dist/`)** | Pre-commit / pre-push & CI (`.github/workflows/verify.yml`) | `pnpm build && pnpm test:e2e` | `http://localhost:4173` |
 | **Portable `itch.io` Zip** | Pre-release / CI artifact | `pnpm package:itch` (or `pnpm build:itch`) | `release/autonomo-simulator-web.zip` |
-| **Live Production (Vercel)** | Post-push / post-deploy | `pnpm test:e2e:prod` | `https://autonomo-simulator.vercel.app/` |
+| **Live Production (Vercel)** | Post-push / post-deploy | `pnpm test:e2e:prod` | `https://autonomo-simulator.com/` |
 
 > **Custom Preview URL Override**: To verify a Vercel preview URL before merging, set `PLAYWRIGHT_BASE_URL` (PowerShell: `$env:PLAYWRIGHT_BASE_URL="https://<preview-url>"; pnpm test:e2e:prod` · macOS/Linux: `PLAYWRIGHT_BASE_URL=https://<preview-url> pnpm test:e2e:prod`).
 
@@ -173,10 +173,10 @@ All targets below are **mandatory** verification gates for user-facing releases 
 
 ---
 
-### QA-13: Live Vercel Production Parity (`https://autonomo-simulator.vercel.app/`)
+### QA-13: Live Vercel Production Parity (`https://autonomo-simulator.com/`)
 - **Preconditions**: Latest `main` deployed via Vercel CD.
 - **Steps**:
-  1. Execute `pnpm test:e2e:prod` running `tests/ui/phase0.spec.ts`, `tests/ui/phase1.spec.ts`, `tests/ui/phase2.spec.ts`, and `tests/ui/ux-usability.spec.ts` across `desktop-chromium` (`1024×768`, `1152×720`, `1280×600`, `1280×720`, `1366×650`, `1366×768`, `1440×900`, `1920×1080`) and `mobile-chromium` (`360×640`, `375×667`, `360×780`, `390×844`, `412×915`, `667×375`) against `https://autonomo-simulator.vercel.app/`.
+  1. Execute `pnpm test:e2e:prod` running `tests/ui/phase0.spec.ts`, `tests/ui/phase1.spec.ts`, `tests/ui/phase2.spec.ts`, and `tests/ui/ux-usability.spec.ts` across `desktop-chromium` (`1024×768`, `1152×720`, `1280×600`, `1280×720`, `1366×650`, `1366×768`, `1440×900`, `1920×1080`) and `mobile-chromium` (`360×640`, `375×667`, `360×780`, `390×844`, `412×915`, `667×375`) against `https://autonomo-simulator.com/`.
 - **Expected Result**:
   - 100% of E2E and Usability/UX specs pass against live HTTPS production with HTTP `200`/`304` on all `.webp`/`.svg`/PWA/OG assets, zero `console.error`, and zero `pageerror` events.
 

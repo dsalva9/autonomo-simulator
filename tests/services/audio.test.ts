@@ -169,7 +169,7 @@ describe("Procedural Web Audio Micro-SFX & PWA Service Worker Registration", () 
     const originalWindow = globalThis.window;
     const originalNavigator = globalThis.navigator;
     try {
-      const fakeRegistration = { scope: "https://autonomo-simulator.vercel.app/" };
+      const fakeRegistration = { scope: "https://autonomo-simulator.com/" };
       const registerSpy = vi.fn(async () => fakeRegistration);
 
       Object.defineProperty(globalThis, "window", {
@@ -177,7 +177,7 @@ describe("Procedural Web Audio Micro-SFX & PWA Service Worker Registration", () 
         value: {
           location: {
             protocol: "https:",
-            hostname: "autonomo-simulator.vercel.app",
+            hostname: "autonomo-simulator.com",
           },
           addEventListener: vi.fn(),
         },

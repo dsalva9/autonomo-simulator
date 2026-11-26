@@ -4,17 +4,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
 >
   <url>
-    <loc>https://autonomo-simulator.vercel.app/</loc>
-    <lastmod>2026-11-20</lastmod>
-    <xhtml:link rel="alternate" hreflang="es" href="https://autonomo-simulator.vercel.app/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://autonomo-simulator.vercel.app/en/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://autonomo-simulator.vercel.app/" />
+    <loc>https://autonomo-simulator.com/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <xhtml:link rel="alternate" hreflang="es" href="https://autonomo-simulator.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://autonomo-simulator.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://autonomo-simulator.com/" />
   </url>
   <url>
-    <loc>https://autonomo-simulator.vercel.app/en/</loc>
-    <lastmod>2026-11-20</lastmod>
-    <xhtml:link rel="alternate" hreflang="es" href="https://autonomo-simulator.vercel.app/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://autonomo-simulator.vercel.app/en/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://autonomo-simulator.vercel.app/" />
+    <loc>https://autonomo-simulator.com/en/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <xhtml:link rel="alternate" hreflang="es" href="https://autonomo-simulator.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://autonomo-simulator.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://autonomo-simulator.com/" />
   </url>
 </urlset>

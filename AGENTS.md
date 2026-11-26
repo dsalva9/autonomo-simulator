@@ -24,7 +24,7 @@ Read [ARCHITECTURE.md](./ARCHITECTURE.md) for state/schema contracts and [Autono
 | Run headless balance sims | `pnpm test:sim` |
 | Production build | `pnpm build` |
 | Run Playwright UI / QA (local `dist/`) | `pnpm test:e2e` |
-| Run Playwright UI / QA (live Vercel prod: `https://autonomo-simulator.vercel.app/`) | `pnpm test:e2e:prod` |
+| Run Playwright UI / QA (live Vercel prod: `https://autonomo-simulator.com/`) | `pnpm test:e2e:prod` |
 
 > **Custom Preview URL Override**: Pass `PLAYWRIGHT_BASE_URL` when targeting a branch preview URL (PowerShell: `$env:PLAYWRIGHT_BASE_URL="https://<preview-url>"; pnpm test:e2e:prod` · macOS/Linux: `PLAYWRIGHT_BASE_URL=https://<preview-url> pnpm test:e2e:prod`).
 
@@ -32,7 +32,7 @@ Read [ARCHITECTURE.md](./ARCHITECTURE.md) for state/schema contracts and [Autono
 ```bash
 pnpm verify
 ```
-Runs `schema:check` -> `validate:assets` -> `validate:content` -> `typecheck` -> `lint` -> `test` -> `build` -> `test:e2e` (local `dist/`), followed after `git push` / Vercel CD deployment by `pnpm test:e2e:prod` against `https://autonomo-simulator.vercel.app/`.
+Runs `schema:check` -> `validate:assets` -> `validate:content` -> `typecheck` -> `lint` -> `test` -> `build` -> `test:e2e` (local `dist/`), followed after `git push` / Vercel CD deployment by `pnpm test:e2e:prod` against `https://autonomo-simulator.com/`.
 
 ## 3. Roles & Directory Ownership
 
@@ -155,14 +155,14 @@ Every completed feature, slice, or fix MUST execute this full end-to-end pipelin
    - Maintain and execute `tests/ui/ux-usability.spec.ts` on every major UI, layout, modal, HUD, or content-presentation change to catch obvious UX regressions (yo-yo scrolling, below-the-fold CTAs, toast/sticky-bar click occlusion, stranded mobile scroll position, silent text clipping, cramped tap targets, or keyboard friction) without needing to play a full 120-month run.
    - Run `pnpm build` to emit a clean `dist/`, then execute Playwright E2E + UX Usability + manual QA scenarios locally via `pnpm test:e2e` (against `dist/` via `pnpm preview`) with screenshot & zero-console/page/HTTP-error verification **before** commit/push.
 4. **Commit & Push**: Stage changes, commit using Conventional Commits + `Co-Authored-By`, and `git push` to GitHub (`origin`).
-5. **Live Vercel Production Playwright QA (Post-Deploy)**: Once Vercel CD finishes deploying to `https://autonomo-simulator.vercel.app/`, run `pnpm test:e2e:prod` to verify all Playwright E2E + UX Usability + manual QA scenarios pass against the live production URL with zero console/page/HTTP errors.
+5. **Live Vercel Production Playwright QA (Post-Deploy)**: Once Vercel CD finishes deploying to `https://autonomo-simulator.com/`, run `pnpm test:e2e:prod` to verify all Playwright E2E + UX Usability + manual QA scenarios pass against the live production URL with zero console/page/HTTP errors.
 
 ### Programmer DoD
 - [ ] Zero boundary violations (`src/engine/` remains pure; no hardcoded content).
 - [ ] `pnpm schema:emit` run if Zod schemas changed; `ARCHITECTURE.md` / `docs/adr/` updated if contracts changed.
 - [ ] Automated unit/simulation/UI tests and Playwright UX Usability checks (`tests/ui/ux-usability.spec.ts` across `360×780`, `390×844`, `1366×768`, and `1440×900`) added or updated and passing with zero yo-yo scroll, zero occluded hit targets, and zero silent text truncation.
-- [ ] Manual QA & UX scenarios updated in `docs/qa/manual-test-plan.md` and executed via Playwright **both** locally (`pnpm test:e2e` against `dist/`) before commit/push **and** against the live Vercel deployment (`https://autonomo-simulator.vercel.app/` via `pnpm test:e2e:prod`) after push/deployment, with zero console/page/HTTP errors.
-- [ ] `pnpm verify` (including `pnpm build` and local `pnpm test:e2e`) passes before commit/push, changes are committed and pushed to `origin`, and post-deploy `pnpm test:e2e:prod` passes against `https://autonomo-simulator.vercel.app/`.
+- [ ] Manual QA & UX scenarios updated in `docs/qa/manual-test-plan.md` and executed via Playwright **both** locally (`pnpm test:e2e` against `dist/`) before commit/push **and** against the live Vercel deployment (`https://autonomo-simulator.com/` via `pnpm test:e2e:prod`) after push/deployment, with zero console/page/HTTP errors.
+- [ ] `pnpm verify` (including `pnpm build` and local `pnpm test:e2e`) passes before commit/push, changes are committed and pushed to `origin`, and post-deploy `pnpm test:e2e:prod` passes against `https://autonomo-simulator.com/`.
 
 ### Narrative DoD
 - [ ] Files live solely under `content/events/` or `content/characters/` (plus optional `docs/proposals/`).

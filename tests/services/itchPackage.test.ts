@@ -47,7 +47,7 @@ function writeMinimalPortableDist(rootDir: string, indexHtmlOverride?: string): 
     '<html lang="es">',
     "<head>",
     '  <link rel="stylesheet" href="./_bundle/index-abc123.css" />',
-    '  <meta property="og:image" content="https://autonomo-simulator.vercel.app/og-preview.png" />',
+    '  <meta property="og:image" content="https://autonomo-simulator.com/og-preview.png" />',
     "</head>",
     "<body>",
     '  <div id="root"></div>',

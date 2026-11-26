@@ -45,7 +45,7 @@ export function stripOuterQuotes(text: string): string {
     .trim();
 }
 
-export const CANONICAL_GAME_URL = "https://autonomo-simulator.vercel.app/";
+export const CANONICAL_GAME_URL = "https://autonomo-simulator.com/";
 
 export function resolveShareUrl(explicitUrl?: string): string {
   if (explicitUrl && explicitUrl.trim().length > 0) {
@@ -59,7 +59,8 @@ export function resolveShareUrl(explicitUrl?: string): string {
       hostname === "127.0.0.1" ||
       hostname === "::1" ||
       hostname === "[::1]";
-    if (isHttp && hostname && !isLocalhost) {
+    const isLegacyVercelHost = hostname === "autonomo-simulator.vercel.app";
+    if (isHttp && hostname && !isLocalhost && !isLegacyVercelHost) {
       return `${origin}${pathname}`;
     }
   }

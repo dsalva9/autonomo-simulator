@@ -2452,16 +2452,14 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     // 1. SEO Verification: robots.txt, sitemap.xml, Schema.org JSON-LD, canonical & dynamic page titles
     const robotsRes = await page.request.get(new URL("./robots.txt", page.url()).toString());
     expect(robotsRes.status()).toBe(200);
-    expect(await robotsRes.text()).toContain(
-      "Sitemap: https://autonomo-simulator.vercel.app/sitemap.xml",
-    );
+    expect(await robotsRes.text()).toContain("Sitemap: https://autonomo-simulator.com/sitemap.xml");
 
     const sitemapRes = await page.request.get(new URL("./sitemap.xml", page.url()).toString());
     expect(sitemapRes.status()).toBe(200);
     const sitemapXml = await sitemapRes.text();
     expect(sitemapXml).toContain("<urlset");
     expect(sitemapXml).toContain("<lastmod>");
-    expect(sitemapXml).toContain('hreflang="en" href="https://autonomo-simulator.vercel.app/en/"');
+    expect(sitemapXml).toContain('hreflang="en" href="https://autonomo-simulator.com/en/"');
 
     const promoRes = await page.request.get(new URL("./promo-portada.jpg", page.url()).toString());
     expect(promoRes.status()).toBe(200);
@@ -2472,7 +2470,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     const staticEnHtml = await staticEnRes.text();
     expect(staticEnHtml).toContain('<html lang="en"');
     expect(staticEnHtml).toContain(
-      '<link rel="canonical" href="https://autonomo-simulator.vercel.app/en/"',
+      '<link rel="canonical" href="https://autonomo-simulator.com/en/"',
     );
     expect(staticEnHtml).toContain('<meta property="og:locale" content="en_US"');
     expect(staticEnHtml).toContain("Spanish Freelancer Survival Game");
@@ -2498,8 +2496,8 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     });
     expect(seoHead.title).toContain("Autónomo Simulator");
     expect(seoHead.description.length).toBeGreaterThanOrEqual(80);
-    expect(seoHead.canonical).toBe("https://autonomo-simulator.vercel.app/");
-    expect(seoHead.hreflangEn).toBe("https://autonomo-simulator.vercel.app/en/");
+    expect(seoHead.canonical).toBe("https://autonomo-simulator.com/");
+    expect(seoHead.hreflangEn).toBe("https://autonomo-simulator.com/en/");
     expect(seoHead.heroPreloadPriority).toBe("high");
     expect(seoHead.hasGraph).toBe(true);
 
@@ -2577,7 +2575,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect.poll(async () => page.title()).toContain("Spanish Freelancer Survival Game");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       "href",
-      "https://autonomo-simulator.vercel.app/en/",
+      "https://autonomo-simulator.com/en/",
     );
     await expect
       .poll(async () =>
@@ -2632,7 +2630,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.goto("./?lang=en");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       "href",
-      "https://autonomo-simulator.vercel.app/en/",
+      "https://autonomo-simulator.com/en/",
     );
     await expect(page.getByTestId("landing-continue-btn")).toBeVisible();
     await page.getByTestId("landing-continue-btn").click();
