@@ -1,10 +1,12 @@
 import { Coffee, ExternalLink } from "lucide-react";
+import { type KofiPlacement, trackKofiClicked } from "../../services/analytics/umamiAnalytics.ts";
 import type { SupportedLocale } from "../../services/i18n/resolveEventText.ts";
 import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 
 export interface KofiSupportBannerProps {
   locale?: SupportedLocale;
   context: "landing" | "end_run" | "milestone";
+  placement?: KofiPlacement;
   testId?: string;
   className?: string;
 }
@@ -12,10 +14,20 @@ export interface KofiSupportBannerProps {
 export function KofiSupportBanner({
   locale,
   context,
+  placement,
   testId = "kofi-support-banner",
   className = "",
 }: KofiSupportBannerProps) {
   const { kofi } = getUiStrings(locale);
+  const resolvedPlacement: KofiPlacement =
+    placement ??
+    (context === "landing"
+      ? "landing"
+      : context === "end_run"
+        ? "endrun"
+        : testId.includes("annual")
+          ? "annual"
+          : "victory");
   const prompt =
     context === "landing"
       ? kofi.landingPrompt
@@ -41,6 +53,7 @@ export function KofiSupportBanner({
         rel="noopener noreferrer"
         data-testid={`${testId}-link`}
         aria-label={kofi.ariaLabel}
+        onClick={() => trackKofiClicked({ context: resolvedPlacement, locale })}
         className="min-h-11 sm:min-h-9 px-3 py-1.5 sm:py-1 rounded-lg border-2 border-[#1f2421] bg-[#1f2421] hover:bg-[#313834] text-[#fce592] font-bold text-xs sm:text-[12.5px] leading-tight inline-flex items-center justify-center gap-1.5 shrink-0 cursor-pointer transition-colors no-underline"
       >
         <Coffee className="w-3.5 h-3.5 text-[#fce592] shrink-0" aria-hidden="true" />

@@ -1,6 +1,7 @@
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { KofiSupportBanner } from "../components/common/KofiSupportBanner.tsx";
+import { trackDashboardEntered } from "../services/analytics/umamiAnalytics.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
 import { compiledCatalog, resolveManifestAsset } from "../services/content/catalog.ts";
 import {
@@ -37,6 +38,7 @@ export function LandingScreen() {
 
   const handleEnterDashboard = () => {
     playUiSound("stamp_thud", { muted: sfxMuted });
+    trackDashboardEntered({ locale, hasActiveRun: hasResumableRun });
     setScreenView("title");
   };
 
@@ -268,6 +270,7 @@ export function LandingScreen() {
         <KofiSupportBanner
           locale={locale}
           context="landing"
+          placement="landing"
           testId="kofi-landing-banner"
           className="shrink-0"
         />

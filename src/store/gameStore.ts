@@ -20,6 +20,12 @@ import {
   settleQuarter,
   startNewRun,
 } from "../engine/index.ts";
+import {
+  recordGameplayTurn,
+  seedRunProgressSnapshot,
+  trackRunProgress,
+  trackRunStarted,
+} from "../services/analytics/umamiAnalytics.ts";
 import { compiledCatalog } from "../services/content/catalog.ts";
 import {
   type UILocale,
@@ -298,6 +304,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     state: GameState,
     options?: SaveActiveRunOptions,
   ): Promise<void> => {
+    trackRunProgress(state, get().profile.settings.locale);
     const synced = await enqueueStorage(() =>
       activeStoragePort.syncRunProgress(state, undefined, options),
     );
@@ -378,6 +385,8 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         hydratedPendingTurn?.last_month_start ??
         (hydratedRun ? readStoredLastMonthStart(hydratedRun.run_id, hydratedRun.month) : null);
 
+      seedRunProgressSnapshot(hydratedRun);
+
       set((curr) => ({
         hydrated: true,
         hydrating: false,
@@ -408,6 +417,12 @@ export const useGameStore = create<GameStoreState>((set, get) => {
 
       useUIStore.getState().resetForRunEntry();
       writeStoredLastMonthStart(state.run_id, resolution.monthStart ?? null);
+      trackRunStarted({
+        runId: state.run_id,
+        locale: get().profile.settings.locale,
+        customSeed: cleanSeed !== undefined,
+        fastPacing: useUIStore.getState().fastPacing,
+      });
 
       set({
         activeRun: state,
@@ -461,6 +476,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       }
 
       const locale = get().profile.settings.locale;
+      recordGameplayTurn(current.month, locale);
       const prevIndicators = current.indicators;
       const { state: nextState, resolution } = applyPlayerChoice(
         current,

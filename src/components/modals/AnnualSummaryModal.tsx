@@ -201,7 +201,12 @@ export function AnnualSummaryModal({
           )}
 
           {(state.endless_mode || state.earned_victories.length > 0 || state.month >= 120) && (
-            <KofiSupportBanner locale={locale} context="milestone" testId="kofi-annual-banner" />
+            <KofiSupportBanner
+              locale={locale}
+              context="milestone"
+              placement="annual"
+              testId="kofi-annual-banner"
+            />
           )}
         </div>
 

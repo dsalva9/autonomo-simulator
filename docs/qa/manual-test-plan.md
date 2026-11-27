@@ -453,3 +453,14 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
   - `robots.txt`, `sitemap.xml`, JSON-LD, `hreflang`, `?lang=en` deep link, and dynamic 4-view `<title>` / `<meta description>` all validate cleanly.
   - Separated `LandingScreen` stays crisp and focused with `Guía rápida`, big Play CTA, Ko-fi, and reserved social slot; Dashboard (`TitleScreen`) stays clean and symmetric (`<= 2px` top/bottom delta) with `Resumen de carrera` balancing `Salón de Caídos / Logros`.
   - Ko-fi support (`https://ko-fi.com/dsal80`) is accessible, high-contrast (`>= 4.5:1`), and unoccluded across `LandingScreen`, `EndRunScreen`, `VictoryModal` (`120m` & `150k €`), and post-victory Endless `AnnualSummaryModal` (including Year 15+) on both mobile and desktop.
+
+---
+
+### QA-36: Cookieless Umami Analytics, Foreground Playtime & Bot/Localhost Isolation (`tests/services/analytics.test.ts`)
+- **Preconditions**: Verified via `tests/services/analytics.test.ts` (Vitest) plus Playwright zero-console/zero-HTTP-error checks locally and on live `https://autonomo-simulator.com/`.
+- **Steps**:
+  1. Confirm analytics stays silent (`0` network requests, `0` console errors) when `VITE_UMAMI_WEBSITE_ID` is unset, on `localhost`, on `itch.io` embeds, or when `navigator.webdriver === true`.
+  2. When `VITE_UMAMI_WEBSITE_ID` is set on `https://autonomo-simulator.com/` in a normal user browser, verify `<script id="autonomo-umami-script" defer data-do-not-track="true">` loads once and dispatches the 7 cookieless zero-PII events (`dashboard_entered`, `run_started`, `run_milestone`, `run_ended`, `play_session`, `result_shared`, `kofi_clicked`).
+  3. Verify `play_session` pauses when switching tabs (`visibilitychange`), flushes foreground playtime on tab hide/`pagehide` when `>= 10s`, resets the stretch accumulator to prevent double-counting, and deduplicates `run_milestone` and `run_ended` per `run_id` (including hydrated saves).
+- **Expected Result**:
+  - Zero cookies, zero PII (raw seed strings never transmitted), zero Playwright/bot traffic inflation, and accurate foreground playtime & funnel telemetry once `VITE_UMAMI_WEBSITE_ID` is configured in Vercel.

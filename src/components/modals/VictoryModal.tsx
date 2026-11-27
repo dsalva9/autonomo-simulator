@@ -118,7 +118,12 @@ export function VictoryModal({ state, locale: localeProp, onDecide }: VictoryMod
             </button>
           </div>
 
-          <KofiSupportBanner locale={locale} context="milestone" testId="kofi-victory-banner" />
+          <KofiSupportBanner
+            locale={locale}
+            context="milestone"
+            placement="victory"
+            testId="kofi-victory-banner"
+          />
         </div>
       </div>
     </dialog>

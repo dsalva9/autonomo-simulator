@@ -2,6 +2,7 @@ import { Award, Copy, Download, Home, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { KofiSupportBanner } from "../components/common/KofiSupportBanner.tsx";
 import type { GameState } from "../engine/index.ts";
+import { trackResultShared } from "../services/analytics/umamiAnalytics.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
 import { compiledCatalog, resolveEndingIllustrationAsset } from "../services/content/catalog.ts";
 import {
@@ -102,6 +103,9 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
 
   const handleCopyText = async () => {
     const ok = await copyShareText(shareSummary, locale);
+    if (ok) {
+      trackResultShared({ method: "copy", endingId: shareSummary.endingId, locale });
+    }
     setFeedback(ok ? ui.endRun.feedbackCopied : ui.endRun.feedbackCopyFailed);
   };
 
@@ -109,12 +113,20 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
     if (!canvasRef.current) return;
     const filename = `certificado-autonomo-${shareSummary.monthsSurvived}m.png`;
     const ok = await downloadShareCardPng(canvasRef.current, filename);
+    if (ok) {
+      trackResultShared({ method: "download", endingId: shareSummary.endingId, locale });
+    }
     setFeedback(ok ? ui.endRun.feedbackDownloaded(filename) : ui.endRun.feedbackDownloadFailed);
   };
 
   const handleNativeShare = async () => {
     const res = await shareRunResult(shareSummary, canvasRef.current, locale);
     if (res.ok) {
+      trackResultShared({
+        method: res.method === "clipboard" ? "copy" : "native",
+        endingId: shareSummary.endingId,
+        locale,
+      });
       setFeedback(
         res.method === "clipboard" ? ui.endRun.feedbackClipboardFallback : ui.endRun.feedbackShared,
       );
@@ -484,7 +496,12 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                 </p>
               )}
 
-              <KofiSupportBanner locale={locale} context="end_run" testId="kofi-endrun-banner" />
+              <KofiSupportBanner
+                locale={locale}
+                context="end_run"
+                placement="endrun"
+                testId="kofi-endrun-banner"
+              />
             </div>
           </div>
 

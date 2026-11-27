@@ -4,6 +4,11 @@ import { EndRunScreen } from "./screens/EndRunScreen.tsx";
 import { GameScreen } from "./screens/GameScreen.tsx";
 import { LandingScreen } from "./screens/LandingScreen.tsx";
 import { TitleScreen } from "./screens/TitleScreen.tsx";
+import {
+  attachPlaySessionLifecycleListeners,
+  initUmamiAnalytics,
+  setGameplayActiveContext,
+} from "./services/analytics/umamiAnalytics.ts";
 import { normalizeLocale } from "./services/i18n/resolveEventText.ts";
 import { getUiStrings } from "./services/i18n/uiStrings.ts";
 import {
@@ -59,6 +64,28 @@ export function App() {
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
+
+  useEffect(() => {
+    initUmamiAnalytics();
+    return attachPlaySessionLifecycleListeners();
+  }, []);
+
+  useEffect(() => {
+    const inActiveGameplay = inGameView && !isEndRunView && !isViewingArchivedCertificate;
+    setGameplayActiveContext({
+      inGameplay: inActiveGameplay,
+      runId: inActiveGameplay ? (visibleState?.run_id ?? null) : null,
+      month: inActiveGameplay ? visibleState?.month : undefined,
+      locale: normalizedLocale,
+    });
+  }, [
+    inGameView,
+    isEndRunView,
+    isViewingArchivedCertificate,
+    visibleState?.run_id,
+    visibleState?.month,
+    normalizedLocale,
+  ]);
 
   useEffect(() => {
     if (!hydrated || appliedUrlParamsRef.current || typeof window === "undefined") {
