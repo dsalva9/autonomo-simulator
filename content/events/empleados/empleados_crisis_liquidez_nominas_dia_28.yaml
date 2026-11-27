@@ -1,0 +1,57 @@
+schema_version: 1
+id: empleados_crisis_liquidez_nominas_dia_28
+category: empleados
+title: "Día 27 y tres clientes sin pagar: faltan 12.000 € para nóminas"
+body: "Mañana vencen las transferencias de nóminas y los seguros sociales, pero tres cuentas grandes han pateado el pago al mes siguiente. Laura te mira seria: el equipo no puede financiar la morosidad de tus clientes."
+tags:
+  - plantilla
+  - tesoreria
+  - crisis_nominas
+character_id: empleada_senior_laura
+character_expression: stressed
+illustration_id: illus_hito_conflicto_laboral
+requirements:
+  min_month: 42
+  team_size:
+    min: 3
+weight: 14
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: activar_poliza_credito_puente
+    label: "Abrir póliza de crédito puente con el banco (1.400 € + intereses)"
+    result_text: "El banco cobra comisiones de apertura e intereses seis meses, pero cada empleado recibe su nómina puntual el día 28 sin enterarse del susto."
+    effects:
+      deductible_expense: 1400
+      employee_satisfaction: 8
+      stress: 4
+      add_modifier:
+        id: mod_poliza_credito_nominas
+        label: "Intereses de póliza puente de nóminas"
+        remaining_months: 6
+        monthly_expense_delta: 350
+  - id: inyectar_reserva_personal_caja
+    label: "Adelantar 8.500 € de reserva propia hasta cobrar 9.500 € en 2m"
+    requirements:
+      stats:
+        money:
+          min: 9000
+    result_text: "Tiras de colchón propio para cubrir las nóminas al céntimo y dejas reclamados los 9.500 € pendientes. La plantilla valora tu solvencia."
+    effects:
+      cash_delta: -8500
+      deferred_invoice:
+        amount: 9500
+        delay_months: 2
+        default_prob: 0.15
+      employee_satisfaction: 12
+      moral: 6
+      stress: -6
+  - id: retrasar_nominas_diez_dias
+    label: "Pedir paciencia al equipo y retrasar las nóminas diez días"
+    result_text: "No sueltas un euro de intereses hoy, pero el grupo de WhatsApp interno arde en silencio y dos perfiles actualizan su currículum esa misma noche."
+    effects:
+      employee_satisfaction: -24
+      stress: 18
+      reputation: -10
+      moral: -8

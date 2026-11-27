@@ -38,16 +38,28 @@ describe("Per-Page & Bilingual SEO Metadata Builder (documentSeo.ts)", () => {
     expect(landingEs.canonicalUrl).toBe("https://autonomo-simulator.com/");
     expect(landingEs.title).toContain("Autónomo Simulator");
     expect(landingEs.description).toContain("autónomo en España");
+    expect(landingEs.description).toContain("362 eventos");
+    expect(landingEs.description).toContain("18 sellos");
+    expect(landingEs.description).toContain("250.000 €");
+    expect(landingEs.description).not.toContain("150.000");
 
     expect(landingEn.lang).toBe("en");
     expect(landingEn.ogLocale).toBe("en_US");
     expect(landingEn.canonicalUrl).toBe("https://autonomo-simulator.com/en/");
     expect(landingEn.title).toContain("Spanish Freelancer Survival Game");
+    expect(landingEn.description).toContain("362 events");
+    expect(landingEn.description).toContain("18 seals");
+    expect(landingEn.description).toContain("250,000 €");
+    expect(landingEn.description).not.toContain("150,000");
 
     const dashEs = buildDocumentSeoSnapshot({ view: "title", locale: "es-ES" });
     const dashEn = buildDocumentSeoSnapshot({ view: "title", locale: "en" });
     expect(dashEs.title).toContain("Panel de Expedientes");
     expect(dashEn.title).toContain("Dossier Dashboard");
+    expect(dashEs.description).toContain("18 sellos");
+    expect(dashEn.description).toContain("18 career seals");
+    expect(dashEs.description).not.toContain("15 logros");
+    expect(dashEn.description).not.toContain("15 achievements");
     expect(dashEs.title).not.toBe(landingEs.title);
     expect(dashEn.title).not.toBe(landingEn.title);
 

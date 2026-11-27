@@ -13,6 +13,7 @@ requirements:
   min_month: 3
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 13
 cooldown_months: 8
 max_occurrences: 4
@@ -30,10 +31,14 @@ choices:
     label: Poner el audio a velocidad doble y estudiarte tú mismo la ley
     result_text: Pierdes media tarde navegando foros fiscales y manuales oficiales, pero sacas la factura correcta a pesar de tu propio gestor.
     effects:
-      stress: 7
+      stress: 2
       moral: -2
-      reputation: 2
-      fiscal_risk: -2
+      reputation: 4
+      fiscal_risk: -6
+    requirements:
+      stats:
+        stress:
+          max: 45
   - id: pagar_microconsulta_intracomunitaria
     label: Pagar una consulta puntual a un especialista internacional (110 €)
     requirements:

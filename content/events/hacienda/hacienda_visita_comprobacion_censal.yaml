@@ -13,7 +13,7 @@ requirements:
   min_month: 8
   stats:
     fiscal_risk:
-      min: 28
+      min: 20
 weight: 24
 cooldown_months: 18
 max_occurrences: 2
@@ -59,4 +59,17 @@ choices:
           stress: 15
           moral: -7
           fiscal_risk: -20
+  - id: exhibir_sede_y_equipo_real
+    label: Enseñar tu estudio real en marcha con equipo en plantilla (0 €)
+    requirements:
+      team_size:
+        min: 2
+      stats:
+        fiscal_risk:
+          max: 25
+    result_text: Al ver puestos de trabajo reales, equipo en marcha y libros en orden, el agente cierra la diligencia conforme en el acto sin multa.
+    effects:
+      moral: 10
+      stress: -6
+      fiscal_risk: -25
 illustration_id: illus_hito_inspeccion_hacienda

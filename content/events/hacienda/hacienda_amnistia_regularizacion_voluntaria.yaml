@@ -1,0 +1,72 @@
+schema_version: 1
+id: hacienda_amnistia_regularizacion_voluntaria
+category: hacienda
+title: "Regularización voluntaria antes de campaña"
+body: "Antes de que la Agencia Tributaria lance su campaña anual de comprobaciones masivas, aún puedes presentar complementarias voluntarias: pagarás recargo extemporáneo sin sanción y borrarás de un plumazo viejos fantasmas."
+tags:
+  - regularizacion
+  - riesgo_fiscal
+  - estrategia
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: banner_hacienda_trimestre
+requirements:
+  min_month: 48
+  stats:
+    fiscal_risk:
+      min: 40
+weight: 10
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: presentar_complementarias_limpias
+    label: "Presentar complementarias voluntarias y limpiar el historial (4.500 €)"
+    requirements:
+      stats:
+        money:
+          min: 5000
+    result_text: "El sablazo de 4.500 € escuece en la caja, pero desactivas sanciones futuras de raíz y vuelves a abrir la DEHú sin taquicardias."
+    effects:
+      cash_delta: -4500
+      fiscal_risk: -35
+      moral: 8
+      stress: -12
+      clear_flags:
+        - cobro_en_b_reciente
+        - elena_aviso_cumplimiento
+  - id: regularizacion_asistida_elena
+    label: "Ejecutar regularización quirúrgica con Elena Montes (2.800 € + 950 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+      stats:
+        money:
+          min: 3800
+    result_text: "Elena encuadra cada ajuste al céntimo con recargo mínimo y te deja el expediente como una patena. Respira tu caja y respira tu relación con ella."
+    effects:
+      cash_delta: -2800
+      deductible_expense: 950
+      fiscal_risk: -38
+      moral: 10
+      stress: -14
+      clear_flags:
+        - cobro_en_b_reciente
+        - elena_aviso_cumplimiento
+  - id: aguantar_el_pulso_del_reloj
+    label: "No despertar a la bestia y confiar en el reloj de prescripción"
+    outcomes:
+      - id: temple_de_veterano
+        weight: 40
+        result_text: "Guardas tu dinero en caja con nervios de acero. Cada mes que pasa sin carta certificada te acerca un paso más a la prescripción."
+        effects:
+          moral: 4
+          stress: 3
+          fiscal_risk: 4
+      - id: insomnio_hasta_prescribir
+        weight: 60
+        result_text: "Evitas soltar un euro hoy, pero cada aviso del correo te dispara el pulso pensando en si tu NIF ha entrado en el algoritmo de otoño."
+        effects:
+          stress: 10
+          fiscal_risk: 6
+          moral: -2

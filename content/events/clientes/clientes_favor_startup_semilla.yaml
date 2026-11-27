@@ -1,0 +1,50 @@
+schema_version: 1
+id: clientes_favor_startup_semilla
+category: clientes
+title: "Una fundadora sin caja pide ayuda real para arrancar"
+body: "Una excompañera brillante te enseña un proyecto semilla prometedor pero sin ronda aún. Puede pagarte 650 € simbólicos, ofrecerte un 8 % en participaciones o esperar a que le pases tu tarifa completa de 2.400 €."
+tags:
+  - startup
+  - semilla
+  - largo_plazo
+character_id: null
+illustration_id: banner_clientes_base
+requirements:
+  min_month: 8
+  max_month: 48
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: ayudar_con_tarifa_solidaria
+    label: "Echarle un cable con tarifa solidaria simbólica (650 €)"
+    result_text: "Entregas un trabajo impecable casi a precio de amigo. No te resuelve el trimestre, pero dejas una deuda de gratitud que los contactos serios nunca olvidan."
+    effects:
+      billed_income: 650
+      moral: 8
+      personal_life: 4
+      reputation: 4
+      schedule_events:
+        - event_id: clientes_probono_retorna_como_vp
+          delay_months: 30
+          probability: 0.9
+          priority: high
+  - id: entrar_por_participaciones_semilla
+    label: "Trabajar gratis a cambio de un 8 % de participaciones semilla"
+    result_text: "Firmas un pacto de socios en notaría y metes noches extra a fondo perdido. Hoy vale cero euros; dentro de tres años ya veremos si sale champán o humo."
+    effects:
+      stress: 8
+      personal_life: -4
+      schedule_events:
+        - event_id: clientes_startup_participaciones_desenlace
+          delay_months: 36
+          probability: 1
+          priority: high
+  - id: cobrar_tarifa_integra_sin_descuento
+    label: "Pasar tu tarifa profesional íntegra sin experimentos (2.400 €)"
+    result_text: "Encuentra financiación familiar para pagarte el presupuesto completo. Cero épica de garaje, pero una factura muy real entrando este mes."
+    effects:
+      billed_income: 2400
+      stress: 2
+      reputation: 2

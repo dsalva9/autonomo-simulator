@@ -1,0 +1,76 @@
+schema_version: 1
+id: familia_entrega_ocho_mil_vs_crisis
+category: familia
+title: "8.000 € de rescate urgente o el día que no estuviste"
+body: "Te cae un rescate crítico de 8.000 € para entregar el lunes a las nueve, justo el fin de semana en que Álex atraviesa un golpe familiar durísimo y te pide mirándote a los ojos: «Por favor, hoy no me dejes solo con esto»."
+tags:
+  - pareja
+  - crisis_pareja
+  - pareja_ultimatum
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: illus_hito_crisis_familiar
+requirements:
+  min_month: 36
+  family_statuses:
+    - dating
+    - cohabiting
+weight: 13
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: priorizar_entrega_ocho_mil
+    label: "Aceptar el rescate de 8.000 € y encerrarte cuarenta horas seguidas"
+    outcomes:
+      - id: rescate_pagado_pareja_rota
+        weight: 60
+        result_text: "Cobras 8.000 € limpios el lunes por la mañana y encuentras las llaves de Álex sobre la mesa del recibidor. Hay facturas que se pagan demasiado caras."
+        effects:
+          billed_income: 8000
+          personal_life: -24
+          moral: -12
+          stress: 18
+          set_family_status:
+            status: separated
+            partner_character_id: null
+          clear_flags:
+            - convivencia_estable
+            - crisis_pareja_latente
+      - id: rescate_pagado_herida_abierta
+        weight: 40
+        result_text: "Salvas los 8.000 € a base de cafeína, pero cuando sales del despacho Álex ni levanta la vista. Algo profundo acaba de resquebrajarse."
+        effects:
+          billed_income: 8000
+          personal_life: -24
+          moral: -12
+          stress: 18
+          set_flags:
+            - crisis_pareja_latente
+  - id: soltar_contrato_y_estar_con_alex
+    label: "Rechazar los 8.000 €, apagar el móvil y quedarte junto a Álex"
+    result_text: "El cliente se marcha furioso y tu reputación se resiente, pero pasas el fin de semana donde de verdad importaba estar. Álex te abraza en silencio."
+    effects:
+      reputation: -8
+      personal_life: 18
+      moral: 14
+      stress: -10
+      clear_flags:
+        - crisis_pareja_latente
+  - id: delegar_rescate_al_equipo
+    label: "Delegar el rescate urgente a tu equipo con prima de guardia (900 €)"
+    requirements:
+      team_size:
+        min: 2
+      employee_satisfaction:
+        min: 65
+    result_text: "Tu plantilla responde con galones, salva la entrega el domingo por la tarde y tú no te mueves del lado de Álex ni un minuto."
+    effects:
+      billed_income: 6200
+      deductible_expense: 900
+      personal_life: 14
+      moral: 8
+      employee_satisfaction: 6
+      stress: -4
+      clear_flags:
+        - crisis_pareja_latente

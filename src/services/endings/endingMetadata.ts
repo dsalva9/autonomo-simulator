@@ -38,8 +38,11 @@ const DEFAULT_SPANISH_ENDING_QUOTES: Record<EndingId, string> = {
   retired_hero:
     "Diez años cotizando sin perder el juicio del todo. En tu gestoría han puesto una placa con tu nombre.",
   retired_rich:
-    "Con 150.000 € limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor».",
+    "Con 250.000 € limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor».",
 };
+
+const LEGACY_SPANISH_RETIRED_RICH_QUOTE =
+  "Con 150.000 € limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor».";
 
 export const ENDING_QUOTES_EN: Record<EndingId, string> = {
   defeat_bankruptcy:
@@ -57,7 +60,7 @@ export const ENDING_QUOTES_EN: Record<EndingId, string> = {
   retired_hero:
     "Ten years contributing without completely losing your mind. Your tax advisor hung a brass plaque in your honor.",
   retired_rich:
-    'With 150,000 € clear in the bank, you finally unlock the magic words: "Have your people call my advisor."',
+    'With 250,000 € clear in the bank, you finally unlock the magic words: "Have your people call my advisor."',
 };
 
 export const ENDING_METADATA: Record<EndingId, EndingMetadata> = {
@@ -122,8 +125,8 @@ export const ENDING_METADATA: Record<EndingId, EndingMetadata> = {
     defaultQuote: DEFAULT_SPANISH_ENDING_QUOTES.retired_hero,
   },
   retired_rich: {
-    code: "MOD. PATRIMONIO-150K · RETIRO DORADO",
-    title: "¡Ricachón! Retiro con 150.000 €",
+    code: "MOD. PATRIMONIO-250K · RETIRO DORADO",
+    title: "¡Ricachón! Retiro con 250.000 €",
     subtitle: "Liquidez suficiente en el banco para delegar hasta la lectura de notificaciones.",
     stampText: "RICACHÓN",
     tone: "victory",
@@ -190,8 +193,8 @@ export const ENDING_METADATA_EN: Record<EndingId, EndingMetadata> = {
     defaultQuote: ENDING_QUOTES_EN.retired_hero,
   },
   retired_rich: {
-    code: "FORM WEALTH-150K · GOLDEN EXIT",
-    title: "Rolling in It! 150,000 € Exit",
+    code: "FORM WEALTH-250K · GOLDEN EXIT",
+    title: "Rolling in It! 250,000 € Exit",
     subtitle: "Enough liquidity in the bank to outsource even opening electronic tax notices.",
     stampText: "TYCOON",
     tone: "victory",
@@ -204,9 +207,9 @@ export const VICTORY_BADGE_LABELS: Record<VictoryBadge, { title: string; shortSe
     title: "¡Eres un héroe! (120 meses)",
     shortSeal: "SELLO HÉROE · 120M",
   },
-  rich_150k: {
-    title: "Ricachón (150.000 €)",
-    shortSeal: "SELLO RICACHÓN · 150K€",
+  rich_250k: {
+    title: "Ricachón (250.000 €)",
+    shortSeal: "SELLO RICACHÓN · 250K€",
   },
 };
 
@@ -215,9 +218,9 @@ export const VICTORY_BADGE_LABELS_EN: Record<VictoryBadge, { title: string; shor
     title: "Self-Employed Hero! (120 months)",
     shortSeal: "HERO SEAL · 120M",
   },
-  rich_150k: {
-    title: "Rolling in It (150,000 €)",
-    shortSeal: "TYCOON SEAL · 150K€",
+  rich_250k: {
+    title: "Rolling in It (250,000 €)",
+    shortSeal: "TYCOON SEAL · 250K€",
   },
 };
 
@@ -256,22 +259,64 @@ function looksLikeRawSpanishQuote(text: string): boolean {
   );
 }
 
+function formatVictoryAmount(
+  victoryMoney: number,
+  isEn: boolean,
+): { full: string; shortK: string } {
+  const rounded = Math.max(1, Math.round(victoryMoney));
+  const full = `${new Intl.NumberFormat(isEn ? "en-US" : "es-ES", {
+    maximumFractionDigits: 0,
+  }).format(rounded)} €`;
+  const shortK = `${Math.round(rounded / 1000)}K`;
+  return { full, shortK };
+}
+
 export function getEndingMetadata(
   endingId: EndingId,
   locale: SupportedLocale = "es-ES",
+  victoryMoney = 250_000,
 ): EndingMetadata {
-  return normalizeLocale(locale) === "en"
-    ? ENDING_METADATA_EN[endingId]
-    : ENDING_METADATA[endingId];
+  const isEn = normalizeLocale(locale) === "en";
+  const base = isEn ? ENDING_METADATA_EN[endingId] : ENDING_METADATA[endingId];
+  if (endingId !== "retired_rich" || victoryMoney === 250_000) {
+    return base;
+  }
+  const { full, shortK } = formatVictoryAmount(victoryMoney, isEn);
+  return isEn
+    ? {
+        ...base,
+        code: `FORM WEALTH-${shortK} · GOLDEN EXIT`,
+        title: `Rolling in It! ${full} Exit`,
+        defaultQuote: `With ${full} clear in the bank, you finally unlock the magic words: "Have your people call my advisor."`,
+      }
+    : {
+        ...base,
+        code: `MOD. PATRIMONIO-${shortK} · RETIRO DORADO`,
+        title: `¡Ricachón! Retiro con ${full}`,
+        defaultQuote: `Con ${full} limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor».`,
+      };
 }
 
 export function getVictoryBadgeLabel(
   badge: VictoryBadge,
   locale: SupportedLocale = "es-ES",
+  victoryMoney = 250_000,
 ): { title: string; shortSeal: string } {
-  return normalizeLocale(locale) === "en"
-    ? VICTORY_BADGE_LABELS_EN[badge]
-    : VICTORY_BADGE_LABELS[badge];
+  const isEn = normalizeLocale(locale) === "en";
+  const base = isEn ? VICTORY_BADGE_LABELS_EN[badge] : VICTORY_BADGE_LABELS[badge];
+  if (badge !== "rich_250k" || victoryMoney === 250_000) {
+    return base;
+  }
+  const { full, shortK } = formatVictoryAmount(victoryMoney, isEn);
+  return isEn
+    ? {
+        title: `Rolling in It (${full})`,
+        shortSeal: `TYCOON SEAL · ${shortK}€`,
+      }
+    : {
+        title: `Ricachón (${full})`,
+        shortSeal: `SELLO RICACHÓN · ${shortK}€`,
+      };
 }
 
 export function resolveLocalizedEndingQuote(
@@ -297,7 +342,10 @@ export function resolveLocalizedEndingQuote(
   if (!rawQuote || rawQuote === DEFAULT_FALLBACK_QUOTE_ES) {
     return canonicalEnFallback;
   }
-  if (rawQuote === DEFAULT_SPANISH_ENDING_QUOTES[endingId]) {
+  if (
+    rawQuote === DEFAULT_SPANISH_ENDING_QUOTES[endingId] ||
+    (endingId === "retired_rich" && rawQuote === LEGACY_SPANISH_RETIRED_RICH_QUOTE)
+  ) {
     return canonicalEnFallback;
   }
 

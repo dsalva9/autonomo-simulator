@@ -11,6 +11,7 @@ character_id: cliente_regateador
 character_expression: angry
 requirements:
   min_month: 5
+  max_month: 48
 weight: 9
 cooldown_months: 12
 max_occurrences: 3
@@ -30,9 +31,15 @@ choices:
     result_text: Tu respuesta templada y profesional deja tan retratado a Borja que dos clientes nuevos te escriben felicitándote por tu templanza.
     effects:
       billed_income: 600
-      stress: 7
-      moral: 5
-      reputation: 2
+      stress: 0
+      moral: 6
+      reputation: 5
+    requirements:
+      stats:
+        moral:
+          min: 65
+        stress:
+          max: 55
   - id: enviar_aviso_legal_con_gestoria
     label: Mandar apercibimiento formal por coacción y difamación (75 €)
     requirements:

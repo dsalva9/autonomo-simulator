@@ -12,9 +12,11 @@ character_expression: null
 illustration_id: null
 requirements:
   min_month: 74
+  forbidden_flags:
+    - cartera_mantenimiento_vendida
 weight: 8
 cooldown_months: 18
-max_occurrences: 2
+max_occurrences: 1
 choices:
   - id: vender_con_anticipo_firme_y_earn_out
     label: Firmar traspaso cobrando 2.800 € hoy y el segundo tramo a los 90 días
@@ -28,6 +30,8 @@ choices:
       schedule_events:
         - event_id: clientes_liquidacion_earn_out_cartera
           delay_months: 3
+      set_flags:
+        - cartera_mantenimiento_vendida
   - id: cobrar_precio_cerrado_menor_al_contado
     label: Exigir 3.600 € íntegros hoy mismo sin tramos variables futuros
     result_text: Renuncias al pico teórico a cambio de dinero contante hoy y cero discusiones dentro de tres meses.
@@ -37,6 +41,8 @@ choices:
       stress: -6
       personal_life: 5
       reputation: 4
+      set_flags:
+        - cartera_mantenimiento_vendida
   - id: conservar_cuentas_fieles_y_subirles_cuota
     label: Rechazar la venta y actualizar tú mismo esas cuotas veteranas
     result_text: Decides no mercadear con clientes que confiaron en ti al principio; ajustas tarifas con cariño y todos siguen contigo.

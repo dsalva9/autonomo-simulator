@@ -1,0 +1,64 @@
+schema_version: 1
+id: familia_burnout_hogar_espejo
+category: familia
+title: "«Llevas seis meses cenando con el móvil boca abajo»"
+body: "Álex te sirve el plato y te frena con suavidad: «Te despiertas a las cuatro repasando facturas, contestas seco y llevas medio año sin reírte de verdad». El agotamiento ya no se nota solo en tu nuca; se respira en toda la casa."
+tags:
+  - pareja
+  - crisis_pareja
+  - burnout
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: banner_familia_tension
+requirements:
+  min_month: 30
+  family_statuses:
+    - dating
+    - cohabiting
+  stats:
+    stress:
+      min: 65
+weight: 15
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: parada_tecnica_quince_dias
+    label: "Aplicar parada técnica de quince días y perder 1.400 € de cartera"
+    result_text: "Cierras agenda dos semanas completas pese al vértigo de dejar ingresos sobre la mesa. Vuelves a dormir del tirón y el brillo regresa al salón."
+    effects:
+      stress: -18
+      personal_life: 14
+      moral: 10
+      add_modifier:
+        id: mod_parada_tecnica_quince_dias
+        label: "Parada técnica de quince días"
+        remaining_months: 1
+        monthly_billed_delta: -1400
+  - id: delegar_hogar_y_terapia
+    label: "Contratar ayuda doméstica semanal y psicólogo seis meses (450 €)"
+    requirements:
+      stats:
+        money:
+          min: 1500
+    result_text: "Quitar la limpieza de los domingos y poner herramientas al estrés cuesta 260 € al mes, pero transforma tus noches y salva la convivencia."
+    effects:
+      cash_delta: -450
+      stress: -14
+      personal_life: 12
+      moral: 8
+      add_modifier:
+        id: mod_apoyo_hogar_y_terapia
+        label: "Apoyo doméstico y terapia activa"
+        remaining_months: 6
+        monthly_expense_delta: 260
+  - id: ignorar_aviso_y_facturar_pico
+    label: "Quitarle hierro y aceptar otro pico de 2.400 € antes de descansar"
+    result_text: "Encajas 2.400 € más en el trimestre a base de ibuprofeno y cafeína mientras Álex deja de insistir y cena solo viendo la tele."
+    effects:
+      billed_income: 2400
+      stress: 10
+      personal_life: -16
+      moral: -8
+      set_flags:
+        - crisis_pareja_latente

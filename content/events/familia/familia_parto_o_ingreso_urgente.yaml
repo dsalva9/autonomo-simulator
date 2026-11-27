@@ -1,0 +1,57 @@
+schema_version: 1
+id: familia_parto_o_ingreso_urgente
+category: familia
+title: "Bolsa del hospital en el maletero y entrega de 4.500 €"
+body: "Fiebre disparada de madrugada e ingreso en observación pediátrica. Mientras haces guardia con Álex en una silla dura del hospital, vibra el teléfono: tu entrega de 4.500 € vence esta tarde y el cliente no entiende de urgencias."
+tags:
+  - hijos
+  - crisis_pareja
+  - urgencias
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: illus_hito_crisis_familiar
+requirements:
+  min_month: 24
+  required_flags:
+    - criatura_en_casa
+weight: 12
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: anular_todo_y_quedar_en_hospital
+    label: "Cancelar la entrega, asumir el golpe y no soltar la mano en planta"
+    result_text: "El cliente rompe el encargo con malas formas y pagas gastos imprevistos de hospital, pero la fiebre remite contigo al pie de la cama."
+    effects:
+      cash_delta: -350
+      reputation: -8
+      personal_life: 18
+      moral: 12
+      stress: -6
+  - id: pagar_senior_externo_guardia
+    label: "Contratar a un colega sénior de guardia para rematar por ti (1.950 €)"
+    requirements:
+      stats:
+        money:
+          min: 2400
+    result_text: "Cedes casi la mitad del margen a un profesional de confianza que cierra los archivos a tiempo. Facturas 4.500 € y no abandonas el hospital."
+    effects:
+      billed_income: 4500
+      deductible_expense: 1950
+      personal_life: 12
+      stress: 4
+      reputation: 3
+  - id: delegar_entrega_a_tu_equipo
+    label: "Pasar el testigo a tu equipo con prima de urgencia (450 €)"
+    requirements:
+      team_size:
+        min: 2
+      employee_satisfaction:
+        min: 65
+    result_text: "Tu equipo se coordina sin llamarte una sola vez, clava la entrega de 4.500 € y te escribe por la noche solo para preguntar por la criatura."
+    effects:
+      billed_income: 4500
+      deductible_expense: 450
+      personal_life: 16
+      employee_satisfaction: 8
+      stress: -4

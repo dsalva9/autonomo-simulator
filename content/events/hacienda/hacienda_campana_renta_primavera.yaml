@@ -16,6 +16,7 @@ requirements:
     - 4
     - 5
     - 6
+  max_month: 48
 weight: 12
 cooldown_months: 9
 max_occurrences: 4
@@ -24,10 +25,15 @@ choices:
     label: Volcar cifras a ojo y confirmar hoy para cobrar cuanto antes
     result_text: Rascas liquidez rápida esta primavera, dejando un descuadre latente con tus modelos trimestrales previos.
     effects:
-      cash_delta: 210
+      cash_delta: 1350
+      moral: -1
       stress: -2
-      moral: -2
-      fiscal_risk: 16
+      fiscal_risk: 18
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 22
+          probability: 0.35
+          priority: high
   - id: cuadrar_libros_y_autonomicas_a_mano
     label: Dedicar el fin de semana a cruzar libros y tramos autonómicos
     result_text: Terminas conociendo de memoria treinta casillas nuevas, pero presentas una declaración anual sólida.

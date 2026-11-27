@@ -16,8 +16,8 @@ requirements:
     reputation:
       min: 55
 weight: 10
-cooldown_months: 16
-max_occurrences: null
+cooldown_months: 18
+max_occurrences: 3
 choices:
   - id: emitir_dictamen_completo_y_ratificacion
     label: Aceptar el dictamen completo con provisión de fondos de 3.900 €
@@ -32,6 +32,8 @@ choices:
     requirements:
       required_flags:
         - web_corporativa_activa
+      forbidden_flags:
+        - linea_pericial_activa
     result_text: Descubres un nicho de altísimo margen donde nadie regatea jamás un euro cuando hay abogados de por medio.
     effects:
       billed_income: 4200
@@ -43,6 +45,8 @@ choices:
         label: Posicionamiento sénior de alto margen
         remaining_months: 5
         monthly_billed_delta: 480
+      set_flags:
+        - linea_pericial_activa
   - id: limitarse_a_nota_tecnica_sin_juzgado
     label: Redactar solo preinforme interno de 2.100 € sin acudir a vistas
     result_text: Cobras muy bien dos tardes de análisis forense sin pisar un pasillo judicial.

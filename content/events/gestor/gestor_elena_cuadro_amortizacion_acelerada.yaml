@@ -23,17 +23,17 @@ choices:
     label: Mantener la amortización lineal clásica sin agotar margen
     result_text: Repartes el escudo fiscal de forma estable entre varios ejercicios con riesgo cero ante comprobaciones.
     effects:
-      stress: -4
-      moral: 3
-      fiscal_risk: -8
+      moral: 1
+      fiscal_risk: -2
   - id: activar_coeficiente_acelerado_este_trimestre
     label: Aplicar el coeficiente acelerado para rebajar factura fiscal ya
-    result_text: Elena documenta cada número de serie en el libro de bienes de inversión y recorta de forma limpia tu pago trimestral.
+    result_text: Adelantas amortizaciones para ganar respiro inmediato de caja, sabiendo que los coeficientes acelerados llaman algo más la atención de Hacienda.
     effects:
       deductible_expense: 520
-      stress: -3
-      moral: 5
-      fiscal_risk: -5
+      stress: 2
+      moral: 3
+      fiscal_risk: 4
+      cash_delta: 260
   - id: renovar_respaldo_y_amortizar_conjunto
     label: Sumar sistema de copias de respaldo y amortizar el lote
     requirements:
@@ -43,7 +43,7 @@ choices:
     result_text: Blindas tu infraestructura técnica contra averías y maximizas la deducción trimestral con factura impecable.
     effects:
       deductible_expense: 680
-      stress: -6
+      stress: -4
       moral: 6
       reputation: 4
-      fiscal_risk: -9
+      fiscal_risk: -8

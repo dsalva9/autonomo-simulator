@@ -3,7 +3,11 @@ import { useRef } from "react";
 import {
   type GameState,
   buildAnnualSummary,
+  computeEffectiveGestorFee,
+  getBusinessTierConfig,
   getEventById,
+  getTeamHeadcount,
+  isBoutiqueSeniorSolo,
   resolvePartnerName,
 } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
@@ -11,6 +15,7 @@ import {
   formatEuros,
   formatSignedEuros,
   resolveEventTitle,
+  translateBusinessTier,
   translateCharacterName,
   translateEmployeeRoleLabel,
   translateFamilyStatus,
@@ -38,6 +43,11 @@ export function AnnualSummaryModal({
 
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const summary = buildAnnualSummary(state);
+  const businessTier = state.business?.tier ?? "solo_autonomo";
+  const tierConfig = getBusinessTierConfig(state, compiledCatalog);
+  const headcount = getTeamHeadcount(state);
+  const boutiqueSolo = isBoutiqueSeniorSolo(state, compiledCatalog);
+  const effectiveGestorFee = computeEffectiveGestorFee(state, compiledCatalog);
   const gestorChar = state.gestor.character_id
     ? compiledCatalog.characters[state.gestor.character_id]
     : undefined;
@@ -72,7 +82,7 @@ export function AnnualSummaryModal({
           />
           <div className="min-w-0">
             <p className="stamp-badge text-[10px] sm:text-[11px] text-[#fce592] leading-tight break-words">
-              {a.formBadge}
+              {tierConfig.corporate_tax_regime ? a.corporateFormBadge : a.formBadge}
             </p>
             <h2
               id="annual-summary-title"
@@ -124,9 +134,21 @@ export function AnnualSummaryModal({
             </div>
           </div>
 
-          {/* Resumen de Estructura: Gestoría, Familia, Plantilla */}
+          {/* Resumen de Estructura: Tier Badge + Gestoría, Familia, Plantilla */}
           <div data-testid="annual-structure-summary" className="space-y-1.5">
-            <p className="stamp-badge text-[10px] text-[#4a524e]">{a.structureHeading}</p>
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
+              <p className="stamp-badge text-[10px] text-[#4a524e]">{a.structureHeading}</p>
+              <span
+                data-testid="annual-business-tier-badge"
+                className={`stamp-badge text-[9.5px] px-1.5 py-0.5 rounded border ${
+                  tierConfig.corporate_tax_regime
+                    ? "bg-[#ebf2fa] text-[#1d436b] border-[#264e7a]/40"
+                    : "bg-[#efe4ce] text-[#373f3a] border-[#1f2421]/25"
+                }`}
+              >
+                {translateBusinessTier(businessTier, locale)}
+              </span>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
               <div className="rounded-lg border border-[#1f2421]/20 bg-[#fffdf8] p-2 space-y-0.5 min-w-0">
                 <span className="inline-flex items-center gap-1 stamp-badge text-[10px] text-[#8f510d]">
@@ -139,7 +161,7 @@ export function AnnualSummaryModal({
                     : translateGestorTier(state.gestor.tier, locale)}
                 </p>
                 <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums">
-                  {formatEuros(state.gestor.monthly_fee, locale)}
+                  {formatEuros(effectiveGestorFee, locale)}
                   {a.perMonthSuffix}
                 </p>
               </div>
@@ -170,10 +192,14 @@ export function AnnualSummaryModal({
                 </span>
                 <p className="font-bold text-[#1f2421] leading-snug break-words">
                   {state.employee
-                    ? employeeChar
-                      ? translateCharacterName(employeeChar, locale)
-                      : translateEmployeeRoleLabel(state.employee.role_label, locale)
-                    : a.soloLabel}
+                    ? headcount >= 2
+                      ? a.teamCountLabel(headcount)
+                      : employeeChar
+                        ? translateCharacterName(employeeChar, locale)
+                        : translateEmployeeRoleLabel(state.employee.role_label, locale)
+                    : boutiqueSolo
+                      ? a.boutiqueSoloLabel
+                      : a.soloLabel}
                 </p>
                 <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums">
                   {state.employee

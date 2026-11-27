@@ -1,0 +1,53 @@
+schema_version: 1
+id: hacienda_prescripcion_cruce_ejercicio_anterior
+category: hacienda
+title: "Cruce diferido: ejercicio de hace dos años"
+body: "Cuando ya ni recordabas aquel trimestre, suena el aviso en la DEHú: el Inspector Gómez reabre un ejercicio de hace dos años por descuadres de gastos y movimientos que siguen muy lejos de prescribir."
+tags:
+  - prescripcion_fiscal
+  - inspeccion
+  - cadena
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: banner_hacienda_inspeccion
+requirements: null
+weight: 0
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: conformidad_liquidacion_atrasada
+    label: "Firmar conformidad atrasada y pagar cuota más intereses (2.400 €)"
+    result_text: "Aflojas 2.400 € de un golpe por un atajo de hace dos años. Duele recordar lo dulce que parecía aquel ahorro, pero cierras la carpeta hoy mismo."
+    effects:
+      cash_delta: -2400
+      fiscal_risk: -16
+      stress: 10
+      moral: -6
+  - id: defensa_elena_ejercicio_abierto
+    label: "Encargar alegaciones técnicas a Elena Montes para recortar el golpe"
+    requirements:
+      gestor_tiers:
+        - premium
+      stats:
+        fiscal_risk:
+          max: 45
+    result_text: "Elena salva la mitad de las partidas cuestionadas con memoria documental y pacta un ajuste reducido (750 € más 950 € de minuta deducible)."
+    effects:
+      deductible_expense: 950
+      cash_delta: -750
+      fiscal_risk: -18
+      stress: 2
+      moral: 3
+  - id: recurrir_al_teac_y_ganar_tiempo
+    label: "Presentar reclamación ante el TEAC y esperar fallo año y medio (650 €)"
+    result_text: "Pagas 650 € de defensa tributaria y aparcas la factura mientras el tribunal resuelve en 18 meses. Ganas oxígeno hoy a cambio de dormir con un ojo abierto."
+    effects:
+      deductible_expense: 650
+      stress: 8
+      fiscal_risk: -6
+      schedule_events:
+        - event_id: hacienda_resolucion_teac_tardia
+          delay_months: 18
+          probability: 1
+          priority: high

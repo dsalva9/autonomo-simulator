@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_reforma_habitacion_infantil_estudio
 category: familia
-title: "Reclamación territorial sobre tu cuarto de trabajo"
-body: "La criatura crece, estira las piernas y necesita habitación propia con mesa de estudio lejos de tus archivadores de facturas. El cuarto donde montaste tu oficina casera acaba de entrar en disputa diplomática."
+title: Reclamación territorial sobre tu cuarto de trabajo
+body: La criatura crece, estira las piernas y necesita habitación propia con mesa de estudio lejos de tus archivadores de facturas. El cuarto donde montaste tu oficina casera acaba de entrar en disputa diplomática.
 tags:
   - hijos
   - vivienda
@@ -16,14 +16,15 @@ requirements:
     - criatura_en_casa
   forbidden_flags:
     - estudio_calle_alquilado
+    - habitacion_infantil_cedida
 weight: 11
 cooldown_months: 18
-max_occurrences: 2
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: encajar_escritorio_plegable_dormitorio
-    label: "Replegar tu ordenador a una mesa abatible junto al armario principal (95 €)"
-    result_text: "La criatura estrena reino feliz sin cuotas mensuales nuevas, aunque encuadrar videollamadas sin mostrar el edredón pide puntería."
+    label: Replegar tu ordenador a una mesa abatible junto al armario principal (95 €)
+    result_text: La criatura estrena reino feliz sin cuotas mensuales nuevas, aunque encuadrar videollamadas sin mostrar el edredón pide puntería.
     effects:
       cash_delta: -95
       billed_income: 490
@@ -31,7 +32,7 @@ choices:
       moral: -3
       personal_life: 4
   - id: alquilar_mesa_fija_barrio
-    label: "Entregarle el cuarto entero y alquilar mesa fija a cinco minutos (190 €)"
+    label: Entregarle el cuarto entero y alquilar mesa fija a cinco minutos (190 €)
     requirements:
       stats:
         money:
@@ -44,13 +45,15 @@ choices:
       moral: 8
       personal_life: 10
       reputation: 2
+      set_flags:
+        - habitacion_infantil_cedida
   - id: ceder_cuarto_y_cerrar_galeria_estudio
-    label: "Ceder la habitación y acondicionar un rincón aislado a medida (680 €)"
+    label: Ceder la habitación y acondicionar un rincón aislado a medida (680 €)
     requirements:
       stats:
         money:
           min: 1500
-    result_text: "Pintáis juntos su cuarto nuevo y estrenas un mirador acristalado con puerta propia donde nadie pisa piezas de plástico descalzo."
+    result_text: Pintáis juntos su cuarto nuevo y estrenas un mirador acristalado con puerta propia donde nadie pisa piezas de plástico descalzo.
     effects:
       cash_delta: -420
       deductible_expense: 260
@@ -59,7 +62,9 @@ choices:
       personal_life: 14
       add_modifier:
         id: mod_galeria_estudio_infantil
-        label: "Despacho propio y convivencia ordenada"
+        label: Despacho propio y convivencia ordenada
         remaining_months: 5
         monthly_billed_delta: 95
         monthly_stress_delta: -2
+      set_flags:
+        - habitacion_infantil_cedida

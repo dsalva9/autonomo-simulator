@@ -19,6 +19,7 @@ requirements:
     - 10
   gestor_tiers:
     - self
+  max_month: 42
 weight: 12
 cooldown_months: 9
 max_occurrences: 3
@@ -45,12 +46,15 @@ choices:
     label: Preparar un café cargado y presentar rectificativa en el acto
     result_text: Peleas una hora con el localizador del justificante previo, pero dejas las casillas impecables antes de medianoche.
     effects:
-      stress: 7
-      moral: 4
-      personal_life: -3
-      fiscal_risk: -5
+      stress: 2
+      moral: 5
+      fiscal_risk: -8
+    requirements:
+      stats:
+        stress:
+          max: 45
   - id: delegar_desaguisado_en_paco
-    label: Rendirte y contratar a Paco para que enderece el entuerto
+    label: Rendirte y contratar a Paco para enderezar el entuerto (85 €/mes)
     requirements:
       stats:
         money:

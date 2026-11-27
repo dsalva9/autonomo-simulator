@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_demanda_responsabilidad_civil
+category: clientes
+title: "Reclamación de daños de 18.000 € por caída en producción"
+body: "El departamento jurídico de Marta envía un requerimiento formal reclamando 18.000 € por lucro cesante tras una incidencia en plena campaña. En la liga de las S.L., los errores ya no se arreglan con un perdón."
+tags:
+  - juridico
+  - crisis
+  - corporativo
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: banner_clientes_tension
+requirements:
+  min_month: 58
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 11
+cooldown_months: 20
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: activar_seguro_rc_corporativo
+    label: "Dar parte a tu seguro de RC corporativo y pagar franquicia (1.800 €)"
+    requirements:
+      required_flags:
+        - homologacion_proveedor_activa
+    result_text: "Aquel requisito pesado de homologación corporativa acaba de salvarte la caja: tu aseguradora negocia con sus abogados y tú pagas solo la franquicia."
+    effects:
+      deductible_expense: 1800
+      stress: 4
+      moral: 4
+      reputation: 2
+  - id: acuerdo_extrajudicial_rapido
+    label: "Firmar transacción extrajudicial rápida y cerrar el lío (-9.500 €)"
+    result_text: "Pagas 9.500 € a toca teja para evitar un juicio de dos años y ruido reputacional. Duele en la cuenta, pero mañana sigues operando en paz."
+    effects:
+      cash_delta: -9500
+      stress: 14
+      moral: -8
+      reputation: -4
+  - id: ir_a_juicio_mercantil
+    label: "Contratar abogados (3.200 €) y pelear la demanda en lo mercantil"
+    outcomes:
+      - id: sentencia_favorable_mercantil
+        weight: 50
+        result_text: "Tus peritos demuestran que la caída vino de un cambio interno del cliente. Desestiman la demanda y solo pagas los 3.200 € de tu defensa."
+        effects:
+          deductible_expense: 3200
+          moral: 8
+          stress: 6
+      - id: condena_danos_mercantil
+        weight: 50
+        result_text: "El juez estima responsabilidad compartida y te condena a 16.000 € más los 3.200 € de tu letrado. Una lección brutal sobre límites contractuales."
+        effects:
+          deductible_expense: 3200
+          cash_delta: -16000
+          stress: 20
+          moral: -12
+          reputation: -8

@@ -20,6 +20,7 @@ requirements:
     - 10
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 12
 cooldown_months: 9
 max_occurrences: 3
@@ -53,7 +54,7 @@ choices:
       personal_life: -3
       fiscal_risk: -4
   - id: rescate_urgente_y_fichaje_de_elena
-    label: Cerrar el pago hoy y contratar mañana mismo a Elena Montes
+    label: Salvar el cargo hoy y fichar a Elena mañana (desde 260 €/mes)
     requirements:
       stats:
         money:

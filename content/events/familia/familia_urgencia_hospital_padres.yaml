@@ -13,13 +13,13 @@ illustration_id: null
 requirements:
   min_month: 64
 weight: 11
-cooldown_months: 16
-max_occurrences: null
+cooldown_months: 24
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: coordinar_turnos_familia_y_entregar_noche
-    label: "Pasar la mañana en el hospital y rematar la entrega de noche en casa (45 €)"
-    result_text: "Cumples donde importa de verdad y salvas la factura a base de ojeras, agradeciendo que todo haya quedado en observación leve."
+    label: Pasar la mañana en el hospital y rematar la entrega de noche en casa (45 €)
+    result_text: Cumples donde importa de verdad y salvas la factura a base de ojeras, agradeciendo que todo haya quedado en observación leve.
     effects:
       cash_delta: -45
       billed_income: 520
@@ -28,7 +28,7 @@ choices:
       personal_life: 7
       reputation: 2
   - id: trabajar_desde_sala_de_espera
-    label: "Llevarte el portátil al pasillo del hospital para no perder el hilo"
+    label: Llevarte el portátil al pasillo del hospital para no perder el hilo
     result_text: "Envías los archivos sobre las rodillas entre pitidos de megafonía: salvas el encargo, pero sales con la cabeza como un bombo."
     effects:
       cash_delta: -35
@@ -37,8 +37,8 @@ choices:
       moral: -4
       personal_life: 1
   - id: cerrar_portatil_y_correr_al_hospital
-    label: "Apagar todo al instante, pedir un taxi e irte a su lado sin dudar (65 €)"
-    result_text: "Queda en un susto controlado con ajuste de medicación. Estar allí cogiéndole la mano cuando sale el médico borra cualquier prisa laboral."
+    label: Apagar todo al instante, pedir un taxi e irte a su lado sin dudar (65 €)
+    result_text: Queda en un susto controlado con ajuste de medicación. Estar allí cogiéndole la mano cuando sale el médico borra cualquier prisa laboral.
     effects:
       cash_delta: -65
       stress: -5

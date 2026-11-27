@@ -16,33 +16,43 @@ requirements:
     - premium
 weight: 12
 cooldown_months: 10
-max_occurrences: 4
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: revisar_y_firmar_respuesta_estandar
     label: Aportar tú los justificantes bancarios y enviar el escrito base
-    result_text: Dedicas un par de horas a recopilar extractos de transferencias y Elena cierra el requerimiento con solvencia profesional.
+    result_text: Pierdes la tarde entera reuniendo justificantes bancarios y abonas tasas menores, pero Elena logra encarrilar el requerimiento.
     effects:
-      stress: -4
-      moral: 4
-      fiscal_risk: -10
+      deductible_expense: 120
+      stress: 6
+      personal_life: -3
+      fiscal_risk: -5
   - id: firmar_defensa_documental_completa
-    label: Autorizar la defensa jurídica completa con peritaje contable (160 €)
+    label: Autorizar defensa jurídica completa con peritaje contable (480 €)
     requirements:
       stats:
         money:
-          min: 250
+          min: 650
+        fiscal_risk:
+          max: 45
     result_text: El expediente vuelve archivado de oficio en tiempo récord y sin un solo euro de sanción. Hoy bendices cada euro de su iguala.
     effects:
-      deductible_expense: 160
-      stress: -10
-      moral: 7
-      fiscal_risk: -16
+      deductible_expense: 480
+      stress: -4
+      moral: 3
+      fiscal_risk: -12
   - id: aprovechar_para_meter_ticket_dudoso
     label: Pedirle que aproveche el envío para reclamar un gasto discutible
-    result_text: Rascas una devolución extra colando el gasto discutible en la respuesta, pero tu NIF queda subrayado para futuros cruces.
+    result_text: Cuelas la partida discutible y rescatas 1.350 € netos hoy, pero Elena registra un aviso de cumplimiento y tu NIF queda marcado.
     effects:
-      cash_delta: 260
+      cash_delta: 1350
       stress: 5
-      moral: -3
-      fiscal_risk: 13
+      moral: -2
+      fiscal_risk: 20
+      set_flags:
+        - elena_aviso_cumplimiento
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 20
+          probability: 0.35
+          priority: high

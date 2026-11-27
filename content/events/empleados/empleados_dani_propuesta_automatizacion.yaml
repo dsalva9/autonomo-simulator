@@ -1,7 +1,7 @@
 schema_version: 1
 id: empleados_dani_propuesta_automatizacion
 category: empleados
-title: "El invento de fin de semana de Dani"
+title: El invento de fin de semana de Dani
 body: "Dani llega el lunes con brillo peligroso en los ojos: ha programado en su tiempo libre un robot que genera informes para quince cuentas de golpe. Si va bien ahorráis días; si falla, lo verán todos los clientes."
 tags:
   - plantilla
@@ -21,11 +21,11 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: enchufarlo_directo_en_produccion
-    label: "Confiar en su entusiasmo y activarlo hoy mismo con clientes reales"
+    label: Confiar en su entusiasmo y activarlo hoy mismo con clientes reales
     outcomes:
       - id: ahorro_espectacular_de_horas
         weight: 55
-        result_text: "El invento va como la seda y despacháis en dos días el trabajo rutinario de medio mes ante el aplauso general."
+        result_text: El invento va como la seda y despacháis en dos días el trabajo rutinario de medio mes ante el aplauso general.
         effects:
           billed_income: 1200
           moral: 5
@@ -34,7 +34,7 @@ choices:
           employee_satisfaction: 10
       - id: envio_cruzado_de_borradores
         weight: 45
-        result_text: "Un bucle manda informes cruzados a cuatro clientes distintos. Toca pedir perdón uno por uno y aplicar descuentos comerciales."
+        result_text: Un bucle manda informes cruzados a cuatro clientes distintos. Toca pedir perdón uno por uno y aplicar descuentos comerciales.
         effects:
           cash_delta: -420
           moral: -4
@@ -42,19 +42,23 @@ choices:
           reputation: -5
           employee_satisfaction: -6
   - id: auditar_juntos_antes_de_activar
-    label: "Dedicar dos tardes a probarlo con datos ficticios antes de salir"
+    label: Dedicar dos tardes a probarlo con datos ficticios antes de salir
     result_text: "Cazáis tres errores tontos en entorno cerrado y lanzáis la herramienta pulida: facturáis extras limpios sin un solo susto."
     effects:
-      billed_income: 850
+      billed_income: 1350
       deductible_expense: 140
       moral: 6
       stress: 3
       personal_life: -2
-      reputation: 4
-      employee_satisfaction: 12
+      reputation: 5
+      employee_satisfaction: 15
+    requirements:
+      stats:
+        stress:
+          max: 48
   - id: prohibir_experimentos_en_estudio
-    label: "Agradecer la iniciativa pero mantener el método manual de siempre"
-    result_text: "Evitas cualquier susto técnico, aunque Dani guarda su prototipo en una carpeta olvidada con evidente decepción."
+    label: Agradecer la iniciativa pero mantener el método manual de siempre
+    result_text: Evitas cualquier susto técnico, aunque Dani guarda su prototipo en una carpeta olvidada con evidente decepción.
     effects:
       moral: -2
       stress: -2

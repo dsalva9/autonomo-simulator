@@ -1,31 +1,32 @@
 schema_version: 1
 
 initial_indicators:
-  money: 2600
+  money: 2800
   moral: 75
-  stress: 20
+  stress: 10
   personal_life: 68
   reputation: 35
   fiscal_risk: 0
 
 base_monthly_billing: 2240
-base_living_cost: 1405
-annual_living_cost_growth: 64
-autonomo_quota: 310
-child_monthly_cost: 280
+base_living_cost: 1440
+annual_living_cost_growth: 75
+autonomo_quota: 294
+child_monthly_cost: 310
 
-reputation_multiplier_min: 0.74
-reputation_multiplier_max: 1.24
-moral_multiplier_min: 0.78
-moral_multiplier_max: 1.15
+reputation_multiplier_min: 0.90
+reputation_multiplier_max: 1.05
+moral_multiplier_min: 0.90
+moral_multiplier_max: 1.03
 
 personal_life_recovery_threshold: 50
-personal_life_monthly_stress_relief: 1
+personal_life_monthly_stress_relief: 4
 high_stat_decay_threshold: 60
 event_novelty_decay_k: 0.85
 
 effective_quarterly_tax_rate: 0.28
 deductible_tax_fraction: 0.28
+corporate_tax_rate: 0.24
 deferral_surcharge_pct: 0.10
 deferral_stress_penalty: 8
 
@@ -34,40 +35,142 @@ max_consecutive_negative_months: 3
 hard_debt_floor: -5000
 
 victory_month: 120
-victory_money: 150000
+victory_money: 250000
 
 gestor_tiers:
   self:
     monthly_fee: 0
     inspection_shield: 0
-    quarterly_error_prob: 0.25
-    quarterly_error_surcharge: 240
-    quarterly_error_stress: 7
+    quarterly_error_prob: 0.26
+    quarterly_error_surcharge: 260
+    quarterly_error_stress: 8
   cheap:
-    monthly_fee: 60
-    inspection_shield: 0.25
-    quarterly_error_prob: 0.08
-    quarterly_error_surcharge: 120
-    quarterly_error_stress: 3
+    monthly_fee: 85
+    inspection_shield: 0.22
+    quarterly_error_prob: 0.11
+    quarterly_error_surcharge: 160
+    quarterly_error_stress: 4
   premium:
-    monthly_fee: 170
-    inspection_shield: 0.72
-    quarterly_error_prob: 0.01
-    quarterly_error_surcharge: 60
-    quarterly_error_stress: 1
+    monthly_fee: 260
+    inspection_shield: 0.50
+    quarterly_error_prob: 0.02
+    quarterly_error_surcharge: 90
+    quarterly_error_stress: 2
 
-default_partner_monthly_cost: 180
+default_partner_monthly_cost: 200
 default_partner_support_modifier: 1
 
 inspection_curve:
   min_fiscal_risk: 15
-  max_probability: 0.65
-  exponent: 1.5
-  risk_decay_on_trigger: 35
-  quarterly_natural_risk_decay: 3
-  fallback_fine_base: 600
-  fallback_fine_per_risk: 12
-  fallback_stress_penalty: 12
+  max_probability: 0.92
+  exponent: 0.85
+  risk_decay_on_trigger: 14
+  quarterly_natural_risk_decay: 4
+  fallback_fine_base: 1750
+  fallback_fine_per_risk: 32
+  fallback_stress_penalty: 20
+
+business_tiers:
+  solo_autonomo:
+    billing_multiplier: 1.00
+    event_stakes_multiplier: 1.00
+    monthly_structural_overhead: 0
+    gestor_fee_multiplier: 1.00
+    max_team_size: 1
+    hard_debt_floor: -5000
+    corporate_tax_regime: false
+  estudio_consolidado:
+    billing_multiplier: 1.62
+    event_stakes_multiplier: 1.45
+    monthly_structural_overhead: 280
+    gestor_fee_multiplier: 1.35
+    max_team_size: 3
+    hard_debt_floor: -8000
+    corporate_tax_regime: false
+  sociedad_limitada:
+    billing_multiplier: 1.68
+    event_stakes_multiplier: 2.15
+    monthly_structural_overhead: 560
+    gestor_fee_multiplier: 1.95
+    max_team_size: 6
+    hard_debt_floor: -15000
+    corporate_tax_regime: true
+    societario_quota: 460
+  agencia_consultora:
+    billing_multiplier: 1.92
+    event_stakes_multiplier: 3.20
+    monthly_structural_overhead: 1250
+    gestor_fee_multiplier: 2.80
+    max_team_size: 12
+    hard_debt_floor: -25000
+    corporate_tax_regime: true
+    societario_quota: 520
+
+reta_brackets:
+  - max_monthly_profit: 2200
+    monthly_quota: 294
+  - max_monthly_profit: 3000
+    monthly_quota: 350
+  - max_monthly_profit: 4200
+    monthly_quota: 420
+  - max_monthly_profit: 5800
+    monthly_quota: 510
+  - max_monthly_profit: null
+    monthly_quota: 590
+
+irpf_brackets:
+  - up_to_monthly_profit: 1500
+    marginal_rate: 0.22
+  - up_to_monthly_profit: 3000
+    marginal_rate: 0.30
+  - up_to_monthly_profit: 5000
+    marginal_rate: 0.37
+  - up_to_monthly_profit: null
+    marginal_rate: 0.44
+
+team_scaling:
+  default_staff_monthly_cost: 1850
+  base_additional_seat_multiplier: 0.78
+  seat_diminishing_factor: 0.95
+  boutique_solo_min_reputation: 68
+  boutique_solo_min_month: 30
+  boutique_solo_max_bonus: 0.11
+
+act_difficulty:
+  act2_start_month: 37
+  act3_start_month: 73
+  act1_living_cost_growth: 75
+  act2_living_cost_growth: 110
+  act3_living_cost_growth: 145
+  act2_market_squeeze: 0.825
+  act3_market_squeeze: 0.665
+  act3_monthly_stress_pressure: 1
+
+gestor_compliance:
+  premium_warning_fiscal_risk: 45
+  premium_drop_fiscal_risk: 65
+  sl_self_quarterly_penalty: 450
+  sl_self_error_prob: 0.35
+
+prescripcion:
+  window_months: 48
+  min_audit_age_months: 14
+  max_audit_age_months: 42
+  min_risk_points_recorded: 10
+  base_quarterly_prob: 0.11
+  prob_per_risk_point: 0.0085
+  max_quarterly_prob: 0.62
+  gestor_shield_effectiveness: 0.65
+  fallback_fine_rate: 0.45
+  fallback_fine_min: 600
+
+partner_pressure:
+  neglect_personal_life_threshold: 38
+  synergy_personal_life_threshold: 70
+  crisis_weight_multiplier: 2.8
+  critical_crisis_weight_multiplier: 4.5
+  synergy_weight_multiplier: 2.0
+  tier_event_weight_multiplier: 1.8
 
 max_history_entries: 120
 
@@ -79,4 +182,4 @@ ending_quotes:
   abandon_salaried: "Vuelves a la nómina fija: cobras menos en bruto, pero los domingos vuelves a ser persona."
   abandon_subsidies: "Tramitas el cese de actividad tras descubrir que emprender sin red tenía letra pequeña."
   retired_hero: "Diez años cotizando sin perder el juicio del todo. En tu gestoría han puesto una placa con tu nombre."
-  retired_rich: "Con 150.000 € limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor»."
+  retired_rich: "Con 250.000 € limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor»."

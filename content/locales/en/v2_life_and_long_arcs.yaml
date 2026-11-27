@@ -1,0 +1,254 @@
+# English ('en') localization overlay for v2 Pillar A (15 'familia' events) & Pillar B Hacienda slice (10 'hacienda' events)
+
+# 1. familia_traslado_laboral_alex
+"familia_traslado_laboral_alex.title": "Álex's Dream Job Offer Four Hundred Kilometers Away"
+"familia_traslado_laboral_alex.body": "Álex comes home with a career-defining offer four hundred kilometers away: real promotion, permanent contract, deadline Monday. Your client roster lives here, and no cheap weekend patch will satisfy both lives this time."
+"familia_traslado_laboral_alex.choices.mudarse_con_alex_y_rehacer_cartera.label": "Pack boxes, move with Álex, and rebuild your client roster there (€2,400)"
+"familia_traslado_laboral_alex.choices.mudarse_con_alex_y_rehacer_cartera.result_text": "Deposits, movers, and lost local accounts drain cash fast, yet Álex will never forget that you truly bet on building a life together."
+"familia_traslado_laboral_alex.choices.puente_ave_semanal.label": "Keep both bases and commute weekly on the high-speed AVE train"
+"familia_traslado_laboral_alex.choices.puente_ave_semanal.result_text": "You memorize every curve of the high-speed rail line while invoicing off a tray table. You keep clients and home intact, at heavy wear and tear."
+"familia_traslado_laboral_alex.choices.pedir_a_alex_que_renuncie.label": "Ask Álex to turn it down: your business cannot survive a move yet"
+"familia_traslado_laboral_alex.choices.pedir_a_alex_que_renuncie.outcomes.renuncia_con_rencor.result_text": "Álex hangs up after turning down the offer of a lifetime. Nobody shouts over dinner, yet the silence in the living room cuts like glass."
+"familia_traslado_laboral_alex.choices.pedir_a_alex_que_renuncie.outcomes.ruptura_por_traslado.result_text": "Álex takes the role and packs up Saturday with quiet sorrow. Your client roster stays untouched; the apartment echoes twice as hollow."
+
+# 2. familia_despido_alex_sosten_hogar
+"familia_despido_alex_sosten_hogar.title": "Layoffs at Álex's Company: Sole Earner Overnight"
+"familia_despido_alex_sosten_hogar.body": "Restructuring at Álex's company ends in collective layoffs and delayed unemployment payouts. For six months, rent, groceries, and every utility bill ride purely on your freelance invoicing with zero salary safety net."
+"familia_despido_alex_sosten_hogar.choices.asumir_todos_los_gastos_seis_meses.label": "Cover every household bill for six months while Álex lands a new role"
+"familia_despido_alex_sosten_hogar.choices.asumir_todos_los_gastos_seis_meses.result_text": "You clench your jaw every first of the month, yet watching Álex job-hunt without panic or blame bonds you tighter than ten beach trips."
+"familia_despido_alex_sosten_hogar.choices.inyectar_colchon_y_recortar_ocio.label": "Transfer €2,800 from savings into the joint account to cover the stretch"
+"familia_despido_alex_sosten_hogar.choices.inyectar_colchon_y_recortar_ocio.result_text": "Your emergency cushion thins overnight, yet covering expenses upfront clears the daily money dread out of the kitchen."
+"familia_despido_alex_sosten_hogar.choices.integrar_a_alex_en_operaciones.label": "Bring Álex into quotes and admin until the next job lands"
+"familia_despido_alex_sosten_hogar.choices.integrar_a_alex_en_operaciones.result_text": "Trust at home clicks immediately: Álex organizes invoicing, chases late payers, and frees prime hours for you to bill calmly."
+
+# 3. familia_entrega_ocho_mil_vs_crisis
+"familia_entrega_ocho_mil_vs_crisis.title": "An €8,000 Emergency Rescue or the Day You Weren't There"
+"familia_entrega_ocho_mil_vs_crisis.body": "A critical €8,000 rescue gig lands due Monday at nine, the exact weekend Álex suffers a devastating family blow and asks looking straight at you: 'Please, don't leave me alone with this today.'"
+"familia_entrega_ocho_mil_vs_crisis.choices.priorizar_entrega_ocho_mil.label": "Take the €8,000 rescue gig and lock yourself in for forty straight hours"
+"familia_entrega_ocho_mil_vs_crisis.choices.priorizar_entrega_ocho_mil.outcomes.rescate_pagado_pareja_rota.result_text": "You invoice €8,000 Monday morning and find Álex's house keys sitting on the entryway table. Some bills cost far more than they pay."
+"familia_entrega_ocho_mil_vs_crisis.choices.priorizar_entrega_ocho_mil.outcomes.rescate_pagado_herida_abierta.result_text": "You pull off the €8,000 rescue on pure caffeine, yet when you step out of the office Álex won't meet your eyes. Something deep just fractured."
+"familia_entrega_ocho_mil_vs_crisis.choices.soltar_contrato_y_estar_con_alex.label": "Drop the €8,000 contract, switch off your phone, and stay beside Álex"
+"familia_entrega_ocho_mil_vs_crisis.choices.soltar_contrato_y_estar_con_alex.result_text": "The client walks away furious and your reputation takes a dent, yet you spend the weekend where you truly belonged. Álex holds you tight."
+"familia_entrega_ocho_mil_vs_crisis.choices.delegar_rescate_al_equipo.label": "Delegate the urgent rescue to your team with weekend hazard pay (€900)"
+"familia_entrega_ocho_mil_vs_crisis.choices.delegar_rescate_al_equipo.result_text": "Your team steps up like pros, ships the rescue Sunday afternoon, and you never leave Álex's side for a single minute."
+
+# 4. familia_hipoteca_conjunta_entrada
+"familia_hipoteca_conjunta_entrada.title": "The Home Down Payment: €12,000 or Renting Forever"
+"familia_hipoteca_conjunta_entrada.body": "After months touring shoeboxes priced like palaces, you find a decent flat. The bank demands three spotless tax years plus the down payment and closing taxes now; Álex asks if you are finally buying or funding landlords forever."
+"familia_hipoteca_conjunta_entrada.choices.firmar_compra_con_entrada_fuerte.label": "Put down €12,000 upfront and lock in a lighter monthly mortgage"
+"familia_hipoteca_conjunta_entrada.choices.firmar_compra_con_entrada_fuerte.result_text": "Your stomach flips watching your savings drain at the notary, yet you walk out with your own keys and a payment lower than your old rent."
+"familia_hipoteca_conjunta_entrada.choices.hipoteca_al_noventa_pct_cara.label": "Put down €4,500 and take a steeper 90% mortgage every month"
+"familia_hipoteca_conjunta_entrada.choices.hipoteca_al_noventa_pct_cara.result_text": "You secure the keys while keeping business liquidity alive, though the bank gladly charges top euro for every extra percent financed."
+"familia_hipoteca_conjunta_entrada.choices.frenar_compra_por_miedo_caja.label": "Hit the brakes last minute: too risky to tie yourself down freelance"
+"familia_hipoteca_conjunta_entrada.choices.frenar_compra_por_miedo_caja.result_text": "Your bank balance breathes easy, while Álex folds the floor plans back into a drawer with disappointment neither of you can hide."
+
+# 5. familia_hipoteca_euribor_disparado
+"familia_hipoteca_euribor_disparado.title": "Euribor Rate Reset: +€380/Month Overnight"
+"familia_hipoteca_euribor_disparado.body": "The bank's most dreaded email arrives: annual variable-rate reset, and your mortgage jumps €380 a month in one shot. Álex checks the household spreadsheet at the kitchen table while the draft threatens to devour your margin."
+"familia_hipoteca_euribor_disparado.choices.absorber_subida_euribor_un_ano.label": "Grit your teeth and absorb +€380/month until next year's reset"
+"familia_hipoteca_euribor_disparado.choices.absorber_subida_euribor_un_ano.result_text": "Every first of the month you feel the bank's bite before opening your inbox. Today's cash stays intact, yet the year turns into an uphill climb."
+"familia_hipoteca_euribor_disparado.choices.amortizar_capital_parcial.label": "Pay down €6,000 in principal to neutralize the monthly hike"
+"familia_hipoteca_euribor_disparado.choices.amortizar_capital_parcial.result_text": "Wiring six grand stings on the spot, yet your monthly payment drops back to human numbers and everyone sleeps without tracking interest rates."
+"familia_hipoteca_euribor_disparado.choices.subrogar_con_expediente_limpio.label": "Refinance to fixed rate using your spotless tax track record (€1,400)"
+"familia_hipoteca_euribor_disparado.choices.subrogar_con_expediente_limpio.result_text": "Two banks compete for your spotless tax returns. For €1,400 in closing fees you lock a fixed rate for good and wave goodbye to Euribor."
+
+# 6. familia_crisis_silenciosa_separacion
+"familia_crisis_silenciosa_separacion.title": "Suitcases in the Hallway: The Cost of Living at 100%"
+"familia_crisis_silenciosa_separacion.body": "No shouting, no slammed doors—just two suitcases by the front door and Álex's voice cracking: 'I've lived for months with a ghost glued to a screen.' No last-minute dinner or next-quarter promise will fix this."
+"familia_crisis_silenciosa_separacion.choices.frenar_negocio_tres_meses_y_terapia.label": "Trim your workload for three months and commit to real therapy (€1,500)"
+"familia_crisis_silenciosa_separacion.choices.frenar_negocio_tres_meses_y_terapia.result_text": "Turning away lucrative clients hurts, yet eating screen-free dinners and talking honestly pulls the relationship back from the brink."
+"familia_crisis_silenciosa_separacion.choices.asumir_ruptura_y_liquidar_piso.label": "Admit you woke up too late and settle the lease and shared bills (€3,200)"
+"familia_crisis_silenciosa_separacion.choices.asumir_ruptura_y_liquidar_piso.result_text": "You divide furniture, utility settlements, and spare keys with a chill that hurts worse than the bank hit. Your desk chair has never felt colder."
+"familia_crisis_silenciosa_separacion.choices.rescate_apoyado_en_terapia_activa.label": "Lean on your active therapy and set a two-month slowdown (€600)"
+"familia_crisis_silenciosa_separacion.choices.rescate_apoyado_en_terapia_activa.result_text": "Having started working on your boundaries months ago gives you shared language: you ease off for two months without sinking the business."
+
+# 7. familia_red_contactos_alex_gran_cuenta
+"familia_red_contactos_alex_gran_cuenta.title": "Álex's Company Dinner: A Top-Tier Client Without a Pitch"
+"familia_red_contactos_alex_gran_cuenta.body": "At Álex's company dinner, their director corners you between dessert and coffee: 'Álex raves about your judgment.' She offers a juicy direct contract—no tender circus, no bargain-bin haggling—if you can fit it in this month."
+"familia_red_contactos_alex_gran_cuenta.choices.cerrar_proyecto_directo_red_alex.label": "Send a clean proposal tomorrow and close the €4,800 project directly"
+"familia_red_contactos_alex_gran_cuenta.choices.cerrar_proyecto_directo_red_alex.result_text": "Without fighting ten cut-rate bids you close €4,800 at a proper rate. Protecting your life beyond the monitor builds a stronger roster too."
+"familia_red_contactos_alex_gran_cuenta.choices.proponer_iguala_corporativa_sl.label": "Showcase your S.L. structure and turn it into a corporate retainer"
+"familia_red_contactos_alex_gran_cuenta.choices.proponer_iguala_corporativa_sl.result_text": "Seeing your incorporated setup, the director expands scope on the spot: €6,500 upfront plus four months of recurring corporate retainer."
+"familia_red_contactos_alex_gran_cuenta.choices.invitar_cena_y_derivar_sin_presion.label": "Pick up the tab, refer a trusted peer, and keep work out of home (€140)"
+"familia_red_contactos_alex_gran_cuenta.choices.invitar_cena_y_derivar_sin_presion.result_text": "You choose not to mix invoices with Álex's workplace. The director respects your candor and Álex smiles with quiet relief on the ride home."
+
+# 8. familia_alex_aval_negocio_crisis
+"familia_alex_aval_negocio_crisis.title": "'Use My Savings—We'll Pull Through This Together'"
+"familia_alex_aval_negocio_crisis.body": "A cashflow crunch catches your account near empty with quarterly taxes looming. Álex opens their savings app on the dining table without drama: 'That's what partners are for. Take a zero-interest bridge and breathe.'"
+"familia_alex_aval_negocio_crisis.choices.aceptar_puente_familiar_sin_intereses.label": "Accept Álex's €4,500 interest-free bridge and dodge bank overdrafts"
+"familia_alex_aval_negocio_crisis.choices.aceptar_puente_familiar_sin_intereses.result_text": "You leave lone-wolf pride outside the dining room and sign a clean private zero-interest loan. The bank loses its predatory overdraft fees."
+"familia_alex_aval_negocio_crisis.choices.recorte_domestico_conjunto_trimestre.label": "Leave those savings untouched and run a four-month joint budget cut"
+"familia_alex_aval_negocio_crisis.choices.recorte_domestico_conjunto_trimestre.result_text": "You slash treats, batch-cook championship lunches, and Álex picks up extra bills. Cashflow rebounds without owing a single euro."
+"familia_alex_aval_negocio_crisis.choices.rechazar_por_orgullo_y_apretar.label": "Refuse out of pride and grind out an overnight rush job alone"
+"familia_alex_aval_negocio_crisis.choices.rechazar_por_orgullo_y_apretar.result_text": "You squeeze €1,800 out of dark circles to prove you can carry it solo, leaving Álex hurt that you wouldn't let them hold you up."
+
+# 9. familia_parto_o_ingreso_urgente
+"familia_parto_o_ingreso_urgente.title": "Hospital Bag in the Trunk and a €4,500 Deadline"
+"familia_parto_o_ingreso_urgente.body": "High fever at 3:00 AM leads to pediatric observation. While you take shifts with Álex on a rigid hospital chair, your phone buzzes: your €4,500 delivery is due this afternoon and the client refuses to hear excuses."
+"familia_parto_o_ingreso_urgente.choices.anular_todo_y_quedar_en_hospital.label": "Cancel the delivery, take the hit, and stay right by the bedside"
+"familia_parto_o_ingreso_urgente.choices.anular_todo_y_quedar_en_hospital.result_text": "The client pulls the contract bitterly and hospital incidentals pile up, yet the fever breaks with you holding their hand the entire time."
+"familia_parto_o_ingreso_urgente.choices.pagar_senior_externo_guardia.label": "Hire an on-call senior peer to finish the delivery for you (€1,950)"
+"familia_parto_o_ingreso_urgente.choices.pagar_senior_externo_guardia.result_text": "You surrender nearly half the margin to a trusted pro who ships every file on time. You invoice €4,500 and never leave the ward."
+"familia_parto_o_ingreso_urgente.choices.delegar_entrega_a_tu_equipo.label": "Hand off the deadline to your team with a rush bonus (€450)"
+"familia_parto_o_ingreso_urgente.choices.delegar_entrega_a_tu_equipo.result_text": "Your team coordinates without calling once, nails the €4,500 delivery, and texts at night solely to check how the little one is doing."
+
+# 10. familia_colegio_concertado_o_publico
+"familia_colegio_concertado_o_publico.title": "Enrollment, School Lunch, and After-School Fees"
+"familia_colegio_concertado_o_publico.body": "School registration opens and the household budget trembles: between 'voluntary contributions,' cafeteria fees, bus routes, and after-school care until five, matching school hours to freelance life rivals a tax quarter."
+"familia_colegio_concertado_o_publico.choices.concertado_con_comedor_y_ruta.label": "Charter school with lunch and bus to protect full workdays (€650)"
+"familia_colegio_concertado_o_publico.choices.concertado_con_comedor_y_ruta.result_text": "Enrollment plus €340 a month stings on every statement, yet you reclaim calm afternoons with zero frantic 1:55 PM school-gate sprints."
+"familia_colegio_concertado_o_publico.choices.publico_y_refuerzo_tardes.label": "Neighborhood public school with lunch and after-school clubs (€220)"
+"familia_colegio_concertado_o_publico.choices.publico_y_refuerzo_tardes.result_text": "Sensible choice with zero disguised fees: you juggle snacks and pick-ups with a bit of choreography while your bank balance stays sane."
+"familia_colegio_concertado_o_publico.choices.reducir_jornada_para_recoger_tu.label": "Cut client workload for six months to handle school pick-ups yourself"
+"familia_colegio_concertado_o_publico.choices.reducir_jornada_para_recoger_tu.result_text": "Billings dip this semester, yet strolling home from school listening to every playground story beats two pointless client calls."
+
+# 11. familia_divorcio_reparto_bienes
+"familia_divorcio_reparto_bienes.title": "Certified Settlement Notice: The Real Cost of Splitting"
+"familia_divorcio_reparto_bienes.body": "Just when you thought the heartbreak had settled, the paperwork phase of splitting with Álex lands: joint account, rental deposit, appliances, and backdated bills. Nobody warns you how pricey closing a chapter on paper gets."
+"familia_divorcio_reparto_bienes.choices.mediacion_limpia_de_bienes.label": "Settle a fair split through a neutral mediator and move on (€2,400)"
+"familia_divorcio_reparto_bienes.choices.mediacion_limpia_de_bienes.result_text": "Clearing the joint account and mediator fees takes a serious bite, yet in two afternoons you sign lasting peace without stepping into court."
+"familia_divorcio_reparto_bienes.choices.pleito_abogados_por_cada_euro.label": "Hire a combative lawyer and fight over every last euro (€4,500)"
+"familia_divorcio_reparto_bienes.choices.pleito_abogados_por_cada_euro.result_text": "Months of certified notices, court clerks, and bitterness end up costing twice as much in legal bills as the furniture you fought over."
+"familia_divorcio_reparto_bienes.choices.acuerdo_amistoso_sin_despachos.label": "Meet Álex for an honest coffee and settle without law firms (€900)"
+"familia_divorcio_reparto_bienes.choices.acuerdo_amistoso_sin_despachos.result_text": "Staying decent despite the breakup saves thousands in legal retainers. You sign a respectful private settlement and close the book."
+
+# 12. familia_cuidado_padres_dependencia
+"familia_cuidado_padres_dependencia.title": "Care Home or In-Home Aide: The Bill Nobody Budgets For"
+"familia_cuidado_padres_dependencia.body": "Your parents can no longer manage groceries, appointments, or minor falls alone. Public dependency aid crawls at geological speed, and real care needs organizing before the next midnight scare."
+"familia_cuidado_padres_dependencia.choices.contratar_cuidadora_especializada.label": "Hire a registered in-home caregiver on proper payroll (€1,200)"
+"familia_cuidado_padres_dependencia.choices.contratar_cuidadora_especializada.result_text": "You take on €550 a month fully on the books, yet your parents stay safe in their own neighborhood and you stop flinching at every ring."
+"familia_cuidado_padres_dependencia.choices.adaptar_vivienda_y_turnos.label": "Remodel the bathroom, add telecare, and coordinate family shifts (€4,200)"
+"familia_cuidado_padres_dependencia.choices.adaptar_vivienda_y_turnos.result_text": "Fast renovations and safety gear carve a chunk out of cash reserves, turning their home safe without adding a steep recurring bill."
+"familia_cuidado_padres_dependencia.choices.recortar_horas_y_cuidar_tu.label": "Trim your client roster for six months to handle mornings yourself"
+"familia_cuidado_padres_dependencia.choices.recortar_horas_y_cuidar_tu.result_text": "Revenue dips for half a year and an impatient client drifts away, yet you share quiet lunches and care you will never regret."
+
+# 13. familia_boda_propia_alex
+"familia_boda_propia_alex.title": "Courthouse Signatures or an €11,500 Banquet?"
+"familia_boda_propia_alex.body": "After years surviving tax quarters side by side, Álex suggests finally getting married. Word spreads fast: relatives dream of open bars and 120 guests while your freelance brain prices every plate like a VAT line."
+"familia_boda_propia_alex.choices.boda_intima_juzgado_y_viaje.label": "Courthouse ceremony, intimate dinner, and a dream getaway (€1,800)"
+"familia_boda_propia_alex.choices.boda_intima_juzgado_y_viaje.result_text": "Zero awkward seating charts or mystery cousins: you sign amid laughter with your closest circle and treat yourselves to an unforgettable week."
+"familia_boda_propia_alex.choices.bodorrio_completo_con_sobres.label": "Throw the full €11,500 wedding banquet and count on gift envelopes"
+"familia_boda_propia_alex.choices.bodorrio_completo_con_sobres.outcomes.sobres_generosos.result_text": "Legendary party until sunrise. Between the €11,500 banquet and generous envelopes from family and friends, your final net tab lands at -€5,300."
+"familia_boda_propia_alex.choices.bodorrio_completo_con_sobres.outcomes.sobres_justitos.result_text": "A magical night with an epic open bar, though gift envelopes come up light and after the €11,500 venue bill your final net cost hits -€7,400."
+"familia_boda_propia_alex.choices.posponer_sin_fecha.label": "Stall indefinitely: 'Business is way too hectic this year'"
+"familia_boda_propia_alex.choices.posponer_sin_fecha.result_text": "You spend zero euros, watching the spark fade from Álex's face as they quietly close the wedding notebook."
+
+# 14. familia_burnout_hogar_espejo
+"familia_burnout_hogar_espejo.title": "'You've Eaten Dinner Phone-Down for Six Months Straight'"
+"familia_burnout_hogar_espejo.body": "Álex sets down dinner and stops you gently: 'You wake up at four mentally auditing invoices, snap at small things, and haven't genuinely laughed in half a year.' Burnout has spilled from your neck into every room."
+"familia_burnout_hogar_espejo.choices.parada_tecnica_quince_dias.label": "Take a two-week full pit stop and forfeit €1,400 in billings"
+"familia_burnout_hogar_espejo.choices.parada_tecnica_quince_dias.result_text": "You close your calendar for fourteen straight days despite the vertigo of lost revenue. Sleep returns in full and warmth comes back home."
+"familia_burnout_hogar_espejo.choices.delegar_hogar_y_terapia.label": "Hire weekly home help and start six months of therapy (€450)"
+"familia_burnout_hogar_espejo.choices.delegar_hogar_y_terapia.result_text": "Outsourcing Sunday chores and building real stress tools costs €260 a month, transforming your evenings and rescuing life at home."
+"familia_burnout_hogar_espejo.choices.ignorar_aviso_y_facturar_pico.label": "Brush it off and squeeze in one more €2,400 rush wave first"
+"familia_burnout_hogar_espejo.choices.ignorar_aviso_y_facturar_pico.result_text": "You cram €2,400 more into the quarter on ibuprofen and espresso while Álex stops arguing and eats alone in front of the TV."
+
+# 15. familia_segundo_hijo_o_planta_firme
+"familia_segundo_hijo_o_planta_firme.title": "'Do We Dare Go for Baby Number Two?'"
+"familia_segundo_hijo_o_planta_firme.body": "Right as you finally claw back decent sleep and rhythm with your first child, Álex drops the Sunday-afternoon question. A second baby means fewer billable hours, steeper fixed bills, and doubling both chaos and joy."
+"familia_segundo_hijo_o_planta_firme.choices.ir_a_por_el_segundo.label": "Go for child number two and reorganize the whole year (€1,600)"
+"familia_segundo_hijo_o_planta_firme.choices.ir_a_por_el_segundo.result_text": "A second whirlwind arrives amid double diapers, partial leave, and compressed invoicing. The exhaustion is mythic—and so is the joy."
+"familia_segundo_hijo_o_planta_firme.choices.plantarse_con_pacto_honesto.label": "Talk calmly and agree to pour everything into your family of three"
+"familia_segundo_hijo_o_planta_firme.choices.plantarse_con_pacto_honesto.result_text": "With zero guilt or awkward silences you make a serene pact: give your child real time while keeping room for work and each other."
+"familia_segundo_hijo_o_planta_firme.choices.cerrar_puerta_por_dinero.label": "Shut it down with a spreadsheet: 'RETA and bills don't add up'"
+"familia_segundo_hijo_o_planta_firme.choices.cerrar_puerta_por_dinero.result_text": "The columns balance and financial pressure lifts, though it stings Álex to watch a family dream reduced to a monthly expense cell."
+
+# 16. hacienda_prescripcion_cruce_ejercicio_anterior
+"hacienda_prescripcion_cruce_ejercicio_anterior.title": "Delayed Cross-Check: A Tax Year from Two Years Ago"
+"hacienda_prescripcion_cruce_ejercicio_anterior.body": "Long after you forgot that quarter, your DEHú inbox chimes: Inspector Gómez reopens a tax year from two years back over mismatched deductions and transfers still nowhere near Spain's four-year statute of limitations."
+"hacienda_prescripcion_cruce_ejercicio_anterior.choices.conformidad_liquidacion_atrasada.label": "Sign the back-tax agreement and pay dues plus interest (€2,400)"
+"hacienda_prescripcion_cruce_ejercicio_anterior.choices.conformidad_liquidacion_atrasada.result_text": "You wire €2,400 in one blow for a shortcut taken two years ago. Remembering how sweet that saving felt hurts, yet the file closes today."
+"hacienda_prescripcion_cruce_ejercicio_anterior.choices.defensa_elena_ejercicio_abierto.label": "Have Elena Montes file technical rebuttals to slash the assessment"
+"hacienda_prescripcion_cruce_ejercicio_anterior.choices.defensa_elena_ejercicio_abierto.result_text": "Elena rescues half the disputed write-offs with airtight memos and negotiates a trimmed settlement (€750 plus €950 deductible fee)."
+"hacienda_prescripcion_cruce_ejercicio_anterior.choices.recurrir_al_teac_y_ganar_tiempo.label": "Appeal to the TEAC tax tribunal and wait eighteen months (€650)"
+"hacienda_prescripcion_cruce_ejercicio_anterior.choices.recurrir_al_teac_y_ganar_tiempo.result_text": "You pay €650 in defense fees and park the assessment while the tribunal deliberates for 18 months—buying oxygen today at the cost of restless nights."
+
+# 17. hacienda_inspeccion_efectivo_tres_anos
+"hacienda_inspeccion_efectivo_tres_anos.title": "Three-Year-Old Tax Year: Uninvoiced Cash Movements"
+"hacienda_inspeccion_efectivo_tres_anos.body": "The Tax Agency has an elephant's memory. Three years after those cash-in-hand deals, Gómez cross-checks ATM deposits, lifestyle gaps, and third-party ledgers, opening an undeclared-income audit inside the four-year window."
+"hacienda_inspeccion_efectivo_tres_anos.choices.pagar_acta_y_sancion_reducida.label": "Sign in agreement to preserve the statutory penalty discount (€4,200)"
+"hacienda_inspeccion_efectivo_tres_anos.choices.pagar_acta_y_sancion_reducida.result_text": "You swallow hard and pay €4,200 in back taxes, surcharge, and interest. Off-the-books cash gets pricey when AEAT wheels finish turning thirty months later."
+"hacienda_inspeccion_efectivo_tres_anos.choices.estrategia_paco_reconstruccion.label": "Let Paco reconstruct paper trails from his churrería-backroom folder"
+"hacienda_inspeccion_efectivo_tres_anos.choices.estrategia_paco_reconstruccion.outcomes.reconstruccion_paco_colada.result_text": "Bureaucratic miracle: Paco buries Gómez's desk in ancient bank slips and old family loan IOUs. The audit closes for €950 plus €350 in fees."
+"hacienda_inspeccion_efectivo_tres_anos.choices.estrategia_paco_reconstruccion.outcomes.reconstruccion_paco_estalla.result_text": "One of Paco's receipts is dated on a non-existent leap Sunday, triggering Gómez's wrath. Every discount vanishes and the bill leaps to €6,800."
+"hacienda_inspeccion_efectivo_tres_anos.choices.recurrir_via_economico_administrativa.label": "Challenge the audit assessment before the TEAC tax tribunal (€1,100)"
+"hacienda_inspeccion_efectivo_tres_anos.choices.recurrir_via_economico_administrativa.result_text": "You wager €1,100 on procedural flaws in the audit file. The ruling now sits with the TEAC tribunal for eighteen tense months."
+
+# 18. hacienda_inspeccion_borde_prescripcion
+"hacienda_inspeccion_borde_prescripcion.title": "Month 43: Notice Five Months Before Limitation Expires"
+"hacienda_inspeccion_borde_prescripcion.body": "That old tax year was five short months from expiring forever, yet an electronic notice freezes the clock in stoppage time. Inspector Gómez arrives carrying nearly four years of compounded late interest."
+"hacienda_inspeccion_borde_prescripcion.choices.firmar_conformidad_al_borde.label": "Sign in agreement at the wire and settle four years of interest (€5,800)"
+"hacienda_inspeccion_borde_prescripcion.choices.firmar_conformidad_al_borde.result_text": "Five months shy of the finish line you pay €5,800 non-deductible. The relief of burying that ghost year weighs almost as much as the hole in cash."
+"hacienda_inspeccion_borde_prescripcion.choices.nulidad_tecnica_archivo_certificado.label": "Prove airtight traceability with your certified digital archive (€600)"
+"hacienda_inspeccion_borde_prescripcion.choices.nulidad_tecnica_archivo_certificado.result_text": "Bless the weekend you digitized every folder: every invoice, contract, and date aligns to the cent and Gómez closes the inquiry on the spot."
+"hacienda_inspeccion_borde_prescripcion.choices.pelear_prescripcion_en_teac.label": "Contest the flawed notice deadline before the TEAC tribunal (€1,400)"
+"hacienda_inspeccion_borde_prescripcion.choices.pelear_prescripcion_en_teac.result_text": "Your tax counsel spots a procedural flaw in the e-notice timestamp and appeals to the TEAC. In sixteen months you learn if limitation truly held."
+
+# 19. hacienda_revision_sociedad_interpuesta_tardia
+"hacienda_revision_sociedad_interpuesta_tardia.title": "Shell-Company Audit: Three Open Corporate Years"
+"hacienda_revision_sociedad_interpuesta_tardia.body": "The nationwide crackdown on personal-service companies hits your desk. Gómez questions whether your S.L. holds real resources or merely shelters income at 24% instead of marginal IRPF, reopening three years at once."
+"hacienda_revision_sociedad_interpuesta_tardia.choices.acreditar_medios_y_plantilla_real.label": "Submit real payrolls, staff contracts, and active agency assets (€900)"
+"hacienda_revision_sociedad_interpuesta_tardia.choices.acreditar_medios_y_plantilla_real.result_text": "With actual payroll, commercial contracts, and real operational substance, the shell-company theory collapses in thirty minutes. Clean audit close."
+"hacienda_revision_sociedad_interpuesta_tardia.choices.aceptar_recalculo_irpf_societario.label": "Accept personal-IRPF recalculation and pay the three-year gap (€7,800)"
+"hacienda_revision_sociedad_interpuesta_tardia.choices.aceptar_recalculo_irpf_societario.result_text": "AEAT re-prices three tax years at personal IRPF rates plus interest. A brutal €7,800 reminder that an S.L. without substance bites hard."
+"hacienda_revision_sociedad_interpuesta_tardia.choices.impugnar_valoracion_en_teac.label": "Challenge the related-party valuation before the TEAC tribunal (€1,800)"
+"hacienda_revision_sociedad_interpuesta_tardia.choices.impugnar_valoracion_en_teac.result_text": "You commission a market-rate valuation study and appeal to the TEAC. €1,800 in legal fees puts the final verdict on ice for eighteen months."
+
+# 20. hacienda_resolucion_teac_tardia
+"hacienda_resolucion_teac_tardia.title": "TEAC Tribunal Ruling After Eighteen Months Waiting"
+"hacienda_resolucion_teac_tardia.body": "Eighteen months later, right after you had nearly wiped that appeal from memory, the official Central Tax Tribunal ruling hits your inbox. Today you discover whether fighting Gómez pays back—or doubles down with interest."
+"hacienda_resolucion_teac_tardia.choices.abrir_fallo_del_tribunal.label": "Download the ruling PDF and accept the tribunal's final verdict"
+"hacienda_resolucion_teac_tardia.choices.abrir_fallo_del_tribunal.outcomes.teac_estimacion_total.result_text": "Appeal granted in full! The tribunal voids the audit for weak reasoning and wires €3,400 back including statutory default interest."
+"hacienda_resolucion_teac_tardia.choices.abrir_fallo_del_tribunal.outcomes.teac_desestimacion_con_intereses.result_text": "Dismissed. The TEAC backs Gómez, and eighteen months of accrued interest push the final payment slip up to €6,400."
+"hacienda_resolucion_teac_tardia.choices.negociar_suspension_y_fraccionamiento.label": "Handle ruling execution and guarantees through Elena Montes (€650)"
+"hacienda_resolucion_teac_tardia.choices.negociar_suspension_y_fraccionamiento.outcomes.teac_victoria_con_elena.result_text": "Elena's legal briefs win the bench over: clean annulment and €2,600 credited to your account after her €650 deductible fee."
+"hacienda_resolucion_teac_tardia.choices.negociar_suspension_y_fraccionamiento.outcomes.teac_estimacion_parcial_elena.result_text": "Partial victory at the TEAC: Elena knocks out the penalty and brings the remaining settlement down to €2,400 plus €650 in fees."
+
+# 21. hacienda_prescripcion_victoria_silenciosa
+"hacienda_prescripcion_victoria_silenciosa.title": "Four Years and a Day: That Tax Year Has Prescribed"
+"hacienda_prescripcion_victoria_silenciosa.body": "You check the tax calendar with mixed awe and relief: four exact years have passed since that delicate old tax year without a single notice or inquiry. Under the statute of limitations, that folder just locked forever."
+"hacienda_prescripcion_victoria_silenciosa.choices.brindar_en_silencio_y_pasar_pagina.label": "Tuck that old binder into the attic and raise a quiet toast"
+"hacienda_prescripcion_victoria_silenciosa.choices.brindar_en_silencio_y_pasar_pagina.result_text": "With zero fanfare you drop four years of invisible tension off your shoulders and sleep like a rock knowing the clock finally ran out."
+"hacienda_prescripcion_victoria_silenciosa.choices.reinvertir_tranquilidad_en_negocio.label": "Put your clear head to work and close a crisp €2,200 engagement"
+"hacienda_prescripcion_victoria_silenciosa.choices.reinvertir_tranquilidad_en_negocio.result_text": "Without that Damocles sword dangling overhead you negotiate cleanly and bill €2,200 straight on the books."
+
+# 22. hacienda_amnistia_regularizacion_voluntaria
+"hacienda_amnistia_regularizacion_voluntaria.title": "Voluntary Regularization Before Audit Season Opens"
+"hacienda_amnistia_regularizacion_voluntaria.body": "Before the Tax Agency kicks off its annual inspection wave, you still have time for voluntary amended returns: you pay a late surcharge with zero punitive fine and wipe old skeletons cleanly off your ledger."
+"hacienda_amnistia_regularizacion_voluntaria.choices.presentar_complementarias_limpias.label": "File voluntary amended returns and scrub your tax record (€4,500)"
+"hacienda_amnistia_regularizacion_voluntaria.choices.presentar_complementarias_limpias.result_text": "The €4,500 wire stings your balance, yet you defuse future penalties at the root and open DEHú notices without heart palpitations."
+"hacienda_amnistia_regularizacion_voluntaria.choices.regularizacion_asistida_elena.label": "Run a surgical regularization with Elena Montes (€2,800 + €950)"
+"hacienda_amnistia_regularizacion_voluntaria.choices.regularizacion_asistida_elena.result_text": "Elena calibrates every line to the lowest statutory surcharge and leaves your books gleaming—saving both cash and your standing with her."
+"hacienda_amnistia_regularizacion_voluntaria.choices.aguantar_el_pulso_del_reloj.label": "Don't wake the beast—trust the four-year limitation clock instead"
+"hacienda_amnistia_regularizacion_voluntaria.choices.aguantar_el_pulso_del_reloj.outcomes.temple_de_veterano.result_text": "You keep your cash intact with nerves of steel. Every quiet month without a certified envelope brings prescription one step closer."
+"hacienda_amnistia_regularizacion_voluntaria.choices.aguantar_el_pulso_del_reloj.outcomes.insomnio_hasta_prescribir.result_text": "You save every euro today, yet every inbox ping spikes your heart rate wondering if your tax ID landed in autumn's audit algorithm."
+
+# 23. hacienda_inspeccion_macro_sociedades
+"hacienda_inspeccion_macro_sociedades.title": "Full Corporate Tax Audit: VAT, IS, and Director Pay"
+"hacienda_inspeccion_macro_sociedades.body": "At your company's current scale you enter AEAT's major league. Inspector Gómez opens a full corporate audit covering Impuesto de Sociedades, VAT ledgers, and director compensation across every open fiscal year."
+"hacienda_inspeccion_macro_sociedades.choices.defensa_integral_elena_limpia.label": "Deploy Elena's full defense backed by spotless books (€1,800 + €800)"
+"hacienda_inspeccion_macro_sociedades.choices.defensa_integral_elena_limpia.result_text": "Elena knocks down nearly every adjustment with pristine corporate accounts. You exit the audit with an €800 adjustment and €1,800 fee."
+"hacienda_inspeccion_macro_sociedades.choices.firmar_acta_sociedades_conformidad.label": "Sign the corporate assessment in agreement and pay the tab (€6,500)"
+"hacienda_inspeccion_macro_sociedades.choices.firmar_acta_sociedades_conformidad.result_text": "You absorb €6,500 to avoid an endless war with the audit team. Hard punch to corporate cash, yet your S.L. keeps rolling forward."
+"hacienda_inspeccion_macro_sociedades.choices.elevar_expediente_al_teac.label": "Sign under protest and appeal the corporate audit to the TEAC (€2,400)"
+"hacienda_inspeccion_macro_sociedades.choices.elevar_expediente_al_teac.result_text": "You commit €2,400 to specialized tax litigation and send the dispute to the TEAC. Eighteen months from now you learn if Gómez overreached."
+
+# 24. hacienda_retenciones_dividendos_sl
+"hacienda_retenciones_dividendos_sl.title": "Form 123: Dividend Withholdings and Shareholder Draws"
+"hacienda_retenciones_dividendos_sl.body": "Gómez zooms in on your S.L.'s shareholder account 551: cash draws that bypassed both payroll and the 19% Form 123 dividend withholding. To AEAT, pulling money from your own company without paperwork looks like disguised dividends."
+"hacienda_retenciones_dividendos_sl.choices.liquidar_retencion_19_y_regularizar.label": "Settle the 19% Form 123 withholding and clear account 551 (€3,200)"
+"hacienda_retenciones_dividendos_sl.choices.liquidar_retencion_19_y_regularizar.result_text": "You pay €3,200 in back withholdings and surcharges. Paying tax to touch profits you already earned stings, yet account 551 closes cleanly."
+"hacienda_retenciones_dividendos_sl.choices.documentar_prestamo_mercantil_con_elena.label": "Formalize a proper shareholder loan contract with Elena Montes (€950)"
+"hacienda_retenciones_dividendos_sl.choices.documentar_prestamo_mercantil_con_elena.result_text": "Elena files statutory interest rates, board minutes, and repayment schedules. Gómez shelves the inquiry with a reluctant nod."
+"hacienda_retenciones_dividendos_sl.choices.reclasificar_como_dietas_y_aguantar.label": "Reclassify draws as pending expenses and keep €1,600 in cash"
+"hacienda_retenciones_dividendos_sl.choices.reclasificar_como_dietas_y_aguantar.result_text": "You hang onto €1,600 in immediate cash by stretching internal minutes, while Gómez bookmarks your corporate tax ID for future campaigns."
+
+# 25. hacienda_comprobacion_iva_deducido_agencia
+"hacienda_comprobacion_iva_deducido_agencia.title": "Audit Lens on Corporate VAT Refunds and Prorata"
+"hacienda_comprobacion_iva_deducido_agencia.body": "After heavy capex and cross-border vendors, your company carries a sizable VAT credit. Gómez freezes the refund and challenges the deductibility ratio on mixed-use expenses, vehicles, and subcontractor bills."
+"hacienda_comprobacion_iva_deducido_agencia.choices.asumir_recorte_prorrata_iva.label": "Accept the VAT prorata cut to unfreeze company cashflow (€4,800)"
+"hacienda_comprobacion_iva_deducido_agencia.choices.asumir_recorte_prorrata_iva.result_text": "You surrender €4,800 in claimed VAT to wrap up the review fast and keep corporate liquidity flowing through peak season."
+"hacienda_comprobacion_iva_deducido_agencia.choices.auditoria_sii_impecable.label": "Present spotless VAT ledgers and bank-matched invoice trails (€900)"
+"hacienda_comprobacion_iva_deducido_agencia.choices.auditoria_sii_impecable.result_text": "With a clean tax history and every ledger entry matched to bank statements, Gómez validates your input VAT and releases the file."
+"hacienda_comprobacion_iva_deducido_agencia.choices.recurrir_prorrata_en_teac.label": "Appeal the VAT deduction haircut before the TEAC tribunal (€1,600)"
+"hacienda_comprobacion_iva_deducido_agencia.choices.recurrir_prorrata_en_teac.result_text": "You invest €1,600 in a textbook VAT-neutrality appeal before the TEAC. Now begins the eighteen-month wait for the ruling."

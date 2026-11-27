@@ -13,6 +13,9 @@ requirements:
   min_month: 8
   months_of_year:
     - 8
+  forbidden_flags:
+    - dias_cortesia_configurados
+  max_month: 54
 weight: 11
 cooldown_months: 11
 max_occurrences: 3

@@ -20,23 +20,17 @@ cooldown_months: 9
 max_occurrences: 4
 choices:
   - id: cobrar_tarifa_expres_por_adelantado
-    label: Exigir 1.450 € con recargo exprés pagados hoy por transferencia
-    outcomes:
-      - id: paga_con_prisas_y_sale_a_tiempo
-        weight: 60
-        result_text: "El pánico a perder las rebajas obra milagros: Borja transfiere al minuto y entregas un paquete impecable sin regalar tu noche."
-        effects:
-          billed_income: 1450
-          moral: 4
-          stress: 7
-          reputation: 4
-      - id: se_asusta_y_compra_plantilla_rota
-        weight: 40
-        result_text: Le parece carísimo y descarga una plantilla chillona por su cuenta. Te ahorras un infarto y duermes ocho horas.
-        effects:
-          moral: 2
-          stress: -3
-          personal_life: 3
+    label: Exigir 1.650 € con recargo exprés pagados hoy por transferencia
+    requirements:
+      stats:
+        reputation:
+          min: 45
+    result_text: "Tu fama de cumplir bajo fuego hace que Borja transfiera los 1.650 € en cinco minutos: entregas impecable sin regalar la noche."
+    effects:
+      billed_income: 1650
+      moral: 5
+      stress: 4
+      reputation: 4
   - id: vender_kit_cerrado_sin_cambios
     label: Ofrecer un kit básico de 780 € cerrado y sin rondas de cambios
     result_text: Acotas el alcance al milímetro, cobras por delante y cierras el correo a las siete de la tarde con la conciencia tranquila.

@@ -13,6 +13,7 @@ import {
   isEventHardEligible,
   isEventOnCooldown,
   pickNoveltyWeightedEvent,
+  selectHistoricalAuditEvent,
   selectInspectableHaciendaEvent,
 } from "./selector.ts";
 import {
@@ -21,6 +22,7 @@ import {
   buildAnnualSummary,
   createInitialAnnualAccumulator,
   createInitialGameState,
+  getEffectiveHardDebtFloor,
 } from "./state.ts";
 import type {
   ActiveEventView,
@@ -58,7 +60,7 @@ export function getActiveEvent(state: GameState, catalog: ContentCatalog): Activ
     event,
     choices: event.choices.map((choice) => ({
       choice,
-      eligible: isChoiceEligible(state, choice),
+      eligible: isChoiceEligible(state, choice, event, catalog),
     })),
   };
 }
@@ -151,7 +153,7 @@ export function applyPlayerChoice(
   if (!choice) {
     throw new Error(`Choice '${choiceId}' does not exist on event '${event.id}'.`);
   }
-  if (!isChoiceEligible(state, choice)) {
+  if (!isChoiceEligible(state, choice, event, catalog)) {
     throw new Error(`Choice '${choiceId}' does not satisfy requirements in current state.`);
   }
 
@@ -177,7 +179,7 @@ export function applyPlayerChoice(
     const excludedIds = new Set<string>([event.id, ...(event.exclusive_with ?? [])]);
     const nextEvent = getEventById(catalog, remainingEvents[0]);
 
-    if (nextEvent && isEventHardEligible(stateWithRemaining, nextEvent, excludedIds)) {
+    if (nextEvent && isEventHardEligible(stateWithRemaining, nextEvent, excludedIds, catalog)) {
       const postChoiceState: GameState = {
         ...stateWithRemaining,
         phase: "event_resolution",
@@ -195,7 +197,7 @@ export function applyPlayerChoice(
       (candidate) =>
         candidate.weight > 0 &&
         !isEventOnCooldown(stateWithRemaining, candidate.id) &&
-        isEventHardEligible(stateWithRemaining, candidate, excludedIds),
+        isEventHardEligible(stateWithRemaining, candidate, excludedIds, catalog),
     );
 
     if (readyReplacements.length > 0) {
@@ -292,7 +294,7 @@ export function resolveVictoryPrompt(
 
   if (decision === "retire") {
     const endingId: EndingId =
-      state.pending_victory_badge === "rich_150k" ? "retired_rich" : "retired_hero";
+      state.pending_victory_badge === "rich_250k" ? "retired_rich" : "retired_hero";
     const quote = resolveEndingQuote(catalog, endingId);
     const ending = {
       id: endingId,
@@ -360,9 +362,9 @@ export function retireFromRun(
   const unlockedVictories: VictoryBadge[] = [];
   if (
     state.indicators.money >= catalog.balance.victory_money &&
-    !state.earned_victories.includes("rich_150k")
+    !state.earned_victories.includes("rich_250k")
   ) {
-    unlockedVictories.push("rich_150k");
+    unlockedVictories.push("rich_250k");
   }
 
   const earnedVictories =
@@ -371,7 +373,7 @@ export function retireFromRun(
       : state.earned_victories;
 
   const endingId: EndingId =
-    state.indicators.money >= catalog.balance.victory_money || earnedVictories.includes("rich_150k")
+    state.indicators.money >= catalog.balance.victory_money || earnedVictories.includes("rich_250k")
       ? "retired_rich"
       : "retired_hero";
 
@@ -455,7 +457,12 @@ function transitionAfterTurnEvents(
   catalog: ContentCatalog,
 ): { state: GameState; resolution: TurnResolution } {
   if (state.month % 3 === 0) {
-    const prepared = prepareQuarterlyTax(state, catalog, selectInspectableHaciendaEvent);
+    const prepared = prepareQuarterlyTax(
+      state,
+      catalog,
+      selectInspectableHaciendaEvent,
+      selectHistoricalAuditEvent,
+    );
     return {
       state: prepared.state,
       resolution: {
@@ -499,10 +506,11 @@ function runEndOfMonthChecks(
     },
   };
 
+  const hardDebtFloor = getEffectiveHardDebtFloor(updatedState, catalog);
   const isBankrupt =
     deferredTaxDefaulted ||
     consecutiveNegativeMonths >= balance.max_consecutive_negative_months ||
-    money < balance.hard_debt_floor;
+    money < hardDebtFloor;
 
   if (isBankrupt) {
     return finalizeGameOver(updatedState, catalog, "defeat_bankruptcy");
@@ -525,9 +533,9 @@ function runEndOfMonthChecks(
   }
   if (
     updatedState.indicators.money >= balance.victory_money &&
-    !updatedState.earned_victories.includes("rich_150k")
+    !updatedState.earned_victories.includes("rich_250k")
   ) {
-    newlyUnlockedVictories.push("rich_150k");
+    newlyUnlockedVictories.push("rich_250k");
   }
 
   if (newlyUnlockedVictories.length > 0) {

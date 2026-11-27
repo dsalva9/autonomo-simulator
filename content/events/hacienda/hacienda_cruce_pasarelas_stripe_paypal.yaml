@@ -24,11 +24,15 @@ choices:
     label: Exportar históricos CSV y cuadrar bruto frente a comisión
     result_text: Demuestras que la diferencia eran comisiones bancarias deducibles, quedando el efecto fiscal casi neutro.
     effects:
-      deductible_expense: 140
-      cash_delta: -115
-      stress: 7
+      deductible_expense: 80
+      cash_delta: -60
+      stress: 3
       moral: 3
-      fiscal_risk: -14
+      fiscal_risk: -16
+    requirements:
+      stats:
+        stress:
+          max: 48
   - id: conciliar_pasarelas_con_gestoria
     label: Entregar informes anuales de pasarela a tu gestoría
     requirements:

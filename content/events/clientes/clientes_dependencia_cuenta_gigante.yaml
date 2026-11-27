@@ -21,11 +21,17 @@ choices:
     label: Poner tope del 35 % de tu tiempo y captar dos cuentas medianas
     result_text: Marta arruga el gesto al principio, pero respeta tu independencia y equilibras el riesgo comercial con clientes nuevos.
     effects:
-      billed_income: 1250
+      billed_income: 1800
       deductible_expense: 140
-      stress: 4
+      stress: -2
       moral: 6
-      reputation: 4
+      reputation: 5
+    requirements:
+      stats:
+        stress:
+          max: 50
+        reputation:
+          min: 55
   - id: abrazar_monocultivo_millonario
     label: Aceptar la ampliación total aunque dependas de una sola firma
     result_text: La transferencia mensual impresiona, pero duermes sabiendo que un estornudo en su departamento tumbando el contrato te dejaría temblando.

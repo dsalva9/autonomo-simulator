@@ -24,7 +24,8 @@ export function LandingScreen() {
 
   const locale = normalizeLocale(profile.settings.locale);
   const isEn = locale === "en";
-  const ui = getUiStrings(locale);
+  const victoryMoney = compiledCatalog.balance.victory_money;
+  const ui = getUiStrings(locale, { victoryMoney });
 
   const hasResumableRun =
     activeRun !== null && activeRun.phase !== "game_over" && activeRun.ending === null;
@@ -158,7 +159,7 @@ export function LandingScreen() {
               <p className="text-xs sm:text-[13px] text-[#4a524e] leading-snug">
                 {ui.title.heroLeadBeforeAmount}
                 <strong className="font-bureau text-[#1f5c53] tabular-nums">
-                  {formatEuros(150_000, locale)}
+                  {formatEuros(victoryMoney, locale)}
                 </strong>
                 {ui.title.heroLeadAfterAmount}
               </p>

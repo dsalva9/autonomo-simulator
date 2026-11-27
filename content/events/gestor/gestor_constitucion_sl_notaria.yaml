@@ -1,0 +1,64 @@
+schema_version: 1
+id: gestor_constitucion_sl_notaria
+category: gestor
+title: "Notaría, capital social y salto a Sociedad Limitada"
+body: "Tu tramo marginal de IRPF ya muerde casi la mitad de cada factura nueva. Toca decidir si acudir a notaría para constituir una S.L. o S.L.U. (24 % Sociedades y cuota societaria) o consolidar antes un estudio ligero."
+tags:
+  - gestoria
+  - sociedad_limitada
+  - estrategia
+character_id: gestor_premium_elena
+character_expression: neutral
+illustration_id: banner_gestor_estrategia
+requirements:
+  min_month: 28
+  business_tiers:
+    - solo_autonomo
+    - estudio_consolidado
+  forbidden_flags:
+    - sociedad_limitada_activa
+weight: 14
+cooldown_months: 14
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: constituir_sociedad_limitada_notaria
+    label: "Firmar escritura de S.L. / S.L.U. en notaría (3.200 € deducibles)"
+    requirements:
+      stats:
+        money:
+          min: 4000
+        reputation:
+          min: 48
+    result_text: "Estrenas CIF societario y sello mercantil: suben los costes fijos y la contabilidad, pero el tipo fijo del 24 % y los contratos grandes ya juegan a tu favor."
+    effects:
+      deductible_expense: 3200
+      set_business_tier:
+        tier: sociedad_limitada
+      set_flags:
+        - sociedad_limitada_activa
+      reputation: 8
+      moral: 6
+      stress: 6
+  - id: formalizar_estudio_consolidado
+    label: "Dar el paso intermedio a Estudio Consolidado (1.100 €)"
+    requirements:
+      business_tiers:
+        - solo_autonomo
+      stats:
+        money:
+          min: 1500
+    result_text: "Formalizas marca, procesos y capacidad de equipo sin cargar todavía con el Impuesto de Sociedades ni libros del Registro Mercantil."
+    effects:
+      deductible_expense: 1100
+      set_business_tier:
+        tier: estudio_consolidado
+      reputation: 5
+      moral: 4
+      stress: 2
+  - id: seguir_en_estructura_actual
+    label: "Posponer la notaría y mantener tu estructura actual"
+    result_text: "Guardas la escritura en el cajón por ahora: cero gastos notariales extra hoy, aunque sigues expuesto a la escalera del IRPF."
+    effects:
+      moral: 2
+      stress: -2

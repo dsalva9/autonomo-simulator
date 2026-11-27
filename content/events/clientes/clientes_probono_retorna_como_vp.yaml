@@ -1,0 +1,48 @@
+schema_version: 1
+id: clientes_probono_retorna_como_vp
+category: clientes
+title: "30 meses después: aquel contacto dirige una multinacional"
+body: "Hace dos años y medio le echaste una mano cuando empezaba sin presupuesto. Hoy acaba de aterrizar en dirección corporativa junto a Marta y te llama saltándose cualquier concurso: quiere adjudicarte el nuevo proyecto."
+tags:
+  - recomendacion
+  - largo_plazo
+  - cadena
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: firmar_contrato_directo_vp
+    label: "Firmar adjudicación directa sin licitación (12.000 €)"
+    result_text: "Sembrar sin avaricia cuando nadie miraba te abre hoy un contrato limpio de 12.000 € que cae en tu mesa sin competir contra diez agencias."
+    effects:
+      billed_income: 12000
+      moral: 14
+      reputation: 8
+      stress: 6
+  - id: firmar_despliegue_global_sl
+    label: "Captar el despliegue global completo como S.L. (22.000 €)"
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+    result_text: "Al operar ya como sociedad homologada puedes absorber la cuenta internacional entera: 22.000 € de facturación y un escaparate de primera división."
+    effects:
+      billed_income: 22000
+      moral: 16
+      reputation: 10
+      stress: 10
+      employee_satisfaction: 6
+  - id: aceptar_consejeria_suave
+    label: "Aceptar solo asesoría estratégica ligera y cuidar tu agenda (6.500 €)"
+    result_text: "Prefieres dirigir el timón sin quemarte en producción: facturas 6.500 € cómodos, ganas prestigio y conservas tus tardes intactas."
+    effects:
+      billed_income: 6500
+      moral: 10
+      stress: -6
+      personal_life: 6
+      reputation: 6

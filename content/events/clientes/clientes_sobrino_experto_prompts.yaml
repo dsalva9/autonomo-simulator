@@ -12,6 +12,7 @@ character_id: cliente_regateador
 character_expression: pleased
 requirements:
   min_month: 4
+  max_month: 36
 weight: 12
 cooldown_months: 11
 max_occurrences: 4

@@ -1,7 +1,7 @@
 schema_version: 1
 id: gestor_revision_estrategia_anual
 category: gestor
-title: "Revisión de estrategia antes del cierre anual"
+title: Revisión de estrategia antes del cierre anual
 body: "Se acerca el cierre del ejercicio fiscal y Elena Montes convoca reunión estratégica: aún estás a tiempo de ordenar amortizaciones, calibrar retenciones y planificar gastos deducibles antes de que diciembre selle el año."
 tags:
   - planificacion
@@ -20,38 +20,40 @@ requirements:
     - premium
 weight: 11
 cooldown_months: 9
-max_occurrences: 4
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: cerrar_ejercicio_sin_cambios
-    label: "Dejar el ejercicio tal cual está y no tocar lo que funciona"
-    result_text: "Cierras carpetas sin gastar un euro extra hoy, confiando en que la liquidación anual venga mansa."
+    label: Dejar el ejercicio tal cual está y no tocar lo que funciona
+    result_text: Cierras carpetas sin gastar un euro extra hoy, confiando en que la liquidación anual venga mansa.
     effects:
       stress: -3
       moral: 1
       fiscal_risk: 4
   - id: ajustar_retenciones_cierre_elena
-    label: "Reordenar vencimientos y amortizaciones pendientes sin gastar caja (75 €)"
-    result_text: "Elena ajusta las tablas de amortización y el calendario de facturas de diciembre con precisión quirúrgica."
+    label: Reordenar vencimientos y amortizaciones pendientes (160 €)
+    result_text: Elena ajusta las tablas de amortización y el calendario de facturas de diciembre con precisión quirúrgica.
     effects:
-      deductible_expense: 75
-      stress: -5
+      deductible_expense: 160
+      stress: -2
       moral: 4
-      fiscal_risk: -8
+      fiscal_risk: -5
   - id: ejecutar_plan_cierre_con_gestoria
-    label: "Ejecutar el plan completo de optimización anual con Elena (180 €)"
+    label: Ejecutar el plan completo de optimización anual con Elena (420 €)
     requirements:
       stats:
         money:
-          min: 350
-    result_text: "Reordenáis vencimientos y gastos deducibles al milímetro, reduciendo tus costes operativos durante todo el arranque del próximo año."
+          min: 700
+        fiscal_risk:
+          max: 30
+    result_text: Reordenáis vencimientos y gastos deducibles al milímetro, reduciendo tus costes operativos durante todo el arranque del próximo año.
     effects:
-      deductible_expense: 180
+      deductible_expense: 420
       add_modifier:
         id: mod_plan_cierre_anual
-        label: "Cierre fiscal optimizado"
+        label: Cierre fiscal optimizado
         remaining_months: 4
-        monthly_expense_delta: -90
+        monthly_expense_delta: -60
         monthly_stress_delta: -1
-      moral: 5
-      fiscal_risk: -11
+      moral: 3
+      fiscal_risk: -9

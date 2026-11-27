@@ -52,16 +52,16 @@ choices:
           moral: -8
           personal_life: -5
   - id: presentar_pliego_blindado_elena
-    label: Blindar solvencia y anexos con Elena Montes para ir sobre seguro (320 €)
+    label: Blindar solvencia y anexos con Elena Montes sobre seguro (640 €)
     requirements:
       gestor_tiers:
         - premium
       stats:
         money:
-          min: 400
+          min: 850
     result_text: La minuta administrativa pica hoy, pero superas la mesa de contratación sin un solo reparo y aseguras un cobro público garantizado a tres meses vista.
     effects:
-      deductible_expense: 320
+      deductible_expense: 640
       deferred_invoice:
         amount: 2850
         delay_months: 3

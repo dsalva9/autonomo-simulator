@@ -350,4 +350,103 @@ describe("useGameStore & useUIStore Integration", () => {
       useGameStore.getState().profile.hall_of_fame.filter((h) => h.run_id === fatalRunId),
     ).toHaveLength(1);
   });
+
+  it("blocks Fast-Pacing quarterly auto-settle on Elena compliance, S.L. self penalty, historical audit, and tier-scaled cash buffer", async () => {
+    const sharedStorage = createStorageAdapter(createMemoryStorageDriver());
+    setGameStoreStoragePort(sharedStorage);
+    useUIStore.getState().setFastPacing(true);
+
+    await useGameStore.getState().startRun("V2-FAST-PACING-GUARDS");
+
+    // 1. S.L. with self gestor triggers sl_self_penalty -> Fast Pacing MUST NOT auto-settle Month 3
+    useGameStore.setState((curr) => ({
+      activeRun: curr.activeRun
+        ? {
+            ...curr.activeRun,
+            month: 3,
+            business: { tier: "sociedad_limitada", months_in_tier: 3, sl_formed_month: 1 },
+            gestor: {
+              tier: "self",
+              character_id: null,
+              monthly_fee: 0,
+              inspection_shield: 0,
+              months_active: 3,
+            },
+            indicators: { ...curr.activeRun.indicators, money: 40_000 },
+            fiscal_risk: 0,
+            current_turn_events: ["clientes_encargo_urgente"],
+          }
+        : null,
+    }));
+
+    const view1 = getActiveEvent(useGameStore.getState().activeRun!, compiledCatalog)!;
+    const det1 = view1.choices.find(
+      (c) => c.eligible && (!c.choice.outcomes || c.choice.outcomes.length <= 1),
+    )!;
+    await useGameStore.getState().chooseOption(det1.choice.id);
+
+    expect(useGameStore.getState().activeRun?.phase).toBe("quarterly_tax");
+    expect(useGameStore.getState().activeRun?.quarterly_report?.sl_self_penalty).toBeGreaterThan(0);
+    expect(useGameStore.getState().lastAutoSettledQuarter).toBeNull();
+
+    // 2. Elena compliance warning (fiscal_risk >= 45) blocks auto-settle even with plenty of cash
+    await useGameStore.getState().startRun("V2-FAST-PACING-ELENA");
+    useGameStore.setState((curr) => ({
+      activeRun: curr.activeRun
+        ? {
+            ...curr.activeRun,
+            month: 3,
+            gestor: {
+              tier: "premium",
+              character_id: "gestor_premium_elena",
+              monthly_fee: 260,
+              inspection_shield: 0.5,
+              months_active: 3,
+            },
+            indicators: { ...curr.activeRun.indicators, money: 35_000 },
+            fiscal_risk: 50,
+            current_turn_events: ["clientes_encargo_urgente"],
+          }
+        : null,
+    }));
+    const view2 = getActiveEvent(useGameStore.getState().activeRun!, compiledCatalog)!;
+    const det2 = view2.choices.find(
+      (c) => c.eligible && (!c.choice.outcomes || c.choice.outcomes.length <= 1),
+    )!;
+    await useGameStore.getState().chooseOption(det2.choice.id);
+    expect(useGameStore.getState().activeRun?.phase).toBe("quarterly_tax");
+    expect(useGameStore.getState().activeRun?.quarterly_report?.elena_compliance_event).toBe(
+      "warning",
+    );
+
+    // 3. Agencia tier requires scaled 3,840 € buffer (1,200 * 3.20): 2,000 € surplus is safe for Solo but NOT for Agencia
+    await useGameStore.getState().startRun("V2-FAST-PACING-BUFFER");
+    useGameStore.setState((curr) => ({
+      activeRun: curr.activeRun
+        ? {
+            ...curr.activeRun,
+            month: 3,
+            business: { tier: "agencia_consultora", months_in_tier: 3, sl_formed_month: 1 },
+            gestor: {
+              tier: "cheap",
+              character_id: "gestor_barato_paco",
+              monthly_fee: 238,
+              inspection_shield: 0.22,
+              months_active: 3,
+            },
+            indicators: { ...curr.activeRun.indicators, money: 3_000 },
+            finances: { ...curr.activeRun.finances, accrued_tax_liability: 1_000 },
+            fiscal_risk: 0,
+            current_turn_events: ["clientes_encargo_urgente"],
+          }
+        : null,
+    }));
+    const view3 = getActiveEvent(useGameStore.getState().activeRun!, compiledCatalog)!;
+    const det3 = view3.choices.find(
+      (c) => c.eligible && (!c.choice.outcomes || c.choice.outcomes.length <= 1),
+    )!;
+    await useGameStore.getState().chooseOption(det3.choice.id);
+    expect(useGameStore.getState().activeRun?.phase).toBe("quarterly_tax");
+    expect(useGameStore.getState().lastAutoSettledQuarter).toBeNull();
+  });
 });

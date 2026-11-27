@@ -12,50 +12,53 @@ character_expression: angry
 illustration_id: null
 requirements:
   min_month: 5
+  max_month: 48
 weight: 9
 cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
   - id: complementaria_eliminando_tickets
-    label: "Presentar complementaria quitando los tickets dudosos sin rechistar"
-    result_text: "Abonas la diferencia con un discreto recargo y prometes solemnemente no volver a colar jamás un postre dominical como reunión de estrategia."
+    label: Presentar complementaria quitando los tickets dudosos sin rechistar
+    result_text: Abonas la diferencia con un discreto recargo y prometes solemnemente no volver a colar jamás un postre dominical como reunión de estrategia.
     effects:
       cash_delta: -260
       stress: 5
       moral: -2
       fiscal_risk: -10
   - id: justificar_reunion_comercial
-    label: "Aportar correos y agenda defendiendo que eran comidas reales con clientes"
+    label: Aportar correos y agenda defendiendo que eran comidas reales con clientes
     outcomes:
       - id: prueba_admitida
-        weight: 50
-        result_text: "Uno de aquellos domingos efectivamente cerró un presupuesto real: Gómez valida la correlación y archiva las actuaciones."
+        weight: 60
+        result_text: "Tus correos y presupuestos firmados aquel domingo convencen a Gómez: valida la deducción, libera 450 € retenidos y archiva el expediente."
         effects:
-          stress: 7
+          cash_delta: 450
+          stress: 4
           moral: 6
-          fiscal_risk: -6
+          fiscal_risk: -8
       - id: ampliacion_actuaciones
-        weight: 50
-        result_text: "Gómez rechaza el argumento y decide ampliar la revisión al ejercicio entero convocándote a inspección formal."
+        weight: 40
+        result_text: Gómez rechaza el argumento y decide ampliar la revisión al ejercicio entero convocándote a inspección formal.
         effects:
-          cash_delta: -300
-          stress: 13
+          cash_delta: -650
+          stress: 12
           moral: -6
-          fiscal_risk: 10
+          fiscal_risk: 14
           set_flags:
             - tickets_dudosos_deducidos
           schedule_events:
             - event_id: hacienda_acta_inspeccion
-              delay_months: 2
-              probability: 0.85
+              delay_months: 14
+              probability: 0.4
+              priority: high
   - id: negociar_ajuste_via_gestoria
-    label: "Dejar que tu gestoría pacte una regularización limpia de mínimos"
+    label: Dejar que tu gestoría pacte una regularización limpia de mínimos
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu gestoría separa el grano de la paja en un escrito impecable y cierra el expediente por una fracción del susto inicial."
+    result_text: Tu gestoría separa el grano de la paja en un escrito impecable y cierra el expediente por una fracción del susto inicial.
     effects:
       deductible_expense: 100
       cash_delta: -120

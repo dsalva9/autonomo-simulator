@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_boda_prima_entrega_martes
 category: familia
-title: "Boda de tu prima en puente y entrega crítica el martes"
-body: "Tu prima favorita se casa un lunes de puente en una finca sin cobertura decente, y tu cliente más quisquilloso exige entrega cerrada el martes a las nueve. Tu tía ya ha avisado de que no ir equivale a desheredación moral."
+title: Boda de tu prima en puente y entrega crítica el martes
+body: Tu prima favorita se casa un lunes de puente en una finca sin cobertura decente, y tu cliente más quisquilloso exige entrega cerrada el martes a las nueve. Tu tía ya ha avisado de que no ir equivale a desheredación moral.
 tags:
   - boda
   - familia
@@ -22,21 +22,25 @@ exclusive_with:
   - familia_boda_fuera_plazo_entrega
 choices:
   - id: adelantar_finde_y_bailar_sin_reloj
-    label: "Adelantar curro el sábado, dar el sobre y bailar el lunes (320 €)"
-    result_text: "Llegas a la finca con el archivo ya enviado, brindas sin mirar el reloj y te ganas el aplauso eterno de toda tu rama materna."
+    label: Adelantar curro el sábado, dar el sobre y bailar el lunes (320 €)
+    result_text: Llegas a la finca con el archivo ya enviado, brindas sin mirar el reloj y te ganas el aplauso eterno de toda tu rama materna.
     effects:
       cash_delta: -320
-      billed_income: 480
-      stress: -4
+      billed_income: 650
+      stress: -8
       moral: 8
-      personal_life: 12
+      personal_life: 14
       reputation: 2
+    requirements:
+      stats:
+        stress:
+          max: 48
   - id: escaparse_del_baile_a_maquetar
-    label: "Ir al banquete y escabullirte tras la tarta para rematar de madrugada"
+    label: Ir al banquete y escabullirte tras la tarta para rematar de madrugada
     outcomes:
       - id: entrega_heroica_con_corbata
         weight: 60
-        result_text: "Envías el proyecto a las seis de la mañana oliendo a barra libre y cumples en ambos frentes, aunque pierdes tres años de vida."
+        result_text: Envías el proyecto a las seis de la mañana oliendo a barra libre y cumples en ambos frentes, aunque pierdes tres años de vida.
         effects:
           cash_delta: -280
           billed_income: 780
@@ -46,7 +50,7 @@ choices:
           reputation: 3
       - id: errata_de_madrugada
         weight: 40
-        result_text: "El sueño te juega una mala pasada con las cifras del documento y el martes toca aguantar bronca con resaca."
+        result_text: El sueño te juega una mala pasada con las cifras del documento y el martes toca aguantar bronca con resaca.
         effects:
           cash_delta: -280
           billed_income: 520
@@ -55,8 +59,8 @@ choices:
           personal_life: 2
           reputation: -4
   - id: enviar_bizum_y_quedarse_en_casa
-    label: "Mandar regalo por transferencia, fingir lumbago y quedarte trabajando"
-    result_text: "Clavas la entrega del martes fresco como una rosa, pero tu madre te manda doce fotos de la mesa con tu silla vacía."
+    label: Mandar regalo por transferencia, fingir lumbago y quedarte trabajando
+    result_text: Clavas la entrega del martes fresco como una rosa, pero tu madre te manda doce fotos de la mesa con tu silla vacía.
     effects:
       cash_delta: -150
       billed_income: 860

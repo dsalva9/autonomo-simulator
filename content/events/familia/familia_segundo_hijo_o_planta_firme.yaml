@@ -1,0 +1,66 @@
+schema_version: 1
+id: familia_segundo_hijo_o_planta_firme
+category: familia
+title: "«¿Nos atrevemos con el segundo?»"
+body: "Cuando por fin habíais recuperado algo de sueño y orden con el primero, Álex suelta la gran pregunta del domingo por la tarde. Otro bebé significa menos horas facturables, más gasto fijo y multiplicar el caos… y la alegría."
+tags:
+  - hijos
+  - pareja
+  - hito_familiar
+character_id: pareja_alex
+character_expression: neutral
+illustration_id: illus_hito_criatura_casa
+requirements:
+  min_month: 54
+  max_month: 108
+  family_statuses:
+    - cohabiting
+  required_flags:
+    - criatura_en_casa
+  children_count:
+    max: 1
+  forbidden_flags:
+    - segunda_criatura_decidida
+weight: 10
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: ir_a_por_el_segundo
+    label: "Lanzaros a por la segunda criatura y reorganizar el año (1.600 €)"
+    result_text: "Llega el segundo terremoto a casa entre pañales dobles, baja a medias y facturas comprimidas. El cansancio es épico, la felicidad también."
+    effects:
+      add_child: 1
+      cash_delta: -1600
+      personal_life: 22
+      moral: 20
+      stress: 12
+      set_flags:
+        - segunda_criatura_decidida
+      add_modifier:
+        id: mod_baja_segunda_criatura
+        label: "Crianza compartida con dos criaturas"
+        remaining_months: 3
+        monthly_billed_delta: -900
+  - id: plantarse_con_pacto_honesto
+    label: "Hablar con calma y pactar disfrutar a fondo de vuestra familia de tres"
+    requirements:
+      stats:
+        personal_life:
+          min: 65
+    result_text: "Sin culpas ni silencios cerráis un pacto sereno: cuidar a vuestra criatura con tiempo real y conservar aire para el negocio y la pareja."
+    effects:
+      personal_life: 8
+      moral: 6
+      stress: -8
+      set_flags:
+        - segunda_criatura_decidida
+  - id: cerrar_puerta_por_dinero
+    label: "Zanjar el tema con la hoja de Excel: «Con el RETA no salen cuentas»"
+    result_text: "Las cifras cuadran y te quitas un peso financiero de encima, aunque a Álex le pesa haber reducido un sueño familiar a una celda de gasto."
+    effects:
+      personal_life: -10
+      moral: -4
+      stress: -4
+      set_flags:
+        - segunda_criatura_decidida

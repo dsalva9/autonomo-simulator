@@ -1,0 +1,58 @@
+schema_version: 1
+id: clientes_en_b_obra_reforma_gran_sobre
+category: clientes
+title: "Encargo de 14.000 €: «10.000 en factura y 4.000 en mano, ¿trato?»"
+body: "Borja ha crecido pero no ha cambiado las mañas: te trae una reforma integral de 14.000 € y propone el clásico español a gran escala —diez mil facturados y cuatro mil en billetes limpios sin IVA ni rastro—."
+tags:
+  - dinero_b
+  - dilema_fiscal
+  - alto_ticket
+character_id: cliente_regateador
+character_expression: pleased
+illustration_id: banner_clientes_base
+requirements:
+  min_month: 48
+  business_tiers:
+    - estudio_consolidado
+    - sociedad_limitada
+    - agencia_consultora
+weight: 12
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: aceptar_reparto_diez_y_cuatro_en_b
+    label: "Aceptar 10.000 € facturados y el sobre de 4.000 € en mano"
+    result_text: "La factura oficial tapa el grueso y los 4.000 € en efectivo dan un chute tremendo a tu liquidez, mientras la prescripción de cuatro años echa a andar."
+    effects:
+      billed_income: 10000
+      cash_delta: 4000
+      fiscal_risk: 24
+      moral: -2
+      stress: 6
+      set_flags:
+        - cobro_en_b_reciente
+      schedule_events:
+        - event_id: hacienda_inspeccion_efectivo_tres_anos
+          delay_months: 34
+          probability: 0.4
+          priority: high
+        - event_id: clientes_cliente_en_b_extorsion_tardia
+          delay_months: 20
+          probability: 0.25
+          priority: high
+  - id: exigir_catorce_mil_con_factura
+    label: "Exigir todo en factura oficial cerrando un ajuste a 12.000 €"
+    result_text: "Borja patalea diez minutos hasta aceptar 12.000 € con IVA y trazabilidad total. Cobras menos en mano hoy, pero tu contabilidad duerme blindada."
+    effects:
+      billed_income: 12000
+      fiscal_risk: -4
+      reputation: 4
+      moral: 4
+  - id: declinar_propuesta_turbia
+    label: "Cerrar la carpeta y rechazar negocios a medias tintas"
+    result_text: "Con la estructura que ya tienes no te compensa jugarte el tipo con los sobres de Borja. Cierras el portátil temprano con la conciencia ligera."
+    effects:
+      personal_life: 4
+      stress: -4
+      reputation: -2

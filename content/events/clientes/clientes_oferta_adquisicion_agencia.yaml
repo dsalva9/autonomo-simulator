@@ -1,0 +1,63 @@
+schema_version: 1
+id: clientes_oferta_adquisicion_agencia
+category: clientes
+title: "Una multinacional quiere comprar tu cartera por 45.000 €"
+body: "Tras casi ocho años construyendo marca, una consultora multinacional llama con Marta de enlace: quieren comprar parte de tu cartera de clientes recurrentes con pagos de entre 32.000 € y 45.000 €."
+tags:
+  - agencia
+  - exit
+  - veterania
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements:
+  min_month: 90
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: vender_division_no_estrategica
+    label: "Vender tu división no estratégica al contado (32.000 €)"
+    result_text: "Traspasas las cuentas más pesadas por 32.000 € directos en cuenta. Baja la facturación mensual seis meses, pero recuperas paz y un colchón formidable."
+    effects:
+      billed_income: 32000
+      stress: -10
+      personal_life: 10
+      moral: 6
+      add_modifier:
+        id: mod_cartera_reducida_tras_venta
+        label: "Cartera ajustada tras venta de división"
+        remaining_months: 6
+        monthly_billed_delta: -1500
+  - id: negociar_venta_parcial_cuarenta_y_cinco_mil
+    label: "Negociar venta parcial de 45.000 € (25.000 € hoy + 20.000 € en 4m)"
+    requirements:
+      stats:
+        reputation:
+          min: 75
+    result_text: "Tu prestigio te permite exigir un múltiplo de primera: ingresas 25.000 € en notaría y un segundo tramo de 20.000 € tras cuatro meses de traspaso."
+    effects:
+      billed_income: 25000
+      deferred_invoice:
+        amount: 20000
+        delay_months: 4
+        default_prob: 0.1
+      moral: 12
+      reputation: 8
+      stress: -6
+      add_modifier:
+        id: mod_transicion_venta_parcial_cartera
+        label: "Traspaso de cuentas tras venta parcial"
+        remaining_months: 6
+        monthly_billed_delta: -1800
+  - id: rechazar_y_seguir_independiente
+    label: "Rechazar la oferta y seguir siendo independiente hasta el final"
+    result_text: "No montaste todo esto para pasarle tus clientes a un fondo con corbata. El equipo celebra tu apuesta y tu marca gana aura de leyenda local."
+    effects:
+      moral: 14
+      reputation: 8
+      employee_satisfaction: 4

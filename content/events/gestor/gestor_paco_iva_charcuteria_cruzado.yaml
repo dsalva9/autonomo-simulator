@@ -20,6 +20,7 @@ requirements:
     - 10
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 12
 cooldown_months: 10
 max_occurrences: 3
@@ -60,9 +61,14 @@ choices:
     label: Hacer caso a Paco y dejarlas como «cestas corporativas»
     result_text: Te ahorras pagar más IVA este mes, pero tu epígrafe profesional ahora incluye maquinaria cárnica industrial.
     effects:
-      cash_delta: 215
-      stress: 4
-      moral: -4
+      cash_delta: 1200
+      moral: -2
+      stress: 3
       fiscal_risk: 19
       set_flags:
         - susto_con_paco
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 18
+          probability: 0.35
+          priority: high

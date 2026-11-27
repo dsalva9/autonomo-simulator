@@ -28,35 +28,45 @@ choices:
     label: Aceptar el sobre «sin papeles» y pringar el finde
     outcomes:
       - id: cobro_limpio
-        weight: 70
+        weight: 75
         result_text: El domingo por la noche recibes un sobre de panadería con billetes arrugados. Liquidez inmediata lejos del trimestre, aunque cada furgoneta blanca aparcada en tu calle te sube las pulsaciones.
         effects:
-          cash_delta: 1600
-          stress: 7
-          moral: -2
-          personal_life: -4
+          cash_delta: 2800
+          stress: 5
+          moral: -1
+          personal_life: -3
           fiscal_risk: 20
           set_flags:
             - cobro_en_b_reciente
           schedule_events:
-            - event_id: hacienda_carta_certificada
-              delay_months: 3
-              probability: 0.65
+            - event_id: hacienda_inspeccion_efectivo_tres_anos
+              delay_months: 30
+              probability: 0.35
+              priority: high
+            - event_id: clientes_cliente_en_b_extorsion_tardia
+              delay_months: 20
+              probability: 0.2
+              priority: high
       - id: regateo_ultima_hora
-        weight: 30
-        result_text: "Al entregar el encargo, Borja saca solo 950 € con sonrisa de tiburón: «Como te ahorras los impuestos, salimos ganando los dos». Y encima no tienes dónde reclamar."
+        weight: 25
+        result_text: "Al entregar el encargo, Borja recorta el sobre a 2.100 € con sonrisa de tiburón: «Como te ahorras impuestos, salimos ganando». Sigue siendo dinero limpio, pero sin papel donde reclamar."
         effects:
-          cash_delta: 950
-          stress: 14
-          moral: -7
-          personal_life: -5
-          fiscal_risk: 18
+          cash_delta: 2100
+          stress: 9
+          moral: -4
+          personal_life: -3
+          fiscal_risk: 20
           set_flags:
             - cobro_en_b_reciente
           schedule_events:
-            - event_id: hacienda_carta_certificada
-              delay_months: 3
-              probability: 0.65
+            - event_id: hacienda_inspeccion_efectivo_tres_anos
+              delay_months: 30
+              probability: 0.35
+              priority: high
+            - event_id: clientes_cliente_en_b_extorsion_tardia
+              delay_months: 20
+              probability: 0.2
+              priority: high
   - id: declinar_encargo
     label: Rechazar el marrón y salvar tu fin de semana
     result_text: Le deseas mucha suerte encontrando a otro incauto un viernes a las ocho de la tarde. Cierras el portátil y recuperas la fe en el descanso dominical.
@@ -65,3 +75,18 @@ choices:
       moral: 3
       personal_life: 5
       reputation: -2
+  - id: subir_tarifa_blanca_por_reputacion
+    label: Imponer tu tarifa blanca sénior con factura íntegra (2.100 €)
+    requirements:
+      stats:
+        reputation:
+          min: 60
+        fiscal_risk:
+          max: 15
+    result_text: "Tu marca impoluta no acepta regateos en B: Borja necesita tu firma y paga 2.100 € con IVA y retención sin rechistar."
+    effects:
+      billed_income: 2100
+      moral: 6
+      stress: 2
+      reputation: 5
+      fiscal_risk: -4

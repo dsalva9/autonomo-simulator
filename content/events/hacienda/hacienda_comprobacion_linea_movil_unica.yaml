@@ -14,12 +14,14 @@ requirements:
   min_month: 7
   forbidden_flags:
     - estudio_calle_alquilado
+    - linea_movil_profesional_separada
   stats:
     fiscal_risk:
       min: 16
+  max_month: 48
 weight: 14
 cooldown_months: 14
-max_occurrences: 3
+max_occurrences: 2
 choices:
   - id: asumir_recorte_y_abrir_linea_exclusiva
     label: Pagar la diferencia y dar de alta una SIM solo profesional
@@ -30,6 +32,8 @@ choices:
       stress: 4
       moral: 1
       fiscal_risk: -14
+      set_flags:
+        - linea_movil_profesional_separada
   - id: defender_prorrateo_con_criterio_gestoria
     label: Alegar criterio económico-administrativo vía gestoría
     requirements:

@@ -1,8 +1,8 @@
 schema_version: 1
 id: empleados_reestructuracion_despido
 category: empleados
-title: "Tijera o reinvención en el despacho"
-body: "Encadenas dos meses en los que sostener nómina fija cada día 28 te quita el sueño frente al banco. Toca decidir en frío si sales a captar ventas para salvar el puesto o reduces estructura indemnizando."
+title: Tijera o reinvención en el despacho
+body: Encadenas dos meses en los que sostener nómina fija cada día 28 te quita el sueño frente al banco. Toca decidir en frío si sales a captar ventas para salvar el puesto o reduces estructura indemnizando.
 tags:
   - plantilla
   - reestructuracion
@@ -19,20 +19,26 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: reorganizar_cartera_y_mantener
-    label: "Mantener el puesto, recortar gastos superfluos y salir a captar nuevos encargos"
-    result_text: "Cancelas suscripciones inútiles, apretáis los dientes juntos y cerráis una campaña comercial rápida que justifica mantener el equipo unido."
+    label: Mantener el puesto, recortar gastos superfluos y salir a captar nuevos encargos
+    result_text: Cancelas suscripciones inútiles, apretáis los dientes juntos y cerráis una campaña comercial rápida que justifica mantener el equipo unido.
     effects:
-      billed_income: 950
+      billed_income: 2200
       deductible_expense: 180
       moral: 3
       stress: 5
       reputation: 2
-      employee_satisfaction: 9
+      employee_satisfaction: 14
       clear_flags:
         - desgaste_plantilla
+    requirements:
+      stats:
+        reputation:
+          min: 58
+        moral:
+          min: 55
   - id: acordar_salida_pactada
-    label: "Pactar una salida amistosa con indemnización íntegra y carta de recomendación"
-    result_text: "Es una conversación dura, pero cerráis la etapa con respeto mutuo y cuentas claras (1.450 € de liquidación). El estudio vuelve a ser silencioso y tus costes fijos caen de golpe."
+    label: Pactar una salida amistosa con indemnización íntegra y carta de recomendación
+    result_text: Es una conversación dura, pero cerráis la etapa con respeto mutuo y cuentas claras (1.450 € de liquidación). El estudio vuelve a ser silencioso y tus costes fijos caen de golpe.
     effects:
       dismiss_employee:
         severance_cost: 1450
@@ -43,12 +49,19 @@ choices:
         - empleado_dani_activo
         - empleada_laura_activa
         - desgaste_plantilla
+      set_flags:
+        - exempleado_salida_amistosa
+      schedule_events:
+        - event_id: empleados_exempleado_competidor_o_aliado
+          delay_months: 24
+          probability: 0.7
+          priority: high
   - id: recorte_drastico_minimo_legal
-    label: "Ejecutar un despido ajustando al límite la indemnización para proteger caja"
+    label: Ejecutar un despido ajustando al límite la indemnización para proteger caja
     outcomes:
       - id: finiquito_tenso_firmado
         weight: 65
-        result_text: "Se firma el finiquito por 750 € sin pasar por juzgados, aunque la despedida es gélida y en el sector siempre acaba corriendo la voz."
+        result_text: Se firma el finiquito por 750 € sin pasar por juzgados, aunque la despedida es gélida y en el sector siempre acaba corriendo la voz.
         effects:
           dismiss_employee:
             severance_cost: 750
@@ -59,6 +72,13 @@ choices:
             - empleado_dani_activo
             - empleada_laura_activa
             - desgaste_plantilla
+          set_flags:
+            - exempleado_salida_conflictiva
+          schedule_events:
+            - event_id: empleados_exempleado_competidor_o_aliado
+              delay_months: 24
+              probability: 0.8
+              priority: high
       - id: papeleta_conciliacion_laboral
         weight: 35
         result_text: "El intento de ahorrar acaba en papeleta de conciliación laboral y consulta urgente: terminas abonando 1.900 € de indemnización más gastos de asesoramiento."
@@ -73,3 +93,10 @@ choices:
             - empleado_dani_activo
             - empleada_laura_activa
             - desgaste_plantilla
+          set_flags:
+            - exempleado_salida_conflictiva
+          schedule_events:
+            - event_id: empleados_exempleado_competidor_o_aliado
+              delay_months: 24
+              probability: 0.8
+              priority: high

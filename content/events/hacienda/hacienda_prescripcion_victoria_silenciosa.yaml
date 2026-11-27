@@ -1,0 +1,46 @@
+schema_version: 1
+id: hacienda_prescripcion_victoria_silenciosa
+category: hacienda
+title: "Cuatro años y un día: aquel ejercicio ha prescrito"
+body: "Miras el calendario tributario con una mezcla de alivio y vértigo: se cumplen cuatro años exactos desde aquel viejo ejercicio delicado sin notificación ni requerimiento. Legalmente, la carpeta acaba de cerrarse para siempre."
+tags:
+  - prescripcion
+  - victoria
+  - largo_plazo
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: banner_hacienda_base
+requirements:
+  min_month: 54
+  required_flags:
+    - ejercicio_prescrito_limpio
+  stats:
+    fiscal_risk:
+      max: 35
+weight: 9
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: brindar_en_silencio_y_pasar_pagina
+    label: "Archivar aquella carpeta en el altillo y brindar en silencio"
+    result_text: "Sin alardes ni ruido te quitas cuatro años de tensión invisible de los hombros. Duermes como un lirón sabiendo que el reloj jugó a tu favor."
+    effects:
+      moral: 12
+      stress: -12
+      personal_life: 6
+      fiscal_risk: -10
+      clear_flags:
+        - cobro_en_b_reciente
+        - ejercicio_prescrito_limpio
+  - id: reinvertir_tranquilidad_en_negocio
+    label: "Aprovechar la mente despejada para cerrar un buen encargo (2.200 €)"
+    result_text: "Sin esa espada de Damocles rondándote la cabeza negocias con soltura y facturas 2.200 € limpios de principio a fin."
+    effects:
+      billed_income: 2200
+      moral: 8
+      reputation: 4
+      fiscal_risk: -8
+      clear_flags:
+        - cobro_en_b_reciente
+        - ejercicio_prescrito_limpio

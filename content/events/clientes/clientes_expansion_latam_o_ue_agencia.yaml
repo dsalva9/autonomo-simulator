@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_expansion_latam_o_ue_agencia
+category: clientes
+title: "Contrato marco europeo de 28.000 € en tres capitales"
+body: "Un grupo internacional con el que colabora Marta busca una firma consolidada para un despliegue simultáneo en Madrid, París y Múnich valorado en 28.000 €. Puedes liderar los tres países o cubrir solo España."
+tags:
+  - internacional
+  - agencia
+  - alto_ticket
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements:
+  min_month: 76
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+  stats:
+    reputation:
+      min: 62
+weight: 12
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: asumir_despliegue_tres_capitales
+    label: "Liderar las tres capitales (16.000 € hoy + 12.000 € en 3m)"
+    requirements:
+      team_size:
+        min: 3
+      stats:
+        money:
+          min: 6000
+    result_text: "Despliegas al equipo entre vuelos cortos y videollamadas en inglés: adelantas 4.200 € de logística, cobras 16.000 € hoy y dejas 12.000 € certificados."
+    effects:
+      billed_income: 16000
+      deferred_invoice:
+        amount: 12000
+        delay_months: 3
+        default_prob: 0.05
+      deductible_expense: 4200
+      reputation: 10
+      stress: 10
+      employee_satisfaction: 6
+      set_flags:
+        - cliente_internacional_activo
+  - id: asumir_solo_tramo_espana
+    label: "Asumir solo el tramo de España con menor gasto (12.000 €)"
+    result_text: "Te quedas con la plaza que dominas sin multiplicar viajes ni traducciones: 12.000 € de facturación limpia y margen muy respetable."
+    effects:
+      billed_income: 12000
+      deductible_expense: 1200
+      reputation: 6
+      stress: 4
+  - id: declinar_expansion_exterior
+    label: "Declinar el despliegue europeo y cuidar el ritmo actual"
+    result_text: "Rechazas los aeropuertos a las seis de la mañana y te centras en rentabilizar lo que ya funciona sin añadir complejidad internacional."
+    effects:
+      personal_life: 4
+      stress: -4

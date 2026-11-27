@@ -15,19 +15,27 @@ requirements:
     - 4
     - 5
     - 6
+  forbidden_flags:
+    - kit_digital_declarado
+  max_month: 48
 weight: 10
 cooldown_months: 16
-max_occurrences: 2
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: omitirla_por_no_haberla_cobrado
     label: Omitir el importe pensando que si no tocó tu banco no existe
     result_text: Te ahorras el pago inmediato cerrando los ojos, aunque ese descuadre brilla con luz propia en el servidor público.
     effects:
-      cash_delta: 120
-      stress: 6
-      moral: -4
+      cash_delta: 1200
+      moral: -1
+      stress: 3
       fiscal_risk: 22
+      schedule_events:
+        - event_id: hacienda_inspeccion_efectivo_tres_anos
+          delay_months: 34
+          probability: 0.35
+          priority: high
   - id: periodificar_ayuda_con_gestoria
     label: Pedir a tu gestoría imputar la ayuda al ritmo de la amortización
     requirements:
@@ -41,6 +49,8 @@ choices:
       stress: 1
       moral: 4
       fiscal_risk: -8
+      set_flags:
+        - kit_digital_declarado
   - id: declarar_ayuda_y_asumir_cuota
     label: Incluir la subvención en renta y abonar el pellizco de IRPF (230 €)
     result_text: Pagas impuestos sobre un dinero que cobró directamente el proveedor, pero dejas la declaración sin fisuras.
@@ -49,3 +59,5 @@ choices:
       stress: 5
       moral: -3
       fiscal_risk: -6
+      set_flags:
+        - kit_digital_declarado

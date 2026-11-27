@@ -1,9 +1,7 @@
 import { BookOpen, Clock, FileWarning, ShieldCheck, TrendingUp } from "lucide-react";
 import {
   type GameState,
-  computeBaselineMonthlyBilling,
-  computeMonthlyDeductibleExpenses,
-  computeMonthlyRecurringExpenses,
+  computeMonthlyEconomyBreakdown,
   resolvePartnerName,
 } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
@@ -12,6 +10,7 @@ import {
   formatSignedEuros,
   formatSignedInt,
   normalizeLocale,
+  translateBusinessTierShort,
   translateEmployeeRoleLabel,
   translateModifierLabel,
 } from "../../services/i18n/resolveEventText.ts";
@@ -36,32 +35,20 @@ export function CuentasPanel({
   const isEn = normalizeLocale(locale) === "en";
   const ui = getUiStrings(locale);
 
-  const { balance } = compiledCatalog;
-  const baselineBilling = computeBaselineMonthlyBilling(state, compiledCatalog);
-  const totalFixedExpenses = computeMonthlyRecurringExpenses(state, compiledCatalog);
-  const deductibleExpenses = computeMonthlyDeductibleExpenses(state, compiledCatalog);
-
-  const modifierExpenseDelta = state.modifiers.reduce(
-    (sum, mod) => sum + (mod.monthly_expense_delta ?? 0),
-    0,
+  const breakdown = computeMonthlyEconomyBreakdown(state, compiledCatalog);
+  const tierShort = translateBusinessTierShort(breakdown.businessTier, locale);
+  const corporateTaxPct = Math.round((compiledCatalog.balance.corporate_tax_rate ?? 0.24) * 100);
+  const irpfDisplayPct = Math.round(
+    (breakdown.taxableProfit > 0 ? breakdown.effectiveTaxRate : breakdown.marginalTaxRate) * 100,
   );
-  const nonLivingFixedExpenses =
-    balance.autonomo_quota +
-    state.gestor.monthly_fee +
-    state.family.monthly_cost +
-    (state.employee?.monthly_cost ?? 0) +
-    modifierExpenseDelta;
-  const effectiveLivingCost = Math.max(0, Math.round(totalFixedExpenses - nonLivingFixedExpenses));
 
-  const netMonthlyBaseline = baselineBilling - totalFixedExpenses;
-
-  const grossMonthlyTax = Math.round(baselineBilling * balance.effective_quarterly_tax_rate);
-  const monthlyTaxShield = Math.round(deductibleExpenses * balance.deductible_tax_fraction);
-  const estNetMonthlyTax = Math.max(0, grossMonthlyTax - monthlyTaxShield);
-  const netMonthlyAfterTax = netMonthlyBaseline - estNetMonthlyTax;
+  const openPrescripcionCount = (state.finances.historical_exposures ?? []).filter(
+    (entry) => !entry.audited && state.month < entry.expires_month,
+  ).length;
 
   const hasExtras =
     Boolean(state.finances.deferred_tax) ||
+    openPrescripcionCount > 0 ||
     state.finances.pending_invoices.length > 0 ||
     state.modifiers.length > 0;
 
@@ -114,7 +101,7 @@ export function CuentasPanel({
                 <span className="truncate">{ui.cuentas.baselineBilling}</span>
               </span>
               <span className="font-bureau text-[#1f5c53] tabular-nums whitespace-nowrap shrink-0">
-                +{formatEuros(baselineBilling, locale)}
+                +{formatEuros(breakdown.grossBilling, locale)}
               </span>
             </div>
 
@@ -122,48 +109,65 @@ export function CuentasPanel({
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate">{ui.cuentas.livingCost}</span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  -{formatEuros(effectiveLivingCost, locale)}
+                  -{formatEuros(breakdown.livingCost, locale)}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate">{ui.cuentas.autonomoQuota}</span>
+                <span className="truncate">
+                  {breakdown.corporateTaxRegime
+                    ? ui.cuentas.corporateQuota
+                    : ui.cuentas.autonomoQuota}
+                </span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  -{formatEuros(balance.autonomo_quota, locale)}
+                  -{formatEuros(breakdown.socialSecurityQuota, locale)}
                 </span>
               </div>
-              {state.gestor.monthly_fee > 0 && (
+              {breakdown.structuralOverhead > 0 && (
+                <div
+                  data-testid="ledger-structural-overhead"
+                  className="flex items-center justify-between gap-2"
+                >
+                  <span className="truncate">{ui.cuentas.structuralOverheadLabel(tierShort)}</span>
+                  <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
+                    -{formatEuros(breakdown.structuralOverhead, locale)}
+                  </span>
+                </div>
+              )}
+              {breakdown.gestorFee > 0 && (
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate">{ui.cuentas.gestorRetainer}</span>
                   <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                    -{formatEuros(state.gestor.monthly_fee, locale)}
+                    -{formatEuros(breakdown.gestorFee, locale)}
                   </span>
                 </div>
               )}
-              {state.family.monthly_cost > 0 && (
+              {breakdown.familyCost > 0 && (
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate">{ui.cuentas.familyCosts}</span>
                   <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                    -{formatEuros(state.family.monthly_cost, locale)}
+                    -{formatEuros(breakdown.familyCost, locale)}
                   </span>
                 </div>
               )}
-              {state.employee && (
+              {state.employee && breakdown.payrollCost > 0 && (
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate">
-                    {ui.cuentas.payrollLabel(
-                      translateEmployeeRoleLabel(state.employee.role_label, locale),
-                    )}
+                    {breakdown.teamHeadcount > 1
+                      ? ui.cuentas.multiPayrollLabel(breakdown.teamHeadcount)
+                      : ui.cuentas.payrollLabel(
+                          translateEmployeeRoleLabel(state.employee.role_label, locale),
+                        )}
                   </span>
                   <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                    -{formatEuros(state.employee.monthly_cost, locale)}
+                    -{formatEuros(breakdown.payrollCost, locale)}
                   </span>
                 </div>
               )}
-              {modifierExpenseDelta !== 0 && (
+              {breakdown.modifierExpenseDelta !== 0 && (
                 <div className="flex items-center justify-between gap-2">
                   <span className="truncate">{ui.cuentas.tempEffects}</span>
                   <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                    {formatSignedEuros(-modifierExpenseDelta, locale)}
+                    {formatSignedEuros(-breakdown.modifierExpenseDelta, locale)}
                   </span>
                 </div>
               )}
@@ -174,23 +178,26 @@ export function CuentasPanel({
                 <span className="truncate">{ui.cuentas.marginBeforeTax}</span>
                 <span
                   className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
-                    netMonthlyBaseline >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
+                    breakdown.netRecurringCash >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
                   }`}
                 >
-                  {formatSignedEuros(netMonthlyBaseline, locale)}
+                  {formatSignedEuros(breakdown.netRecurringCash, locale)}
                 </span>
               </div>
-              <div className="flex items-center justify-between gap-2 text-[11px] text-[#4a524e]">
+              <div
+                data-testid="ledger-tax-provision"
+                className="flex items-center justify-between gap-2 text-[11px] text-[#4a524e]"
+              >
                 <span className="truncate">
-                  {ui.cuentas.estTaxProvision(
-                    Math.round(balance.effective_quarterly_tax_rate * 100),
-                  )}
+                  {breakdown.corporateTaxRegime
+                    ? ui.cuentas.corporateTaxProvision(corporateTaxPct)
+                    : ui.cuentas.irpfProvision(irpfDisplayPct)}
                 </span>
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
-                  -{formatEuros(estNetMonthlyTax, locale)}
+                  -{formatEuros(breakdown.netTaxAccrued, locale)}
                 </span>
               </div>
-              {monthlyTaxShield > 0 && (
+              {breakdown.taxShieldOnExpenses > 0 && (
                 <div
                   data-testid="ledger-deductible-shield"
                   className="flex items-center justify-between gap-2 text-[10.5px] text-[#1f5c53]"
@@ -199,12 +206,12 @@ export function CuentasPanel({
                     <ShieldCheck className="w-3 h-3 shrink-0" aria-hidden="true" />
                     <span className="truncate">
                       {isEn
-                        ? `Deductible shield (${formatEuros(deductibleExpenses, locale)})`
-                        : `Escudo deducible (${formatEuros(deductibleExpenses, locale)})`}
+                        ? `Deductible shield (${formatEuros(breakdown.deductibleExpenses, locale)})`
+                        : `Escudo deducible (${formatEuros(breakdown.deductibleExpenses, locale)})`}
                     </span>
                   </span>
                   <span className="font-bureau font-bold tabular-nums whitespace-nowrap shrink-0">
-                    +{formatEuros(monthlyTaxShield, locale)}
+                    +{formatEuros(breakdown.taxShieldOnExpenses, locale)}
                   </span>
                 </div>
               )}
@@ -213,10 +220,10 @@ export function CuentasPanel({
                 <span
                   data-testid="ledger-net-after-tax"
                   className={`font-bureau tabular-nums whitespace-nowrap shrink-0 ${
-                    netMonthlyAfterTax >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
+                    breakdown.netCashAfterTax >= 0 ? "text-[#1f5c53]" : "text-[#9e221b]"
                   }`}
                 >
-                  {formatSignedEuros(netMonthlyAfterTax, locale)}
+                  {formatSignedEuros(breakdown.netCashAfterTax, locale)}
                 </span>
               </div>
             </div>
@@ -228,7 +235,9 @@ export function CuentasPanel({
             className="rounded-lg border border-[#264e7a]/40 bg-[#ebf2fa]/85 px-2.5 py-1.5 space-y-0.5 leading-snug self-start"
           >
             <div className="stamp-badge text-[9.5px] text-[#264e7a]">
-              {ui.cuentas.quarterProvisionHeading}
+              {breakdown.corporateTaxRegime
+                ? ui.cuentas.corporateQuarterProvisionHeading
+                : ui.cuentas.quarterProvisionHeading}
             </div>
             <div className="flex items-center justify-between gap-2 text-[11px]">
               <span className="text-[#373f3a] truncate">{ui.cuentas.quarterBilled}</span>
@@ -254,7 +263,7 @@ export function CuentasPanel({
           </div>
         </div>
 
-        {/* Optional Scrollable Ledger Extras: Active Deferral, Non-Empty Pending Invoices, Active Modifiers */}
+        {/* Optional Scrollable Ledger Extras: Active Deferral, 4-Yr Prescripción Window, Pending Invoices, Active Modifiers */}
         {hasExtras && (
           <div
             data-testid="cuentas-extras-scroll"
@@ -286,6 +295,17 @@ export function CuentasPanel({
                     )}
                   </strong>
                 </p>
+              </div>
+            )}
+
+            {/* Open 4-Year Prescripción Fiscal Audit Window */}
+            {openPrescripcionCount > 0 && (
+              <div
+                data-testid="ledger-prescripcion-warning"
+                className="rounded-lg border border-[#7a4308]/55 bg-[#fcf4df] px-2.5 py-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-[#7a4308] leading-snug"
+              >
+                <FileWarning className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>{ui.cuentas.openPrescripcionWindow(openPrescripcionCount)}</span>
               </div>
             )}
 

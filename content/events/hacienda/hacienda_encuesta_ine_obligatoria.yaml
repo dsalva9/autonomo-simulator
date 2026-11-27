@@ -10,6 +10,7 @@ tags:
 character_id: null
 requirements:
   min_month: 4
+  max_month: 48
 weight: 10
 cooldown_months: 15
 max_occurrences: 3

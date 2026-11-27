@@ -12,6 +12,7 @@ character_expression: pleased
 illustration_id: null
 requirements:
   min_month: 24
+  max_month: 60
 weight: 9
 cooldown_months: 12
 max_occurrences: 3

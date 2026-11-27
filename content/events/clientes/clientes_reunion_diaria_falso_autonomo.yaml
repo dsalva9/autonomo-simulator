@@ -20,10 +20,14 @@ choices:
     label: Recordar por escrito tu independencia horaria y trabajar por hitos
     result_text: En cuanto Recursos Humanos lee «autonomía organizativa», cancelan el fichaje al instante por pánico a Inspección de Trabajo.
     effects:
-      billed_income: 1025
-      stress: 6
-      moral: 5
+      billed_income: 1350
+      stress: 1
+      moral: 7
       reputation: 2
+    requirements:
+      stats:
+        moral:
+          min: 60
   - id: tragar_horario_por_ingreso_seguro
     label: Tragar con la rutina de oficina sin tener vacaciones pagadas
     result_text: Sufres lo peor de ser asalariado y lo peor de ser autónomo a la vez, aunque la factura entra íntegra.

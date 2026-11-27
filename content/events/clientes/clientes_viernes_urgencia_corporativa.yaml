@@ -47,3 +47,19 @@ choices:
       personal_life: -2
       reputation: 5
       employee_satisfaction: 4
+  - id: activar_guardia_rotatoria_agencia
+    label: Activar guardia rotatoria pagada con tu agencia (3.400 €)
+    requirements:
+      team_size:
+        min: 3
+      employee_satisfaction:
+        min: 68
+    result_text: Tu célula de guardia cubre la emergencia con plus generoso y entrega impecable el lunes. Facturación de agencia sin arruinar tu sábado.
+    effects:
+      billed_income: 3400
+      deductible_expense: 650
+      stress: 2
+      moral: 5
+      personal_life: 2
+      reputation: 6
+      employee_satisfaction: 4

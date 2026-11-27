@@ -27,11 +27,13 @@ choices:
       moral: 1
       fiscal_risk: 3
   - id: firmar_salto_ordenado_a_elena
-    label: Dar el salto profesional al despacho de Elena (170 €/mes)
+    label: Dar el salto profesional al despacho de Elena (desde 260 €/mes)
     requirements:
       stats:
         money:
-          min: 320
+          min: 550
+        fiscal_risk:
+          max: 35
     result_text: Elena audita los últimos trimestres de Paco, corrige tres amortizaciones dormidas y blinda tu calendario fiscal.
     effects:
       set_gestor:

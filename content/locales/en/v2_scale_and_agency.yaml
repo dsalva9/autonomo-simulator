@@ -1,0 +1,387 @@
+# English ('en') localization overlay for all 37 Wave 3 v2 scale, S.L., agency, boutique solo, and macro events
+
+# ==============================================================================
+# CLIENTES (18 events)
+# ==============================================================================
+
+# 1. clientes_boutique_solo_consejero_consejo
+clientes_boutique_solo_consejero_consejo.title: "Independent Board Advisor: €14,000 for 12 Days a Year"
+clientes_boutique_solo_consejero_consejo.body: "With zero staff or overhead, your name now carries boardroom weight. Marta offers an independent advisory seat—twelve executive sessions a year for €14,000, bound by fairly stiff loyalty clauses."
+clientes_boutique_solo_consejero_consejo.choices.aceptar_silla_independiente.label: "Take the board advisory seat at the full fee (€14,000)"
+clientes_boutique_solo_consejero_consejo.choices.aceptar_silla_independiente.result_text: "You sit at the mahogany table twelve days a year and bill €14,000 cleanly. Massive prestige jump, though every public remark now gets weighed twice."
+clientes_boutique_solo_consejero_consejo.choices.imponer_clausula_etica_e_independencia.label: "Insist on full editorial independence clauses (€11,500)"
+clientes_boutique_solo_consejero_consejo.choices.imponer_clausula_etica_e_independencia.result_text: "Your integrity wins the chair over: you trim a slice off the fee in exchange for total freedom to tell hard truths without a muzzle."
+clientes_boutique_solo_consejero_consejo.choices.declinar_por_libertad_total.label: "Decline the boardroom seat and keep 100% sovereignty"
+clientes_boutique_solo_consejero_consejo.choices.declinar_por_libertad_total.result_text: "You turn down the honor gracefully and return to your desk with zero board minutes, zero politics, and zero disguised bosses."
+
+# 2. clientes_boutique_solo_cuello_botella_salud
+clientes_boutique_solo_cuello_botella_salud.title: "Key-Person Risk: If You Stop for a Week, Everything Stops"
+clientes_boutique_solo_cuello_botella_salud.body: "A brutal flu with high fever floors you right during a critical €5,200 deliverable. Running solo spares you payroll all year—until today reveals the dark side of being a single point of failure."
+clientes_boutique_solo_cuello_botella_salud.choices.activar_cobertura_red_colegas.label: "Call in backup from your trusted freelance network (€1,200)"
+clientes_boutique_solo_cuello_botella_salud.choices.activar_cobertura_red_colegas.result_text: "A peer from your alliance steps in for €1,200 deductible, ships an immaculate deliverable, and lets you actually recover in bed."
+clientes_boutique_solo_cuello_botella_salud.choices.aguantar_enfermo_y_entregar.label: "Pop fever meds at 39°C and force the delivery out (€5,200)"
+clientes_boutique_solo_cuello_botella_salud.choices.aguantar_enfermo_y_entregar.result_text: "You deliver through chills and pocket the full €5,200 invoice, dragging fierce exhaustion and the sinking feeling you pushed the engine too far."
+clientes_boutique_solo_cuello_botella_salud.choices.pagar_penalizacion_y_descansar.label: "Eat the late-delivery penalty (-€3,800) and heal properly"
+clientes_boutique_solo_cuello_botella_salud.choices.pagar_penalizacion_y_descansar.result_text: "The client invokes the SLA penalty, stinging your cash by €3,800 and dimming your shine, yet you shut off your phone for five days and mend."
+
+# 3. clientes_boutique_solo_retainer_elite
+clientes_boutique_solo_retainer_elite.title: "Boutique Senior: Two €4,500/mo Retainers With Zero Payroll"
+clientes_boutique_solo_retainer_elite.body: "With no employees or giant lease, your solo specialist brand flies on its own: Marta and another director both want you on high-ticket boutique retainers with an upfront fee and six-month run."
+clientes_boutique_solo_retainer_elite.choices.firmar_doble_retainer_elite.label: "Sign both elite retainers at once (€9,000 + €2,200/mo)"
+clientes_boutique_solo_retainer_elite.choices.firmar_doble_retainer_elite.result_text: "Without paying a single wage you bill mid-sized agency numbers. Your balance rockets upward while you juggle two relentless executive calendars."
+clientes_boutique_solo_retainer_elite.choices.firmar_un_retainer_y_cuidar_vida.label: "Take just one retainer and protect your life (€4,800 + €1,100/mo)"
+clientes_boutique_solo_retainer_elite.choices.firmar_un_retainer_y_cuidar_vida.result_text: "Peak boutique luxury: you hand-pick one stellar client, bill like a director, and shut your laptop at five sharp."
+clientes_boutique_solo_retainer_elite.choices.subir_tarifa_por_escasez.label: "Quote waitlist pricing for a single slot (€7,500 + €1,600/mo)"
+clientes_boutique_solo_retainer_elite.choices.subir_tarifa_por_escasez.result_text: "When you are the only specialist on the market, you name the price: they sign your scarcity rate without haggling a single euro."
+
+# 4. clientes_cliente_en_b_extorsion_tardia
+clientes_cliente_en_b_extorsion_tardia.title: "20 Months Later: Borja Gets Audited and Threatens to Sing"
+clientes_cliente_en_b_extorsion_tardia.body: "Borja calls sweating from his bookkeeper's doorstep: the Tax Agency is combing through his cash payouts from nearly two years ago, and he suggests 'splitting the heat' for €1,800 so he keeps your emails buried."
+clientes_cliente_en_b_extorsion_tardia.choices.pagar_silencio_y_cierre_rapido.label: "Pay Borja €1,800 to close his audit without naming you"
+clientes_cliente_en_b_extorsion_tardia.choices.pagar_silencio_y_cierre_rapido.result_text: "You hand over hush money with a sour stomach while Borja swears your name stays out. You buy shaky quiet, yet the trail still smolders."
+clientes_cliente_en_b_extorsion_tardia.choices.adelantarte_con_complementaria_elena.label: "Get ahead via Elena with an amended return (-€2,600 + €550)"
+clientes_cliente_en_b_extorsion_tardia.choices.adelantarte_con_complementaria_elena.result_text: "Elena files a voluntary corrective return before any formal notice hits: you defuse Borja's shakedown cold and scrub the open ledger."
+clientes_cliente_en_b_extorsion_tardia.choices.aguantar_el_farol_de_borja.label: "Hang up on him and call his bluff without paying a cent"
+clientes_cliente_en_b_extorsion_tardia.choices.aguantar_el_farol_de_borja.outcomes.borja_se_arruga_farol.result_text: "You remind him that singing blows up his own off-the-books slush fund too. Dead silence hits the line, and he never brings it up again."
+clientes_cliente_en_b_extorsion_tardia.choices.aguantar_el_farol_de_borja.outcomes.borja_canta_ante_hacienda.result_text: "Cornered by his auditor, Borja hands over screenshots to shave points off his own fine. Your tax ID lands straight in the delayed cross-check queue."
+
+# 5. clientes_contrato_enterprise_cuarenta_mil
+clientes_contrato_enterprise_cuarenta_mil.title: "IBEX 35 Tender: €44,000 Annual Enterprise Rollout"
+clientes_contrato_enterprise_cuarenta_mil.body: "Marta brings your career-defining brief: an IBEX 35 flagship needs an agency for a six-month €44,000 rollout (€22,000 upfront plus €3,600/mo). That pace demands a razor-sharp, well-oiled team."
+clientes_contrato_enterprise_cuarenta_mil.choices.ejecucion_agencia_alto_rendimiento.label: "Lead the full €44,000 rollout with a fired-up team"
+clientes_contrato_enterprise_cuarenta_mil.choices.ejecucion_agencia_alto_rendimiento.result_text: "With a cohesive squad the rollout runs like a high-speed train: €22,000 at kickoff, €3,600/mo for six months, and national prestige."
+clientes_contrato_enterprise_cuarenta_mil.choices.aceptar_forzando_plantilla.label: "Sign the €44,000 deal and push overtime even if staff creak"
+clientes_contrato_enterprise_cuarenta_mil.choices.aceptar_forzando_plantilla.result_text: "You enter the revenue big leagues on brute overtime and hurried shortcuts. Your bank beams; your staff quietly pray production holds together."
+clientes_contrato_enterprise_cuarenta_mil.choices.vender_solo_fase_estrategia.label: "Pitch only the architecture and strategy phase (€14,000)"
+clientes_contrato_enterprise_cuarenta_mil.choices.vender_solo_fase_estrategia.result_text: "You cap exposure by selling the blueprint for €14,000 and handing the operational meat grinder to another consultancy. Clean cash, healthy margin."
+
+# 6. clientes_demanda_responsabilidad_civil
+clientes_demanda_responsabilidad_civil.title: "€18,000 Damages Claim Over a Production Outage"
+clientes_demanda_responsabilidad_civil.body: "Marta's legal team serves a formal demand for €18,000 in lost revenue after an outage mid-campaign. Once you operate as an S.L., production glitches no longer end with an apologetic phone call."
+clientes_demanda_responsabilidad_civil.choices.activar_seguro_rc_corporativo.label: "File with your corporate liability insurer (€1,800 deductible)"
+clientes_demanda_responsabilidad_civil.choices.activar_seguro_rc_corporativo.result_text: "That tedious enterprise vendor-onboarding insurance just saved your bank account: your carrier handles their lawyers and you pay only the deductible."
+clientes_demanda_responsabilidad_civil.choices.acuerdo_extrajudicial_rapido.label: "Settle out of court quickly to bury the dispute (-€9,500)"
+clientes_demanda_responsabilidad_civil.choices.acuerdo_extrajudicial_rapido.result_text: "You wire €9,500 upfront to dodge a two-year lawsuit and ugly gossip. It stings like hell, yet tomorrow your agency keeps running in peace."
+clientes_demanda_responsabilidad_civil.choices.ir_a_juicio_mercantil.label: "Hire commercial litigators (€3,200) and fight it in court"
+clientes_demanda_responsabilidad_civil.choices.ir_a_juicio_mercantil.outcomes.sentencia_favorable_mercantil.result_text: "Your technical experts prove the crash stemmed from the client's own internal push. The claim is tossed and you pay only €3,200 in legal fees."
+clientes_demanda_responsabilidad_civil.choices.ir_a_juicio_mercantil.outcomes.condena_danos_mercantil.result_text: "The court splits liability and orders €16,000 in damages on top of €3,200 in counsel fees—a brutal masterclass in contract caps."
+
+# 7. clientes_en_b_obra_reforma_gran_sobre
+clientes_en_b_obra_reforma_gran_sobre.title: "€14,000 Project: '€10,000 Invoiced, €4,000 in Cash—Deal?'"
+clientes_en_b_obra_reforma_gran_sobre.body: "Borja has scaled up without changing his habits: he pitches a €14,000 overhaul with the Spanish grand classic—ten grand on an official invoice and four grand in crisp cash off the books."
+clientes_en_b_obra_reforma_gran_sobre.choices.aceptar_reparto_diez_y_cuatro_en_b.label: "Take €10,000 on the books plus the €4,000 cash envelope"
+clientes_en_b_obra_reforma_gran_sobre.choices.aceptar_reparto_diez_y_cuatro_en_b.result_text: "The official invoice covers the bulk while €4,000 tax-free turbocharges liquidity—and starts the four-year tax-audit statute clock ticking."
+clientes_en_b_obra_reforma_gran_sobre.choices.exigir_catorce_mil_con_factura.label: "Insist on 100% legal invoicing, settling at €12,000"
+clientes_en_b_obra_reforma_gran_sobre.choices.exigir_catorce_mil_con_factura.result_text: "Borja grumbles for ten minutes before signing €12,000 with full VAT traceability. Less cash in hand today, bulletproof books tonight."
+clientes_en_b_obra_reforma_gran_sobre.choices.declinar_propuesta_turbia.label: "Close the folder and pass on half-shady arrangements"
+clientes_en_b_obra_reforma_gran_sobre.choices.declinar_propuesta_turbia.result_text: "At your current scale, risking your company over Borja's cash envelopes makes no sense. You shut your laptop early with a light conscience."
+
+# 8. clientes_expansion_latam_o_ue_agencia
+clientes_expansion_latam_o_ue_agencia.title: "€28,000 European Framework Contract Across Three Capitals"
+clientes_expansion_latam_o_ue_agencia.body: "An international group partnering with Marta needs an established firm for a synchronized rollout across Madrid, Paris, and Munich worth €28,000. You can lead all three hubs or take Spain alone."
+clientes_expansion_latam_o_ue_agencia.choices.asumir_despliegue_tres_capitales.label: "Lead all three capitals (€16,000 now + €12,000 in 3m)"
+clientes_expansion_latam_o_ue_agencia.choices.asumir_despliegue_tres_capitales.result_text: "You mobilize your team across short-haul flights and English syncs: €4,200 in upfront travel costs, €16,000 billed today, and €12,000 certified."
+clientes_expansion_latam_o_ue_agencia.choices.asumir_solo_tramo_espana.label: "Take only the Spanish hub with lower overhead (€12,000)"
+clientes_expansion_latam_o_ue_agencia.choices.asumir_solo_tramo_espana.result_text: "You keep the market you know cold without multiplying flights or translation loops: €12,000 cleanly billed on a crisp margin."
+clientes_expansion_latam_o_ue_agencia.choices.declinar_expansion_exterior.label: "Pass on cross-border expansion and protect current pace"
+clientes_expansion_latam_o_ue_agencia.choices.declinar_expansion_exterior.result_text: "You skip 6 a.m. airport queues and focus on squeezing more profit out of the domestic accounts already running smoothly."
+
+# 9. clientes_favor_startup_semilla
+clientes_favor_startup_semilla.title: "A Bootstrapped Founder Asks for Real Help to Launch"
+clientes_favor_startup_semilla.body: "A sharp former colleague pitches a promising pre-seed venture with an empty treasury. She can pay a token €650 goodwill fee, grant 8% early equity, or wait for your full €2,400 commercial quote."
+clientes_favor_startup_semilla.choices.ayudar_con_tarifa_solidaria.label: "Help her launch at a symbolic goodwill fee (€650)"
+clientes_favor_startup_semilla.choices.ayudar_con_tarifa_solidaria.result_text: "You ship spotless work near cost. It won't pay the quarter on its own, yet serious operators never forget who showed up before they had funding."
+clientes_favor_startup_semilla.choices.entrar_por_participaciones_semilla.label: "Work for zero cash in exchange for 8% seed equity"
+clientes_favor_startup_semilla.choices.entrar_por_participaciones_semilla.result_text: "You sign a notarized shareholder pact and burn late nights on spec. Worth zero euros today; in three years we'll see if it pours champagne or dust."
+clientes_favor_startup_semilla.choices.cobrar_tarifa_integra_sin_descuento.label: "Quote your full standard rate with zero experiments (€2,400)"
+clientes_favor_startup_semilla.choices.cobrar_tarifa_integra_sin_descuento.result_text: "She scrapes together family money to cover your full invoice. Zero garage-startup romance, just very real revenue landing this month."
+
+# 10. clientes_garantia_codigo_tres_anos
+clientes_garantia_codigo_tres_anos.title: "28 Months Later: That Cheap Shortcut Explodes"
+clientes_garantia_codigo_tres_anos.body: "Marta forwards an icy certified notice: that rushed job you cut corners on over two years ago just crashed their platform mid-campaign. They demand immediate compensation or a full free rebuild."
+clientes_garantia_codigo_tres_anos.choices.pagar_indemnizacion_extrajudicial.label: "Sign a quiet settlement and pay damages (-€4,500)"
+clientes_garantia_codigo_tres_anos.choices.pagar_indemnizacion_extrajudicial.result_text: "You wire €4,500 with a knotted stomach to wrap the matter under NDA before it lands in commercial court."
+clientes_garantia_codigo_tres_anos.choices.parar_todo_y_rehacerlo_gratis.label: "Freeze new billing and rebuild it free for two months"
+clientes_garantia_codigo_tres_anos.choices.parar_todo_y_rehacerlo_gratis.result_text: "You swallow two unpaid months patching old sins without billing a cent on that account. You save face, ending the quarter utterly drained."
+clientes_garantia_codigo_tres_anos.choices.activar_poliza_rc_homologada.label: "Trigger your approved liability policy (€950 deductible)"
+clientes_garantia_codigo_tres_anos.choices.activar_poliza_rc_homologada.result_text: "Keeping professional liability insurance active pays off massively: your insurer absorbs the claim while you cover only the €950 deductible."
+
+# 11. clientes_licitacion_ministerio_treinta_mil
+clientes_licitacion_ministerio_treinta_mil.title: "National Public Tender: €32,000 and a Bank Guarantee"
+clientes_licitacion_ministerio_treinta_mil.body: "A €32,000 ministry lot lands tailor-made for your S.L. It demands spotless tax clearance, technical track record, and a €3,500 bid guarantee that tests both your balance sheet and patience."
+clientes_licitacion_ministerio_treinta_mil.choices.concursar_solitario_con_solvencia.label: "Win the full lot solo (€16,000 now + €16,000 in 3m)"
+clientes_licitacion_ministerio_treinta_mil.choices.concursar_solitario_con_solvencia.result_text: "Your spotless compliance dossier sweeps the tender board. You invoice the first €16,000 milestone today and certify the second at 90 days."
+clientes_licitacion_ministerio_treinta_mil.choices.presentarse_en_ute_compartida.label: "Bid via a shared joint venture splitting bond & load (€18,000)"
+clientes_licitacion_ministerio_treinta_mil.choices.presentarse_en_ute_compartida.result_text: "You split red tape and guarantee costs with a partner firm: €18,000 cleanly billed on lower upfront cost plus a marquee public reference."
+clientes_licitacion_ministerio_treinta_mil.choices.descartar_concurso_publico.label: "Skip the public tender and dodge months of PDF annexes"
+clientes_licitacion_ministerio_treinta_mil.choices.descartar_concurso_publico.result_text: "You leave the state procurement portal to anyone who enjoys signing ninety affidavits, keeping your cash free and your afternoons calm."
+
+# 12. clientes_oferta_adquisicion_agencia
+clientes_oferta_adquisicion_agencia.title: "A Multinational Offers €45,000 to Acquire Your Roster"
+clientes_oferta_adquisicion_agencia.body: "After nearly eight years building your brand, a global consultancy reaches out via Marta: they want to buy a slice of your recurring client book for €32,000 to €45,000."
+clientes_oferta_adquisicion_agencia.choices.vender_division_no_estrategica.label: "Sell your non-core unit outright for cash (€32,000)"
+clientes_oferta_adquisicion_agencia.choices.vender_division_no_estrategica.result_text: "You hand off your heaviest maintenance accounts for €32,000 on the spot. Monthly billing dips for six months, yet you bank peace and deep reserves."
+clientes_oferta_adquisicion_agencia.choices.negociar_venta_parcial_cuarenta_y_cinco_mil.label: "Negotiate a €45,000 partial sale (€25,000 now + €20,000 in 4m)"
+clientes_oferta_adquisicion_agencia.choices.negociar_venta_parcial_cuarenta_y_cinco_mil.result_text: "Your reputation commands a top multiple: €25,000 wired at notary signing plus a €20,000 earn-out tranche after a four-month handover."
+clientes_oferta_adquisicion_agencia.choices.rechazar_y_seguir_independiente.label: "Turn down the buyout and stay independent to the finish"
+clientes_oferta_adquisicion_agencia.choices.rechazar_y_seguir_independiente.result_text: "You didn't build all this just to hand your accounts to a suited holding fund. Your team cheers and your brand earns local-legend aura."
+
+# 13. clientes_ola_inflacion_costes_fijos
+clientes_ola_inflacion_costes_fijos.title: "Inflation Spiral: Power, Cloud Vendors, and Rent +18%"
+clientes_ola_inflacion_costes_fijos.body: "CPI adjustment notices hit your inbox in chorus from cloud vendors, power utilities, insurers, and your landlord. Do nothing today and fixed overhead will chew an extra €650 every month for half a year."
+clientes_ola_inflacion_costes_fijos.choices.repercutir_subida_a_cartera.label: "Pass the inflation adjustment onto your client roster (+€1,400/mo)"
+clientes_ola_inflacion_costes_fijos.choices.repercutir_subida_a_cartera.result_text: "You present the rate update with calm data. Your best clients accept the macro reality and the repricing easily defends your margins."
+clientes_ola_inflacion_costes_fijos.choices.absorber_inflacion_en_margen.label: "Keep quiet for fear of churn and absorb +€650/mo yourself"
+clientes_ola_inflacion_costes_fijos.choices.absorber_inflacion_en_margen.result_text: "Nobody complains about your rates, naturally—you are personally subsidizing power and software inflation out of your own pocket for six months."
+clientes_ola_inflacion_costes_fijos.choices.renegociar_proveedores_con_calma.label: "Audit vendors coolly and trim the hike down to +€220/mo"
+clientes_ola_inflacion_costes_fijos.choices.renegociar_proveedores_con_calma.result_text: "Without panicking, you renegotiate annual contracts, axe duplicate SaaS seats, and cut the inflation sting down to a third."
+
+# 14. clientes_perdida_cuenta_ancla_cuarenta_pct
+clientes_perdida_cuenta_ancla_cuarenta_pct.title: "9:01 AM Email: Your Anchor Account Cancels (-40% Billing)"
+clientes_perdida_cuenta_ancla_cuarenta_pct.body: "Without warning, Marta forwards a glacial global-restructuring memo cancelling your biggest recurring retainer overnight. The crater threatens to wipe out 40% of your monthly billing."
+clientes_perdida_cuenta_ancla_cuarenta_pct.choices.absorber_golpe_y_reajustar.label: "Take the hit head-on and tighten belts (-€2,400/mo for 5m)"
+clientes_perdida_cuenta_ancla_cuarenta_pct.choices.absorber_golpe_y_reajustar.result_text: "You slash every non-essential euro and grit your teeth through five brutal months rebuilding your sales pipeline from scratch."
+clientes_perdida_cuenta_ancla_cuarenta_pct.choices.sprint_comercial_de_emergencia.label: "Launch an emergency sales blitz and roadshow (€2,800)"
+clientes_perdida_cuenta_ancla_cuarenta_pct.choices.sprint_comercial_de_emergencia.result_text: "You deploy €2,800 into surgical outreach backed by your reputation, plugging more than half the revenue crater within a single quarter."
+clientes_perdida_cuenta_ancla_cuarenta_pct.choices.activar_colchon_cartera_internacional.label: "Shift capacity to your international and enterprise accounts"
+clientes_perdida_cuenta_ancla_cuarenta_pct.choices.activar_colchon_cartera_internacional.result_text: "Diversifying across Europe and blue-chip accounts saves you from sinking: you expand two active scopes and shrink the blow to a mild bruise."
+
+# 15. clientes_probono_retorna_como_vp
+clientes_probono_retorna_como_vp.title: "30 Months Later: That Early Contact Now Runs a Multinational"
+clientes_probono_retorna_como_vp.body: "Two and a half years ago you lent a hand when they had zero budget. Today they just took an executive VP seat alongside Marta and bypass procurement altogether to hand you their flagship launch."
+clientes_probono_retorna_como_vp.choices.firmar_contrato_directo_vp.label: "Sign the sole-source direct contract (€12,000)"
+clientes_probono_retorna_como_vp.choices.firmar_contrato_directo_vp.result_text: "Planting goodwill when nobody was watching drops a crisp €12,000 contract straight onto your desk without pitching against ten rival agencies."
+clientes_probono_retorna_como_vp.choices.firmar_despliegue_global_sl.label: "Capture the full global rollout as an S.L. (€22,000)"
+clientes_probono_retorna_como_vp.choices.firmar_despliegue_global_sl.result_text: "Operating as a vetted limited company lets you absorb the entire international scope: €22,000 billed and a first-division showcase."
+clientes_probono_retorna_como_vp.choices.aceptar_consejeria_suave.label: "Take a light strategic advisory role and guard your calendar (€6,500)"
+clientes_probono_retorna_como_vp.choices.aceptar_consejeria_suave.result_text: "You steer strategy without burning out in production: €6,500 cleanly billed, rising prestige, and every evening left untouched."
+
+# 16. clientes_recesion_recorte_sectorial
+clientes_recesion_recorte_sectorial.title: "Recession Wave: Three Clients Freeze Budgets at Once"
+clientes_recesion_recorte_sectorial.body: "The market hits the brakes: three finance directors send the exact same 'quarterly cost-containment' email demanding 25% rate cuts or freezing every planned project for the next six months."
+clientes_recesion_recorte_sectorial.choices.bajar_tarifas_para_retener.label: "Slash rates to keep accounts alive (-€1,500/mo for 6m)"
+clientes_recesion_recorte_sectorial.choices.bajar_tarifas_para_retener.result_text: "You swallow the discount to avoid staring at an empty calendar. Accounts stay breathing, though you grind the same hours for far thinner checks."
+clientes_recesion_recorte_sectorial.choices.pivotar_a_auditorias_eficiencia.label: "Pivot your pitch to instant cost-saving audits (€6,500)"
+clientes_recesion_recorte_sectorial.choices.pivotar_a_auditorias_eficiencia.result_text: "When nobody buys growth, everyone pays to trim fat: you package efficiency audits and bill €6,500 right into the headwind."
+clientes_recesion_recorte_sectorial.choices.aguantar_tarifas_quemando_caja.label: "Hold your rate card firm and burn reserves through winter (-€4,500)"
+clientes_recesion_recorte_sectorial.choices.aguantar_tarifas_quemando_caja.result_text: "You refuse to panic-discount your craft and lean on savings to wait out the chill. When budgets thaw, your pricing power remains intact."
+
+# 17. clientes_shock_ia_tarifas_sector
+clientes_shock_ia_tarifas_sector.title: "AI Tsunami: 'Agencies Already Charge 40% Less Now'"
+clientes_shock_ia_tarifas_sector.body: "Borja pops back waving automated bargain quotes: 'With the new AI tools your rivals do this in half an afternoon for half the price.' Half the industry panics and races straight to the bottom."
+clientes_shock_ia_tarifas_sector.choices.invertir_en_flujo_ia_propio.label: "Invest €4,500 in your own AI pipeline to expand margins"
+clientes_shock_ia_tarifas_sector.choices.invertir_en_flujo_ia_propio.result_text: "You automate repetitive grunt work in-house without cutting value-based pricing, adding €1,800/mo in cleaner billing for the next six months."
+clientes_shock_ia_tarifas_sector.choices.entrar_en_guerra_de_precios.label: "Jump into the low-cost price war (-€1,200/mo for 6m)"
+clientes_shock_ia_tarifas_sector.choices.entrar_en_guerra_de_precios.result_text: "You join a race to the bottom where someone always underbids you. You ship twice the volume for razor-thin survival margins."
+clientes_shock_ia_tarifas_sector.choices.vender_criterio_humano_elite.label: "Move upmarket selling elite human judgment (€8,500)"
+clientes_shock_ia_tarifas_sector.choices.vender_criterio_humano_elite.result_text: "Two clients burned after trying to prompt everything for free come crawling back for real senior judgment, signing €8,500 without blinking."
+
+# 18. clientes_startup_participaciones_desenlace
+clientes_startup_participaciones_desenlace.title: "36 Months Later: That 8% Startup Equity..."
+clientes_startup_participaciones_desenlace.body: "Three years after signing that shareholder paper you had written off as wallpaper, the startup's board calls. A corporate deal is closing, and it is finally time to see what your stake is worth."
+clientes_startup_participaciones_desenlace.choices.ejecutar_venta_de_tus_participaciones.label: "Sell your 8% stake and pocket whatever the exit pays"
+clientes_startup_participaciones_desenlace.choices.ejecutar_venta_de_tus_participaciones.outcomes.exit_millonario_participaciones.result_text: "Defying every startup mortality chart, a fund buys the company and wires €18,000 cleanly for your 8% stake. Time to uncork the good bottle."
+clientes_startup_participaciones_desenlace.choices.ejecutar_venta_de_tus_participaciones.outcomes.acquihire_modesto_participaciones.result_text: "A larger group absorbs the team in a quiet acqui-hire: not Maldives money, yet €4,500 lands in your account from a bet you'd already buried."
+clientes_startup_participaciones_desenlace.choices.ejecutar_venta_de_tus_participaciones.outcomes.liquidacion_quiebra_startup.result_text: "Runway hits zero and the liquidator locks the doors at zero cents on the euro. You keep a framed share certificate and an expensive dinner story."
+clientes_startup_participaciones_desenlace.choices.negociar_canje_por_contrato_anual.label: "Swap your stake for a guaranteed annual contract (€8,500 + retainer)"
+clientes_startup_participaciones_desenlace.choices.negociar_canje_por_contrato_anual.result_text: "The acquirer knows your industry standing and prefers you as lead vendor: €8,500 upfront plus €1,200/mo over the next four months."
+
+# ==============================================================================
+# EMPLEADOS (11 events)
+# ==============================================================================
+
+# 19. empleados_convenio_teletrabajo_hibrido_equipo
+empleados_convenio_teletrabajo_hibrido_equipo.title: "Cold War: Half Wants Full Remote, Half Wants the Office"
+empleados_convenio_teletrabajo_hibrido_equipo.body: "The remote-work debate splits your staff down the middle: half wants to move outside the capital while the rest feel isolated at home. Dani warns that ducking a clear policy is souring every meeting."
+empleados_convenio_teletrabajo_hibrido_equipo.choices.pacto_hibrido_y_ayuda_hogar.label: "Sign a hybrid charter with home-office stipends (€2,400)"
+empleados_convenio_teletrabajo_hibrido_equipo.choices.pacto_hibrido_y_ayuda_hogar.result_text: "You put two optional office days and deductible home-desk gear in writing. Hallway grumbling stops overnight and output climbs."
+empleados_convenio_teletrabajo_hibrido_equipo.choices.exigir_presencialidad_estricta.label: "Enforce strict Monday-to-Friday office attendance"
+empleados_convenio_teletrabajo_hibrido_equipo.choices.exigir_presencialidad_estricta.result_text: "Old-school clients love seeing rows of full desks, while long faces clocking in at nine take an immediate toll on team morale."
+empleados_convenio_teletrabajo_hibrido_equipo.choices.remoto_asincrono_de_alto_nivel.label: "Go pro async-remote and trim fixed overhead (-€400/mo)"
+empleados_convenio_teletrabajo_hibrido_equipo.choices.remoto_asincrono_de_alto_nivel.result_text: "With a mature team and strong brand, async remote clicks like Swiss clockwork: you cut office costs and send team happiness soaring."
+
+# 20. empleados_crisis_liquidez_nominas_dia_28
+empleados_crisis_liquidez_nominas_dia_28.title: "The 27th and Three Unpaid Invoices: €12,000 Short for Payroll"
+empleados_crisis_liquidez_nominas_dia_28.body: "Salaries and Social Security debit tomorrow, yet three big clients pushed settlement into next month. Laura stares straight at you: your staff cannot act as an interest-free bank for late clients."
+empleados_crisis_liquidez_nominas_dia_28.choices.activar_poliza_credito_puente.label: "Open a bank bridge credit line (€1,400 + monthly interest)"
+empleados_crisis_liquidez_nominas_dia_28.choices.activar_poliza_credito_puente.result_text: "The bank clips you for opening fees and six months of interest, yet every payslip lands right on the 28th with zero panic inside the studio."
+empleados_crisis_liquidez_nominas_dia_28.choices.inyectar_reserva_personal_caja.label: "Advance €8,500 from personal reserves (recover €9,500 in 2m)"
+empleados_crisis_liquidez_nominas_dia_28.choices.inyectar_reserva_personal_caja.result_text: "You dip into your own cushion to clear payroll to the cent while chasing €9,500 in overdue wires. Staff respect your rock-solid backing."
+empleados_crisis_liquidez_nominas_dia_28.choices.retrasar_nominas_diez_dias.label: "Ask the team for patience and delay payroll by ten days"
+empleados_crisis_liquidez_nominas_dia_28.choices.retrasar_nominas_diez_dias.result_text: "You dodge bank interest today while the private team chat catches fire and two staffers update their resumes before midnight."
+
+# 21. empleados_ere_ajuste_plantilla_bache
+empleados_ere_ajuste_plantilla_bache.title: "Two Slow Quarters: Downsize Staff or Burn Reserves?"
+empleados_ere_ajuste_plantilla_bache.body: "Billings have failed to fill every seat for two straight quarters, and payroll is chewing through cash fast. Laura lays out three stark choices: negotiated exits, a temporary furlough, or burning savings."
+empleados_ere_ajuste_plantilla_bache.choices.ejecutar_ajuste_dos_plazas.label: "Negotiate dignified exits for 2 roles (€3,250/person severance)"
+empleados_ere_ajuste_plantilla_bache.choices.ejecutar_ajuste_dos_plazas.result_text: "It is your hardest day as an owner, yet full severance and honest references keep the agency alive without leaving scorched earth behind."
+empleados_ere_ajuste_plantilla_bache.choices.activar_erte_reduccion_temporal.label: "File a 4-month reduced-hours furlough (ERTE, €2,400)"
+empleados_ere_ajuste_plantilla_bache.choices.activar_erte_reduccion_temporal.result_text: "Labor lawyers structure a temporary short-time ERTE that trims wage burn without firing anyone, though mood cools until sales rebound."
+empleados_ere_ajuste_plantilla_bache.choices.proteger_toda_la_plantilla_con_caja.label: "Burn €10,000 of your cash buffer to save every single job"
+empleados_ere_ajuste_plantilla_bache.choices.proteger_toda_la_plantilla_con_caja.result_text: "You absorb the entire slump out of your own war chest. Nobody loses their desk, earning a brand of loyalty money rarely buys."
+
+# 22. empleados_escalado_diez_personas_directivo
+empleados_escalado_diez_personas_directivo.title: "Ten Payslips: Hire Operations Leadership or Collapse"
+empleados_escalado_diez_personas_directivo.body: "Your calendar is a wall of Tetris blocks: between pitches, fires, and sign-offs, everyone queues for your nod. Laura gives it to you straight: either build an operations layer or stay the bottleneck."
+empleados_escalado_diez_personas_directivo.choices.incorporar_celula_y_directora_ops.label: "Hire an ops director plus +1 support role (€4,200)"
+empleados_escalado_diez_personas_directivo.choices.incorporar_celula_y_directora_ops.result_text: "Two key hires absorb traffic, scheduling, and QA reviews. Your monthly payroll looks terrifying, yet for the first time you can breathe."
+empleados_escalado_diez_personas_directivo.choices.promocionar_lider_interno.label: "Promote an internal lead and add +1 backup (€1,500)"
+empleados_escalado_diez_personas_directivo.choices.promocionar_lider_interno.result_text: "A loyal squad rallies behind the internal promotion with infectious energy: you delegate operations while keeping your house culture intact."
+empleados_escalado_diez_personas_directivo.choices.congelar_plantilla_y_centralizar.label: "Freeze hiring and keep signing off on every task yourself"
+empleados_escalado_diez_personas_directivo.choices.congelar_plantilla_y_centralizar.result_text: "You dodge new payroll today at the price of 8 p.m. status calls and client deliverables piling up waiting for your green light."
+
+# 23. empleados_exempleado_competidor_o_aliado
+empleados_exempleado_competidor_o_aliado.title: "24 Months Later: Your Former Employee Launches a Studio"
+empleados_exempleado_competidor_o_aliado.body: "Two years after leaving your team, their own studio is taking off and just crossed paths with your roster. Parted on good terms? They bring a €9,500 referral. Bad terms? They're undercutting your clients."
+empleados_exempleado_competidor_o_aliado.choices.cobrar_comision_y_proyecto_referido.label: "Accept their partnership and bill the joint brief (€9,500)"
+empleados_exempleado_competidor_o_aliado.choices.cobrar_comision_y_proyecto_referido.result_text: "Classy exits pay ridiculous dividends: your former hire passes you an enterprise client too big for them and you toast the win together."
+empleados_exempleado_competidor_o_aliado.choices.defender_tu_cartera_del_ataque.label: "Mount an urgent commercial defense against poaching (€1,400)"
+empleados_exempleado_competidor_o_aliado.choices.defender_tu_cartera_del_ataque.result_text: "You wade into the mud with client visits, defensive discounts, and late calls. You hold the line, yet the revenue dip stings for four months."
+empleados_exempleado_competidor_o_aliado.choices.blindar_cuentas_por_reputacion.label: "Let your reputation lock accounts and sign a €3,800 add-on"
+empleados_exempleado_competidor_o_aliado.choices.blindar_cuentas_por_reputacion.result_text: "Your clients don't even open their pitch—they tip you off, double down on your studio, and sign a €3,800 expansion to play it safe."
+
+# 24. empleados_expansion_agencia_cinco_personas
+empleados_expansion_agencia_cinco_personas.title: "Leap to Agency Consultancy: Five Payslips & Real Structure"
+empleados_expansion_agencia_cinco_personas.body: "Laura lays the math on the whiteboard: two more hires and stepping up to Agency Consultancy unlock IBEX tenders and rotating cover. The catch: heavier fixed overhead and serious payroll every 28th."
+empleados_expansion_agencia_cinco_personas.choices.escalar_a_agencia_cinco_personas.label: "Scale to Agency Consultancy (+2 staff, Laura lead, €5,500)"
+empleados_expansion_agencia_cinco_personas.choices.escalar_a_agencia_cinco_personas.result_text: "Your Agency Consultancy launches with Laura running operations. You enter the big-account league knowing this machine cannot idle anymore."
+empleados_expansion_agencia_cinco_personas.choices.sumar_un_perfil_sin_cambiar_tramo.label: "Add just +1 hire inside your current S.L. tier (€1,600)"
+empleados_expansion_agencia_cinco_personas.choices.sumar_un_perfil_sin_cambiar_tramo.result_text: "You clear the main delivery bottleneck without triggering full agency overhead yet—measured growth with both eyes on cash flow."
+empleados_expansion_agencia_cinco_personas.choices.quedarse_como_estudio_agil.label: "Stay a nimble studio and guard margins and sanity"
+empleados_expansion_agencia_cinco_personas.choices.quedarse_como_estudio_agil.result_text: "You choose a lean, profitable squad over becoming a full-time HR manager. Everyone in the office lets out a quiet sigh of relief."
+
+# 25. empleados_formacion_liderazgo_mandos
+empleados_formacion_liderazgo_mandos.title: "Middle-Management Track So You Stop Being the Bottleneck"
+empleados_formacion_liderazgo_mandos.body: "Your agency is finally big enough to scale, yet nobody dares sign off on a quote or push back on scope creep without asking you. Laura proposes training two seniors into genuine team leads."
+empleados_formacion_liderazgo_mandos.choices.programa_ejecutivo_mandos.label: "Sponsor an executive leadership program (€3,200 deductible)"
+empleados_formacion_liderazgo_mandos.choices.programa_ejecutivo_mandos.result_text: "Two months later your leads close upsells and run deliveries solo. Monthly billing climbs €1,200 with far fewer heart palpitations."
+empleados_formacion_liderazgo_mandos.choices.mentorizacion_interna_viernes.label: "Coach them yourself by blocking every Friday afternoon"
+empleados_formacion_liderazgo_mandos.choices.mentorizacion_interna_viernes.result_text: "You save cash on outside trainers, turning your Fridays into an intense management bootcamp that drains your battery to empty."
+empleados_formacion_liderazgo_mandos.choices.posponer_hasta_ano_siguiente.label: "Push training to next year and keep approving everything"
+empleados_formacion_liderazgo_mandos.choices.posponer_hasta_ano_siguiente.result_text: "The quarter rolls on without spending a cent, while ambitious staff spot the glass ceiling and ease off the gas."
+
+# 26. empleados_fuga_bloque_dos_seniors
+empleados_fuga_bloque_dos_seniors.title: "Agency Mutiny: Two Key Seniors Threaten to Walk Together"
+empleados_fuga_bloque_dos_seniors.body: "A large consultancy is poaching two of your core seniors at once with fat raises and promises of calmer weeks. They ask to meet before Friday: if both walk together, two major accounts wobble."
+empleados_fuga_bloque_dos_seniors.choices.paquete_retencion_emergencia.label: "Lock them in with a €4,500 bonus plus €900/mo for 6m"
+empleados_fuga_bloque_dos_seniors.choices.paquete_retencion_emergencia.result_text: "You match the bid with a deductible bonus and a six-month raise. Margins tighten for half a year, yet you keep the agency's beating heart."
+empleados_fuga_bloque_dos_seniors.choices.dejar_marchar_dos_seniors.label: "Refuse bidding wars and settle both exits (-€2,500)"
+empleados_fuga_bloque_dos_seniors.choices.dejar_marchar_dos_seniors.result_text: "You hold firm and sign chilly offboarding papers. Payroll drops, yet billing dips for a quarter—and they leave with your client list memorized."
+empleados_fuga_bloque_dos_seniors.choices.retener_por_cultura_y_autonomia.label: "Win them back on autonomy, culture, and a €1,800 bonus"
+empleados_fuga_bloque_dos_seniors.choices.retener_por_cultura_y_autonomia.result_text: "Years of healthy studio culture beat a corporate meat grinder: they choose genuine autonomy and a sensible retention bonus."
+
+# 27. empleados_inspeccion_trabajo_agencia
+empleados_inspeccion_trabajo_agencia.title: "Surprise Labor Inspection: Time Logs, Safety & Compliance"
+empleados_inspeccion_trabajo_agencia.body: "Two Labor and Social Security inspectors walk in unannounced demanding time-tracking logs, workplace-safety audits (PRL), signed contracts, and right-to-disconnect policies for your entire team."
+empleados_inspeccion_trabajo_agencia.choices.exhibir_cumplimiento_prl_y_fichaje.label: "Hand over spotless time-tracking and PRL binders (€0)"
+empleados_inspeccion_trabajo_agencia.choices.exhibir_cumplimiento_prl_y_fichaje.result_text: "Doing your labor homework pays pure gold: they spot-check four files, compliment your rigor, and close the visit with zero euros fined."
+empleados_inspeccion_trabajo_agencia.choices.pactar_acta_laboral_reducida.label: "Accept gaps, pay prompt-settlement fine (-€4,800), and fix all"
+empleados_inspeccion_trabajo_agencia.choices.pactar_acta_laboral_reducida.result_text: "Wiring €4,800 stings deeply, yet prompt settlement closes the citation and leaves your time logs and safety compliance spotless going forward."
+empleados_inspeccion_trabajo_agencia.choices.litigar_acta_en_juzgado_social.label: "Contest the citation in Labor Court and roll the dice"
+empleados_inspeccion_trabajo_agencia.choices.litigar_acta_en_juzgado_social.outcomes.sentencia_parcial_juzgado_social.result_text: "The judge flags procedural flaws in the inspector's filing and cuts the hit to €1,800, though the courtroom sweat still ages you a year."
+empleados_inspeccion_trabajo_agencia.choices.litigar_acta_en_juzgado_social.outcomes.condena_firme_juzgado_social.result_text: "Final judgment goes against you with surcharges and court fees: a €9,500 legal wallop that chills the entire office."
+
+# 28. empleados_oficina_corporativa_reforma
+empleados_oficina_corporativa_reforma.title: "Lease an Open-Plan Downtown Office for the Agency"
+empleados_oficina_corporativa_reforma.body: "A sunlit downtown floor with a proper boardroom just opened up. Dani pictures specialty espresso and giant whiteboards; your spreadsheet mostly sees deposits, renovations, and hefty monthly rent."
+empleados_oficina_corporativa_reforma.choices.firmar_sede_representativa.label: "Sign the flagship HQ and remodel (€7,500 + €1,100/mo)"
+empleados_oficina_corporativa_reforma.choices.firmar_sede_representativa.result_text: "Hosting procurement heads in your own flagship HQ lifts your prestige overnight, though rent becomes the first bill knocking every month."
+empleados_oficina_corporativa_reforma.choices.hub_hibrido_flexible.label: "Book a flexible hybrid hub for client meetings (€2,200)"
+empleados_oficina_corporativa_reforma.choices.hub_hibrido_flexible.result_text: "You get sleek boardrooms when serious clients visit and shared desks twice a week without chaining yourself to a five-year commercial lease."
+empleados_oficina_corporativa_reforma.choices.mantener_agencia_remota_ligera.label: "Stay 100% remote and skip bricks, mortar, and contractors"
+empleados_oficina_corporativa_reforma.choices.mantener_agencia_remota_ligera.result_text: "One or two old-school prospects miss a marble lobby, while your team cheers skipping Monday traffic jams."
+
+# 29. empleados_salto_estudio_dos_personas
+empleados_salto_estudio_dos_personas.title: "From Solo Helper to Boutique Studio (2–3 Staff)"
+empleados_salto_estudio_dos_personas.body: "Client briefs no longer fit across two desks, and Dani begs for another pair of hands so you stop firefighting every week. Decide whether to upgrade into a Boutique Studio and expand payroll."
+empleados_salto_estudio_dos_personas.choices.ampliar_estudio_a_dos_o_tres.label: "Upgrade to Boutique Studio and hire +1 teammate (€1,800)"
+empleados_salto_estudio_dos_personas.choices.ampliar_estudio_a_dos_o_tres.result_text: "You add a fresh desk, stagger deliveries cleanly, and graduate into a real studio. Fixed payroll climbs, yet you finally stop turning work away."
+empleados_salto_estudio_dos_personas.choices.fichaje_doble_estudio.label: "Bet big: Boutique Studio plus +2 hires at once (€3,000)"
+empleados_salto_estudio_dos_personas.choices.fichaje_doble_estudio.result_text: "Your brand now pulls talent without begging. You double output overnight and gear up to fight for mid-market accounts with real muscle."
+empleados_salto_estudio_dos_personas.choices.mantener_tamano_actual_prudente.label: "Keep headcount as-is and protect cash-flow peace"
+empleados_salto_estudio_dos_personas.choices.mantener_tamano_actual_prudente.result_text: "You pass on growth fever for now: a few oversized briefs slip away, yet month-end payroll still lets you sleep soundly."
+
+# ==============================================================================
+# GESTOR (8 events)
+# ==============================================================================
+
+# 30. gestor_auditoria_cuentas_anuales_registro
+gestor_auditoria_cuentas_anuales_registro.title: "Annual Accounts Filing at the Commercial Registry"
+gestor_auditoria_cuentas_anuales_registro.body: "July 30th looms and your limited company must legalize books, approve minutes, and file Annual Accounts. Miss the deadline and the Commercial Registry freezes your company sheet while ICAC issues fines."
+gestor_auditoria_cuentas_anuales_registro.choices.depositar_cuentas_en_plazo.label: "Compile annual reports and file on time (€1,400)"
+gestor_auditoria_cuentas_anuales_registro.choices.depositar_cuentas_en_plazo.result_text: "Registry fees and last-minute balance checks swallow three afternoons, yet your company stays open and tender-ready."
+gestor_auditoria_cuentas_anuales_registro.choices.cierre_express_con_elena.label: "Delegate the entire registry filing to Elena's team (€950)"
+gestor_auditoria_cuentas_anuales_registro.choices.cierre_express_con_elena.result_text: "Elena submits balances, notes, and board certificates ahead of schedule, leaving your summer clear and your corporate record spotless."
+gestor_auditoria_cuentas_anuales_registro.choices.retrasar_deposito_y_arriesgar_hoja.label: "Push filing to autumn and gamble against a fine"
+gestor_auditoria_cuentas_anuales_registro.choices.retrasar_deposito_y_arriesgar_hoja.outcomes.multa_icac_hoja_cerrada.result_text: "ICAC opens a penalty case and your bank freezes credit over a locked registry sheet: €2,800 fined just to get back to square one."
+gestor_auditoria_cuentas_anuales_registro.choices.retrasar_deposito_y_arriesgar_hoja.outcomes.prorroga_sin_sancion.result_text: "Summer backlog lets your late filing slip through without an immediate fine, though your commercial credit rating drops a few notches."
+
+# 31. gestor_conflicto_socio_pacto_socios
+gestor_conflicto_socio_pacto_socios.title: "Red-Hot Shareholder Meeting: Dividends Now or Reinvest"
+gestor_conflicto_socio_pacto_socios.body: "Your minority investor arrives at the shareholder meeting with counsel and a calculator demanding an immediate €12,000 dividend payout. Pay up today, or buy back their stake to reclaim 100% control."
+gestor_conflicto_socio_pacto_socios.choices.repartir_doce_mil_de_dividendos.label: "Approve an extraordinary dividend payout (-€12,000)"
+gestor_conflicto_socio_pacto_socios.choices.repartir_doce_mil_de_dividendos.result_text: "Your treasury slims down overnight, yet the investor signs the minutes smiling and stops sending formal legal notices for a good stretch."
+gestor_conflicto_socio_pacto_socios.choices.recomprar_participaciones_socio.label: "Exercise your call option to buy back their 30% (-€22,000)"
+gestor_conflicto_socio_pacto_socios.choices.recomprar_participaciones_socio.result_text: "You march back to the notary and buy back every last share. The cash hit is historic, yet 100% ownership is yours again for good."
+gestor_conflicto_socio_pacto_socios.choices.bloquear_junta_y_aguantar_pulso.label: "Block the payout citing prudence and weather the standoff"
+gestor_conflicto_socio_pacto_socios.choices.bloquear_junta_y_aguantar_pulso.result_text: "Not a single euro leaves the account today—bought with months of contested minutes, legal friction, and sleepless nights rereading bylaws."
+
+# 32. gestor_constitucion_sl_notaria
+gestor_constitucion_sl_notaria.title: "Notary, Share Capital, and Incorporating as an S.L."
+gestor_constitucion_sl_notaria.body: "Your top marginal IRPF bracket now bites nearly half of every new invoice. Decide whether to incorporate an S.L. or solo S.L.U. (flat 24% corporate tax + director quota) or formalize a nimble studio first."
+gestor_constitucion_sl_notaria.choices.constituir_sociedad_limitada_notaria.label: "Sign S.L. / S.L.U. incorporation deeds at the notary (€3,200)"
+gestor_constitucion_sl_notaria.choices.constituir_sociedad_limitada_notaria.result_text: "You debut a corporate tax ID and company seal: fixed accounting overhead rises, yet the flat 24% rate and enterprise tenders now open up."
+gestor_constitucion_sl_notaria.choices.formalizar_estudio_consolidado.label: "Take the intermediate step to Boutique Studio (€1,100)"
+gestor_constitucion_sl_notaria.choices.formalizar_estudio_consolidado.result_text: "You formalize brand, workflows, and team capacity without taking on Corporate Tax returns or Commercial Registry filings just yet."
+gestor_constitucion_sl_notaria.choices.seguir_en_estructura_actual.label: "Postpone the notary and stay on your current structure"
+gestor_constitucion_sl_notaria.choices.seguir_en_estructura_actual.result_text: "You keep the draft bylaws in a drawer: zero extra notary fees today, though you remain exposed to progressive income-tax brackets."
+
+# 33. gestor_elena_ultimatum_cumplimiento
+gestor_elena_ultimatum_cumplimiento.title: "Elena Shuts Your Binder: 'I Will Not Sign These Books'"
+gestor_elena_ultimatum_cumplimiento.body: "Elena calls you in with zero coffee or small talk: your accumulated fiscal risk has crossed her bar association's red line. Pay for a forensic cleanup before closing or her firm drops you today."
+gestor_elena_ultimatum_cumplimiento.choices.pagar_auditoria_forense_y_limpieza.label: "Pay for forensic cleanup and amended filings (€2,400)"
+gestor_elena_ultimatum_cumplimiento.choices.pagar_auditoria_forense_y_limpieza.result_text: "The bill stings, yet Elena untangles four quarters of creative acrobatics and puts her signature back on your returns without flinching."
+gestor_elena_ultimatum_cumplimiento.choices.bajar_a_paco_el_rapido.label: "Collect your folders and go back to Paco Quick-File"
+gestor_elena_ultimatum_cumplimiento.choices.bajar_a_paco_el_rapido.result_text: "Elena files her withdrawal with glacial precision. Paco welcomes you with open arms and a ring binder inherited from 2008."
+gestor_elena_ultimatum_cumplimiento.choices.volver_a_autogestion.label: "Part ways with advisory firms and file returns yourself"
+gestor_elena_ultimatum_cumplimiento.choices.volver_a_autogestion.result_text: "You save her retainer and her lectures, returning next quarter to wrestle Spain's online tax portal completely solo."
+
+# 34. gestor_entrada_socio_capitalista
+gestor_entrada_socio_capitalista.title: "An Investor Offers €35,000 for 30% of Your S.L."
+gestor_entrada_socio_capitalista.body: "Marta introduces a private investor dazzled by your margins: €35,000 wired tomorrow for 30% equity and board votes. Fresh fuel to scale fast—at the cost of no longer ruling your company alone."
+gestor_entrada_socio_capitalista.choices.aceptar_ampliacion_treinta_y_cinco_mil.label: "Take the capital injection: +€35,000 for 30% equity"
+gestor_entrada_socio_capitalista.choices.aceptar_ampliacion_treinta_y_cinco_mil.result_text: "The wire lights up your balance like neon. You gain massive runway—plus a minority partner already asking for quarterly decks."
+gestor_entrada_socio_capitalista.choices.negociar_prestamo_participativo.label: "Negotiate an €18,000 participating loan with zero dilution"
+gestor_entrada_socio_capitalista.choices.negociar_prestamo_participativo.result_text: "Your track record secures €18,000 repaid over twelve €1,200 installments while keeping 100% of the keys to your company."
+gestor_entrada_socio_capitalista.choices.rechazar_y_mantener_cien_por_cien.label: "Decline the check and stay 100% sole owner"
+gestor_entrada_socio_capitalista.choices.rechazar_y_mantener_cien_por_cien.result_text: "You would rather grow on your own invoices than justify your holidays at a shareholder meeting. You close the pitch deck in pure calm."
+
+# 35. gestor_impuesto_sociedades_modelo_200
+gestor_impuesto_sociedades_modelo_200.title: "Corporate July: Modelo 200 & Capitalization Reserve"
+gestor_impuesto_sociedades_modelo_200.body: "July 25th arrives at 38°C with the annual Corporate Tax return (Modelo 200) on your desk. Fund a legal capitalization reserve, pay yourself a clean dividend, or cram aggressive deductions into year-end."
+gestor_impuesto_sociedades_modelo_200.choices.dotar_reserva_capitalizacion.label: "Fund the capitalization reserve and armor equity (€4,500)"
+gestor_impuesto_sociedades_modelo_200.choices.dotar_reserva_capitalizacion.result_text: "You lock in capital today to trim taxable profit with full statutory blessing. Banks and enterprise buyers now eye your balance sheet warmly."
+gestor_impuesto_sociedades_modelo_200.choices.repartir_dividendo_ordinario.label: "Pay an ordinary dividend eating 19% withholding (-€1,600)"
+gestor_impuesto_sociedades_modelo_200.choices.repartir_dividendo_ordinario.result_text: "You pay the Modelo 123 toll by the book and finally enjoy a full year's profits at home without a shadow of guilt."
+gestor_impuesto_sociedades_modelo_200.choices.forzar_gastos_deducibles_cierre.label: "Stuff mixed expenses at closing to free +€2,600 cash"
+gestor_impuesto_sociedades_modelo_200.choices.forzar_gastos_deducibles_cierre.result_text: "Your tax bill drops sharply and cash breathes in mid-summer—while corporate-tax algorithms quietly flag your ratio for future review."
+
+# 36. gestor_nomina_administrador_vs_dividendo
+gestor_nomina_administrador_vs_dividendo.title: "Bylaw Director Salary, Self-Invoicing, or Dividends?"
+gestor_nomina_administrador_vs_dividendo.body: "A fresh Supreme Court ruling rattles how owners pay themselves from their own S.L. If bylaws say 'unpaid director' while you pull cash casually, the Tax Agency can disallow the entire salary deduction."
+gestor_nomina_administrador_vs_dividendo.choices.fijar_nomina_administrador_en_estatutos.label: "Amend bylaws and formalize director payroll (€1,800)"
+gestor_nomina_administrador_vs_dividendo.choices.fijar_nomina_administrador_en_estatutos.result_text: "You pay notary, minutes, and registry fees to carve your pay into stone. Spending it hurts, yet it seals a classic audit loophole."
+gestor_nomina_administrador_vs_dividendo.choices.autofacturar_desde_fuera_como_socio.label: "Self-invoice your S.L. without touching bylaws (+€2,900 saved)"
+gestor_nomina_administrador_vs_dividendo.choices.autofacturar_desde_fuera_como_socio.result_text: "You skip notary bills and director withholdings short term, teeing up a textbook related-party audit two and a half years down the road."
+gestor_nomina_administrador_vs_dividendo.choices.blindar_retribucion_con_elena.label: "Approve a blended pay & dividend plan with Elena (€1,200)"
+gestor_nomina_administrador_vs_dividendo.choices.blindar_retribucion_con_elena.result_text: "With clean books, Elena calibrates arm's-length pay and drafts shareholder minutes built to survive any tax-agency challenge."
+
+# 37. gestor_paco_red_gris_veterana
+gestor_paco_red_gris_veterana.title: "Paco's Back-Room 'Private Club'"
+gestor_paco_red_gris_veterana.body: "Paco lowers the metal shutter at noon and slides over an unmarked folder: a neighborhood cross-expense circuit promising €3,200 clean cash this quarter without touching a single bank statement."
+gestor_paco_red_gris_veterana.choices.entrar_en_reparto_gris_de_paco.label: "Join Paco's off-radar grey circuit (+€3,200 cash)"
+gestor_paco_red_gris_veterana.choices.entrar_en_reparto_gris_de_paco.result_text: "Tax-free cash revives your balance instantly—while the four-year statute-of-limitations clock starts ticking every time you check the mail."
+gestor_paco_red_gris_veterana.choices.quedarte_solo_con_gastos_legales.label: "Pass on the back room and claim legal deductions only (+€450)"
+gestor_paco_red_gris_veterana.choices.quedarte_solo_con_gastos_legales.result_text: "Paco grumbles that you're 'way too squeamish', yet combing your old receipts turns up legitimate write-offs that give you clean breathing room."
+gestor_paco_red_gris_veterana.choices.cortar_con_paco_y_pasar_a_elena.label: "Walk out and retain Elena with an onboarding scrub (€350)"
+gestor_paco_red_gris_veterana.choices.cortar_con_paco_y_pasar_a_elena.result_text: "You leave the churro-shop scent behind for strict compliance: Elena reconciles balances, clears old warnings, and takes the tax wheel."

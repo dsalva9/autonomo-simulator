@@ -1,10 +1,22 @@
 import { Briefcase, Heart, ShieldCheck, Target, Users } from "lucide-react";
-import { type GameState, type RenderMode, resolvePartnerName } from "../../engine/index.ts";
+import {
+  type GameState,
+  type RenderMode,
+  computeBoutiqueSoloFactor,
+  computeEffectiveGestorFee,
+  computeEffectiveTeamMultiplier,
+  getBusinessTierConfig,
+  getTeamHeadcount,
+  isBoutiqueSeniorSolo,
+  resolvePartnerName,
+} from "../../engine/index.ts";
 import { compiledCatalog, resolveCharacterPortraitAsset } from "../../services/content/catalog.ts";
 import {
   formatEuros,
   humanizeFlag,
   normalizeLocale,
+  translateBusinessTier,
+  translateBusinessTierShort,
   translateCharacterName,
   translateEmployeeRoleLabel,
   translateFamilyStatus,
@@ -57,10 +69,32 @@ export function EntornoPanel({
   const employeeSatisfaction = state.employee
     ? Math.max(0, Math.min(100, Math.round(state.employee.satisfaction)))
     : 0;
-  // Live satisfaction-scaled effective billing multiplier matching src/engine/economy.ts
-  const effectiveEmployeeMultiplier = state.employee
-    ? 1 + (state.employee.billing_multiplier - 1) * (0.4 + 0.8 * (employeeSatisfaction / 100))
-    : 1;
+  const businessTier = state.business?.tier ?? "solo_autonomo";
+  const tierConfig = getBusinessTierConfig(state, compiledCatalog);
+  const headcount = getTeamHeadcount(state);
+  const boutiqueSolo = isBoutiqueSeniorSolo(state, compiledCatalog);
+  const boutiqueFactor = boutiqueSolo ? computeBoutiqueSoloFactor(state, compiledCatalog) : 1;
+  const effectiveEmployeeMultiplier = computeEffectiveTeamMultiplier(state, compiledCatalog);
+  const effectiveGestorFee = computeEffectiveGestorFee(state, compiledCatalog);
+  const tierShort = translateBusinessTierShort(businessTier, locale, {
+    isBoutiqueSeniorSolo: boutiqueSolo,
+  });
+  const taxRegimeLabel = tierConfig.corporate_tax_regime
+    ? isEn
+      ? "Corp. Tax"
+      : "Imp. Sociedades"
+    : "IRPF";
+  const structureBadgeLabel = `${tierShort} · ${taxRegimeLabel}`;
+  const structureBadgeTitle = `${translateBusinessTier(businessTier, locale)} · ${taxRegimeLabel}`;
+
+  const isPartnered = state.family.status === "dating" || state.family.status === "cohabiting";
+  const partnerClimate: "strain" | "support" | null = isPartnered
+    ? state.indicators.personal_life <= 38 || (state.family.neglect_months ?? 0) >= 3
+      ? "strain"
+      : state.indicators.personal_life >= 70
+        ? "support"
+        : null
+    : null;
 
   // Avoid redundant "Laura (Senior Specialist) · Senior Specialist" repetition when character name already embeds role
   const showEmployeeRoleSuffix =
@@ -124,13 +158,29 @@ export function EntornoPanel({
     });
   }
   if (
-    state.employee ||
+    businessTier !== "solo_autonomo" ||
+    headcount > 0 ||
+    boutiqueSolo ||
     state.flags?.estudio_calle_alquilado ||
     state.flags?.estudio_propio_activo
   ) {
+    const structureChipText =
+      headcount >= 2
+        ? isEn
+          ? `🏢 ${tierShort} · ${headcount} staff`
+          : `🏢 ${tierShort} · ${headcount} pers.`
+        : boutiqueSolo
+          ? isEn
+            ? "⭐ Boutique Solo"
+            : "⭐ Boutique Sénior"
+          : businessTier !== "solo_autonomo"
+            ? `🏢 ${tierShort}`
+            : isEn
+              ? "💻 Studio"
+              : "💻 Estudio";
     statusChips.push({
       key: "equipo",
-      label: isEn ? "💻 Studio" : "💻 Estudio",
+      label: structureChipText,
       tone: "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40",
     });
   }
@@ -159,18 +209,42 @@ export function EntornoPanel({
     >
       {!embeddedInFolder ? (
         <div className="dossier-header shrink-0">
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 min-w-0">
             <Users className="w-4 h-4 text-[#264e7a] shrink-0" aria-hidden="true" />
-            <h2 className="font-editorial font-bold text-base text-[#1f2421] leading-tight">
+            <h2 className="font-editorial font-bold text-[15px] text-[#1f2421] leading-tight whitespace-nowrap">
               {ui.entorno.heading}
             </h2>
           </div>
-          <span className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] shrink-0">
-            {ui.entorno.badge}
+          <span
+            data-testid="entorno-structure-badge"
+            title={structureBadgeTitle}
+            className={`stamp-badge text-[9.5px] px-1.5 py-0.5 rounded max-w-[58%] truncate shrink-0 ${
+              tierConfig.corporate_tax_regime
+                ? "bg-[#ebf2fa] text-[#1d436b] border border-[#264e7a]/35"
+                : "bg-[#efe4ce] text-[#373f3a]"
+            }`}
+          >
+            {structureBadgeLabel}
           </span>
         </div>
       ) : (
-        <h2 className="sr-only">{ui.entorno.heading}</h2>
+        <>
+          <h2 className="sr-only">{ui.entorno.heading}</h2>
+          <div className="px-3 py-1 border-b border-[#1f2421]/14 bg-[#f6efe0]/75 flex items-center justify-between gap-2 shrink-0">
+            <span className="stamp-badge text-[9.5px] text-[#4a524e]">{ui.entorno.badge}</span>
+            <span
+              data-testid="entorno-structure-badge"
+              title={structureBadgeTitle}
+              className={`stamp-badge text-[9.5px] px-1.5 py-0.5 rounded truncate ${
+                tierConfig.corporate_tax_regime
+                  ? "bg-[#ebf2fa] text-[#1d436b] border border-[#264e7a]/35"
+                  : "bg-[#efe4ce] text-[#373f3a]"
+              }`}
+            >
+              {structureBadgeLabel}
+            </span>
+          </div>
+        </>
       )}
 
       <div className="entorno-body flex-1 min-h-0 overflow-y-auto dossier-scroll flex flex-col divide-y md:max-lg:grid md:max-lg:grid-cols-3 md:max-lg:divide-y-0 md:max-lg:divide-x divide-[#1f2421]/14">
@@ -208,7 +282,7 @@ export function EntornoPanel({
               {gestorName ?? translateGestorTier(state.gestor.tier, locale)}
             </p>
             <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums leading-snug break-words">
-              {formatEuros(state.gestor.monthly_fee, locale)}
+              {formatEuros(effectiveGestorFee, locale)}
               {ui.entorno.perMonth} ·{" "}
               {ui.entorno.shieldPct(Math.round(state.gestor.inspection_shield * 100))}
             </p>
@@ -242,8 +316,28 @@ export function EntornoPanel({
             )}
           </div>
           <div className="min-w-0 flex-1 text-xs space-y-0.5">
-            <div className="stamp-badge text-[10px] text-[#9e221b] leading-none">
-              {ui.entorno.personalLifeHeader}
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="stamp-badge text-[10px] text-[#9e221b] leading-none">
+                {ui.entorno.personalLifeHeader}
+              </span>
+              {partnerClimate && (
+                <span
+                  data-testid="entorno-partner-climate"
+                  className={`font-bureau text-[9.5px] font-bold px-1.5 py-0.5 rounded border leading-none whitespace-nowrap shrink-0 ${
+                    partnerClimate === "strain"
+                      ? "bg-[#fdf0ef] text-[#9e221b] border-[#9e221b]/40"
+                      : "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40"
+                  }`}
+                >
+                  {partnerClimate === "strain"
+                    ? isEn
+                      ? "Strain at home"
+                      : "Tensión en casa"
+                    : isEn
+                      ? "Active support"
+                      : "Apoyo activo"}
+                </span>
+              )}
             </div>
             <p className="font-bold text-[#1f2421] leading-snug break-words">
               {translateFamilyStatus(state.family.status, locale)}
@@ -258,8 +352,8 @@ export function EntornoPanel({
           </div>
         </div>
 
-        {/* Row 3: Empleado (max 1) */}
-        <div className="px-3 py-2 flex items-center gap-2.5">
+        {/* Row 3: Equipo / Plantilla (0..12 staff + Boutique Sénior solo path) */}
+        <div data-testid="entorno-team-summary" className="px-3 py-2 flex items-center gap-2.5">
           <div className="w-10 shrink-0 flex items-center justify-center">
             {state.employee && employeePortrait ? (
               <div
@@ -285,10 +379,55 @@ export function EntornoPanel({
             )}
           </div>
           <div className="min-w-0 flex-1 text-xs space-y-0.5">
-            <div className="stamp-badge text-[10px] text-[#1f5c53] leading-none">
-              {ui.entorno.staffHeader}
+            <div className="flex items-center justify-between gap-1.5">
+              <span className="stamp-badge text-[10px] text-[#1f5c53] leading-none">
+                {ui.entorno.staffHeader} ({headcount}/{tierConfig.max_team_size})
+              </span>
+              {headcount === 0 && boutiqueSolo && (
+                <span
+                  data-testid="entorno-boutique-badge"
+                  className="font-bureau text-[9.5px] font-bold px-1.5 py-0.5 rounded border leading-none whitespace-nowrap shrink-0 bg-[#e8f5f1] text-[#174d45] border-[#1f5c53]/45"
+                >
+                  {isEn ? "Boutique Solo" : "Boutique Sénior"}
+                </span>
+              )}
             </div>
-            {state.employee ? (
+            {state.employee && headcount >= 2 ? (
+              <>
+                <p className="font-bold text-[#1f2421] leading-snug line-clamp-2 break-words">
+                  {isEn
+                    ? `${headcount} staff · Lead: ${employeeName ?? employeeRoleLabel}`
+                    : `${headcount} personas · Líder: ${employeeName ?? employeeRoleLabel}`}
+                </p>
+                <p className="font-bureau text-[11px] text-[#4a524e] tabular-nums leading-snug break-words">
+                  {formatEuros(state.employee.monthly_cost, locale)}
+                  {ui.entorno.perMonth} ·{" "}
+                  {ui.entorno.billingMultiplier(effectiveEmployeeMultiplier)}
+                </p>
+                <div
+                  data-testid="entorno-employee-satisfaction"
+                  className="pt-0.5 flex items-center gap-2"
+                >
+                  <span className="text-[10.5px] font-semibold text-[#4a524e] shrink-0">
+                    {isEn ? "Morale" : "Clima"}
+                  </span>
+                  <div
+                    aria-hidden="true"
+                    className="flex-1 h-1.5 rounded-full bg-[#e5dac5] overflow-hidden border border-[#1f2421]/20"
+                  >
+                    <div
+                      className={`h-full transition-all duration-200 ${empSatBarColor}`}
+                      style={{ width: `${employeeSatisfaction}%` }}
+                    />
+                  </div>
+                  <span
+                    className={`font-bureau text-[10.5px] font-bold tabular-nums shrink-0 ${empSatTextColor}`}
+                  >
+                    {employeeSatisfaction}%
+                  </span>
+                </div>
+              </>
+            ) : state.employee ? (
               <>
                 <p className="font-bold text-[#1f2421] leading-snug line-clamp-2 break-words">
                   {employeeName ?? employeeRoleLabel}
@@ -328,7 +467,9 @@ export function EntornoPanel({
                   {ui.entorno.noEmployeesTitle}
                 </p>
                 <p className="text-[11px] text-[#4a524e] leading-snug break-words">
-                  {ui.entorno.noEmployeesSub}
+                  {boutiqueSolo
+                    ? `${isEn ? "Solo specialist" : "En solitario"} · ${ui.entorno.billingMultiplier(boutiqueFactor)}`
+                    : ui.entorno.noEmployeesSub}
                 </p>
               </>
             )}

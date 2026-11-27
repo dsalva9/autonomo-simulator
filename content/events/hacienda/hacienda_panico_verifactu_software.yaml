@@ -10,6 +10,9 @@ tags:
 character_id: null
 requirements:
   min_month: 3
+  forbidden_flags:
+    - verifactu_implantado
+  max_month: 42
 weight: 12
 cooldown_months: 16
 max_occurrences: 2
@@ -20,10 +23,15 @@ choices:
     label: Seguir renombrando «Factura_Final_v3.pdf» hasta que obligue el BOE
     result_text: Te ahorras la cuota mensual de momento, rezando para no repetir número de serie cuando facturas con sueño.
     effects:
-      cash_delta: 80
-      stress: 4
+      cash_delta: 950
+      stress: 3
       moral: -1
-      fiscal_risk: 12
+      fiscal_risk: 15
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 24
+          probability: 0.3
+          priority: high
   - id: contratar_software_homologado
     label: Suscribirte a un programa de facturación serio y automatizar libros
     result_text: Gastas un poco en licencia deducible, pero tus facturas numeradas con QR salen impecables en treinta segundos.
@@ -33,6 +41,8 @@ choices:
       moral: 4
       reputation: 2
       fiscal_risk: -8
+      set_flags:
+        - verifactu_implantado
   - id: usar_portal_incluido_gestoria
     label: Activar el facturador homologado que incluye tu propia gestoría
     requirements:
@@ -45,3 +55,5 @@ choices:
       stress: -5
       moral: 5
       fiscal_risk: -8
+      set_flags:
+        - verifactu_implantado

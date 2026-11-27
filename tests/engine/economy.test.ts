@@ -232,6 +232,8 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
       employee: {
         character_id: "empleada_senior_laura",
         role_label: laura.employee_params!.role_label,
+        headcount: 1,
+        lead_monthly_cost: laura.employee_params!.monthly_cost,
         monthly_cost: laura.employee_params!.monthly_cost,
         billing_multiplier: laura.employee_params!.billing_multiplier,
         satisfaction: 75,
@@ -337,29 +339,37 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
     expect(burnoutStaffWithFlag.state.employee?.satisfaction).toBe(69);
   });
 
-  it("enforces Phase 3.6 balance.yaml starting cash window, Turn-1 personal_life buffer, tax-deductible parameters, and negative after-tax passive baseline", () => {
+  it("enforces v2 balance.yaml starting cash window, progressive RETA/IRPF baseline, tier configs, and negative after-tax passive baseline", () => {
     const liveBalance = BalanceConfigSchema.parse(
       parseYaml(readFileSync(join(process.cwd(), "content/config/balance.yaml"), "utf8")),
     );
-    expect(liveBalance.annual_living_cost_growth).toBe(64);
+    expect(liveBalance.base_living_cost).toBe(1440);
+    expect(liveBalance.victory_money).toBe(250000);
+    expect(liveBalance.corporate_tax_rate).toBe(0.24);
     expect(liveBalance.high_stat_decay_threshold).toBe(60);
     expect(liveBalance.event_novelty_decay_k).toBe(0.85);
     expect(liveBalance.initial_indicators.personal_life).toBe(68);
     expect(liveBalance.personal_life_recovery_threshold).toBe(50);
-    expect(liveBalance.personal_life_monthly_stress_relief).toBe(1);
+    expect(liveBalance.personal_life_monthly_stress_relief).toBe(4);
     expect(liveBalance.default_partner_support_modifier).toBe(1);
     expect(liveBalance.gestor_tiers.self).toMatchObject({
-      quarterly_error_prob: 0.25,
-      quarterly_error_surcharge: 240,
-      quarterly_error_stress: 7,
+      quarterly_error_prob: 0.26,
+      quarterly_error_surcharge: 260,
+      quarterly_error_stress: 8,
     });
-    expect(liveBalance.gestor_tiers.cheap.monthly_fee).toBe(60);
+    expect(liveBalance.gestor_tiers.cheap).toMatchObject({
+      monthly_fee: 85,
+      inspection_shield: 0.22,
+    });
     expect(liveBalance.gestor_tiers.premium).toMatchObject({
-      monthly_fee: 170,
-      inspection_shield: 0.72,
+      monthly_fee: 260,
+      inspection_shield: 0.5,
     });
     expect(liveBalance.inspection_curve.min_fiscal_risk).toBe(15);
-    expect(liveBalance.inspection_curve.quarterly_natural_risk_decay).toBe(3);
+    expect(liveBalance.inspection_curve.quarterly_natural_risk_decay).toBe(4);
+    expect(liveBalance.business_tiers?.agencia_consultora.max_team_size).toBe(12);
+    expect(liveBalance.reta_brackets).toHaveLength(5);
+    expect(liveBalance.irpf_brackets).toHaveLength(4);
 
     const fixtureCatalog = createFixtureCatalog();
     const liveCatalog = {
@@ -368,19 +378,23 @@ describe("Economy, invoicing, quarterly taxes & insolvency rules", () => {
     };
 
     const started = startNewRun(liveCatalog, { seed: "BALANCE-WINDOW-CHECK" });
+    expect(started.state.schema_version).toBe(2);
+    expect(started.state.business.tier).toBe("solo_autonomo");
     expect(started.state.indicators.money).toBeGreaterThanOrEqual(2900);
     expect(started.state.indicators.money).toBeLessThanOrEqual(3500);
     expect(started.state.indicators.personal_life).toBe(67);
     expect(started.state.indicators.personal_life).toBeGreaterThanOrEqual(
       liveBalance.personal_life_recovery_threshold,
     );
-    expect(started.resolution.monthStart?.passive_stress_delta).toBe(-1);
+    expect(started.resolution.monthStart?.passive_stress_delta).toBe(
+      -liveBalance.personal_life_monthly_stress_relief,
+    );
 
-    // Passive Month 1 cashflow after net tax reserve (even with deductible RETA shield) must be negative without client gigs
+    // Passive Month 1 cashflow after progressive RETA (294 €) and marginal IRPF must be negative without client gigs
     const m1Summary = started.resolution.monthStart!;
-    expect(m1Summary.deductible_expenses).toBe(liveBalance.autonomo_quota);
-    expect(m1Summary.tax_shield_on_expenses).toBe(
-      Math.round(liveBalance.autonomo_quota * liveBalance.deductible_tax_fraction),
+    expect(m1Summary.deductible_expenses).toBe(294);
+    expect((m1Summary.tax_accrued_on_billing ?? 0) - (m1Summary.tax_shield_on_expenses ?? 0)).toBe(
+      m1Summary.net_tax_accrued,
     );
     const passiveAfterNetTax = m1Summary.net_recurring_cash - (m1Summary.net_tax_accrued ?? 0);
     expect(passiveAfterNetTax).toBeLessThan(0);

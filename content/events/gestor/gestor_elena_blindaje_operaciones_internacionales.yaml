@@ -24,28 +24,33 @@ choices:
     requirements:
       stats:
         money:
-          min: 280
-    result_text: Elena apostilla los certificados a tiempo, el cliente extranjero libera el cien por cien y evitas doble peaje.
+          min: 450
+        fiscal_risk:
+          max: 25
+    result_text: Elena apostilla los certificados con tus libros limpios, el cliente paga íntegro y blindas tu reputación internacional tras asumir el trámite.
     effects:
-      deductible_expense: 165
-      cash_delta: 580
-      stress: -6
-      moral: 6
+      deductible_expense: 340
+      stress: 2
+      moral: 4
       reputation: 4
-      fiscal_risk: -9
+      fiscal_risk: -6
+      billed_income: 550
   - id: deducir_retencion_extranjera_en_renta
     label: Dejar que retengan allí y compensar el tramo en tu Renta
     result_text: Adelantas liquidez unos meses, pero Elena guarda los justificantes traducidos para recuperar buena parte al cierre.
     effects:
-      cash_delta: 290
-      stress: -3
-      moral: 3
-      fiscal_risk: -5
+      stress: 3
+      moral: 1
+      fiscal_risk: -2
+      deferred_invoice:
+        amount: 420
+        delay_months: 4
+        default_prob: 0.15
   - id: subir_tarifa_bruta_y_facturar_rapido
     label: Inflar un poco el presupuesto para compensar y cobrar ya
     result_text: El cliente acepta el recargo por urgencia y cobras rápido, aunque asumes tú el desgaste de la negociación.
     effects:
-      billed_income: 440
-      stress: 4
+      billed_income: 350
+      stress: 6
       moral: 2
-      fiscal_risk: -2
+      reputation: -2

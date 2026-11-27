@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_puente_mayo_escapada
 category: familia
-title: "Puente de mayo y media España en carretera"
-body: "Llega mayo con festivos encadenados, maletas en el rellano y amigos rumbo a la costa. Justo al cerrar el jueves, un cliente ansioso pregunta si mañana viernes estarás «localizable un minutito por si acaso»."
+title: Puente de mayo y media España en carretera
+body: Llega mayo con festivos encadenados, maletas en el rellano y amigos rumbo a la costa. Justo al cerrar el jueves, un cliente ansioso pregunta si mañana viernes estarás «localizable un minutito por si acaso».
 tags:
   - puente
   - mayo
@@ -20,8 +20,8 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: quedarse_de_guardia_en_puente
-    label: "Quedarte de guardia el viernes para facturar el encargo urgente"
-    result_text: "La ciudad vacía cunde de maravilla para sacar facturas limpias, aunque comer frente al monitor un festivo soleado escuece un poco."
+    label: Quedarte de guardia el viernes para facturar el encargo urgente
+    result_text: La ciudad vacía cunde de maravilla para sacar facturas limpias, aunque comer frente al monitor un festivo soleado escuece un poco.
     effects:
       billed_income: 590
       stress: 6
@@ -29,16 +29,20 @@ choices:
       personal_life: -7
       reputation: 2
   - id: pactar_entrega_lunes_y_escapar
-    label: "Dejar cerrado lo esencial hoy y unirte a la escapada del puente (175 €)"
-    result_text: "Marcas límites educados antes de salir a la autovía. Respiras mar y brasas tres días seguidos sin que el mundo corporativo implosione."
+    label: Dejar cerrado lo esencial hoy y unirte a la escapada del puente (175 €)
+    result_text: Marcas límites educados antes de salir a la autovía. Respiras mar y brasas tres días seguidos sin que el mundo corporativo implosione.
     effects:
       cash_delta: -175
-      stress: -13
-      moral: 9
-      personal_life: 13
+      stress: -16
+      moral: 11
+      personal_life: 15
+    requirements:
+      stats:
+        personal_life:
+          min: 62
   - id: descansar_en_ciudad_vacia
-    label: "Apagar alertas y disfrutar tu ciudad desierta sin gastar en hoteles (45 €)"
-    result_text: "Paseas por calles sin tráfico, lees al sol en el parque y recargas pilas sin comerte tres horas de atasco a la vuelta."
+    label: Apagar alertas y disfrutar tu ciudad desierta sin gastar en hoteles (45 €)
+    result_text: Paseas por calles sin tráfico, lees al sol en el parque y recargas pilas sin comerte tres horas de atasco a la vuelta.
     effects:
       cash_delta: -45
       stress: -9

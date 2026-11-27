@@ -1,8 +1,8 @@
 schema_version: 1
 id: gestor_fallo_app_fiscal_lowcost
 category: gestor
-title: "Tu app fiscal «low-cost» multiplica por cien"
-body: "Esa aplicación en la nube de nueve euros al mes que prometía llevar tus impuestos sola ha leído un billete de tren de 18 € como 1.800 €. Ha pregrabado un borrador delirante y su soporte es un bot que manda iconos de fiesta."
+title: Tu app fiscal «low-cost» multiplica por cien
+body: Esa aplicación en la nube de nueve euros al mes que prometía llevar tus impuestos sola ha leído un billete de tren de 18 € como 1.800 €. Ha pregrabado un borrador delirante y su soporte es un bot que manda iconos de fiesta.
 tags:
   - autogestion
   - software_fiscal
@@ -11,18 +11,21 @@ requirements:
   min_month: 4
   gestor_tiers:
     - self
+  forbidden_flags:
+    - app_fiscal_lowcost_cerrada
+  max_month: 36
 weight: 13
 cooldown_months: 9
-max_occurrences: 3
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: exigir_escalado_y_sustitutiva
-    label: "Pagar soporte humano urgente para anular y corregir el envío (85 €)"
+    label: Pagar soporte humano urgente para anular y corregir el envío (85 €)
     requirements:
       stats:
         money:
           min: 150
-    result_text: "Logras que un contable de carne y hueso pise el borrador erróneo antes del cargo bancario y abres reclamación formal contra la plataforma."
+    result_text: Logras que un contable de carne y hueso pise el borrador erróneo antes del cargo bancario y abres reclamación formal contra la plataforma.
     effects:
       deductible_expense: 85
       stress: 3
@@ -33,8 +36,8 @@ choices:
           delay_months: 1
           probability: 1
   - id: exportar_csv_y_rehacer_a_mano
-    label: "Descargar tus datos en bruto y rehacer toda la liquidación a mano"
-    result_text: "Cenas sándwich frente al teclado limpiando duplicados línea por línea, pero corriges el desastre sin soltar un céntimo extra."
+    label: Descargar tus datos en bruto y rehacer toda la liquidación a mano
+    result_text: Cenas sándwich frente al teclado limpiando duplicados línea por línea, pero corriges el desastre sin soltar un céntimo extra.
     effects:
       stress: 9
       moral: -2
@@ -45,8 +48,8 @@ choices:
           delay_months: 1
           probability: 1
   - id: confiar_en_parche_automatico
-    label: "Aceptar el recálculo automático experimental que sugiere el bot"
-    result_text: "Te ahorras la velada en vela confiando en su parche nocturno, aunque en el borrador quedan tres decimales huérfanos muy sospechosos."
+    label: Aceptar el recálculo automático experimental que sugiere el bot
+    result_text: Te ahorras la velada en vela confiando en su parche nocturno, aunque en el borrador quedan tres decimales huérfanos muy sospechosos.
     effects:
       stress: -2
       moral: -2
@@ -55,3 +58,7 @@ choices:
         - event_id: gestor_compensacion_app_fiscal
           delay_months: 1
           probability: 1
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 16
+          probability: 0.25
+          priority: high

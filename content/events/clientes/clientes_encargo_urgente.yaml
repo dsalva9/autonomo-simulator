@@ -43,3 +43,19 @@ choices:
       moral: 4
       personal_life: 4
       reputation: -1
+  - id: cobrar_urgencia_premium_sin_estres
+    label: Aplicar tarifa quirúrgica sénior y despacharlo en horas (1.450 €)
+    requirements:
+      stats:
+        reputation:
+          min: 55
+        stress:
+          max: 40
+    result_text: Con la mente despejada y caché de sobra, cobras 1.450 € por delante y resuelves en una tarde lo que a otro le llevaría tres noches.
+    effects:
+      billed_income: 1450
+      stress: 3
+      moral: 5
+      reputation: 4
+requirements:
+  max_month: 48

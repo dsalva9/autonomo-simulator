@@ -13,8 +13,8 @@ character_expression: angry
 requirements:
   min_month: 66
 weight: 9
-cooldown_months: 15
-max_occurrences: null
+cooldown_months: 18
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: imponer_clausula_desconexion_digital

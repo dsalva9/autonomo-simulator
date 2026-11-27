@@ -20,10 +20,14 @@ choices:
     label: Vender la implantación y licencia de uso a precio de consultoría alta
     result_text: Si quieren comprar la caña de pescar, la pagan a precio de yate. Ingresas una factura redonda por dos tardes de taller.
     effects:
-      billed_income: 1900
+      billed_income: 2800
       stress: 5
       moral: 7
-      reputation: 4
+      reputation: 5
+    requirements:
+      stats:
+        reputation:
+          min: 55
   - id: vender_mantenimiento_mensual_sistema
     label: Implantarles un flujo básico atado a una iguala de supervisión
     result_text: Ellos automatizan lo repetitivo y tú te quedas cuatro meses cobrando por revisar que no rompan nada.

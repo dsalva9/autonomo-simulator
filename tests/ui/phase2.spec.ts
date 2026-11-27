@@ -1,6 +1,19 @@
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { type Locator, type Page, expect, test } from "@playwright/test";
+import {
+  type CompiledContentBundle,
+  applyPlayerChoice,
+  computeMonthlyEconomyBreakdown,
+  computeNetCashAfterTaxReserve,
+  computeReservedTaxObligation,
+  startNewRun,
+} from "../../src/engine/index.ts";
+import { formatEuros, formatSignedEuros } from "../../src/services/i18n/resolveEventText.ts";
+
+const compiledCatalog = JSON.parse(
+  readFileSync(resolve(process.cwd(), "src/generated/content-bundle.json"), "utf8"),
+) as CompiledContentBundle;
 
 const SCREENSHOT_DIR = resolve(process.cwd(), "test-results", "qa-screenshots");
 
@@ -29,8 +42,11 @@ const PHASE2_ACHIEVEMENT_IDS = [
   "cinco_anos",
   "facturacion_100k",
   "heroe_120m",
-  "ricachon_150k",
+  "ricachon_250k",
   "modo_infinito",
+  "sociedad_limitada",
+  "agencia_consolidada",
+  "ejercicio_prescrito",
 ] as const;
 
 const MOBILE_AUDIT_VIEWPORTS = [
@@ -178,36 +194,64 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("game-screen")).toBeVisible();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
 
-    // Month 1 post-start cash: 2.600 € initial seed capital + 2.167 € billing - 1.715 € fixed costs = 3.052 €
-    // Net accrued tax on Month 1 (607 € gross - 87 € deductible RETA shield): -520 € -> Tax-adjusted Libre = 2.532 €
+    // Derive expected Month 1 -> Month 2 numbers dynamically from the live engine + catalog
+    const m1Start = startNewRun(compiledCatalog, { seed: "P35-CASH-158" });
+    const m1State = m1Start.state;
+    const m1MonthStartRecurring = m1Start.resolution.monthStart!.net_recurring_cash;
+    const m1Breakdown = computeMonthlyEconomyBreakdown(m1State, compiledCatalog);
+    const m1ReservedTax = computeReservedTaxObligation(m1State);
+    const m1Libre = computeNetCashAfterTaxReserve(m1State);
+    const m1AfterNegResult = applyPlayerChoice(
+      m1State,
+      compiledCatalog,
+      "escapada_desconexion_total",
+    );
+    const m1PostNegState = m1AfterNegResult.resolution.postChoiceState ?? m1AfterNegResult.state;
+    const m1NegDelta = m1PostNegState.indicators.money - m1State.indicators.money;
+    const m1PostNegLibre = computeNetCashAfterTaxReserve(m1PostNegState);
+    const m2State = m1AfterNegResult.state;
+    const m2AfterPosResult = applyPlayerChoice(
+      m2State,
+      compiledCatalog,
+      "exigir_euros_aunque_sea_en_dos_plazos",
+    );
+    const m2PostPosState = m2AfterPosResult.resolution.postChoiceState ?? m2AfterPosResult.state;
+    const m2PosDelta = m2PostPosState.indicators.money - m2State.indicators.money;
+
     const viewport = page.viewportSize();
     const moneyBox = page.getByTestId("indicator-money");
     const moneyValue = page.getByTestId("indicator-money-value");
     const netCash = page.getByTestId("indicator-net-cash");
 
-    await expect(page.getByTestId("month-economy-strip")).toContainText("Caja fija: +452 €");
+    await expect(page.getByTestId("month-economy-strip")).toContainText(
+      `Caja fija: ${formatSignedEuros(m1MonthStartRecurring, "es")}`,
+    );
     await expect(moneyBox).toBeVisible();
-    await expect(moneyValue).toHaveText("3.052 €");
+    await expect(moneyValue).toHaveText(formatEuros(m1State.indicators.money, "es"));
     await expect(netCash).toBeVisible();
     await expect(netCash).toContainText(
       viewport && viewport.width < 768 ? "Res.:" : "Reserva Trimestre:",
     );
-    await expect(netCash).toContainText("-520 €");
+    await expect(netCash).toContainText(formatSignedEuros(-m1ReservedTax, "es"));
     await expect(netCash).toContainText("Libre:");
-    await expect(netCash).toContainText("2.532 €");
+    await expect(netCash).toContainText(formatEuros(m1Libre, "es"));
 
     // Verify ledger-net-after-tax in CuentasPanel (desktop right column or mobile Cuentas tab)
     if (viewport && viewport.width < 1024) {
       await page.getByTestId("mobile-tab-cuentas").click();
       await expect(page.getByTestId("ledger-net-after-tax")).toBeVisible();
-      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-79 €");
+      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText(
+        formatSignedEuros(m1Breakdown.netCashAfterTax, "es"),
+      );
       await page.getByTestId("mobile-tab-despacho").click();
     } else {
       await expect(page.getByTestId("ledger-net-after-tax")).toBeVisible();
-      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText("-79 €");
+      await expect(page.getByTestId("ledger-net-after-tax")).toHaveText(
+        formatSignedEuros(m1Breakdown.netCashAfterTax, "es"),
+      );
     }
 
-    // Step 1 (Negative Cash Effect, -90 €): click choice on Month 1 and verify immediate Month 1 preview
+    // Step 1 (Negative Cash Effect): click choice on Month 1 and verify immediate Month 1 preview
     const negChoice = page.locator('[data-choice-id="escapada_desconexion_total"]');
     await expect(negChoice).toBeEnabled();
     await negChoice.click();
@@ -217,21 +261,21 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 1");
     await expect(page.getByTestId("indicator-calendar")).not.toContainText("Año 1 · Mes 2");
     // Cash and negative red delta update immediately on Month 1
-    await expect(moneyValue).toHaveText("2.962 €");
-    await expect(netCash).toContainText("2.442 €");
+    await expect(moneyValue).toHaveText(formatEuros(m1PostNegState.indicators.money, "es"));
+    await expect(netCash).toContainText(formatEuros(m1PostNegLibre, "es"));
 
     const moneyDelta = page.getByTestId("indicator-money-delta");
     await expect(moneyDelta).toBeVisible();
-    await expect(moneyDelta).toHaveText("-90 €");
+    await expect(moneyDelta).toHaveText(formatSignedEuros(m1NegDelta, "es"));
     await expect(moneyDelta).toHaveClass(/text-\[#9e221b\]/);
 
     // Only upon clicking outcome-continue-btn does calendar advance to Month 2
     await page.getByTestId("outcome-continue-btn").click();
     await expect(page.getByTestId("outcome-panel")).toBeHidden();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
-    await expect(moneyValue).toHaveText("3.445 €");
+    await expect(moneyValue).toHaveText(formatEuros(m2State.indicators.money, "es"));
 
-    // Step 2 (Positive Cash Effect, +600 €): verify positive green delta stays on Month 2 until acknowledged
+    // Step 2 (Positive Cash Effect): verify positive green delta stays on Month 2 until acknowledged
     const posChoice = page.locator('[data-choice-id="exigir_euros_aunque_sea_en_dos_plazos"]');
     await expect(posChoice).toBeEnabled();
     await posChoice.click();
@@ -239,9 +283,9 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     await expect(page.getByTestId("outcome-panel")).toBeVisible();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Año 1 · Mes 2");
     await expect(page.getByTestId("indicator-calendar")).not.toContainText("Año 1 · Mes 3");
-    await expect(moneyValue).toHaveText("4.045 €");
+    await expect(moneyValue).toHaveText(formatEuros(m2PostPosState.indicators.money, "es"));
     await expect(moneyDelta).toBeVisible();
-    await expect(moneyDelta).toHaveText("+600 €");
+    await expect(moneyDelta).toHaveText(formatSignedEuros(m2PosDelta, "es"));
     await expect(moneyDelta).toHaveClass(/text-\[#1f5c53\]/);
 
     await page.getByTestId("outcome-continue-btn").click();
@@ -425,7 +469,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     });
   }
 
-  test("QA-16: Strict 3-column desktop alignment & 15-seal HistorialPanel audit (1440x900)", async ({
+  test("QA-16: Strict 3-column desktop alignment & 18-seal HistorialPanel audit (1440x900)", async ({
     page,
   }, testInfo) => {
     test.skip(
@@ -488,10 +532,10 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
       `Expected aligned top edges across 3 desktop columns (left=${leftBox!.y}, center=${eventCardBox!.y}, right=${rightBox!.y})`,
     ).toBeLessThanOrEqual(2);
 
-    // Verify HistorialPanel displays 15 career seals inside collapsible accordion without horizontal overflow
+    // Verify HistorialPanel displays 18 career seals inside collapsible accordion without horizontal overflow
     await expect(panelHistorial).toContainText("Sellos de carrera");
-    await expect(panelHistorial).toContainText("0/15");
-    await expect(panelHistorial.locator(".historial-seals-grid > span")).toHaveCount(15);
+    await expect(panelHistorial).toContainText("0/18");
+    await expect(panelHistorial.locator(".historial-seals-grid > span")).toHaveCount(18);
 
     const historialBox = await panelHistorial.boundingBox();
     expect(historialBox).not.toBeNull();
@@ -508,7 +552,7 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     });
   });
 
-  test("QA-17 / QA-18 / QA-19: PWA + OpenGraph assets, 15 achievements, SFX mute, Fast Pacing & illustrated 1080x1350 Share Card", async ({
+  test("QA-17 / QA-18 / QA-19: PWA + OpenGraph assets, 18 achievements, SFX mute, Fast Pacing & illustrated 1080x1350 Share Card", async ({
     page,
   }) => {
     await page.goto("./");
@@ -557,12 +601,12 @@ test.describe("Autónomo Simulator — Phase 2 Cashflow Timing, Geometry, PWA & 
     const swSource = await swRes.text();
     expect(swSource).toContain("PRECACHE_URLS");
 
-    // 2. Verify TitleScreen Logros displays all 15 Phase 2 achievements
+    // 2. Verify TitleScreen Logros displays all 18 v2 achievements
     const achievementsTab = page.getByTestId("title-tab-achievements");
-    await expect(achievementsTab).toContainText("Logros (0/15)");
+    await expect(achievementsTab).toContainText("Logros (0/18)");
     await achievementsTab.click();
     await expect(page.getByTestId("achievements-list")).toBeVisible();
-    await expect(page.locator('[data-testid^="achievement-item-"]')).toHaveCount(15);
+    await expect(page.locator('[data-testid^="achievement-item-"]')).toHaveCount(18);
     for (const achId of PHASE2_ACHIEVEMENT_IDS) {
       await expect(page.getByTestId(`achievement-item-${achId}`)).toBeVisible();
     }

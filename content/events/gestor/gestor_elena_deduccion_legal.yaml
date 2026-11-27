@@ -15,26 +15,38 @@ requirements:
   gestor_tiers:
     - premium
 weight: 13
-cooldown_months: 8
-max_occurrences: 4
+cooldown_months: 16
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: pedir_meter_gastos_personales
     label: Intentar colar también plataformas de series y compras del súper
-    result_text: Elena se ajusta las gafas en silencio glacial, cuela solo la parte gris bajo tu responsabilidad y rascas más caja asumiendo riesgo.
+    result_text: Elena se ajusta las gafas en silencio glacial, anota un aviso de cumplimiento y cuelas 1.450 € en partidas grises bajo tu exclusiva responsabilidad.
     effects:
-      cash_delta: 820
-      stress: 4
-      moral: -3
-      fiscal_risk: 15
+      cash_delta: 1450
+      stress: 6
+      moral: -2
+      fiscal_risk: 22
+      set_flags:
+        - elena_aviso_cumplimiento
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 18
+          probability: 0.35
+          priority: high
   - id: aplicar_rectificacion_prudente
     label: Aplicar únicamente las partidas blindadas con factura impecable
     result_text: Recuperas liquidez neta gracias al ajuste de retenciones y deducciones sin sumar ni un milímetro de tensión fiscal. Por esto pagas lo que pagas.
     effects:
-      cash_delta: 540
-      stress: -8
-      moral: 6
-      fiscal_risk: -10
+      cash_delta: 180
+      stress: -3
+      moral: 3
+      fiscal_risk: -6
+      deductible_expense: 140
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 25
   - id: adelantar_renovacion_herramientas
     label: Seguir su consejo y adelantar inversión profesional deducible (720 €)
     requirements:

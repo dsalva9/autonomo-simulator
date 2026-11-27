@@ -4,6 +4,8 @@ import {
   type GameState,
   type QuarterlySettlementMode,
   canDeferQuarterlyTax,
+  getBusinessTierConfig,
+  getEffectiveHardDebtFloor,
 } from "../../engine/index.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
 import { formatEuros } from "../../services/i18n/resolveEventText.ts";
@@ -27,9 +29,14 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
   const { balance } = compiledCatalog;
   const report = state.quarterly_report;
   const canDefer = canDeferQuarterlyTax(state);
+  const isCorporateRegime = getBusinessTierConfig(state, compiledCatalog).corporate_tax_regime;
+  const effectiveHardDebtFloor = getEffectiveHardDebtFloor(state, compiledCatalog);
 
   const accruedDue = report?.accrued_tax_due ?? state.finances.accrued_tax_liability;
   const deferredDue = report?.deferred_tax_due ?? 0;
+  const slSelfPenalty = report?.sl_self_penalty ?? 0;
+  const elenaComplianceEvent = report?.elena_compliance_event ?? null;
+  const historicalAuditTriggered = Boolean(report?.historical_audit_triggered);
   const totalPayNow = accruedDue + deferredDue;
   const cashAfterFullPay = state.indicators.money - totalPayNow;
   const deferralSurcharge = Math.round(accruedDue * balance.deferral_surcharge_pct);
@@ -74,8 +81,11 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
               aria-hidden="true"
             />
             <div className="min-w-0">
-              <p className="stamp-badge text-[10px] sm:text-xs text-[#fce592] leading-tight break-words">
-                {q.formBadge}
+              <p
+                data-testid="trimestre-form-badge"
+                className="stamp-badge text-[10px] sm:text-xs text-[#fce592] leading-tight break-words"
+              >
+                {isCorporateRegime ? q.corporateFormBadge : q.formBadge}
               </p>
               <h2
                 id="trimestre-modal-title"
@@ -112,6 +122,18 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
                 <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
                   +{formatEuros(report.gestor_error_surcharge, locale)}
                   {gestorErrorStress > 0 ? ` · +${gestorErrorStress} ${q.stressWord}` : ""}
+                </span>
+              </div>
+            )}
+
+            {slSelfPenalty > 0 && (
+              <div
+                data-testid="trimestre-sl-self-penalty"
+                className="flex items-center justify-between gap-2 text-[#b42b24] font-semibold"
+              >
+                <span>{q.slSelfPenalty}</span>
+                <span className="font-bureau tabular-nums whitespace-nowrap shrink-0">
+                  +{formatEuros(slSelfPenalty, locale)}
                 </span>
               </div>
             )}
@@ -162,7 +184,31 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
             </div>
           </div>
 
-          {/* Inspection Trigger Notice */}
+          {/* Elena Premium Advisor Compliance Warning / Termination */}
+          {elenaComplianceEvent && (
+            <div
+              data-testid="trimestre-elena-compliance-alert"
+              className={`rounded-lg border p-2.5 flex items-start gap-2 text-xs ${
+                elenaComplianceEvent === "dropped"
+                  ? "border-[#b42b24] bg-[#fdf0ef] text-[#9e221b]"
+                  : "border-[#8f510d] bg-[#fcf4df] text-[#7a4308]"
+              }`}
+            >
+              <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+              <div>
+                <p className="font-bold uppercase font-bureau">
+                  {elenaComplianceEvent === "dropped"
+                    ? q.elenaDroppedHeading
+                    : q.elenaWarningHeading}
+                </p>
+                <p className="mt-0.5 text-[#373f3a]">
+                  {elenaComplianceEvent === "dropped" ? q.elenaDroppedBody : q.elenaWarningBody}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Immediate Inspection Trigger Notice */}
           {report?.inspection_triggered && (
             <div className="rounded-lg border border-[#b42b24] bg-[#fdf0ef] p-2.5 flex items-start gap-2 text-xs text-[#b42b24]">
               <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
@@ -172,6 +218,24 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
                   {report.inspection_scheduled_event_id
                     ? q.auditScheduledBody
                     : q.auditImmediateBody}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* 4-Year Prescripción Fiscal Historical Audit Notice */}
+          {historicalAuditTriggered && (
+            <div
+              data-testid="trimestre-historical-audit-alert"
+              className="rounded-lg border border-[#b42b24] bg-[#fdf0ef] p-2.5 flex items-start gap-2 text-xs text-[#b42b24]"
+            >
+              <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+              <div>
+                <p className="font-bold uppercase font-bureau">{q.historicalAuditHeading}</p>
+                <p className="mt-0.5 text-[#373f3a]">
+                  {report?.inspection_scheduled_event_id
+                    ? q.historicalAuditScheduledBody
+                    : q.historicalAuditImmediateBody}
                 </p>
               </div>
             </div>
@@ -187,7 +251,7 @@ export function QuarterlyTaxModal({ state, locale: localeProp, onSettle }: Quart
                   {formatEuros(cashAfterFullPay, locale)}
                 </strong>{" "}
                 {q.overdraftLabel}{" "}
-                {cashAfterFullPay < balance.hard_debt_floor
+                {cashAfterFullPay < effectiveHardDebtFloor
                   ? q.overdraftImmediateBankruptcy
                   : q.overdraftThreeMonthRule}
               </span>

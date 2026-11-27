@@ -25,7 +25,7 @@ import {
   translateModifierLabel,
 } from "../../src/services/i18n/resolveEventText.ts";
 
-describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML content catalog contracts", () => {
+describe("v2 repository assets, manifest, English i18n & 362-event YAML content catalog contracts", () => {
   it("validates assets/manifest.json with 66 entries (57 WebP + 9 SVG, all 66 ready)", () => {
     const result = validateAssets(process.cwd());
     expect(result.errors).toEqual([]);
@@ -63,7 +63,7 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
     expect(byCategory.ui).toHaveLength(9);
   });
 
-  it("validates all 8 multi-expression characters and 300 Phase 3.5 events with exact category distribution", () => {
+  it("validates all 8 multi-expression characters and 362 v2 events with exact category distribution", () => {
     const result = loadAndValidateContent(process.cwd());
     expect(result.errors).toEqual([]);
     expect(result.ok).toBe(true);
@@ -80,7 +80,7 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
       expect(char.expressions?.neutral).toBe(char.portrait_asset_id);
     }
 
-    expect(result.events).toHaveLength(300);
+    expect(result.events).toHaveLength(362);
     const countsByCategory: Record<EventCategory, number> = {
       clientes: 0,
       hacienda: 0,
@@ -92,11 +92,11 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
       countsByCategory[event.category] += 1;
     }
     expect(countsByCategory).toEqual({
-      clientes: 90,
-      hacienda: 56,
-      familia: 57,
-      empleados: 48,
-      gestor: 49,
+      clientes: 108,
+      hacienda: 66,
+      familia: 72,
+      empleados: 59,
+      gestor: 57,
     });
   });
 
@@ -158,12 +158,12 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
     ).toBe("banner_gestor_urgencia");
   });
 
-  it("enforces 100% English ('en') event copy parity and 100% add_modifier ID & label translation coverage across all 300 events", () => {
+  it("enforces 100% English ('en') event copy parity and 100% add_modifier ID & label translation coverage across all 362 events", () => {
     const localeResult = validateLocales(process.cwd(), "en");
     expect(localeResult.errors).toEqual([]);
     expect(localeResult.ok).toBe(true);
-    expect(localeResult.eventCount).toBe(300);
-    expect(localeResult.keyCount).toBeGreaterThanOrEqual(2502);
+    expect(localeResult.eventCount).toBe(362);
+    expect(localeResult.keyCount).toBeGreaterThanOrEqual(3046);
 
     let modifierCount = 0;
     for (const event of compiledCatalog.events) {
@@ -223,10 +223,10 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
         }
       }
     }
-    expect(modifierCount).toBeGreaterThanOrEqual(100);
+    expect(modifierCount).toBeGreaterThanOrEqual(150);
   });
 
-  it("enforces anti-softlock, NPC expression resolution, illustration refs, zero orphan chains, and late-game repeatable events across all 300 events", () => {
+  it("enforces anti-softlock, NPC expression resolution, illustration refs, zero orphan chains, v2 tier/scale contracts, and late-game repeatable events across all 362 events", () => {
     const result = loadAndValidateContent(process.cwd());
     expect(result.ok).toBe(true);
     const manifest = result.manifest!;
@@ -330,14 +330,62 @@ describe("Phase 3.5 repository assets, manifest, English i18n & 300-event YAML c
     expect(lateGameIds.has("familia_sabatico_largo_veterano")).toBe(true);
     expect(lateGameIds.has("empleados_paga_aniversario_estudio")).toBe(true);
 
+    // v2 progression & 4-year prescripción fiscal catalog contracts
+    const tierTargets = new Set<string>();
+    let expandTeamChoiceCount = 0;
+    let shrinkTeamChoiceCount = 0;
+    const prescripcionEvents = result.events.filter(
+      (event) => event.category === "hacienda" && event.tags?.includes("prescripcion_fiscal"),
+    );
+    expect(prescripcionEvents.length).toBeGreaterThanOrEqual(5);
+
+    for (const event of result.events) {
+      if (event.scale_with_tier) {
+        expect(event.title, `scale_with_tier event '${event.id}' title contains €`).not.toContain(
+          "€",
+        );
+        expect(event.body, `scale_with_tier event '${event.id}' body contains €`).not.toContain(
+          "€",
+        );
+      }
+      for (const choice of event.choices) {
+        if (event.scale_with_tier) {
+          expect(
+            choice.label,
+            `scale_with_tier event '${event.id}' choice '${choice.id}' label contains €`,
+          ).not.toContain("€");
+        }
+        const effectBlocks = [
+          ...(choice.effects ? [choice.effects] : []),
+          ...(choice.outcomes ? choice.outcomes.map((o) => o.effects) : []),
+        ];
+        for (const eff of effectBlocks) {
+          if (eff.set_business_tier) {
+            tierTargets.add(eff.set_business_tier.tier);
+          }
+          if (eff.expand_team) {
+            expandTeamChoiceCount += 1;
+          }
+          if (eff.shrink_team) {
+            shrinkTeamChoiceCount += 1;
+          }
+        }
+      }
+    }
+    expect(tierTargets.has("estudio_consolidado")).toBe(true);
+    expect(tierTargets.has("sociedad_limitada")).toBe(true);
+    expect(tierTargets.has("agencia_consultora")).toBe(true);
+    expect(expandTeamChoiceCount).toBeGreaterThanOrEqual(4);
+    expect(shrinkTeamChoiceCount).toBeGreaterThanOrEqual(1);
+
     // Compiled bundle parity check
     expect(Object.keys(compiledCatalog.characters)).toHaveLength(8);
-    expect(compiledCatalog.events).toHaveLength(300);
+    expect(compiledCatalog.events).toHaveLength(362);
     expect(Object.keys(compiledCatalog.manifest.assets)).toHaveLength(66);
     expect(compiledCatalog.balance).toEqual(result.balance);
   });
 
-  it("plays a multi-year seeded run on the compiled 300-event catalog without errors", () => {
+  it("plays a multi-year seeded run on the compiled 362-event catalog without errors", () => {
     let { state } = startNewRun(compiledCatalog, { seed: "LIVE-CONTENT-SMOKE-P3B" });
     let steps = 0;
 

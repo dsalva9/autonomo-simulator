@@ -26,6 +26,7 @@ import {
 import { useModalKeyboard } from "../components/modals/useModalKeyboard.ts";
 import { getLocalizedAchievementCatalog } from "../services/achievements/definitions.ts";
 import { playUiSound } from "../services/audio/soundEffects.ts";
+import { compiledCatalog } from "../services/content/catalog.ts";
 import {
   getEndingMetadata,
   getVictoryBadgeLabel,
@@ -173,8 +174,12 @@ export function TitleScreen() {
 
   const locale = normalizeLocale(profile.settings.locale);
   const isEn = locale === "en";
-  const ui = getUiStrings(locale);
   const localizedAchievements = getLocalizedAchievementCatalog(locale);
+  const victoryMoney = compiledCatalog.balance.victory_money;
+  const ui = getUiStrings(locale, {
+    victoryMoney,
+    totalSeals: localizedAchievements.length,
+  });
 
   const hasResumableRun =
     activeRun !== null && activeRun.phase !== "game_over" && activeRun.ending === null;
@@ -788,7 +793,7 @@ export function TitleScreen() {
             </section>
           </div>
 
-          {/* Right Column: Salón de Caídos & 15 Logros (Balanced 7-col Dossier Matching Left Height) */}
+          {/* Right Column: Salón de Caídos & 18 Logros (Balanced 7-col Dossier Matching Left Height) */}
           <section className="lg:col-span-7 paper-dossier rounded-xl overflow-hidden bg-[#fffdf8] flex flex-col min-h-0">
             <div
               role="tablist"
@@ -902,7 +907,7 @@ export function TitleScreen() {
                   ) : (
                     <ul className="space-y-2.5">
                       {profile.hall_of_fame.map((run) => {
-                        const meta = getEndingMetadata(run.ending_id, locale);
+                        const meta = getEndingMetadata(run.ending_id, locale, victoryMoney);
                         const runSeed = (run as { seed?: string }).seed;
                         const rawQuote = resolveLocalizedEndingQuote(
                           run.ending_id,
@@ -973,7 +978,7 @@ export function TitleScreen() {
                                     key={badge}
                                     className="stamp-badge text-[10px] px-2 py-0.5 rounded bg-[#e8f5f1] text-[#1f5c53] border border-[#1f5c53]/40"
                                   >
-                                    ★ {getVictoryBadgeLabel(badge, locale).shortSeal}
+                                    ★ {getVictoryBadgeLabel(badge, locale, victoryMoney).shortSeal}
                                   </span>
                                 ))}
                               </div>

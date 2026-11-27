@@ -1,0 +1,58 @@
+schema_version: 1
+id: familia_despido_alex_sosten_hogar
+category: familia
+title: "ERE en la empresa de Álex: sostén único"
+body: "La reestructuración de la empresa de Álex acaba en despido colectivo y prestaciones retrasadas. Durante medio año el alquiler, la compra y todos los recibos caen sobre tu facturación de autónomo sin red salarial en casa."
+tags:
+  - pareja
+  - crisis_pareja
+  - hogar
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: banner_familia_tension
+requirements:
+  min_month: 18
+  max_month: 108
+  family_statuses:
+    - cohabiting
+weight: 12
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: asumir_todos_los_gastos_seis_meses
+    label: "Asumir todos los recibos durante seis meses mientras Álex se recoloca"
+    result_text: "Aprietas dientes con cada factura del día uno, pero ver a Álex buscar empleo sin pánico ni reproches os une más que diez vacaciones."
+    effects:
+      personal_life: 14
+      moral: 10
+      stress: 6
+      add_modifier:
+        id: mod_sosten_unico_hogar
+        label: "Sostén único del hogar tras ERE"
+        remaining_months: 6
+        monthly_expense_delta: 650
+  - id: inyectar_colchon_y_recortar_ocio
+    label: "Volcar 2.800 € de reserva a la cuenta común y blindar el semestre"
+    result_text: "Tu colchón de emergencia adelgaza de golpe, aunque dejáis los gastos cubiertos de antemano y desaparece la ansiedad diaria sobre el saldo."
+    effects:
+      cash_delta: -2800
+      personal_life: 10
+      stress: -4
+      moral: 4
+  - id: integrar_a_alex_en_operaciones
+    label: "Sumar a Álex a tus presupuestos y gestión hasta su próximo puesto"
+    requirements:
+      stats:
+        personal_life:
+          min: 68
+    result_text: "La complicidad en casa se nota al instante: Álex ordena cobros, persigue impagos y te libera horas clave para facturar con calma."
+    effects:
+      stress: -6
+      personal_life: 12
+      moral: 8
+      add_modifier:
+        id: mod_apoyo_operativo_alex
+        label: "Apoyo operativo de Álex en casa"
+        remaining_months: 5
+        monthly_billed_delta: 450

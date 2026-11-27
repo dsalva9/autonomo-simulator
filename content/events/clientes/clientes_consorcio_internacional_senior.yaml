@@ -45,3 +45,17 @@ choices:
       moral: 1
       personal_life: 6
       reputation: -3
+  - id: liderar_como_agencia_europea
+    label: Asumir el lote completo como agencia europea con tu plantilla (6.800 €)
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      team_size:
+        min: 3
+    result_text: "Te adjudican el tramo principal del consorcio como socio mercantil español: factura de campeonato y nombre propio en tres capitales."
+    effects:
+      billed_income: 6800
+      stress: 6
+      moral: 8
+      reputation: 8

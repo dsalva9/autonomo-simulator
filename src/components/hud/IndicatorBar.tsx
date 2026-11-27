@@ -15,6 +15,7 @@ import {
   type GameState,
   computeNetCashAfterTaxReserve,
   computeReservedTaxObligation,
+  isBoutiqueSeniorSolo,
 } from "../../engine/index.ts";
 import { playUiSound } from "../../services/audio/soundEffects.ts";
 import { compiledCatalog } from "../../services/content/catalog.ts";
@@ -25,6 +26,8 @@ import {
   formatSignedEuros,
   formatSignedInt,
   normalizeLocale,
+  translateBusinessTier,
+  translateBusinessTierShort,
 } from "../../services/i18n/resolveEventText.ts";
 import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 import {
@@ -214,6 +217,30 @@ export function IndicatorBar({
   const reservedTax = computeReservedTaxObligation(state);
   const netCashAfterTax = computeNetCashAfterTaxReserve(state);
 
+  const businessTier = state.business?.tier ?? "solo_autonomo";
+  const boutiqueSolo = isBoutiqueSeniorSolo(state, compiledCatalog);
+  const businessTierLabel = translateBusinessTierShort(businessTier, locale, {
+    isBoutiqueSeniorSolo: boutiqueSolo,
+  });
+  const businessTierCompact = translateBusinessTierShort(businessTier, locale, {
+    isBoutiqueSeniorSolo: boutiqueSolo,
+    compactCode: true,
+  });
+  const businessTierFull = boutiqueSolo
+    ? isEn
+      ? `${translateBusinessTier(businessTier, locale)} · Boutique Solo`
+      : `${translateBusinessTier(businessTier, locale)} · Boutique Sénior`
+    : translateBusinessTier(businessTier, locale);
+  const showCompactTierOnPhone = businessTier !== "solo_autonomo" || boutiqueSolo;
+  const businessTierTone =
+    businessTier === "agencia_consultora"
+      ? "bg-[#e8f5f1] text-[#174d45] border-[#1f5c53]/45"
+      : businessTier === "sociedad_limitada"
+        ? "bg-[#ebf2fa] text-[#1d436b] border-[#264e7a]/45"
+        : businessTier === "estudio_consolidado" || boutiqueSolo
+          ? "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/35"
+          : "bg-[#f6efe0] text-[#373f3a] border-[#1f2421]/25";
+
   const canRetireHonorably = checkCanRetireHonorably(state);
 
   const retireLongLabel = isEn ? "Retire with honors" : "Jubilarse con honores";
@@ -332,6 +359,17 @@ export function IndicatorBar({
             </span>
             <span className="hidden min-[440px]:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1 sm:px-1.5 py-0.5 rounded bg-[#efe4ce] text-[#373f3a] whitespace-nowrap tabular-nums">
               {state.endless_mode ? `M${state.month}·∞` : `M${state.month}/120`}
+            </span>
+            <span
+              data-testid="indicator-business-tier"
+              data-business-tier={businessTier}
+              title={businessTierFull}
+              className={`${
+                showCompactTierOnPhone ? "inline-block" : "hidden sm:inline-block"
+              } font-bureau text-[9.5px] sm:text-[10.5px] font-bold px-1 sm:px-1.5 py-0.5 rounded border whitespace-nowrap leading-none ${businessTierTone}`}
+            >
+              <span className="sm:hidden">{businessTierCompact}</span>
+              <span className="hidden sm:inline">{businessTierLabel}</span>
             </span>
             <span
               className={`hidden min-[520px]:max-lg:inline-block xl:inline-block font-bureau text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap tabular-nums ${

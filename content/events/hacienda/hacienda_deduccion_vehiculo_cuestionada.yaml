@@ -46,8 +46,8 @@ choices:
         - premium
     result_text: Elena cita tres consultas vinculantes incontestables y cierra la comprobación salvando la deducción indirecta íntegra.
     effects:
-      deductible_expense: 170
-      cash_delta: -80
+      deductible_expense: 360
+      cash_delta: -150
       stress: 2
       moral: 5
       fiscal_risk: -18

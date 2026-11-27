@@ -1,0 +1,59 @@
+schema_version: 1
+id: familia_red_contactos_alex_gran_cuenta
+category: familia
+title: "Cena de empresa de Álex: cliente de primera división"
+body: "En la cena de empresa de Álex, su directora te aborda entre el postre y el café: «Álex habla maravillas de tu criterio». Te propone un proyecto jugoso sin concurso previo ni regateos ridículos si encajáis agenda este mes."
+tags:
+  - pareja
+  - sinergia_pareja
+  - red_pareja
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: banner_familia_base
+requirements:
+  min_month: 24
+  family_statuses:
+    - dating
+    - cohabiting
+  stats:
+    personal_life:
+      min: 70
+weight: 13
+cooldown_months: 24
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: cerrar_proyecto_directo_red_alex
+    label: "Enviar propuesta limpia al día siguiente y cerrar el encargo (4.800 €)"
+    result_text: "Sin pelear contra diez presupuestos baratos firmas 4.800 € a precio digno. Cuidar tu vida fuera de la pantalla también construye cartera."
+    effects:
+      billed_income: 4800
+      moral: 10
+      personal_life: 6
+      reputation: 6
+      stress: 4
+  - id: proponer_iguala_corporativa_sl
+    label: "Presentar capacidad de S.L. y convertirlo en iguala corporativa"
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+    result_text: "Al ver tu estructura societaria la directora amplía el alcance al vuelo: proyecto inicial de 6.500 € y cuatro meses de iguala recurrente."
+    effects:
+      billed_income: 6500
+      moral: 12
+      reputation: 8
+      personal_life: 6
+      add_modifier:
+        id: mod_iguala_red_alex
+        label: "Iguala corporativa vía red de Álex"
+        remaining_months: 4
+        monthly_billed_delta: 1400
+  - id: invitar_cena_y_derivar_sin_presion
+    label: "Invitar la ronda, derivar el encargo y proteger el vínculo (140 €)"
+    result_text: "Prefieres no mezclar negocio con el entorno laboral de Álex. La directora agradece tu honestidad y Álex te sonríe aliviado camino a casa."
+    effects:
+      cash_delta: -140
+      personal_life: 12
+      stress: -8
+      reputation: 4

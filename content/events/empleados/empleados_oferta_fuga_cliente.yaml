@@ -1,8 +1,8 @@
 schema_version: 1
 id: empleados_oferta_fuga_cliente
 category: empleados
-title: "Oferta furtiva desde la trinchera cliente"
-body: "Tras meses sacando proyectos impecables juntos, descubres que el equipo de Marta ha tanteado en privado a tu persona en plantilla para ficharla en su nómina interna y ahorrarse tu margen como estudio."
+title: Oferta furtiva desde la trinchera cliente
+body: Tras meses sacando proyectos impecables juntos, descubres que el equipo de Marta ha tanteado en privado a tu persona en plantilla para ficharla en su nómina interna y ahorrarse tu margen como estudio.
 tags:
   - plantilla
   - retencion
@@ -20,20 +20,23 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: blindar_con_prima_y_marcar_limites
-    label: "Abonar prima de retención (550 €) y marcar límites claros ante Marta"
-    result_text: "Tu fichaje agradece el gesto quedándose a tu lado y Marta acepta renovar el proyecto respetando escrupulosamente el perímetro de tu estudio."
+    label: Abonar prima de retención (350 €) y marcar límites claros ante Marta
+    result_text: Tu fichaje agradece el gesto quedándose a tu lado y Marta acepta renovar el proyecto respetando escrupulosamente el perímetro de tu estudio.
     effects:
-      cash_delta: -550
-      billed_income: 600
+      cash_delta: -350
+      billed_income: 1200
       stress: 5
       moral: 7
-      reputation: 4
-      employee_satisfaction: 14
+      reputation: 6
+      employee_satisfaction: 18
       clear_flags:
         - desgaste_plantilla
+    requirements:
+      employee_satisfaction:
+        min: 70
   - id: pactar_cesion_y_cobrar_traspaso
-    label: "Negociar una compensación facturada por la transición y volver a ir por libre"
-    result_text: "Cierras el traspaso como un acuerdo profesional civilizado, cobras una factura compensatoria y eliminas de golpe la carga salarial fija de cada mes."
+    label: Negociar una compensación facturada por la transición y volver a ir por libre
+    result_text: Cierras el traspaso como un acuerdo profesional civilizado, cobras una factura compensatoria y eliminas de golpe la carga salarial fija de cada mes.
     effects:
       billed_income: 1950
       dismiss_employee:
@@ -46,11 +49,11 @@ choices:
         - empleada_laura_activa
         - desgaste_plantilla
   - id: no_igualar_y_confiar_en_el_trato
-    label: "Negarte a entrar en pujas contra una multinacional y apelar al buen ambiente"
+    label: Negarte a entrar en pujas contra una multinacional y apelar al buen ambiente
     outcomes:
       - id: lealtad_al_estudio_pequeno
         weight: 50
-        result_text: "Prefiere la libertad de tu despacho antes que encadenar comités corporativos eternos y declina la oferta sin tocar tu tesorería."
+        result_text: Prefiere la libertad de tu despacho antes que encadenar comités corporativos eternos y declina la oferta sin tocar tu tesorería.
         effects:
           moral: 5
           stress: 4
@@ -58,7 +61,7 @@ choices:
           employee_satisfaction: 8
       - id: marcha_con_quince_dias_preaviso
         weight: 50
-        result_text: "Firma las catorce pagas corporativas dejando el preaviso legal sobre tu mesa. Te quedas sin equipo en mitad del trimestre y reorganizar entregas te cuesta dinero."
+        result_text: Firma las catorce pagas corporativas dejando el preaviso legal sobre tu mesa. Te quedas sin equipo en mitad del trimestre y reorganizar entregas te cuesta dinero.
         effects:
           dismiss_employee:
             severance_cost: 0

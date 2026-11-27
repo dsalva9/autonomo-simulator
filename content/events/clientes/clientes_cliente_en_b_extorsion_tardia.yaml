@@ -1,0 +1,59 @@
+schema_version: 1
+id: clientes_cliente_en_b_extorsion_tardia
+category: clientes
+title: "20 meses después: inspeccionan a Borja y amenaza con cantar"
+body: "Borja te llama sudando desde la puerta de su asesoría: Hacienda le está peinando los pagos en efectivo de hace casi dos años y te sugiere «repartir el marrón» con 1.800 € si no quieres que entregue tus correos."
+tags:
+  - dinero_b
+  - largo_plazo
+  - cadena
+character_id: cliente_regateador
+character_expression: angry
+illustration_id: banner_clientes_tension
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: pagar_silencio_y_cierre_rapido
+    label: "Soltar 1.800 € a Borja para que cierre su acta sin nombrarte"
+    result_text: "Le pagas el rescate con náuseas morales mientras Borja promete «dejar tu nombre fuera». Te compras calma precaria, pero el rastro sigue ahí."
+    effects:
+      cash_delta: -1800
+      fiscal_risk: 12
+      moral: -6
+      stress: 8
+  - id: adelantarte_con_complementaria_elena
+    label: "Adelantarte con complementaria vía Elena (-2.600 € + 550 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: "Elena presenta regularización voluntaria antes de que llegue ningún requerimiento formal: desactivas el chantaje de Borja y limpias el expediente."
+    effects:
+      cash_delta: -2600
+      deductible_expense: 550
+      fiscal_risk: -20
+      moral: 4
+      stress: 2
+  - id: aguantar_el_farol_de_borja
+    label: "Colgarle el teléfono y aguantar su farol sin soltar un euro"
+    outcomes:
+      - id: borja_se_arruga_farol
+        weight: 50
+        result_text: "Le recuerdas que si él habla también cae su propia caja B. Se hace el silencio al otro lado de la línea y nunca vuelve a mencionar el asunto."
+        effects:
+          moral: 6
+          stress: -2
+      - id: borja_canta_ante_hacienda
+        weight: 50
+        result_text: "Acorralado por su inspector, Borja entrega capturas de pantalla para rascar rebaja en su sanción. Tu nombre acaba en la bandeja de cruce diferido."
+        effects:
+          fiscal_risk: 20
+          stress: 12
+          moral: -6
+          schedule_events:
+            - event_id: hacienda_inspeccion_efectivo_tres_anos
+              delay_months: 14
+              probability: 0.85
+              priority: high

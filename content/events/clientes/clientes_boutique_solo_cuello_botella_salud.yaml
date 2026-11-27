@@ -1,0 +1,47 @@
+schema_version: 1
+id: clientes_boutique_solo_cuello_botella_salud
+category: clientes
+title: "Riesgo de persona clave: si tú paras una semana, se para todo"
+body: "Una gripe feroz con fiebre alta te tumba justo la semana de una entrega crítica de 5.200 €. Trabajar sin plantilla te ahorra nóminas todo el año, pero hoy descubres la cara B de ser tu único punto de fallo."
+tags:
+  - boutique_solo
+  - salud
+  - riesgo_clave
+character_id: null
+illustration_id: banner_clientes_tension
+requirements:
+  min_month: 66
+  team_size:
+    max: 0
+weight: 13
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: activar_cobertura_red_colegas
+    label: "Activar relevo de tu red de colegas de confianza (1.200 €)"
+    requirements:
+      required_flags:
+        - acuerdo_colaboradores_firmado
+    result_text: "Un colega de tu red entra al rescate por 1.200 € deducibles, saca el entregable impecable y tú te recuperas en la cama sin perder reputación."
+    effects:
+      deductible_expense: 1200
+      stress: -10
+      personal_life: 8
+      moral: 4
+  - id: aguantar_enfermo_y_entregar
+    label: "Empastillarte con 39 de fiebre y sacar la entrega (5.200 €)"
+    result_text: "Entregas entre escalofríos y cobras los 5.200 € íntegros, pero arrastras un agotamiento feroz y la certeza de haber forzado demasiado la máquina."
+    effects:
+      billed_income: 5200
+      stress: 20
+      moral: -10
+      personal_life: -10
+  - id: pagar_penalizacion_y_descansar
+    label: "Asumir penalización por retraso (-3.800 €) y curarte de verdad"
+    result_text: "El cliente aplica la cláusula de retraso y pierdes 3.800 € y algo de brillo, pero apagas el móvil cinco días y recuperas la salud."
+    effects:
+      cash_delta: -3800
+      reputation: -6
+      stress: -10
+      personal_life: 8

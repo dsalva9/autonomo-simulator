@@ -10,6 +10,9 @@ tags:
 character_id: null
 requirements:
   min_month: 3
+  forbidden_flags:
+    - epigrafe_iae_regularizado
+  max_month: 36
 weight: 10
 cooldown_months: 16
 max_occurrences: 2
@@ -19,10 +22,15 @@ choices:
     label: No tocar el censo y facturar el trabajo como «servicios varios»
     result_text: Cobras rápido sin pisar trámites censales, aunque el concepto ambiguo queda cantando en tus libros anuales.
     effects:
-      billed_income: 350
+      cash_delta: 1200
+      moral: -1
       stress: 3
-      moral: -2
       fiscal_risk: 16
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 20
+          probability: 0.25
+          priority: high
   - id: alta_epigrafe_adicional_036
     label: Presentar un Modelo 036 añadiendo un segundo epígrafe aproximado
     result_text: Peleas cuarenta minutos con casillas censales de otra época, pero dejas tu actividad blindada ante el cliente.
@@ -32,6 +40,8 @@ choices:
       moral: 2
       reputation: 2
       fiscal_risk: -4
+      set_flags:
+        - epigrafe_iae_regularizado
   - id: encuadre_exacto_via_gestoria
     label: Encargar a tu gestoría el encuadre profesional con retención exacta
     requirements:
@@ -45,3 +55,5 @@ choices:
       moral: 4
       reputation: 3
       fiscal_risk: -8
+      set_flags:
+        - epigrafe_iae_regularizado

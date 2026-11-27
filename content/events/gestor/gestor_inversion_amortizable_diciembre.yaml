@@ -1,7 +1,7 @@
 schema_version: 1
 id: gestor_inversion_amortizable_diciembre
 category: gestor
-title: "Inversión amortizable o liquidez en el colchón"
+title: Inversión amortizable o liquidez en el colchón
 body: "El material de tu estudio acusa años de tralla justo antes de cerrar el ejercicio. Elena Montes te plantea el dilema: renovar ahora resta liquidez hoy pero amortiza impuestos; aguantar con parches protege caja a costa de sufrir."
 tags:
   - amortizacion
@@ -24,42 +24,42 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: aguantar_con_equipos_veteranos
-    label: "No soltar un euro ahora y exprimir el material viejo otro año más"
-    result_text: "Tu saldo bancario no se mueve un milímetro hoy, aunque los cuelgues diarios y el ruido de ventiladores cansados te restan ritmo cada semana."
+    label: No soltar un euro ahora y exprimir el material viejo otro año más
+    result_text: Tu saldo bancario no se mueve un milímetro hoy, aunque los cuelgues diarios y el ruido de ventiladores cansados te restan ritmo cada semana.
     effects:
-      stress: 6
+      stress: 2
       moral: -3
       add_modifier:
         id: mod_desgaste_equipos_veteranos
-        label: "Equipos veteranos al límite"
+        label: Equipos veteranos al límite
         remaining_months: 4
         monthly_billed_delta: -140
         monthly_stress_delta: 2
   - id: actualizar_solo_esenciales
-    label: "Renovar únicamente lo imprescindible sin vaciar la reserva fiscal (480 €)"
-    result_text: "Cambias silla y herramientas críticas manteniendo el grueso de la tesorería a salvo para cuando llegue el cargo trimestral."
+    label: Renovar solo lo imprescindible sin vaciar reserva fiscal (620 €)
+    result_text: Cambias silla y herramientas críticas manteniendo el grueso de la tesorería a salvo para cuando llegue el cargo trimestral.
     effects:
-      deductible_expense: 480
-      stress: -4
+      deductible_expense: 620
+      stress: -2
       moral: 4
-      reputation: 2
+      reputation: 1
       fiscal_risk: -4
   - id: renovar_estudio_integral_deducible
-    label: "Acometer la renovación completa del estudio con factura deducible (1.450 €)"
+    label: Acometer la renovación completa del estudio deducible (1.800 €)
     requirements:
       stats:
         money:
-          min: 1650
-    result_text: "La cuenta pega un bajón respetable hoy, pero estrenas equipamiento de primera línea, rebajas el próximo trimestre y trabajas el doble de fluido."
+          min: 2600
+    result_text: La cuenta pega un bajón respetable hoy, pero estrenas equipamiento de primera línea, rebajas el próximo trimestre y trabajas el doble de fluido.
     effects:
-      deductible_expense: 1450
-      stress: -8
-      moral: 8
+      deductible_expense: 1800
+      stress: -4
+      moral: 5
       reputation: 5
-      fiscal_risk: -8
+      fiscal_risk: -6
       add_modifier:
         id: mod_estudio_renovado_veterano
-        label: "Equipamiento de estudio renovado"
+        label: Equipamiento de estudio renovado
         remaining_months: 6
-        monthly_billed_delta: 310
-        monthly_stress_delta: -2
+        monthly_billed_delta: 160
+        monthly_stress_delta: -1

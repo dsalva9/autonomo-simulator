@@ -1,0 +1,67 @@
+schema_version: 1
+id: familia_colegio_concertado_o_publico
+category: familia
+title: "Matrícula, comedor y extraescolares del curso"
+body: "Llega el plazo de escolarización y el presupuesto familiar tiembla: entre «aportaciones voluntarias», comedor, ruta y extraescolares hasta las cinco, cuadrar horarios con la vida de autónomo cuesta tanto como un trimestre fiscal."
+tags:
+  - hijos
+  - colegio
+  - hogar
+character_id: pareja_alex
+character_expression: neutral
+illustration_id: illus_hito_criatura_casa
+requirements:
+  min_month: 42
+  max_month: 108
+  months_of_year:
+    - 3
+    - 4
+    - 9
+  required_flags:
+    - criatura_en_casa
+weight: 12
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: concertado_con_comedor_y_ruta
+    label: "Colegio concertado con comedor y ruta para blindar jornadas (650 €)"
+    requirements:
+      stats:
+        money:
+          min: 1800
+    result_text: "La matrícula y los 340 € mensuales duelen al ver el extracto, pero recuperas tardes enteras sin carreras agónicas a las dos menos cinco."
+    effects:
+      cash_delta: -650
+      personal_life: 12
+      stress: -8
+      moral: 6
+      add_modifier:
+        id: mod_colegio_concertado_curso
+        label: "Colegio concertado, comedor y ruta"
+        remaining_months: 10
+        monthly_expense_delta: 340
+  - id: publico_y_refuerzo_tardes
+    label: "Colegio público del barrio con comedor y extraescolares (220 €)"
+    result_text: "Opción sensata y sin cuotas disfrazadas: encajáis meriendas y recogidas con algo de malabarismo, pero vuestra caja lo agradece cada mes."
+    effects:
+      cash_delta: -220
+      personal_life: 8
+      stress: 2
+      add_modifier:
+        id: mod_comedor_extraescolares
+        label: "Comedor escolar y extraescolares"
+        remaining_months: 10
+        monthly_expense_delta: 140
+  - id: reducir_jornada_para_recoger_tu
+    label: "Bajar carga de clientes seis meses para recoger a mediodía tú"
+    result_text: "Facturas menos este semestre, pero volver paseando del colegio mientras te cuenta su día vale mucho más que dos reuniones inútiles."
+    effects:
+      personal_life: 16
+      stress: -10
+      moral: 10
+      add_modifier:
+        id: mod_jornada_reducida_colegio
+        label: "Tardes despejadas para el colegio"
+        remaining_months: 6
+        monthly_billed_delta: -550

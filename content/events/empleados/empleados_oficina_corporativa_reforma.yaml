@@ -1,0 +1,60 @@
+schema_version: 1
+id: empleados_oficina_corporativa_reforma
+category: empleados
+title: "Alquilar planta diáfana en zona céntrica para la agencia"
+body: "Queda libre una oficina luminosa con sala de juntas en pleno centro. Dani sueña con cafetera de especialidad y pizarra gigante; tu hoja de cálculo solo ve fianza, reforma y un alquiler mensual de respeto."
+tags:
+  - agencia
+  - oficina
+  - prestigio
+character_id: empleado_junior_dani
+character_expression: pleased
+illustration_id: illus_hito_mudanza_oficina
+requirements:
+  min_month: 54
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+  team_size:
+    min: 3
+  forbidden_flags:
+    - sede_agencia_propia
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: firmar_sede_representativa
+    label: "Firmar sede céntrica y reforma (7.500 € + 1.100 €/mes)"
+    requirements:
+      stats:
+        money:
+          min: 11000
+    result_text: "Recibir directores de compras en una sede propia sube tu caché al instante, aunque el recibo del alquiler pasa a ser el primer invitado de cada mes."
+    effects:
+      deductible_expense: 7500
+      reputation: 14
+      employee_satisfaction: 12
+      moral: 8
+      set_flags:
+        - sede_agencia_propia
+        - estudio_calle_alquilado
+      add_modifier:
+        id: mod_alquiler_sede_agencia
+        label: "Alquiler de sede céntrica de agencia"
+        remaining_months: 12
+        monthly_expense_delta: 1100
+  - id: hub_hibrido_flexible
+    label: "Contratar hub híbrido flexible para reuniones clave (2.200 €)"
+    result_text: "Tienes sala profesional cuando vienen clientes serios y mesas para juntarse dos días por semana sin atarte a un contrato de cinco años."
+    effects:
+      deductible_expense: 2200
+      employee_satisfaction: 6
+      reputation: 4
+  - id: mantener_agencia_remota_ligera
+    label: "Seguir 100 % en remoto y ahorrarse ladrillo y obras"
+    result_text: "Algún cliente chapado a la antigua echa en falta el mármol en recepción, pero tu equipo celebra seguir evitando atascos cada lunes."
+    effects:
+      personal_life: 6
+      employee_satisfaction: 4
+      reputation: -2

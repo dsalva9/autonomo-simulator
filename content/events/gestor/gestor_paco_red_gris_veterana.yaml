@@ -1,0 +1,58 @@
+schema_version: 1
+id: gestor_paco_red_gris_veterana
+category: gestor
+title: "El «club privado» de Paco en la trastienda"
+body: "Paco baja la persiana metálica a mediodía y te enseña una carpeta sin membrete: un circuito de gastos cruzados entre autónomos del barrio que promete 3.200 € limpios este trimestre sin pisar ningún banco."
+tags:
+  - gestoria
+  - paco
+  - dinero_b
+character_id: gestor_barato_paco
+character_expression: pleased
+illustration_id: banner_gestor_base
+requirements:
+  min_month: 30
+  gestor_tiers:
+    - cheap
+  stats:
+    fiscal_risk:
+      min: 20
+weight: 13
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: entrar_en_reparto_gris_de_paco
+    label: "Entrar en el circuito gris de Paco (+3.200 € fuera de radar)"
+    result_text: "El efectivo alivia tu tesorería al instante, aunque el reloj de prescripción de cuatro años empieza a sonar cada vez que abres el buzón."
+    effects:
+      cash_delta: 3200
+      fiscal_risk: 22
+      moral: -2
+      stress: 5
+      set_flags:
+        - cobro_en_b_reciente
+      schedule_events:
+        - event_id: hacienda_inspeccion_borde_prescripcion
+          delay_months: 36
+          probability: 0.35
+          priority: high
+  - id: quedarte_solo_con_gastos_legales
+    label: "Rechazar la trastienda y rascar solo deducciones legales (+450 €)"
+    result_text: "Paco resopla llamándote «demasiado escrupuloso», pero al revisar tus tickets viejos rescata varios gastos legítimos que te devuelven aire."
+    effects:
+      cash_delta: 450
+      fiscal_risk: -4
+      moral: 3
+  - id: cortar_con_paco_y_pasar_a_elena
+    label: "Salir de ahí y contratar a Elena con limpieza inicial (350 €)"
+    result_text: "Dejas atrás el olor a churrería y vuelves a la ortodoxia: Elena revisa tus saldos, limpia alertas pendientes y toma el timón fiscal."
+    effects:
+      deductible_expense: 350
+      set_gestor:
+        tier: premium
+        character_id: gestor_premium_elena
+      fiscal_risk: -10
+      clear_flags:
+        - elena_aviso_cumplimiento
+        - elena_rescision_cumplimiento

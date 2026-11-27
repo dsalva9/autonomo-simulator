@@ -1,0 +1,60 @@
+schema_version: 1
+id: empleados_escalado_diez_personas_directivo
+category: empleados
+title: "Diez nóminas: fichar dirección de operaciones o colapsar"
+body: "Tu agenda parece un tetris imposible: entre ventas, incidencias y revisiones finales, todo el equipo espera tu visto bueno. Laura avisa sin rodeos: o creas una capa de operaciones o el cuello de botella eres tú."
+tags:
+  - plantilla
+  - agencia
+  - liderazgo
+character_id: empleada_senior_laura
+character_expression: stressed
+illustration_id: banner_empleados_estudio
+requirements:
+  min_month: 72
+  business_tiers:
+    - agencia_consultora
+  team_size:
+    min: 5
+    max: 9
+weight: 13
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: incorporar_celula_y_directora_ops
+    label: "Fichar directora de operaciones y +1 refuerzo (4.200 €)"
+    requirements:
+      stats:
+        money:
+          min: 10000
+    result_text: "Incorporas dos plazas clave que absorben tráfico, calendarios y control de calidad. Tu nómina mensual impresiona, pero por fin recuperas el aire."
+    effects:
+      deductible_expense: 4200
+      expand_team:
+        count: 2
+        avg_monthly_cost: 2200
+      stress: -16
+      employee_satisfaction: 10
+      reputation: 8
+  - id: promocionar_lider_interno
+    label: "Promocionar mando interno y sumar +1 apoyo (1.500 €)"
+    requirements:
+      employee_satisfaction:
+        min: 72
+    result_text: "Un equipo comprometido responde al ascenso interno con entusiasmo contagioso: delegas operaciones sin perder la cultura de la casa."
+    effects:
+      deductible_expense: 1500
+      expand_team:
+        count: 1
+        avg_monthly_cost: 1950
+      employee_satisfaction: 14
+      stress: -12
+      moral: 6
+  - id: congelar_plantilla_y_centralizar
+    label: "Congelar fichajes y seguir revisando todo personalmente"
+    result_text: "Ahorras nóminas nuevas hoy a base de reuniones a las ocho de la tarde y correos que se acumulan esperando tu firma."
+    effects:
+      stress: 12
+      employee_satisfaction: -6
+      personal_life: -4

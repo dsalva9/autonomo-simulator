@@ -21,7 +21,7 @@ requirements:
     - tickets_dudosos_deducidos
 weight: 12
 cooldown_months: 16
-max_occurrences: 2
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: usar_certificado_corriente_clientes_serios
@@ -58,3 +58,5 @@ choices:
         remaining_months: 6
         monthly_moral_delta: 2
         monthly_stress_delta: -2
+      set_flags:
+        - archivo_digitalizado_certificado

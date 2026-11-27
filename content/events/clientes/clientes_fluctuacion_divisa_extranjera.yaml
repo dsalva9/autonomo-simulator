@@ -14,9 +14,11 @@ requirements:
   min_month: 34
   required_flags:
     - cliente_internacional_activo
+  forbidden_flags:
+    - cuenta_multidivisa_activa
 weight: 9
 cooldown_months: 12
-max_occurrences: 3
+max_occurrences: 2
 choices:
   - id: absorber_cambio_y_atender_noches
     label: Atender sus llamadas nocturnas facturando extras (2.950 €) pese al banco
@@ -30,24 +32,17 @@ choices:
       reputation: 5
   - id: pasar_contrato_a_euros_y_ventana_europea
     label: Exigir facturación fija en euros y reuniones antes de las 18:00
-    outcomes:
-      - id: aceptan_euros_y_horario_madrid
-        weight: 65
-        result_text: "Para ellos sigues siendo más ágil que cualquier agencia local: fijan 2.950 € limpios por transferencia SEPA y respetan tus tardes."
-        effects:
-          billed_income: 2950
-          moral: 7
-          stress: -2
-          personal_life: 4
-          reputation: 5
-      - id: reducen_bolsa_pero_en_euros
-        weight: 35
-        result_text: Aceptan pagar en euros y cortar llamadas tardías, recortando el alcance a un bloque menor muy cómodo.
-        effects:
-          billed_income: 1750
-          moral: 3
-          stress: -4
-          personal_life: 5
+    requirements:
+      stats:
+        reputation:
+          min: 55
+    result_text: "Con tu prestigio no discuten ni media coma: fijan 2.800 € limpios por transferencia SEPA y respetan tu horario europeo a rajatabla."
+    effects:
+      billed_income: 2800
+      moral: 7
+      stress: -2
+      personal_life: 5
+      reputation: 5
   - id: abrir_cuenta_multidivisa_deducible
     label: Contratar pasarela multidivisa (60 €) y grabar vídeos asíncronos
     result_text: Eliminas el sablazo bancario y sustituyes tres videollamadas nocturnas por resúmenes grabados de cinco minutos.
@@ -58,3 +53,5 @@ choices:
       stress: 1
       personal_life: 3
       reputation: 3
+      set_flags:
+        - cuenta_multidivisa_activa

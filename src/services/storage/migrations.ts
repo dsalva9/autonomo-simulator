@@ -1,10 +1,13 @@
 import type {
+  BusinessState,
+  BusinessTier,
   ChoiceOutcomeSummary,
   EventDef,
   GameState,
   Indicators,
   MonthStartSummary,
   TurnPhase,
+  VictoryBadge,
 } from "../../engine/index.ts";
 import {
   CURRENT_PROFILE_VERSION,
@@ -18,8 +21,13 @@ import {
   createDefaultProfileEnvelope,
 } from "./StoragePort.ts";
 
-const LEGACY_ACHIEVEMENT_KEY_MAP: Readonly<Record<string, string>> = {
+export const LEGACY_VICTORY_BADGE_MAP: Readonly<Record<string, VictoryBadge>> = {
+  rich_150k: "rich_250k",
+};
+
+export const LEGACY_ACHIEVEMENT_KEY_MAP: Readonly<Record<string, string>> = {
   aplazamiento_Solicitado: "aplazamiento_solicitado",
+  ricachon_150k: "ricachon_250k",
 };
 
 const VALID_PHASES: ReadonlySet<TurnPhase> = new Set<TurnPhase>([
@@ -31,6 +39,13 @@ const VALID_PHASES: ReadonlySet<TurnPhase> = new Set<TurnPhase>([
   "game_over",
 ]);
 
+const VALID_BUSINESS_TIERS: ReadonlySet<BusinessTier> = new Set<BusinessTier>([
+  "solo_autonomo",
+  "estudio_consolidado",
+  "sociedad_limitada",
+  "agencia_consultora",
+]);
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -39,11 +54,178 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
+function normalizeVictoryBadge(raw: unknown): VictoryBadge | null {
+  if (typeof raw !== "string") {
+    return null;
+  }
+  const mapped = LEGACY_VICTORY_BADGE_MAP[raw] ?? raw;
+  if (mapped === "hero_120m" || mapped === "rich_250k") {
+    return mapped;
+  }
+  return null;
+}
+
+function normalizeVictoryBadgeList(raw: unknown): VictoryBadge[] {
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+  const seen = new Set<VictoryBadge>();
+  const out: VictoryBadge[] = [];
+  for (const item of raw) {
+    const badge = normalizeVictoryBadge(item);
+    if (badge && !seen.has(badge)) {
+      seen.add(badge);
+      out.push(badge);
+    }
+  }
+  return out;
+}
+
+function inferBusinessStateFromV1(rawState: Record<string, unknown>): BusinessState {
+  if (
+    isRecord(rawState.business) &&
+    VALID_BUSINESS_TIERS.has(rawState.business.tier as BusinessTier)
+  ) {
+    return {
+      tier: rawState.business.tier as BusinessTier,
+      months_in_tier: isFiniteNumber(rawState.business.months_in_tier)
+        ? Math.max(0, Math.round(rawState.business.months_in_tier))
+        : 0,
+      sl_formed_month: isFiniteNumber(rawState.business.sl_formed_month)
+        ? Math.max(1, Math.round(rawState.business.sl_formed_month))
+        : null,
+    };
+  }
+
+  const flags = isRecord(rawState.flags) ? rawState.flags : {};
+  const month = isFiniteNumber(rawState.month) ? Math.max(1, Math.round(rawState.month)) : 1;
+
+  if (flags.sociedad_limitada_activa) {
+    return {
+      tier: "sociedad_limitada",
+      months_in_tier: 0,
+      sl_formed_month: Math.max(1, month - 1),
+    };
+  }
+  if (
+    flags.estudio_calle_alquilado ||
+    flags.estudio_propio_activo ||
+    (rawState.employee != null && month >= 24)
+  ) {
+    return {
+      tier: "estudio_consolidado",
+      months_in_tier: 0,
+      sl_formed_month: null,
+    };
+  }
+  return {
+    tier: "solo_autonomo",
+    months_in_tier: 0,
+    sl_formed_month: null,
+  };
+}
+
+export function migrateGameStateV1ToV2(rawState: unknown): unknown {
+  if (!isRecord(rawState)) {
+    return rawState;
+  }
+
+  const business = inferBusinessStateFromV1(rawState);
+
+  const migratedEmployee = isRecord(rawState.employee)
+    ? {
+        ...rawState.employee,
+        headcount:
+          isFiniteNumber(rawState.employee.headcount) && rawState.employee.headcount >= 1
+            ? Math.round(rawState.employee.headcount)
+            : 1,
+        lead_monthly_cost: isFiniteNumber(rawState.employee.lead_monthly_cost)
+          ? rawState.employee.lead_monthly_cost
+          : isFiniteNumber(rawState.employee.monthly_cost)
+            ? rawState.employee.monthly_cost
+            : 0,
+      }
+    : rawState.employee === null
+      ? null
+      : rawState.employee;
+
+  const migratedFamily = isRecord(rawState.family)
+    ? {
+        ...rawState.family,
+        neglect_months: isFiniteNumber(rawState.family.neglect_months)
+          ? Math.max(0, Math.round(rawState.family.neglect_months))
+          : 0,
+      }
+    : rawState.family;
+
+  const migratedFinances = isRecord(rawState.finances)
+    ? {
+        ...rawState.finances,
+        historical_exposures: Array.isArray(rawState.finances.historical_exposures)
+          ? rawState.finances.historical_exposures
+          : [],
+      }
+    : rawState.finances;
+
+  const migratedEarnedVictories = normalizeVictoryBadgeList(rawState.earned_victories);
+
+  const migratedPendingVictoryBadge =
+    rawState.pending_victory_badge == null
+      ? (rawState.pending_victory_badge ?? null)
+      : (normalizeVictoryBadge(rawState.pending_victory_badge) ?? null);
+
+  const migratedHistory = Array.isArray(rawState.history)
+    ? rawState.history.map((entry) => {
+        if (
+          isRecord(entry) &&
+          entry.kind === "victory_unlocked" &&
+          typeof entry.summary === "string"
+        ) {
+          const mappedSummary = LEGACY_VICTORY_BADGE_MAP[entry.summary] ?? entry.summary;
+          if (mappedSummary !== entry.summary) {
+            return { ...entry, summary: mappedSummary };
+          }
+        }
+        return entry;
+      })
+    : rawState.history;
+
+  const migratedScheduledQueue = Array.isArray(rawState.scheduled_queue)
+    ? rawState.scheduled_queue.map((item) => {
+        if (!isRecord(item)) {
+          return item;
+        }
+        const triggerMonth = isFiniteNumber(item.trigger_month) ? item.trigger_month : 1;
+        return {
+          ...item,
+          origin_month: isFiniteNumber(item.origin_month)
+            ? item.origin_month
+            : Math.max(1, triggerMonth - 2),
+          priority:
+            item.priority === "high" || item.priority === "normal" ? item.priority : "normal",
+        };
+      })
+    : rawState.scheduled_queue;
+
+  return {
+    ...rawState,
+    schema_version: 2,
+    business,
+    employee: migratedEmployee,
+    family: migratedFamily,
+    finances: migratedFinances,
+    earned_victories: migratedEarnedVictories,
+    pending_victory_badge: migratedPendingVictoryBadge,
+    history: migratedHistory,
+    scheduled_queue: migratedScheduledQueue,
+  };
+}
+
 export type SaveMigrationStep = (envelope: Record<string, unknown>) => Record<string, unknown>;
 
 /**
  * Sequential pure migrations keyed by source `save_version`.
- * Example future entry: `1: (v1) => ({ ...v1, save_version: 2, ... })`.
+ * Runs v0 -> v1 -> v2 deterministically without dropping active `pending_turn` payloads.
  */
 export const SAVE_MIGRATIONS: Record<number, SaveMigrationStep> = {
   0: (legacy) => ({
@@ -54,13 +236,39 @@ export const SAVE_MIGRATIONS: Record<number, SaveMigrationStep> = {
     state: legacy.state,
     ...(legacy.pending_turn !== undefined ? { pending_turn: legacy.pending_turn } : {}),
   }),
+  1: (v1) => {
+    let migratedPendingTurn = v1.pending_turn;
+    if (isRecord(v1.pending_turn)) {
+      migratedPendingTurn = {
+        ...v1.pending_turn,
+        ...(v1.pending_turn.outcome_preview_state != null
+          ? {
+              outcome_preview_state: migrateGameStateV1ToV2(v1.pending_turn.outcome_preview_state),
+            }
+          : {}),
+        ...(v1.pending_turn.queued_final_state != null
+          ? {
+              queued_final_state: migrateGameStateV1ToV2(v1.pending_turn.queued_final_state),
+            }
+          : {}),
+      };
+    }
+
+    return {
+      ...v1,
+      save_version: 2,
+      engine_build: ENGINE_BUILD,
+      state: migrateGameStateV1ToV2(v1.state),
+      ...(migratedPendingTurn !== undefined ? { pending_turn: migratedPendingTurn } : {}),
+    };
+  },
 };
 
 export function isValidGameStateShape(candidate: unknown): candidate is GameState {
   if (!isRecord(candidate)) {
     return false;
   }
-  if (candidate.schema_version !== 1) {
+  if (candidate.schema_version !== 2) {
     return false;
   }
   if (typeof candidate.run_id !== "string" || candidate.run_id.trim().length === 0) {
@@ -107,7 +315,15 @@ export function isValidGameStateShape(candidate: unknown): candidate is GameStat
     !isFiniteNumber(fin.current_quarter_billed) ||
     !isFiniteNumber(fin.accrued_tax_liability) ||
     !isFiniteNumber(fin.consecutive_negative_months) ||
-    !Array.isArray(fin.pending_invoices)
+    !Array.isArray(fin.pending_invoices) ||
+    !Array.isArray(fin.historical_exposures)
+  ) {
+    return false;
+  }
+  if (
+    !isRecord(candidate.business) ||
+    !VALID_BUSINESS_TIERS.has(candidate.business.tier as BusinessTier) ||
+    !isFiniteNumber(candidate.business.months_in_tier)
   ) {
     return false;
   }
@@ -118,11 +334,25 @@ export function isValidGameStateShape(candidate: unknown): candidate is GameStat
   ) {
     return false;
   }
+  if (!isFiniteNumber(candidate.family.neglect_months)) {
+    return false;
+  }
   if (
     candidate.family.partner_name !== undefined &&
     typeof candidate.family.partner_name !== "string"
   ) {
     return false;
+  }
+  if (candidate.employee !== null) {
+    if (
+      !isRecord(candidate.employee) ||
+      !isFiniteNumber(candidate.employee.headcount) ||
+      candidate.employee.headcount < 1 ||
+      !isFiniteNumber(candidate.employee.lead_monthly_cost) ||
+      !isFiniteNumber(candidate.employee.monthly_cost)
+    ) {
+      return false;
+    }
   }
   if (
     !Array.isArray(candidate.current_turn_events) ||
@@ -336,7 +566,10 @@ export function migrateProfileEnvelope(raw: unknown): ProfileEnvelope {
   if (Array.isArray(unpacked.hall_of_fame)) {
     for (const entry of unpacked.hall_of_fame) {
       if (isValidPastRunSummary(entry)) {
-        hallOfFame.push(entry);
+        hallOfFame.push({
+          ...entry,
+          earned_victories: normalizeVictoryBadgeList(entry.earned_victories),
+        });
       }
       if (hallOfFame.length >= MAX_HALL_OF_FAME_ENTRIES) {
         break;

@@ -1,0 +1,52 @@
+schema_version: 1
+id: empleados_formacion_liderazgo_mandos
+category: empleados
+title: "Plan de mandos intermedios para dejar de ser el cuello de botella"
+body: "Tu agencia ya tiene tamaño de sobra, pero nadie se atreve a cerrar un presupuesto ni frenar un desvío sin consultarte. Laura propone formar a dos perfiles sénior como mandos intermedios reales."
+tags:
+  - plantilla
+  - liderazgo
+  - productividad
+character_id: empleada_senior_laura
+character_expression: neutral
+illustration_id: banner_empleados_estudio
+requirements:
+  min_month: 66
+  team_size:
+    min: 4
+weight: 11
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: programa_ejecutivo_mandos
+    label: "Financiar programa ejecutivo de mandos (3.200 € deducibles)"
+    requirements:
+      stats:
+        money:
+          min: 4500
+    result_text: "Dos meses después tus mandos ya negocian ampliaciones y coordinan entregas solos. Facturas 1.200 € más al mes con bastante menos taquicardia."
+    effects:
+      deductible_expense: 3200
+      stress: -14
+      employee_satisfaction: 14
+      reputation: 6
+      add_modifier:
+        id: mod_mandos_intermedios_activos
+        label: "Mandos intermedios liberando dirección"
+        remaining_months: 6
+        monthly_billed_delta: 1200
+        monthly_stress_delta: -1
+  - id: mentorizacion_interna_viernes
+    label: "Formarlos tú mismo bloqueando tardes de viernes"
+    result_text: "No gastas caja en consultoras de liderazgo, pero tus viernes se convierten en una escuela intensiva que te exprime la batería al límite."
+    effects:
+      stress: 8
+      employee_satisfaction: 6
+      moral: 4
+  - id: posponer_hasta_ano_siguiente
+    label: "Posponer la formación y seguir aprobando tú cada entrega"
+    result_text: "El trimestre sigue en marcha sin invertir ni un euro, pero los perfiles con ambición notan el techo de cristal y bajan el ritmo."
+    effects:
+      employee_satisfaction: -8
+      stress: 4

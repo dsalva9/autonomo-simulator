@@ -86,9 +86,10 @@ function describeHistoryEntry(entry: HistoryEntry, state: GameState, locale: str
       return ui.historial.entryInspection;
     case "victory_unlocked": {
       const raw = entry.summary;
-      if (raw === "hero_120m" || raw === "rich_150k") {
+      if (raw === "hero_120m" || raw === "rich_250k" || raw === "rich_150k") {
+        const badge: VictoryBadge = raw === "hero_120m" ? "hero_120m" : "rich_250k";
         return ui.historial.entryVictoryUnlocked(
-          getVictoryBadgeLabel(raw as VictoryBadge, locale).title,
+          getVictoryBadgeLabel(badge, locale, compiledCatalog.balance.victory_money).title,
         );
       }
       return ui.historial.entryVictoryUnlocked(raw ?? ui.historial.entryVictoryFallback);

@@ -11,9 +11,12 @@ character_id: null
 illustration_id: null
 requirements:
   min_month: 5
+  forbidden_flags:
+    - stack_software_libre_activo
+  max_month: 48
 weight: 11
 cooldown_months: 12
-max_occurrences: 4
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: podar_planes_al_minimo
@@ -39,6 +42,8 @@ choices:
           stress: 6
           moral: 6
           personal_life: -4
+          set_flags:
+            - stack_software_libre_activo
       - id: incompatibilidad_en_plena_entrega
         weight: 45
         result_text: Un formato rebelde descuadra dos entregables el miércoles por la tarde y terminas recomprando licencias mensuales sueltas a precio de oro mientras pides disculpas.

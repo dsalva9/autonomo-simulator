@@ -53,3 +53,16 @@ choices:
     requirements:
       required_flags:
         - web_corporativa_activa
+  - id: escalar_los_tres_con_equipo
+    label: Absorber los tres clientes repartiendo carga con tu equipo (4.200 €)
+    requirements:
+      team_size:
+        min: 2
+      employee_satisfaction:
+        min: 65
+    result_text: Tu plantilla engrasada reparte los tres proyectos sin despeinarse. Cierras un mes récord de facturación sin sacrificar tus noches.
+    effects:
+      billed_income: 4200
+      stress: 4
+      moral: 6
+      reputation: 7

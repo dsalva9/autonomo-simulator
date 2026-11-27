@@ -1,4 +1,14 @@
-import { type SupportedLocale, type UILocale, normalizeLocale } from "./resolveEventText.ts";
+import {
+  type SupportedLocale,
+  type UILocale,
+  formatEuros,
+  normalizeLocale,
+} from "./resolveEventText.ts";
+
+export interface UiStringsOptions {
+  victoryMoney?: number;
+  totalSeals?: number;
+}
 
 export interface ConfirmOverwriteRunStrings {
   heading: string;
@@ -248,14 +258,21 @@ export interface UiStrings {
     baselineBilling: string;
     livingCost: string;
     autonomoQuota: string;
+    corporateQuota: string;
+    structuralOverheadLabel: (tierShort: string) => string;
     gestorRetainer: string;
     familyCosts: string;
     payrollLabel: (roleLabel: string) => string;
+    multiPayrollLabel: (headcount: number) => string;
     tempEffects: string;
     marginBeforeTax: string;
     estTaxProvision: (pct: number) => string;
+    irpfProvision: (pct: number) => string;
+    corporateTaxProvision: (pct: number) => string;
     marginAfterTax: string;
     quarterProvisionHeading: string;
+    corporateQuarterProvisionHeading: string;
+    openPrescripcionWindow: (count: number) => string;
     quarterBilled: string;
     accruedTaxes: string;
     lifetimeBilled: string;
@@ -317,11 +334,13 @@ export interface UiStrings {
   modals: {
     quarterly: {
       formBadge: string;
+      corporateFormBadge: string;
       heading: (month: number, quarter: number) => string;
       mandatoryBadge: string;
       intro: string;
       quarterBilled: string;
       gestorErrorSurcharge: string;
+      slSelfPenalty: string;
       directAuditFine: string;
       currentQuarterDue: string;
       priorDeferralDue: string;
@@ -330,6 +349,13 @@ export interface UiStrings {
       auditDetectedHeading: string;
       auditScheduledBody: string;
       auditImmediateBody: string;
+      historicalAuditHeading: string;
+      historicalAuditScheduledBody: string;
+      historicalAuditImmediateBody: string;
+      elenaWarningHeading: string;
+      elenaWarningBody: string;
+      elenaDroppedHeading: string;
+      elenaDroppedBody: string;
       overdraftWarningBefore: string;
       overdraftLabel: string;
       overdraftImmediateBankruptcy: string;
@@ -358,6 +384,7 @@ export interface UiStrings {
     };
     annual: {
       formBadge: string;
+      corporateFormBadge: string;
       heading: (year: number, month: number) => string;
       intro: string;
       grossBilled: string;
@@ -370,6 +397,8 @@ export interface UiStrings {
       familyCardLabel: string;
       staffCardLabel: string;
       soloLabel: string;
+      boutiqueSoloLabel: string;
+      teamCountLabel: (headcount: number) => string;
       perMonthSuffix: string;
       childrenCountPrefix: (count: number) => string;
       highlightsHeading: string;
@@ -530,13 +559,13 @@ const ES_STRINGS: UiStrings = {
       },
       {
         code: "META 02 · COLCHÓN",
-        target: "150.000 €",
+        target: "250.000 €",
         desc: "Liquidez limpia en cuenta para retirarte a tiempo.",
       },
       {
         code: "META 03 · CARRERA",
-        target: "15 Sellos",
-        desc: "Hitos oficiales desde el primer 303 al Modo Infinito.",
+        target: "18 Sellos",
+        desc: "Hitos oficiales desde el primer 303 a la S.L. y el Modo Infinito.",
       },
     ],
     hallCashPrefix: "Caja",
@@ -562,8 +591,8 @@ const ES_STRINGS: UiStrings = {
       },
       {
         step: "03",
-        title: "120 meses o 150k €",
-        desc: "Aguanta 10 años cotizando o fórrete antes de quemarte.",
+        title: "120 meses o 250k €",
+        desc: "Aguanta 10 años cotizando o escala hasta 250.000 € limpios.",
       },
     ],
     landingEnterBtn: "¡Jugar! · Entrar al despacho",
@@ -581,11 +610,11 @@ const ES_STRINGS: UiStrings = {
     careerSealsLabel: "Sellos oficiales",
     careerZeroMonths: "0 meses",
     careerEmptyHint:
-      "Cierra tu primera partida para registrar marcas oficiales y desbloquear los 15 sellos del RETA.",
+      "Cierra tu primera partida para registrar marcas oficiales y desbloquear los 18 sellos del RETA.",
     careerVeteranHint: (victories) =>
       victories > 0
         ? `Has conquistado ${victories} ${victories === 1 ? "sello de victoria" : "sellos de victoria"} en tu trayectoria como autónomo.`
-        : "Sigue afinando tu margen trimestral para alcanzar los 120 meses o los 150.000 € limpios.",
+        : "Sigue afinando tu margen trimestral para alcanzar los 120 meses o los 250.000 € limpios.",
     confirmOverwriteRun: ES_CONFIRM_OVERWRITE_RUN,
   },
   kofi: {
@@ -713,15 +742,22 @@ const ES_STRINGS: UiStrings = {
     badge: "LIBRO REGISTRO",
     baselineBilling: "Facturación base mensual",
     livingCost: "Coste de vida básico",
-    autonomoQuota: "Cuota fija RETA",
+    autonomoQuota: "Cuota RETA (tramo)",
+    corporateQuota: "Autónomo societario",
+    structuralOverheadLabel: (tierShort) => `Estructura (${tierShort})`,
     gestorRetainer: "Iguala de gestoría",
     familyCosts: "Gastos familiares",
     payrollLabel: (roleLabel) => `Nómina (${roleLabel})`,
+    multiPayrollLabel: (headcount) => `Nóminas (${headcount} pers.)`,
     tempEffects: "Efectos temporales",
     marginBeforeTax: "Margen antes de impuestos",
     estTaxProvision: (pct) => `Provisión fiscal est. (${pct}%)`,
+    irpfProvision: (pct) => `Provisión IRPF (~${pct}%)`,
+    corporateTaxProvision: (pct) => `Imp. Sociedades (${pct}%)`,
     marginAfterTax: "Margen tras provisión fiscal",
     quarterProvisionHeading: "PROVISIÓN TRIMESTRAL (IVA + IRPF)",
+    corporateQuarterProvisionHeading: "PROVISIÓN TRIMESTRAL (IVA + IS)",
+    openPrescripcionWindow: (count) => `Ejercicios en prescripción AEAT (4 años): ${count}`,
     quarterBilled: "Facturado trimestre:",
     accruedTaxes: "Impuestos devengados:",
     lifetimeBilled: "Facturación oficial acum.:",
@@ -750,7 +786,7 @@ const ES_STRINGS: UiStrings = {
     partnerFallbackAlt: "Pareja",
     personalLifeHeader: "VIDA PERSONAL",
     childrenAndCost: (children, costFormatted) => `Hijos: ${children} · ${costFormatted}/mes`,
-    staffHeader: "PLANTILLA (MÁX. 1)",
+    staffHeader: "PLANTILLA",
     billingMultiplier: (mult) => `Fact. ×${mult.toFixed(2).replace(".", ",")}`,
     noEmployeesTitle: "Sin empleados en nómina",
     noEmployeesSub: "En solitario · Cero nóminas fijas",
@@ -783,12 +819,14 @@ const ES_STRINGS: UiStrings = {
   modals: {
     quarterly: {
       formBadge: "MODELO 303 / 130 · AUTOLIQUIDACIÓN",
+      corporateFormBadge: "MODELO 303 / 202 (S.L.) · AUTOLIQUIDACIÓN",
       heading: (month, quarter) => `El Trimestre · Mes ${month} (T${quarter})`,
       mandatoryBadge: "OBLIGATORIO",
       intro:
         "Llega el día 20 y toca ajustar cuentas con la Agencia Tributaria por lo facturado en los últimos tres meses.",
       quarterBilled: "Facturación oficial del trimestre:",
       gestorErrorSurcharge: "Recargo por error al rellenar casillas:",
+      slSelfPenalty: "Penalización S.L. sin gestoría mercantil:",
       directAuditFine: "Sanción directa de comprobación tributaria:",
       currentQuarterDue: "Cuota del trimestre actual:",
       priorDeferralDue: "Aplazamiento anterior vencido (inaplazable):",
@@ -799,6 +837,17 @@ const ES_STRINGS: UiStrings = {
         "Un inspector ha abierto expediente sobre tus cuentas: recibirás notificación certificada el próximo mes.",
       auditImmediateBody:
         "Se ha girado liquidación sancionadora inmediata sobre este cierre trimestral.",
+      historicalAuditHeading: "Revisión de ejercicio anterior (prescripción 4 años)",
+      historicalAuditScheduledBody:
+        "Hacienda ha cruzado datos de un ejercicio pasado aún sin prescribir: recibirás requerimiento oficial el próximo mes.",
+      historicalAuditImmediateBody:
+        "Se ha girado liquidación complementaria sobre un ejercicio pasado dentro del plazo de prescripción de 4 años.",
+      elenaWarningHeading: "Aviso de cumplimiento · Elena Montes",
+      elenaWarningBody:
+        "Tu nivel de riesgo fiscal inquieta al despacho: reduce operaciones opacas o Elena rescindirá tu iguala en el próximo cierre (+4 Estrés).",
+      elenaDroppedHeading: "Rescisión unilateral · Elena Montes",
+      elenaDroppedBody:
+        "Tu exposición fiscal ha superado el límite del despacho. Elena rescinde el contrato y vuelves a Autogestión (-8 Reputación, +10 Estrés).",
       overdraftWarningBefore: "Pagar al contado dejará tu cuenta en ",
       overdraftLabel: "(Números rojos).",
       overdraftImmediateBankruptcy:
@@ -822,7 +871,7 @@ const ES_STRINGS: UiStrings = {
       richHeadline: "¡Ricachón!",
       heroHeadline: "«¡Eres un héroe!»",
       richSubheadline:
-        "Has superado los 150.000 € limpios en tu cuenta corriente sin que Hacienda ni los clientes acaben contigo.",
+        "Has superado los 250.000 € limpios en tu cuenta corriente sin que Hacienda ni los clientes acaben contigo.",
       heroSubheadline:
         "Has sobrevivido diez años completos (120 meses) dado de alta en el RETA. En tu gestoría te han enmarcado el Modelo 036.",
       sealedBadgeHeading: "SELLO CONQUISTADO Y BLINDADO EN TU CERTIFICADO",
@@ -836,6 +885,7 @@ const ES_STRINGS: UiStrings = {
     },
     annual: {
       formBadge: "MODELO 390 · RESUMEN CONTABLE ANUAL",
+      corporateFormBadge: "MODELO 200 / 390 · CIERRE ANUAL S.L.",
       heading: (year, month) => `Cierre del Año ${year} (Mes ${month})`,
       intro:
         "Otro año natural superado sin cerrar la persiana. Balance oficial y estructura al cierre del ejercicio:",
@@ -849,6 +899,8 @@ const ES_STRINGS: UiStrings = {
       familyCardLabel: "Familia",
       staffCardLabel: "Plantilla",
       soloLabel: "En solitario",
+      boutiqueSoloLabel: "Boutique Sénior",
+      teamCountLabel: (headcount) => `${headcount} personas`,
       perMonthSuffix: "/mes",
       childrenCountPrefix: (count) => `${count} ${count === 1 ? "hijo" : "hijos"} · `,
       highlightsHeading: "Momentos memorables del año",
@@ -870,7 +922,7 @@ const ES_STRINGS: UiStrings = {
       honorableBadge: "MODELO 036 · CESE CON HONORES",
       honorableHeading: "Jubilarse con honores",
       honorablePrompt:
-        "Tras superar la meta histórica del RETA (10+ años cotizados o 150.000 € de colchón), puedes cerrar el despacho por la puerta grande.",
+        "Tras superar la meta histórica del RETA (10+ años cotizados o 250.000 € de colchón), puedes cerrar el despacho por la puerta grande.",
       honorableSummary:
         "Se archivará tu expediente con el sello oficial de retirada triunfal y podrás descargar o compartir tu certificado definitivo.",
       honorableCancelBtn: "Seguir cotizando en el despacho",
@@ -990,13 +1042,13 @@ const EN_STRINGS: UiStrings = {
       },
       {
         code: "GOAL 02 · CUSHION",
-        target: "150,000 €",
+        target: "250,000 €",
         desc: "Net cash in the bank for an early golden exit.",
       },
       {
         code: "GOAL 03 · CAREER",
-        target: "15 Seals",
-        desc: "Official milestones from first Q1 tax to Endless Mode.",
+        target: "18 Seals",
+        desc: "Official milestones from first Q1 tax to S.L. and Endless Mode.",
       },
     ],
     hallCashPrefix: "Cash",
@@ -1022,8 +1074,8 @@ const EN_STRINGS: UiStrings = {
       },
       {
         step: "03",
-        title: "120 mos or 150k €",
-        desc: "Last 10 full years or bank 150,000 € before burnout.",
+        title: "120 mos or 250k €",
+        desc: "Last 10 full years or scale to 250,000 € before burnout.",
       },
     ],
     landingEnterBtn: "Play! · Enter the Desk",
@@ -1041,11 +1093,11 @@ const EN_STRINGS: UiStrings = {
     careerSealsLabel: "Career seals",
     careerZeroMonths: "0 months",
     careerEmptyHint:
-      "Finish your first run to log personal survival records and unlock all 15 official seals.",
+      "Finish your first run to log personal survival records and unlock all 18 official seals.",
     careerVeteranHint: (victories) =>
       victories > 0
         ? `You have earned ${victories} victory ${victories === 1 ? "seal" : "seals"} across your self-employed career.`
-        : "Keep sharpening your quarterly margin to reach 120 months or 150,000 € net cash.",
+        : "Keep sharpening your quarterly margin to reach 120 months or 250,000 € net cash.",
     confirmOverwriteRun: EN_CONFIRM_OVERWRITE_RUN,
   },
   kofi: {
@@ -1172,15 +1224,22 @@ const EN_STRINGS: UiStrings = {
     badge: "BOOKKEEPING",
     baselineBilling: "Baseline monthly billing",
     livingCost: "Basic living cost",
-    autonomoQuota: "Monthly RETA fee",
+    autonomoQuota: "RETA fee (bracket)",
+    corporateQuota: "Corporate RETA fee",
+    structuralOverheadLabel: (tierShort) => `Overhead (${tierShort})`,
     gestorRetainer: "Advisor retainer",
     familyCosts: "Household expenses",
     payrollLabel: (roleLabel) => `Payroll (${roleLabel})`,
+    multiPayrollLabel: (headcount) => `Payroll (${headcount} staff)`,
     tempEffects: "Temporary modifiers",
     marginBeforeTax: "Pre-tax monthly margin",
     estTaxProvision: (pct) => `Est. tax reserve (${pct}%)`,
+    irpfProvision: (pct) => `IRPF reserve (~${pct}%)`,
+    corporateTaxProvision: (pct) => `Corporate Tax (${pct}%)`,
     marginAfterTax: "Margin after tax reserve",
     quarterProvisionHeading: "QUARTERLY TAX RESERVE (VAT + IRPF)",
+    corporateQuarterProvisionHeading: "QUARTERLY RESERVE (VAT + CORP)",
+    openPrescripcionWindow: (count) => `Open 4-yr tax audit window: ${count}`,
     quarterBilled: "Quarter billed:",
     accruedTaxes: "Accrued tax due:",
     lifetimeBilled: "Lifetime official billing:",
@@ -1209,7 +1268,7 @@ const EN_STRINGS: UiStrings = {
     partnerFallbackAlt: "Partner",
     personalLifeHeader: "PERSONAL LIFE",
     childrenAndCost: (children, costFormatted) => `Kids: ${children} · ${costFormatted}/mo`,
-    staffHeader: "STAFF (MAX 1)",
+    staffHeader: "STAFF",
     billingMultiplier: (mult) => `Billing ×${mult.toFixed(2)}`,
     noEmployeesTitle: "No employees on payroll",
     noEmployeesSub: "Solo operator · Zero fixed payroll",
@@ -1242,12 +1301,14 @@ const EN_STRINGS: UiStrings = {
   modals: {
     quarterly: {
       formBadge: "FORM 303 / 130 · QUARTERLY RETURN",
+      corporateFormBadge: "FORM 303 / 202 (S.L.) · QUARTERLY RETURN",
       heading: (month, quarter) => `The Quarter · Month ${month} (Q${quarter})`,
       mandatoryBadge: "MANDATORY",
       intro:
         "The 20th has arrived: time to settle up with the Tax Agency for everything invoiced over the last three months.",
       quarterBilled: "Official quarterly billing:",
       gestorErrorSurcharge: "Filing error surcharge:",
+      slSelfPenalty: "Corporate self-filing penalty (no advisor):",
       directAuditFine: "Direct tax audit penalty:",
       currentQuarterDue: "Current quarter tax due:",
       priorDeferralDue: "Prior deferred tax due (non-deferrable):",
@@ -1258,6 +1319,17 @@ const EN_STRINGS: UiStrings = {
         "An auditor opened a file on your accounts: expect a certified notice next month.",
       auditImmediateBody:
         "An immediate penalty assessment has been added to this quarterly return.",
+      historicalAuditHeading: "Prior-Year Tax Audit (4-Year Statute Window)",
+      historicalAuditScheduledBody:
+        "The Tax Agency flagged an unprescribed prior-year filing: expect an official audit notice next month.",
+      historicalAuditImmediateBody:
+        "A direct back-tax penalty from a prior year within the 4-year statute window has been added to this filing.",
+      elenaWarningHeading: "Compliance Warning · Elena Montes",
+      elenaWarningBody:
+        "Your fiscal risk is tripping the firm's compliance alarms: clean up off-the-books activity or Elena will drop you next quarter (+4 Stress).",
+      elenaDroppedHeading: "Engagement Terminated · Elena Montes",
+      elenaDroppedBody:
+        "Your fiscal exposure crossed the firm's compliance threshold. Elena terminated your retainer and you are back to Self-filed (-8 Reputation, +10 Stress).",
       overdraftWarningBefore: "Paying in full will leave your account at ",
       overdraftLabel: "(In the red).",
       overdraftImmediateBankruptcy:
@@ -1281,7 +1353,7 @@ const EN_STRINGS: UiStrings = {
       richHeadline: "Rolling in It!",
       heroHeadline: "Self-Employed Hero!",
       richSubheadline:
-        "You cleared 150,000 € in net bank cash without the Tax Agency or your clients finishing you off.",
+        "You cleared 250,000 € in net bank cash without the Tax Agency or your clients finishing you off.",
       heroSubheadline:
         "You survived ten full years (120 months) registered as self-employed. Your tax advisor framed your Form 036.",
       sealedBadgeHeading: "VICTORY SEAL LOCKED INTO YOUR CERTIFICATE",
@@ -1295,6 +1367,7 @@ const EN_STRINGS: UiStrings = {
     },
     annual: {
       formBadge: "FORM 390 · ANNUAL FISCAL SUMMARY",
+      corporateFormBadge: "FORM 200 / 390 · CORPORATE ANNUAL CLOSING",
       heading: (year, month) => `Year ${year} Closing (Month ${month})`,
       intro:
         "Another calendar year survived without pulling down the shutters. Official balance and setup at year-end:",
@@ -1308,6 +1381,8 @@ const EN_STRINGS: UiStrings = {
       familyCardLabel: "Household",
       staffCardLabel: "Staff",
       soloLabel: "Solo",
+      boutiqueSoloLabel: "Boutique Solo",
+      teamCountLabel: (headcount) => `${headcount} staff`,
       perMonthSuffix: "/mo",
       childrenCountPrefix: (count) => `${count} ${count === 1 ? "child" : "children"} · `,
       highlightsHeading: "Memorable moments of the year",
@@ -1329,7 +1404,7 @@ const EN_STRINGS: UiStrings = {
       honorableBadge: "FORM 036 · HONORABLE RETIREMENT",
       honorableHeading: "Retire with honors",
       honorablePrompt:
-        "After conquering self-employment's ultimate milestone (10+ years survived or 150,000 € banked), you may close your RETA registration with full honors.",
+        "After conquering self-employment's ultimate milestone (10+ years survived or 250,000 € banked), you may close your RETA registration with full honors.",
       honorableSummary:
         "Your dossier will be permanently archived with an official triumph seal and you can claim your retirement certificate right away.",
       honorableCancelBtn: "Keep filing at the desk",
@@ -1365,6 +1440,82 @@ const EN_STRINGS: UiStrings = {
   },
 };
 
-export function getUiStrings(locale: SupportedLocale = "es-ES"): UiStrings {
-  return normalizeLocale(locale) === "en" ? EN_STRINGS : ES_STRINGS;
+const DEFAULT_VICTORY_MONEY = 250_000;
+const DEFAULT_TOTAL_SEALS = 18;
+
+export function getUiStrings(
+  locale: SupportedLocale = "es-ES",
+  options?: UiStringsOptions,
+): UiStrings {
+  const normalized = normalizeLocale(locale);
+  const base = normalized === "en" ? EN_STRINGS : ES_STRINGS;
+  const victoryMoney = options?.victoryMoney ?? DEFAULT_VICTORY_MONEY;
+  const totalSeals = options?.totalSeals ?? DEFAULT_TOTAL_SEALS;
+
+  if (victoryMoney === DEFAULT_VICTORY_MONEY && totalSeals === DEFAULT_TOTAL_SEALS) {
+    return base;
+  }
+
+  const isEn = normalized === "en";
+  const formattedMoney = formatEuros(victoryMoney, normalized);
+  const shortK = `${Math.round(victoryMoney / 1000)}k €`;
+
+  return {
+    ...base,
+    title: {
+      ...base.title,
+      emptyHallGoals: base.title.emptyHallGoals.map((goal, idx) => {
+        if (idx === 1) {
+          return { ...goal, target: formattedMoney };
+        }
+        if (idx === 2) {
+          return {
+            ...goal,
+            target: isEn ? `${totalSeals} Seals` : `${totalSeals} Sellos`,
+          };
+        }
+        return goal;
+      }),
+      landingSteps: base.title.landingSteps.map((step, idx) => {
+        if (idx !== 2) {
+          return step;
+        }
+        return isEn
+          ? {
+              ...step,
+              title: `120 mos or ${shortK}`,
+              desc: `Last 10 full years or scale to ${formattedMoney} before burnout.`,
+            }
+          : {
+              ...step,
+              title: `120 meses o ${shortK}`,
+              desc: `Aguanta 10 años cotizando o escala hasta ${formattedMoney} limpios.`,
+            };
+      }),
+      careerEmptyHint: isEn
+        ? `Finish your first run to log personal survival records and unlock all ${totalSeals} official seals.`
+        : `Cierra tu primera partida para registrar marcas oficiales y desbloquear los ${totalSeals} sellos del RETA.`,
+      careerVeteranHint: (victories) =>
+        victories > 0
+          ? base.title.careerVeteranHint(victories)
+          : isEn
+            ? `Keep sharpening your quarterly margin to reach 120 months or ${formattedMoney} net cash.`
+            : `Sigue afinando tu margen trimestral para alcanzar los 120 meses o los ${formattedMoney} limpios.`,
+    },
+    modals: {
+      ...base.modals,
+      victory: {
+        ...base.modals.victory,
+        richSubheadline: isEn
+          ? `You cleared ${formattedMoney} in net bank cash without the Tax Agency or your clients finishing you off.`
+          : `Has superado los ${formattedMoney} limpios en tu cuenta corriente sin que Hacienda ni los clientes acaben contigo.`,
+      },
+      abandon: {
+        ...base.modals.abandon,
+        honorablePrompt: isEn
+          ? `After conquering self-employment's ultimate milestone (10+ years survived or ${formattedMoney} banked), you may close your RETA registration with full honors.`
+          : `Tras superar la meta histórica del RETA (10+ años cotizados o ${formattedMoney} de colchón), puedes cerrar el despacho por la puerta grande.`,
+      },
+    },
+  };
 }

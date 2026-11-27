@@ -1,0 +1,51 @@
+schema_version: 1
+id: hacienda_inspeccion_borde_prescripcion
+category: hacienda
+title: "Mes 43: notificación a cinco meses de prescribir"
+body: "Faltaban apenas cinco meses para que aquel viejo ejercicio prescribiera para siempre, pero el timbre del buzón electrónico interrumpe el reloj en el descuento. Gómez aparece con intereses acumulados de casi cuatro años."
+tags:
+  - prescripcion_fiscal
+  - inspeccion
+  - prescripcion
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: illus_hito_inspeccion_hacienda
+requirements: null
+weight: 0
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: firmar_conformidad_al_borde
+    label: "Firmar conformidad al límite y zanjar cuatro años de intereses (5.800 €)"
+    result_text: "A cinco meses de la meta te toca soltar 5.800 € sin deducción posible. El alivio de cerrar ese ejercicio fantasma pesa casi tanto como el agujero."
+    effects:
+      cash_delta: -5800
+      fiscal_risk: -28
+      stress: 16
+      moral: -10
+  - id: nulidad_tecnica_archivo_certificado
+    label: "Acreditar trazabilidad total con tu archivo digital certificado (600 €)"
+    requirements:
+      required_flags:
+        - archivo_digitalizado_certificado
+      stats:
+        fiscal_risk:
+          max: 25
+    result_text: "Bendito día en que ordenaste tus carpetas: cada factura, contrato y fecha cuadra al milímetro y Gómez archiva el requerimiento en el descuento."
+    effects:
+      deductible_expense: 600
+      moral: 12
+      stress: -10
+      fiscal_risk: -20
+  - id: pelear_prescripcion_en_teac
+    label: "Alegar interrupción defectuosa del plazo y acudir al TEAC (1.400 €)"
+    result_text: "Tu fiscalista detecta un fallo de forma en la notificación electrónica y eleva el recurso al TEAC. En dieciséis meses sabrás si prescribe de verdad."
+    effects:
+      deductible_expense: 1400
+      stress: 12
+      schedule_events:
+        - event_id: hacienda_resolucion_teac_tardia
+          delay_months: 16
+          probability: 1
+          priority: high

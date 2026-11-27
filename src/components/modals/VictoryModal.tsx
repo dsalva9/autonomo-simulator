@@ -1,6 +1,7 @@
 import { Award, Infinity as InfinityIcon, Trophy } from "lucide-react";
 import { useRef } from "react";
 import type { GameState, VictoryDecision } from "../../engine/index.ts";
+import { compiledCatalog } from "../../services/content/catalog.ts";
 import { formatDurationMonthsEs, formatEuros } from "../../services/i18n/resolveEventText.ts";
 import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 import { useGameStore } from "../../store/gameStore.ts";
@@ -16,10 +17,12 @@ export interface VictoryModalProps {
 export function VictoryModal({ state, locale: localeProp, onDecide }: VictoryModalProps) {
   const storeLocale = useGameStore((s) => s.profile.settings.locale);
   const locale = localeProp ?? storeLocale;
-  const v = getUiStrings(locale).modals.victory;
+  const v = getUiStrings(locale, {
+    victoryMoney: compiledCatalog.balance.victory_money,
+  }).modals.victory;
 
   const dialogRef = useRef<HTMLDialogElement | null>(null);
-  const isRich = state.pending_victory_badge === "rich_150k";
+  const isRich = state.pending_victory_badge === "rich_250k";
 
   const headline = isRich ? v.richHeadline : v.heroHeadline;
   const subheadline = isRich ? v.richSubheadline : v.heroSubheadline;

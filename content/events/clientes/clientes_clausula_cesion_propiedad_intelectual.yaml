@@ -33,6 +33,11 @@ choices:
       stress: 1
       personal_life: 2
       reputation: -2
+      schedule_events:
+        - event_id: clientes_garantia_codigo_tres_anos
+          delay_months: 28
+          probability: 0.45
+          priority: high
   - id: tarifar_buyout_exclusivo_al_doble
     label: Exigir 4.100 € si quieren comprar también editables y exclusividad
     result_text: "Ponerle precio real a la exclusividad surte efecto: dirección prefiere pagarte el recargo completo para que su equipo pueda editarlo todo."

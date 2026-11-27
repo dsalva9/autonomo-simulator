@@ -1,7 +1,7 @@
 schema_version: 1
 id: gestor_elena_dilema_sociedad_limitada
 category: gestor
-title: "¿Seguir como autónomo o dar el paso a Sociedad Limitada?"
+title: ¿Seguir como autónomo o dar el paso a Sociedad Limitada?
 body: "Con tu facturación consolidándose, Elena Montes pone sobre la mesa el gran dilema del gremio: estudiar una estructura mercantil para vestir mejor ante corporaciones o mantener la agilidad ligera de persona física."
 tags:
   - gestoria
@@ -11,27 +11,30 @@ tags:
 character_id: gestor_premium_elena
 character_expression: neutral
 requirements:
-  min_month: 16
+  min_month: 26
   gestor_tiers:
     - premium
   forbidden_flags:
     - sociedad_limitada_activa
+  business_tiers:
+    - solo_autonomo
+    - estudio_consolidado
 weight: 12
 cooldown_months: 14
 max_occurrences: 2
 exclusive_with: []
 choices:
   - id: mantener_estructura_ligera_actual
-    label: "Descartar notarías por ahora y seguir ligero como persona física"
-    result_text: "Cierras la carpeta societaria sin asumir libros mercantiles ni costes notariales y sigues facturando ágil como autónomo."
+    label: Descartar notarías por ahora y seguir ligero como persona física
+    result_text: Cierras la carpeta societaria sin asumir libros mercantiles ni costes notariales y sigues facturando ágil como autónomo.
     effects:
-      stress: -3
-      moral: 2
+      stress: -1
+      moral: 1
   - id: pedir_informe_comparativo_previo
-    label: "Pagar solo el estudio fiscal comparativo antes de decidir (180 €)"
-    result_text: "Recibes una simulación honesta al céntimo con pros, contras y costes reales de Registro Mercantil para decidir en dos meses."
+    label: Pagar solo el estudio fiscal comparativo antes de decidir (280 €)
+    result_text: Recibes una simulación honesta al céntimo con pros, contras y costes reales de Registro Mercantil para decidir en dos meses.
     effects:
-      deductible_expense: 180
+      deductible_expense: 280
       stress: -4
       moral: 3
       fiscal_risk: -5
@@ -42,17 +45,21 @@ choices:
           delay_months: 2
           probability: 0.95
   - id: encargar_protocolo_mercantil_sl
-    label: "Encargar el proyecto mercantil y reserva de denominación (640 €)"
+    label: Encargar proyecto mercantil y reserva de denominación (950 €)
     requirements:
       stats:
         money:
-          min: 1200
-    result_text: "Elena pone en marcha el dossier societario y prepara la cita con notaría para blindar tu operativa comercial del próximo ciclo."
+          min: 2500
+        reputation:
+          min: 50
+        fiscal_risk:
+          max: 30
+    result_text: Elena pone en marcha el dossier societario y prepara la cita con notaría para blindar tu operativa comercial del próximo ciclo.
     effects:
-      deductible_expense: 640
-      stress: 2
-      moral: 5
-      reputation: 6
+      deductible_expense: 950
+      stress: 4
+      moral: 4
+      reputation: 5
       fiscal_risk: -8
       set_flags:
         - dossier_sl_elena

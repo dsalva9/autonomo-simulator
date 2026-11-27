@@ -3,7 +3,7 @@ import { type SupportedLocale, normalizeLocale } from "../i18n/resolveEventText.
 
 export type AnalyticsLocale = "es" | "en";
 export type PlaytimeBucket = "<1m" | "1-3m" | "3-10m" | "10-20m" | "20m+";
-export type RunMilestoneId = "year_1" | "year_3" | "year_5" | "year_10_hero" | "rich_150k";
+export type RunMilestoneId = "year_1" | "year_3" | "year_5" | "year_10_hero" | "rich_250k";
 export type ShareMethodAnalytics = "copy" | "download" | "native";
 export type KofiPlacement = "landing" | "endrun" | "victory" | "annual";
 
@@ -375,7 +375,7 @@ export function seedRunProgressSnapshot(state: GameState | null): void {
   if (state.month >= 36) seenMilestones.add("year_3");
   if (state.month >= 60) seenMilestones.add("year_5");
   if (state.earned_victories.includes("hero_120m")) seenMilestones.add("year_10_hero");
-  if (state.earned_victories.includes("rich_150k")) seenMilestones.add("rich_150k");
+  if (state.earned_victories.includes("rich_250k")) seenMilestones.add("rich_250k");
   if (state.ending !== null) {
     tracker.endedRunIds.add(state.run_id);
   }
@@ -406,7 +406,7 @@ export function trackRunProgress(state: GameState, locale?: SupportedLocale): vo
     ["year_3", state.month >= 36],
     ["year_5", state.month >= 60],
     ["year_10_hero", state.earned_victories.includes("hero_120m")],
-    ["rich_150k", state.earned_victories.includes("rich_150k")],
+    ["rich_250k", state.earned_victories.includes("rich_250k")],
   ];
 
   for (const [milestoneId, achieved] of milestoneChecks) {

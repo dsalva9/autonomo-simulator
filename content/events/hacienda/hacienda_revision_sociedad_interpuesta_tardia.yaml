@@ -1,0 +1,48 @@
+schema_version: 1
+id: hacienda_revision_sociedad_interpuesta_tardia
+category: hacienda
+title: "Sociedad interpuesta: tres ejercicios bajo lupa"
+body: "La campaña nacional contra sociedades profesionales llama a tu puerta. Gómez cuestiona si tu estructura societaria tiene medios reales o sirve solo para tributar al 24 % en lugar del IRPF marginal, y revisa tres años de golpe."
+tags:
+  - prescripcion_fiscal
+  - inspeccion
+  - sociedad_limitada
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: banner_hacienda_inspeccion
+requirements: null
+weight: 0
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: acreditar_medios_y_plantilla_real
+    label: "Aportar nóminas, contratos y medios propios de tu equipo (900 €)"
+    requirements:
+      team_size:
+        min: 2
+    result_text: "Con plantilla real, contratos mercantiles y estructura operativa demostrable, la tesis de sociedad pantalla se desinfla en media hora. Acta limpia."
+    effects:
+      deductible_expense: 900
+      moral: 10
+      stress: -6
+      fiscal_risk: -22
+  - id: aceptar_recalculo_irpf_societario
+    label: "Asumir el recálculo a IRPF y liquidar la diferencia acumulada (7.800 €)"
+    result_text: "Hacienda te ajusta tres ejercicios a tipo personal con intereses. Un hachazo de 7.800 € que te recuerda que una S.L. sin sustancia se paga carísima."
+    effects:
+      cash_delta: -7800
+      fiscal_risk: -26
+      stress: 18
+      moral: -12
+  - id: impugnar_valoracion_en_teac
+    label: "Impugnar la valoración de operaciones vinculadas ante el TEAC (1.800 €)"
+    result_text: "Encargas peritaje de precios de mercado y llevas la disputa al TEAC. Pagas 1.800 € de defensa y congelas el veredicto durante año y medio."
+    effects:
+      deductible_expense: 1800
+      stress: 14
+      schedule_events:
+        - event_id: hacienda_resolucion_teac_tardia
+          delay_months: 18
+          probability: 1
+          priority: high

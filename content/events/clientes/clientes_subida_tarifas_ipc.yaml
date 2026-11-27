@@ -29,29 +29,21 @@ choices:
       moral: -2
   - id: anunciar_subida_firme
     label: Comunicar un +15 % firme con un mes de preaviso
-    outcomes:
-      - id: cartera_saneada
-        weight: 65
-        result_text: Tras dos suspiros teatrales, los clientes serios aceptan sin pestañear y solo se marcha quien más guerra daba por menos dinero.
-        effects:
-          add_modifier:
-            id: mod_tarifas_ipc
-            label: Tarifas actualizadas al IPC
-            remaining_months: 6
-            monthly_billed_delta: 380
-            monthly_moral_delta: 1
-          stress: 3
-          moral: 6
-          reputation: 3
-      - id: espantada_temporal
-        weight: 35
-        result_text: Borja monta un drama digno de Goya y cancela un par de encargos menores, dejándote un bache corto pero tardes sorprendentemente tranquilas.
-        effects:
-          cash_delta: -240
-          stress: 6
-          moral: 1
-          personal_life: 3
-          reputation: 1
+    requirements:
+      stats:
+        reputation:
+          min: 50
+    result_text: "Tu reputación respalda cada euro: la cartera seria acepta el +15 % sin bajas dolorosas y tu margen mensual sube un peldaño."
+    effects:
+      add_modifier:
+        id: mod_tarifas_ipc
+        label: Tarifas actualizadas al IPC
+        remaining_months: 6
+        monthly_billed_delta: 300
+        monthly_moral_delta: 1
+      stress: 2
+      moral: 9
+      reputation: 4
   - id: borrar_borrador_por_miedo
     label: Borrar el correo y absorber tú toda la inflación otro año
     result_text: Conservas hasta al último cliente a costa de trabajar más horas por el mismo poder adquisitivo.

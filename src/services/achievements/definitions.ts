@@ -66,14 +66,26 @@ const ACHIEVEMENT_TRANSLATIONS_EN: Readonly<
     title: "Self-Employed Hero!",
     description: "Survive ten full years (120 months) as a self-employed freelancer.",
   },
-  ricachon_150k: {
+  ricachon_250k: {
     title: "Rolling in It",
-    description: "Accumulate at least 150,000 € in available bank liquidity.",
+    description: "Accumulate at least 250,000 € in available bank liquidity.",
   },
   modo_infinito: {
     title: "Contributing Masochist",
     description:
       "Turn down retirement after earning a victory seal and keep filing in Endless Mode.",
+  },
+  sociedad_limitada: {
+    title: "Limited Company (S.L.)",
+    description: "Incorporate a Limited Company and leap from solo income tax to Corporate Tax.",
+  },
+  agencia_consolidada: {
+    title: "Consolidated Agency",
+    description: "Lead an active payroll team of at least five people.",
+  },
+  ejercicio_prescrito: {
+    title: "Statute-Barred Year",
+    description: "Clear the four-year legal window until a past risky fiscal year expires cleanly.",
   },
 };
 

@@ -1,6 +1,17 @@
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { type Locator, type Page, expect, test } from "@playwright/test";
+import {
+  type CompiledContentBundle,
+  computeMonthlyLivingCost,
+  computeNetCashAfterTaxReserve,
+  startNewRun,
+} from "../../src/engine/index.ts";
+import { formatEuros } from "../../src/services/i18n/resolveEventText.ts";
+
+const compiledCatalog = JSON.parse(
+  readFileSync(resolve(process.cwd(), "src/generated/content-bundle.json"), "utf8"),
+) as CompiledContentBundle;
 
 const SCREENSHOT_DIR = resolve(process.cwd(), "test-results", "qa-screenshots");
 
@@ -349,7 +360,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto("./");
       await openDashboardFromLanding(page);
-      await page.getByTestId("seed-input").fill("P35-M4-HITO-72");
+      await page.getByTestId("seed-input").fill("V2-M4-HITO-37");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -441,14 +452,14 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
       // Play Months 1..3 + Trimestre + Month 4 (16:9 milestone illustration + Inspector Polaroid)
       await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
-        "cambiar_de_tema_con_elegancia",
+        "tragar_para_no_discutir",
         `${vp.label} M1`,
       );
+      await clickChoiceAndVerifyOutcomeFitsWithoutScroll("seguir_autogestion", `${vp.label} M2`);
       await clickChoiceAndVerifyOutcomeFitsWithoutScroll(
         "aceptar_mitad_efectivo_y_cajas",
-        `${vp.label} M2`,
+        `${vp.label} M3`,
       );
-      await clickChoiceAndVerifyOutcomeFitsWithoutScroll("seguir_autogestion", `${vp.label} M3`);
 
       await expect(page.getByTestId("trimestre-modal")).toBeVisible();
       await page.getByTestId("trimestre-defer-btn").click();
@@ -1143,7 +1154,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("title-tab-hall-of-fame")).toContainText(
       "Hall of the Fallen (0)",
     );
-    await expect(page.getByTestId("title-tab-achievements")).toContainText("Achievements (0/15)");
+    await expect(page.getByTestId("title-tab-achievements")).toContainText("Achievements (0/18)");
 
     await page.keyboard.press("l");
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
@@ -1157,15 +1168,22 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     expect(titleScrollWidth).toBeLessThanOrEqual(vp.width);
 
     // 2. Start deterministic English run (P35-EN-LOCALE-134)
+    const m1EnState = startNewRun(compiledCatalog, { seed: "P35-EN-LOCALE-134" }).state;
+    const m1EnLibre = computeNetCashAfterTaxReserve(m1EnState);
+
     await page.getByTestId("seed-input").fill("P35-EN-LOCALE-134");
     await page.getByTestId("start-run-btn").click();
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
     // Verify English HUD, comma thousands formatting, and IndicatorBar ES<->EN hotkey + button
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 1");
-    await expect(page.getByTestId("indicator-money-value")).toHaveText("3,052 €");
+    await expect(page.getByTestId("indicator-money-value")).toHaveText(
+      formatEuros(m1EnState.indicators.money, "en"),
+    );
     await expect(page.getByTestId("indicator-net-cash")).toContainText("Net:");
-    await expect(page.getByTestId("indicator-net-cash")).toContainText("2,532 €");
+    await expect(page.getByTestId("indicator-net-cash")).toContainText(
+      formatEuros(m1EnLibre, "en"),
+    );
 
     await page.keyboard.press("l");
     await expect(page.locator("html")).toHaveAttribute("lang", "es");
@@ -1366,7 +1384,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       await page.setViewportSize({ width: compactVp.width, height: compactVp.height });
       await page.goto("./");
       await openDashboardFromLanding(page);
-      await page.getByTestId("seed-input").fill("P35-M4-HITO-72");
+      await page.getByTestId("seed-input").fill("V2-M4-HITO-37");
       await page.getByTestId("start-run-btn").click();
       await expect(page.getByTestId("game-screen")).toBeVisible();
 
@@ -1428,7 +1446,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       await assertCompactDesktopFit(`${compactVp.label} M1`);
 
       // Click directly WITHOUT scrollIntoViewIfNeeded() and verify outcome fits 100% above the fold
-      await page.locator('[data-choice-id="cambiar_de_tema_con_elegancia"]').click();
+      await page.locator('[data-choice-id="tragar_para_no_discutir"]').click();
       await expect(page.getByTestId("outcome-panel")).toBeVisible();
       expect(await page.evaluate(() => window.scrollY)).toBe(0);
       expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
@@ -1691,7 +1709,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
             envelope.state.month = 128;
             envelope.state.endless_mode = true;
             envelope.state.earned_victories = ["hero_120m"];
-            envelope.state.indicators.money = 158000;
+            envelope.state.indicators.money = 258000;
             store.put(envelope, "autonomo:active_run");
           };
           tx.oncomplete = () => {
@@ -1706,8 +1724,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.reload();
     await openDashboardFromLanding(page);
     await page.getByTestId("continue-run-btn").click();
-    // Month 128 (Year 11, tapered 0.5x post-M120): effectiveLivingCost = 1,405 + 9.5 * 64 = 2,013 €/mo
-    await expect(page.getByTestId("panel-cuentas")).toContainText(/2\.?013\s*€/);
+    // Month 128 (Year 11, tapered 0.5x post-M120): derive expected living cost from live catalog
+    const expectedM128LivingCost = computeMonthlyLivingCost({ month: 128 }, compiledCatalog);
+    await expect(page.getByTestId("panel-cuentas")).toContainText(
+      formatEuros(expectedM128LivingCost, "es"),
+    );
 
     await page.getByTestId("abandon-run-btn").click();
     await expect(page.getByTestId("abandon-modal")).toBeVisible();
@@ -2596,7 +2617,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(page.getByTestId("game-screen")).toBeVisible();
     await expect.poll(async () => page.title()).toContain("Year 1 · Month 1");
 
-    // Stage Year 15 (Month 180) Annual Summary followed by Ricachón 150k VictoryModal in IndexedDB
+    // Stage Year 15 (Month 180) Annual Summary followed by Ricachón 250k VictoryModal in IndexedDB
     await page.evaluate(async () => {
       await new Promise<void>((resolvePromise, rejectPromise) => {
         const openReq = indexedDB.open("keyval-store");
@@ -2611,10 +2632,10 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
             const envelope = getReq.result;
             envelope.state.month = 180;
             envelope.state.endless_mode = true;
-            envelope.state.earned_victories = ["hero_120m", "rich_150k"];
-            envelope.state.pending_victory_badge = "rich_150k";
+            envelope.state.earned_victories = ["hero_120m", "rich_250k"];
+            envelope.state.pending_victory_badge = "rich_250k";
             envelope.state.phase = "annual_summary";
-            envelope.state.indicators.money = 162000;
+            envelope.state.indicators.money = 262000;
             store.put(envelope, "autonomo:active_run");
           };
           tx.oncomplete = () => {
@@ -2642,7 +2663,7 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await expect(annualKofi).toHaveAttribute("href", "https://ko-fi.com/dsal80");
     await page.getByTestId("annual-summary-close-btn").click();
 
-    // Millionaire / Ricachón (150k €) VictoryModal displays Ko-fi link
+    // Millionaire / Ricachón (250k €) VictoryModal displays Ko-fi link
     await expect(page.getByTestId("victory-modal")).toBeVisible();
     const victoryKofi = page.getByTestId("kofi-victory-banner-link");
     await expect(victoryKofi).toBeVisible();
@@ -2663,5 +2684,425 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.getByTestId("end-return-title-btn").click();
     await expect(page.getByTestId("title-screen")).toBeVisible();
     await expect(page.getByTestId("career-summary-runs")).toHaveText("1");
+  });
+
+  test("QA-37: v2 Business Tiers, Multi-Staff Entorno, RPG Stat-Check Chips, Progressive Cuentas, v2 Modals & v1->v2 Save Migration", async ({
+    page,
+  }, testInfo) => {
+    const isMobile = testInfo.project.name === "mobile-chromium";
+    const viewports = isMobile ? MOBILE_UX_VIEWPORTS : DESKTOP_UX_VIEWPORTS;
+    await page.setViewportSize({ width: viewports[0].width, height: viewports[0].height });
+    await page.goto("./");
+    await openDashboardFromLanding(page);
+
+    await page.getByTestId("seed-input").fill("V2-OVERHAUL-UX-37");
+    await page.getByTestId("start-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    // 1. Stage rich v2 S.L. + 4-person team + Partner Strain + Prescripción + RPG-gated event in IndexedDB
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.month = 45;
+            envelope.state.phase = "event_resolution";
+            envelope.state.business = {
+              tier: "sociedad_limitada",
+              months_in_tier: 9,
+              sl_formed_month: 36,
+            };
+            envelope.state.gestor = {
+              tier: "premium",
+              character_id: "gestor_premium_elena",
+              monthly_fee: 260,
+              inspection_shield: 0.75,
+              months_active: 18,
+            };
+            envelope.state.employee = {
+              character_id: "empleado_junior_dani",
+              role_label: "Diseñador Junior",
+              headcount: 4,
+              lead_monthly_cost: 2200,
+              monthly_cost: 7600,
+              billing_multiplier: 1.45,
+              satisfaction: 74,
+              months_employed: 20,
+            };
+            envelope.state.family = {
+              status: "cohabiting",
+              partner_character_id: "pareja_alex",
+              partner_name: "Álex",
+              children_count: 1,
+              monthly_cost: 350,
+              support_modifier: 1,
+              neglect_months: 4,
+            };
+            envelope.state.indicators = {
+              money: 48500,
+              reputation: 72,
+              stress: 58,
+              moral: 68,
+              personal_life: 36,
+            };
+            envelope.state.fiscal_risk = 28;
+            envelope.state.finances.historical_exposures = [
+              {
+                id: "exp_qa37_1",
+                origin_month: 18,
+                expires_month: 66,
+                risk_points: 12,
+                untaxed_amount: 3200,
+                source_event_id: "clientes_pago_sin_factura",
+                audited: false,
+              },
+            ];
+            envelope.state.current_turn_events = ["clientes_agencia_intermediaria"];
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await openDashboardFromLanding(page);
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+
+    for (const vp of viewports) {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+
+      // IndicatorBar: inline business tier badge with zero height bloat or horizontal overflow
+      const tierBadge = page.getByTestId("indicator-business-tier");
+      await expect(tierBadge).toBeVisible();
+      await expect(tierBadge).toHaveAttribute("data-business-tier", "sociedad_limitada");
+      await expect(tierBadge).toContainText("S.L.");
+
+      const hudBox = await page.locator("header").first().boundingBox();
+      expect(hudBox).not.toBeNull();
+      expect(hudBox!.height).toBeLessThanOrEqual(isMobile ? 136 : 102);
+
+      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+      expect(scrollWidth, `Zero horizontal overflow on ${vp.label}`).toBeLessThanOrEqual(
+        vp.width + 1,
+      );
+
+      // EventStage: RPG Stat-Check chip unlocked & strict 4-chip cap preserving zero-scroll ergonomics
+      const rpgUnlockChip = page.getByTestId("choice-rpg-unlock-2");
+      await expect(rpgUnlockChip).toBeVisible();
+      await expect(rpgUnlockChip).toContainText("✓ Rep ≥ 52");
+
+      const stakeChipCount = await page.getByTestId("choice-stakes-2").locator("> span").count();
+      expect(
+        stakeChipCount,
+        `Choice stake chips capped at 4 on ${vp.label} (got ${stakeChipCount})`,
+      ).toBeLessThanOrEqual(4);
+
+      const choiceButtons = page.locator('[data-testid^="choice-btn-"]');
+      const choiceCount = await choiceButtons.count();
+      expect(choiceCount).toBeGreaterThanOrEqual(3);
+
+      if (!isMobile) {
+        // Zero Desktop Yo-Yo Scroll
+        const scrollState = await page.evaluate(() => ({
+          scrollY: window.scrollY,
+          scrollHeight: document.documentElement.scrollHeight,
+          innerHeight: window.innerHeight,
+        }));
+        expect(scrollState.scrollY).toBe(0);
+        expect(
+          scrollState.scrollHeight,
+          `Zero desktop yo-yo scroll with v2 RPG chips on ${vp.label}`,
+        ).toBeLessThanOrEqual(scrollState.innerHeight + 2);
+
+        for (let i = 0; i < choiceCount; i += 1) {
+          await assertVisibleInViewportWithoutScroll(
+            choiceButtons.nth(i),
+            {
+              minTop: hudBox!.y + hudBox!.height - 1,
+              maxBottom: vp.height,
+              viewportWidth: vp.width,
+            },
+            `v2 choice-btn-${i} (${vp.label})`,
+          );
+          await assertCenterHitTargetUnoccluded(
+            choiceButtons.nth(i),
+            `v2 choice-btn-${i} (${vp.label})`,
+          );
+          await assertZeroSilentTextTruncation(
+            choiceButtons.nth(i),
+            `v2 choice-btn-${i} (${vp.label})`,
+          );
+        }
+      } else {
+        // Zero-Scroll Mobile Decision Stage
+        const bottomNavBox = await page.locator("nav.mobile-desk-nav").boundingBox();
+        expect(bottomNavBox).not.toBeNull();
+        let prevBottom: number | null = null;
+        for (let i = 0; i < choiceCount; i += 1) {
+          const btn = choiceButtons.nth(i);
+          const box = await assertVisibleInViewportWithoutScroll(
+            btn,
+            {
+              minTop: hudBox!.y + hudBox!.height - 1,
+              maxBottom: bottomNavBox!.y - 2,
+              viewportWidth: vp.width,
+            },
+            `v2 mobile choice-btn-${i} (${vp.label})`,
+          );
+          expect(box.height, `Tap floor >= 48px on ${vp.label}`).toBeGreaterThanOrEqual(48);
+          if (prevBottom !== null) {
+            expect(
+              box.y - prevBottom,
+              `Inter-button gap >= 6px on ${vp.label}`,
+            ).toBeGreaterThanOrEqual(5.5);
+          }
+          prevBottom = box.y + box.height;
+          await assertCenterHitTargetUnoccluded(btn, `v2 mobile choice-btn-${i} (${vp.label})`);
+          await assertZeroSilentTextTruncation(btn, `v2 mobile choice-btn-${i} (${vp.label})`);
+        }
+      }
+
+      // EntornoPanel + SceneRenderer: multi-staff, partner strain, S.L. tax regime & upgraded studio backdrop
+      if (isMobile) {
+        await page.getByTestId("mobile-tab-entorno").click();
+      }
+      await expect(page.getByTestId("entorno-structure-badge")).toContainText("S.L.");
+      await expect(page.getByTestId("entorno-structure-badge")).toContainText("Imp. Sociedades");
+      await expect(page.getByTestId("entorno-partner-climate")).toContainText("Tensión en casa");
+      await expect(page.getByTestId("entorno-team-summary")).toContainText("4 personas");
+      await expect(page.getByTestId("entorno-team-summary")).toContainText("Dani");
+      await expect(page.getByTestId("scene-bg")).toHaveAttribute(
+        "data-asset-id",
+        "bg_despacho_estudio",
+      );
+      if (!isMobile) {
+        await expect(page.getByTestId("scene-structure-chip")).toContainText("S.L. · 4 pers.");
+      }
+
+      // CuentasPanel: progressive RETA/societario, structural overhead, multi-staff payroll, Imp. Sociedades, 4-yr prescripción
+      if (isMobile) {
+        await page.getByTestId("mobile-tab-cuentas").click();
+      }
+      await expect(page.getByTestId("panel-cuentas")).toContainText("Autónomo societario");
+      await expect(page.getByTestId("panel-cuentas")).toContainText("Nóminas (4 pers.)");
+      await expect(page.getByTestId("ledger-structural-overhead")).toBeVisible();
+      await expect(page.getByTestId("ledger-tax-provision")).toContainText("Imp. Sociedades");
+      await expect(page.getByTestId("ledger-prescripcion-warning")).toBeVisible();
+      await expect(page.getByTestId("ledger-prescripcion-warning")).toContainText("1");
+
+      if (isMobile) {
+        await page.getByTestId("mobile-tab-despacho").click();
+      }
+    }
+
+    // 2. Stage v2 QuarterlyTaxModal (Modelo 303/202, S.L. self-penalty, Elena compliance warning, 4-yr historical audit)
+    await page.setViewportSize({ width: viewports[0].width, height: viewports[0].height });
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.phase = "quarterly_tax";
+            envelope.state.quarterly_report = {
+              month: 45,
+              quarter: 3,
+              quarter_billed: 32000,
+              accrued_tax_due: 5400,
+              deferred_tax_due: 0,
+              gestor_error_surcharge: 0,
+              sl_self_penalty: 340,
+              elena_compliance_event: "warning",
+              inspection_triggered: false,
+              historical_audit_triggered: true,
+              inspection_scheduled_event_id: null,
+              inspection_fallback_fine: 0,
+              can_defer: true,
+            };
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await openDashboardFromLanding(page);
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await expect(page.getByTestId("trimestre-form-badge")).toContainText("MODELO 303 / 202 (S.L.)");
+    await expect(page.getByTestId("trimestre-sl-self-penalty")).toBeVisible();
+    await expect(page.getByTestId("trimestre-elena-compliance-alert")).toBeVisible();
+    await expect(page.getByTestId("trimestre-historical-audit-alert")).toBeVisible();
+
+    await assertVisibleInViewportWithoutScroll(
+      page.getByTestId("trimestre-pay-btn"),
+      { minTop: 0, maxBottom: viewports[0].height, viewportWidth: viewports[0].width },
+      `v2 QuarterlyTaxModal pay button (${viewports[0].label})`,
+    );
+    await assertCenterHitTargetUnoccluded(
+      page.getByTestId("trimestre-pay-btn"),
+      `v2 QuarterlyTaxModal pay button (${viewports[0].label})`,
+    );
+
+    // 3. Stage v2 AnnualSummaryModal (Agencia / Consultora + 5 staff)
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.month = 60;
+            envelope.state.phase = "annual_summary";
+            envelope.state.business = {
+              tier: "agencia_consultora",
+              months_in_tier: 12,
+              sl_formed_month: 36,
+            };
+            envelope.state.employee.headcount = 5;
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await openDashboardFromLanding(page);
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("annual-summary-modal")).toBeVisible();
+    await expect(page.getByTestId("annual-business-tier-badge")).toContainText("Agencia");
+    await expect(page.getByTestId("annual-summary-modal")).toContainText("5 personas");
+    await assertCenterHitTargetUnoccluded(
+      page.getByTestId("annual-summary-close-btn"),
+      `v2 AnnualSummaryModal close btn (${viewports[0].label})`,
+    );
+
+    // 4. Stage Boutique Sénior solo + v1 -> v2 save migration check
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            envelope.state.month = 30;
+            envelope.state.phase = "event_resolution";
+            envelope.state.business = {
+              tier: "solo_autonomo",
+              months_in_tier: 30,
+              sl_formed_month: null,
+            };
+            envelope.state.employee = null;
+            envelope.state.indicators.reputation = 82;
+            envelope.state.current_turn_events = ["clientes_encargo_urgente"];
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await openDashboardFromLanding(page);
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("indicator-business-tier")).toContainText(
+      isMobile ? "BTQ" : "Boutique",
+    );
+    if (isMobile) {
+      await page.getByTestId("mobile-tab-entorno").click();
+    }
+    await expect(page.getByTestId("entorno-boutique-badge")).toBeVisible();
+
+    // 5. Verify legacy v1 save (save_version: 1, rich_150k, sociedad_limitada_activa, no business object) migrates cleanly to v2
+    await page.evaluate(async () => {
+      await new Promise<void>((resolvePromise, rejectPromise) => {
+        const openReq = indexedDB.open("keyval-store");
+        openReq.onerror = () => rejectPromise(openReq.error);
+        openReq.onsuccess = () => {
+          const db = openReq.result;
+          const tx = db.transaction("keyval", "readwrite");
+          const store = tx.objectStore("keyval");
+          const getReq = store.get("autonomo:active_run");
+          getReq.onerror = () => rejectPromise(getReq.error);
+          getReq.onsuccess = () => {
+            const envelope = getReq.result;
+            const { business: _omitBusiness, ...legacyState } = envelope.state;
+            envelope.save_version = 1;
+            envelope.state = {
+              ...legacyState,
+              flags: { ...legacyState.flags, sociedad_limitada_activa: true },
+              earned_victories: ["rich_150k"],
+              employee: {
+                character_id: "empleado_junior_dani",
+                role_label: "Diseñador Junior",
+                monthly_cost: 1850,
+                billing_multiplier: 1.4,
+                satisfaction: 70,
+                months_employed: 6,
+              },
+            };
+            store.put(envelope, "autonomo:active_run");
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolvePromise();
+          };
+          tx.onerror = () => rejectPromise(tx.error);
+        };
+      });
+    });
+
+    await page.reload();
+    await openDashboardFromLanding(page);
+    await page.getByTestId("continue-run-btn").click();
+    await expect(page.getByTestId("game-screen")).toBeVisible();
+    await expect(page.getByTestId("indicator-business-tier")).toHaveAttribute(
+      "data-business-tier",
+      "sociedad_limitada",
+    );
+    await expect(page.getByTestId("indicator-business-tier")).toContainText("S.L.");
   });
 });

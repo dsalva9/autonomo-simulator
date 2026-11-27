@@ -9,6 +9,7 @@ tags:
   - operaciones_vinculadas
   - veterania
   - largo_plazo
+  - prescripcion_fiscal
 character_id: hacienda_inspector_gomez
 character_expression: angry
 requirements:
@@ -41,21 +42,14 @@ choices:
       fiscal_risk: -12
   - id: acreditar_independencia_y_cartera
     label: Aportar contratos mercantiles, medios propios y cartera diversificada
-    outcomes:
-      - id: autonomia_plena_acreditada
-        weight: 70
-        result_text: Demuestras organización propia y pluralidad de clientes; Gómez valida las deducciones y archiva las actuaciones.
-        effects:
-          deductible_expense: 110
-          stress: 6
-          moral: 7
-          reputation: 3
-          fiscal_risk: -12
-      - id: recorte_en_gastos_refacturados
-        weight: 30
-        result_text: Admiten tu independencia pero rechazan dos facturas de gastos compartidos mal desglosadas, girándote diferencia.
-        effects:
-          cash_delta: -410
-          stress: 10
-          moral: -4
-          fiscal_risk: -10
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 20
+    result_text: "Tu expediente limpio, medios propios y cartera diversa no dejan fisura alguna: Gómez valida cada factura y archiva sin sanción."
+    effects:
+      deductible_expense: 120
+      stress: 4
+      moral: 7
+      reputation: 3
+      fiscal_risk: -14

@@ -15,40 +15,47 @@ requirements:
   gestor_tiers:
     - premium
 weight: 12
-cooldown_months: 9
-max_occurrences: 4
+cooldown_months: 16
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: intentar_meter_escapada_como_congreso
     label: Pedirle que cuele también un hotel de puente como congreso
-    result_text: Elena te envía una captura del reglamento subrayada en rojo, rechaza el hotel y anota una advertencia en tu ficha interna.
+    result_text: "Disfrazas el viaje y varias dietas como congreso técnico: disfrutas del puente y rascas 1.250 € netos, pero Elena te advierte de futuros cruces."
     effects:
-      cash_delta: 180
+      cash_delta: 1250
+      personal_life: 5
+      moral: -1
       stress: 4
-      moral: -3
-      fiscal_risk: 13
+      fiscal_risk: 18
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 18
+          probability: 0.3
+          priority: high
   - id: ejecutar_memoria_tecnica_completa
-    label: Aprobar la memoria técnica y ampliar formación certificada (320 €)
+    label: Aprobar memoria técnica y ampliar formación certificada (560 €)
     requirements:
       stats:
         money:
-          min: 500
+          min: 700
+        fiscal_risk:
+          max: 25
     result_text: Amortizas impuestos con respaldo documental blindado y mejoras tu tarifa media gracias a las nuevas acreditaciones técnicas.
     effects:
-      deductible_expense: 320
-      stress: -5
-      moral: 5
+      deductible_expense: 560
+      stress: -3
+      moral: 4
       reputation: 5
-      fiscal_risk: -8
+      fiscal_risk: -5
       add_modifier:
         id: mod_acreditacion_tecnica_elena
         label: Acreditación técnica deducible
-        remaining_months: 4
-        monthly_billed_delta: 165
+        remaining_months: 3
+        monthly_billed_delta: 150
   - id: aplicar_solo_recibos_ya_pagados
     label: Aplicar solo las facturas ya emitidas sin desembolsar nada extra
     result_text: Elena reclasifica tus cursos del semestre con pulcritud y te deja el próximo trimestre más ligero sin tocar tu liquidez actual.
     effects:
-      stress: -4
-      moral: 3
-      fiscal_risk: -6
+      moral: 1
+      fiscal_risk: -2

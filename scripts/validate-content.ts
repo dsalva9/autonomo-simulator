@@ -202,6 +202,25 @@ function validateSingleEventFileRules(
       `${relLabel}: event '${event.id}' must include at least 1 unconditional choice (no requirements).`,
     );
   }
+  if (event.scale_with_tier === true) {
+    if (event.title.includes("€")) {
+      errors.push(
+        `${relLabel}: scale_with_tier event '${event.id}' title must not contain literal '€' amounts.`,
+      );
+    }
+    if (event.body.includes("€")) {
+      errors.push(
+        `${relLabel}: scale_with_tier event '${event.id}' body must not contain literal '€' amounts.`,
+      );
+    }
+    for (const choice of event.choices) {
+      if (choice.label.includes("€")) {
+        errors.push(
+          `${relLabel}: scale_with_tier event '${event.id}' choice '${choice.id}' label must not contain literal '€' amounts.`,
+        );
+      }
+    }
+  }
 }
 
 function validateCrossReferencesAndGraph(
@@ -245,11 +264,14 @@ function validateCrossReferencesAndGraph(
       }
     }
 
-    const eventHasNoEmployeeGuard = event.requirements?.has_employee === false;
+    const eventHasNoEmployeeGuard =
+      event.requirements?.has_employee === false || event.requirements?.team_size?.max === 0;
 
     for (const choice of event.choices) {
       const choiceHasNoEmployeeGuard =
-        eventHasNoEmployeeGuard || choice.requirements?.has_employee === false;
+        eventHasNoEmployeeGuard ||
+        choice.requirements?.has_employee === false ||
+        choice.requirements?.team_size?.max === 0;
       const effectBlocks = collectChoiceEffectBlocks(choice);
 
       for (const { label, effects } of effectBlocks) {
@@ -270,7 +292,13 @@ function validateCrossReferencesAndGraph(
   }
 
   for (const event of events) {
-    if (event.weight === 0 && (incomingScheduledCount.get(event.id) ?? 0) === 0) {
+    const isHistoricalAuditEvent =
+      event.category === "hacienda" && Boolean(event.tags?.includes("prescripcion_fiscal"));
+    if (
+      event.weight === 0 &&
+      !isHistoricalAuditEvent &&
+      (incomingScheduledCount.get(event.id) ?? 0) === 0
+    ) {
       errors.push(
         `Event '${event.id}' has weight: 0 (chain-only) but no incoming schedule_events reference (orphan event).`,
       );
@@ -376,7 +404,19 @@ function validateEffectsReferences(
     }
     if (!hasNoEmployeeGuard) {
       errors.push(
-        `${fullLabel}: hire_employee requires 'has_employee: false' on either the event or choice requirements.`,
+        `${fullLabel}: hire_employee requires 'has_employee: false' or 'team_size.max: 0' on either the event or choice requirements.`,
+      );
+    }
+  }
+
+  if (effects.expand_team?.lead_character_id) {
+    const leadId = effects.expand_team.lead_character_id;
+    const leadChar = characters[leadId];
+    if (!leadChar) {
+      errors.push(`${fullLabel}: expand_team references unknown lead character '${leadId}'.`);
+    } else if (leadChar.role !== "empleado" || !leadChar.employee_params) {
+      errors.push(
+        `${fullLabel}: expand_team lead_character_id '${leadId}' must have role 'empleado'.`,
       );
     }
   }

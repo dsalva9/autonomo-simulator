@@ -12,9 +12,11 @@ character_expression: null
 illustration_id: null
 requirements:
   min_month: 100
+  forbidden_flags:
+    - posicionamiento_boutique_elite
 weight: 10
 cooldown_months: 18
-max_occurrences: null
+max_occurrences: 1
 choices:
   - id: mantener_mix_prudente_de_cartera
     label: Subir solo un 12 % conservando el equilibrio actual de cuentas
@@ -42,6 +44,8 @@ choices:
             remaining_months: 6
             monthly_billed_delta: 520
             monthly_stress_delta: -1
+          set_flags:
+            - posicionamiento_boutique_elite
       - id: trimestre_selectivo_pero_muy_sano
         weight: 35
         result_text: Se caen tres presupuestos pequeños y entra uno grande limpio. Facturas algo menos hoy a cambio de recuperar diez horas de vida por semana.
@@ -51,3 +55,5 @@ choices:
           stress: -8
           personal_life: 7
           reputation: 4
+          set_flags:
+            - posicionamiento_boutique_elite

@@ -1,7 +1,7 @@
 schema_version: 1
 id: empleados_baja_gripe_entrega_trimestral
 category: empleados
-title: "Treinta y nueve de fiebre a dos días de entregar"
+title: Treinta y nueve de fiebre a dos días de entregar
 body: "El virus invernal entra por la ventana: tu persona en plantilla escribe con voz tomada y treinta y nueve de fiebre ofreciéndose aun así a conectarse desde la cama para cerrar la entrega del jueves."
 tags:
   - plantilla
@@ -23,8 +23,8 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: prohibirle_conectarse_y_cubrir_tu
-    label: "Prohibirle abrir el portátil, desearle reposo y rematar tú la entrega"
-    result_text: "Duermes cinco horas ese miércoles, pero salvas el proyecto y tu equipo no olvida que priorizaste su salud."
+    label: Prohibirle abrir el portátil, desearle reposo y rematar tú la entrega
+    result_text: Duermes cinco horas ese miércoles, pero salvas el proyecto y tu equipo no olvida que priorizaste su salud.
     effects:
       billed_income: 540
       stress: 9
@@ -34,17 +34,21 @@ choices:
       clear_flags:
         - desgaste_plantilla
   - id: pedir_tres_dias_de_margen_al_cliente
-    label: "Hablar claro con el cliente para pasar la entrega al lunes siguiente"
-    result_text: "El cliente refunfuña diez segundos y acepta; nadie trabaja delirando de fiebre ni tú te quemas las pestañas."
+    label: Hablar claro con el cliente para pasar la entrega al lunes siguiente
+    result_text: El cliente refunfuña diez segundos y acepta; nadie trabaja delirando de fiebre ni tú te quemas las pestañas.
     effects:
-      billed_income: 420
+      billed_income: 620
       stress: -2
       moral: 6
-      reputation: -1
-      employee_satisfaction: 10
+      reputation: 2
+      employee_satisfaction: 12
+    requirements:
+      stats:
+        reputation:
+          min: 55
   - id: aceptar_que_trabaje_con_fiebre_en_remoto
-    label: "Aceptar su ofrecimiento para que cierre su parte desde la cama"
-    result_text: "Entregáis en fecha a costa de dos erratas evitables y una decepción silenciosa que tarda meses en olvidarse."
+    label: Aceptar su ofrecimiento para que cierre su parte desde la cama
+    result_text: Entregáis en fecha a costa de dos erratas evitables y una decepción silenciosa que tarda meses en olvidarse.
     effects:
       billed_income: 720
       stress: 5

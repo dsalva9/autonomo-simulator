@@ -1,7 +1,7 @@
 schema_version: 1
 id: gestor_conciliacion_bancaria_anual_solo
 category: gestor
-title: "Cuatro años de Bizums y comisiones sin cuadrar"
+title: Cuatro años de Bizums y comisiones sin cuadrar
 body: "Con el volumen de un veterano, llevar tus cuentas a pulso pasa factura: tienes cobros en divisa, comisiones de pasarela y Bizums mezclados en el extracto. Si no concilias el libro registro antes del cierre, cantarás en los cruces."
 tags:
   - autogestion
@@ -15,36 +15,46 @@ requirements:
     - 12
   gestor_tiers:
     - self
+  forbidden_flags:
+    - conector_conciliacion_activo
 weight: 12
 cooldown_months: 10
-max_occurrences: 3
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: puntear_extractos_el_fin_de_semana
-    label: "Encerrarte el sábado entero con rotulador fluorescente y extractos"
-    result_text: "Terminas viendo números hasta al cerrar los párpados, pero cuadras hasta el último céntimo de pasarela sin gastar un euro."
+    label: Encerrarte el sábado entero con rotulador fluorescente y extractos
+    result_text: Terminas viendo números hasta al cerrar los párpados, pero cuadras hasta el último céntimo de pasarela sin gastar un euro.
     effects:
       stress: 8
       moral: 2
       personal_life: -4
       fiscal_risk: -4
   - id: cuadrar_diferencias_a_ojimetro
-    label: "Meter un apunte genérico de ajuste y rezar para que cuele"
-    result_text: "Cierras la carpeta en cinco minutos y ganas la tarde libre, dejando un descuadre latente bajo la alfombra contable."
+    label: Meter un apunte genérico de ajuste y rezar para que cuele
+    result_text: Cierras la carpeta en cinco minutos y ganas la tarde libre, dejando un descuadre latente bajo la alfombra contable.
     effects:
-      stress: -4
-      moral: -2
+      cash_delta: 1250
+      moral: -1
+      stress: -3
       personal_life: 2
-      fiscal_risk: 12
+      fiscal_risk: 16
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 24
+          probability: 0.35
+          priority: high
   - id: comprar_conector_conciliacion
-    label: "Adquirir una herramienta profesional de conciliación bancaria (160 €)"
+    label: Adquirir una herramienta profesional de conciliación bancaria (160 €)
     requirements:
       stats:
         money:
           min: 250
-    result_text: "Cruzas tres mil apuntes en diez minutos, cazas comisiones deducibles olvidadas y dejas el libro mayor limpio como una patena."
+    result_text: Cruzas tres mil apuntes en diez minutos, cazas comisiones deducibles olvidadas y dejas el libro mayor limpio como una patena.
     effects:
       deductible_expense: 160
       stress: -6
       moral: 4
       fiscal_risk: -8
+      set_flags:
+        - conector_conciliacion_activo

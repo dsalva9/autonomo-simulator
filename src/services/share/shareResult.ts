@@ -1,4 +1,11 @@
-import type { EndingId, GameState, VictoryBadge } from "../../engine/index.ts";
+import {
+  type BusinessTier,
+  type EndingId,
+  type GameState,
+  type VictoryBadge,
+  getTeamHeadcount,
+  isBoutiqueSeniorSolo,
+} from "../../engine/index.ts";
 import {
   ENDING_METADATA,
   type EndingMetadata,
@@ -27,6 +34,10 @@ export interface EndRunShareSummary {
   seed: string;
   endlessMode: boolean;
   gameUrl: string;
+  businessTier?: BusinessTier;
+  teamHeadcount?: number;
+  isBoutiqueSeniorSolo?: boolean;
+  victoryMoney?: number;
 }
 
 export interface RenderShareCardOptions {
@@ -67,9 +78,58 @@ export function resolveShareUrl(explicitUrl?: string): string {
   return CANONICAL_GAME_URL;
 }
 
+export function formatShareStructureLabel(
+  summary: Pick<
+    EndRunShareSummary,
+    "businessTier" | "teamHeadcount" | "isBoutiqueSeniorSolo" | "endlessMode"
+  >,
+  locale: SupportedLocale = "es-ES",
+): string {
+  const isEn = normalizeLocale(locale) === "en";
+  const tier = summary.businessTier ?? "solo_autonomo";
+  const headcount = Math.max(0, Math.round(summary.teamHeadcount ?? 0));
+
+  switch (tier) {
+    case "agencia_consultora":
+      if (headcount > 0) {
+        return isEn ? `Agency · ${headcount} staff` : `Agencia · ${headcount} pers.`;
+      }
+      return isEn ? "Agency / Consultancy" : "Agencia Consultora";
+    case "sociedad_limitada":
+      if (headcount > 0) {
+        return isEn
+          ? `S.L. · ${headcount} staff`
+          : `S.L. · ${headcount} ${headcount === 1 ? "persona" : "personas"}`;
+      }
+      return isEn ? "Single-Member S.L." : "S.L. Unipersonal";
+    case "estudio_consolidado":
+      if (headcount > 0) {
+        return isEn
+          ? `Studio · ${headcount} staff`
+          : `Estudio · ${headcount} ${headcount === 1 ? "persona" : "personas"}`;
+      }
+      if (summary.isBoutiqueSeniorSolo) {
+        return isEn ? "Boutique Solo" : "Boutique Sénior";
+      }
+      return isEn ? "Boutique Studio" : "Estudio Consolidado";
+    case "solo_autonomo":
+      if (headcount > 0) {
+        return isEn ? `Solo · ${headcount} staff` : `Autónomo · ${headcount} pers.`;
+      }
+      if (summary.isBoutiqueSeniorSolo) {
+        return isEn ? "Boutique Solo" : "Boutique Sénior";
+      }
+      if (summary.endlessMode) {
+        return isEn ? "Solo RETA · Endless" : "Autónomo · Infinito";
+      }
+      return isEn ? "Solo Freelancer" : "Autónomo RETA";
+  }
+}
+
 export function createShareSummaryFromState(
   state: GameState,
   explicitUrl?: string,
+  victoryMoney?: number,
 ): EndRunShareSummary {
   const endingId: EndingId = state.ending?.id ?? "defeat_bankruptcy";
   const monthsSurvived = state.ending?.month ?? state.month;
@@ -87,6 +147,10 @@ export function createShareSummaryFromState(
     seed: state.prng.seed,
     endlessMode: state.endless_mode,
     gameUrl: resolveShareUrl(explicitUrl),
+    businessTier: state.business?.tier ?? "solo_autonomo",
+    teamHeadcount: getTeamHeadcount(state),
+    isBoutiqueSeniorSolo: isBoutiqueSeniorSolo(state),
+    ...(victoryMoney != null ? { victoryMoney } : {}),
   };
 }
 
@@ -95,7 +159,7 @@ export function buildShareText(
   locale: SupportedLocale = "es-ES",
 ): string {
   const isEn = normalizeLocale(locale) === "en";
-  const meta = getEndingMetadata(summary.endingId, locale);
+  const meta = getEndingMetadata(summary.endingId, locale, summary.victoryMoney);
   const duration = formatDurationMonthsEs(summary.monthsSurvived, locale);
   const quote = stripOuterQuotes(
     isEn && summary.localizedQuoteEn
@@ -108,6 +172,10 @@ export function buildShareText(
           summary.seed,
         ),
   );
+  const showStructureLine =
+    (summary.businessTier != null && summary.businessTier !== "solo_autonomo") ||
+    (summary.teamHeadcount ?? 0) > 0 ||
+    Boolean(summary.isBoutiqueSeniorSolo);
 
   if (isEn) {
     const lines: string[] = [
@@ -117,9 +185,13 @@ export function buildShareText(
       `💶 Final cash: ${formatEuros(summary.finalMoney, locale)} | 🧾 Official billing: ${formatEuros(summary.lifetimeBilled, locale)}`,
     ];
 
+    if (showStructureLine) {
+      lines.push(`🏢 Structure: ${formatShareStructureLabel(summary, locale)}`);
+    }
+
     if (summary.earnedVictories.length > 0) {
       const badges = summary.earnedVictories
-        .map((b) => getVictoryBadgeLabel(b, locale).title)
+        .map((b) => getVictoryBadgeLabel(b, locale, summary.victoryMoney).title)
         .join(" · ");
       lines.push(`🏅 Seals earned: ${badges}`);
     }
@@ -137,8 +209,14 @@ export function buildShareText(
     `💶 Liquidez final: ${formatEuros(summary.finalMoney)} | 🧾 Facturado oficial: ${formatEuros(summary.lifetimeBilled)}`,
   ];
 
+  if (showStructureLine) {
+    lines.push(`🏢 Estructura: ${formatShareStructureLabel(summary, locale)}`);
+  }
+
   if (summary.earnedVictories.length > 0) {
-    const badges = summary.earnedVictories.map((b) => VICTORY_BADGE_LABELS[b].title).join(" · ");
+    const badges = summary.earnedVictories
+      .map((b) => getVictoryBadgeLabel(b, locale, summary.victoryMoney).title)
+      .join(" · ");
     lines.push(`🏅 Sellos conquistados: ${badges}`);
   }
 
@@ -264,7 +342,7 @@ export function renderShareCardToCanvas(
   const illustration = options?.illustrationImage ?? null;
   const hasIllustration = illustration !== null;
 
-  const meta = getEndingMetadata(summary.endingId, locale);
+  const meta = getEndingMetadata(summary.endingId, locale, summary.victoryMoney);
   const localizedQuote =
     isEn && summary.localizedQuoteEn
       ? summary.localizedQuoteEn
@@ -479,14 +557,8 @@ export function renderShareCardToCanvas(
       accent: "#264E7A",
     },
     {
-      code: isEn ? "BOX [04] · REGIME MODE" : "CASILLA [04] · MODALIDAD",
-      value: isEn
-        ? summary.endlessMode
-          ? "Endless Mode (+120m)"
-          : "RETA Campaign (10 yrs)"
-        : summary.endlessMode
-          ? "Modo Infinito (+120m)"
-          : "Campaña RETA (10 años)",
+      code: isEn ? "BOX [04] · STRUCTURE" : "CASILLA [04] · ESTRUCTURA",
+      value: formatShareStructureLabel(summary, locale),
       accent: "#1F2421",
     },
   ];
@@ -584,7 +656,7 @@ export function renderShareCardToCanvas(
   if (summary.earnedVictories.length > 0) {
     let badgeX = 84;
     for (const badge of summary.earnedVictories) {
-      const label = getVictoryBadgeLabel(badge, locale).shortSeal;
+      const label = getVictoryBadgeLabel(badge, locale, summary.victoryMoney).shortSeal;
       const badgeW = 360;
       ctx.fillStyle = "#E8F5F1";
       ctx.fillRect(badgeX, badgeRowY, badgeW, badgeH);

@@ -1,0 +1,63 @@
+schema_version: 1
+id: empleados_inspeccion_trabajo_agencia
+category: empleados
+title: "Inspección de Trabajo sorpresa: fichajes, PRL e igualdad"
+body: "Dos inspectores de Trabajo y Seguridad Social se presentan sin cita previa pidiendo cuadrantes de registro horario, prevención de riesgos, contratos y plan de desconexión de toda tu plantilla."
+tags:
+  - plantilla
+  - inspeccion_trabajo
+  - normativa
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: illus_hito_conflicto_laboral
+requirements:
+  min_month: 48
+  team_size:
+    min: 3
+weight: 12
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: exhibir_cumplimiento_prl_y_fichaje
+    label: "Entregar carpetas al día de registro horario y PRL (0 €)"
+    requirements:
+      required_flags:
+        - registro_horario_al_dia
+        - prl_estudio_al_dia
+    result_text: "Tener los deberes laborales hechos paga dividendos en oro: revisan cuatro expedientes, felicitan el orden y cierran el acta sin un céntimo de sanción."
+    effects:
+      moral: 10
+      employee_satisfaction: 8
+      stress: -8
+      fiscal_risk: -6
+  - id: pactar_acta_laboral_reducida
+    label: "Reconocer carencias, pagar sanción reducida (-4.800 €) y regularizar"
+    result_text: "Duele en el alma transferir 4.800 €, pero cierras el expediente por pronto pago y dejas fichaje y PRL impecables para futuras visitas."
+    effects:
+      cash_delta: -4800
+      stress: 10
+      moral: -6
+      employee_satisfaction: -4
+      set_flags:
+        - registro_horario_al_dia
+        - prl_estudio_al_dia
+  - id: litigar_acta_en_juzgado_social
+    label: "Impugnar el acta en el Juzgado de lo Social y jugártela"
+    outcomes:
+      - id: sentencia_parcial_juzgado_social
+        weight: 40
+        result_text: "El juez aprecia defectos formales en la propuesta inspectora y rebaja el golpe a 1.800 €, aunque el mal rato en sala no te lo quita nadie."
+        effects:
+          cash_delta: -1800
+          stress: 12
+          employee_satisfaction: -6
+          moral: 2
+      - id: condena_firme_juzgado_social
+        weight: 60
+        result_text: "Sentencia firme en contra con recargos y costas: 9.500 € de varapalo judicial que hiela el ambiente de toda la oficina."
+        effects:
+          cash_delta: -9500
+          stress: 18
+          employee_satisfaction: -12
+          moral: -10

@@ -14,6 +14,7 @@ requirements:
   min_month: 15
   gestor_tiers:
     - self
+  max_month: 48
 weight: 11
 cooldown_months: 11
 max_occurrences: 3
@@ -46,7 +47,7 @@ choices:
       moral: 2
       fiscal_risk: -3
   - id: pasar_a_elena_y_olvidar_autofirma
-    label: Jubilar la autogestión y contratar al despacho de Elena Montes
+    label: Jubilar la autogestión y fichar a Elena Montes (260 €/mes)
     requirements:
       stats:
         money:

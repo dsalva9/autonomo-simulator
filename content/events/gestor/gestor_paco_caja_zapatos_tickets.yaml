@@ -1,8 +1,8 @@
 schema_version: 1
 id: gestor_paco_caja_zapatos_tickets
 category: gestor
-title: "La caja de zapatos térmica de Paco se ha borrado"
-body: "Paco guardó tu caja de zapatos con tickets de comidas de trabajo y parkings encima del radiador del despacho. El calor ha dejado el térmico blanco nuclear y ahora no se lee ni el importe ni el NIF de ningún local."
+title: La caja de zapatos térmica de Paco se ha borrado
+body: Paco guardó tu caja de zapatos con tickets de comidas de trabajo y parkings encima del radiador del despacho. El calor ha dejado el térmico blanco nuclear y ahora no se lee ni el importe ni el NIF de ningún local.
 tags:
   - gestoria
   - paco
@@ -13,14 +13,15 @@ requirements:
   min_month: 3
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 12
 cooldown_months: 9
 max_occurrences: 3
 exclusive_with: []
 choices:
   - id: renunciar_a_tickets_borrados
-    label: "Descartar los papeles en blanco y presentar solo lo legible"
-    result_text: "Pagas algo más de trimestre por culpa del radiador de Paco, pero duermes tranquilo sabiendo que no hay ni un ticket fantasma."
+    label: Descartar los papeles en blanco y presentar solo lo legible
+    result_text: Pagas algo más de trimestre por culpa del radiador de Paco, pero duermes tranquilo sabiendo que no hay ni un ticket fantasma.
     effects:
       cash_delta: -110
       stress: 3
@@ -29,18 +30,23 @@ choices:
       set_flags:
         - susto_con_paco
   - id: meter_cifra_redonda_estimada
-    label: "Hacer caso a Paco y anotar una cifra redonda «aproximada»"
-    result_text: "Te ahorras un buen pellizco hoy en la liquidación, aunque como pidan los justificantes enseñarás cartulina blanca."
+    label: Hacer caso a Paco y anotar una cifra redonda «aproximada»
+    result_text: Te ahorras un buen pellizco hoy en la liquidación, aunque como pidan los justificantes enseñarás cartulina blanca.
     effects:
-      cash_delta: 195
-      stress: 4
-      moral: -4
+      cash_delta: 1150
+      moral: -1
+      stress: 3
       fiscal_risk: 17
       set_flags:
         - susto_con_paco
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 20
+          probability: 0.3
+          priority: high
   - id: reclamar_facturas_nominativas_locales
-    label: "Llamar local por local pidiendo duplicados con tus cargos de tarjeta"
-    result_text: "Recuperas dos tercios de las facturas completas a base de paciencia telefónica y obligas a Paco a escanearlas al momento."
+    label: Llamar local por local pidiendo duplicados con tus cargos de tarjeta
+    result_text: Recuperas dos tercios de las facturas completas a base de paciencia telefónica y obligas a Paco a escanearlas al momento.
     effects:
       deductible_expense: 130
       stress: 7

@@ -13,9 +13,11 @@ character_expression: neutral
 illustration_id: illus_hito_inspeccion_hacienda
 requirements:
   min_month: 90
+  forbidden_flags:
+    - revision_decenal_completada
 weight: 14
 cooldown_months: 18
-max_occurrences: 2
+max_occurrences: 1
 choices:
   - id: defender_cuatro_anos_carpeta_a_carpeta
     label: Sentarte con Gómez a cuadrar los cuatro años documento en mano
@@ -28,6 +30,8 @@ choices:
           moral: 10
           reputation: 4
           fiscal_risk: -18
+          set_flags:
+            - revision_decenal_completada
       - id: ajuste_menor_ultimo_ejercicio
         weight: 40
         result_text: Tres ejercicios pasan limpios y solo abonas una pequeña diferencia de prorrateo en el último año.
@@ -36,19 +40,22 @@ choices:
           stress: 9
           moral: 1
           fiscal_risk: -15
+          set_flags:
+            - revision_decenal_completada
   - id: cerrar_expediente_con_blindaje_elena
     label: Presentar auditoría histórica certificada con Elena Montes
     requirements:
       gestor_tiers:
         - premium
-    result_text: El dosier impecable de Elena cierra la revisión en tiempo récord y te vale un contrato corporativo nuevo.
+    result_text: El dosier pericial de Elena cuesta una minuta seria, pero cierra los cuatro ejercicios sin sanciones ni flecos abiertos.
     effects:
-      billed_income: 780
-      deductible_expense: 260
-      stress: -6
-      moral: 9
-      reputation: 5
-      fiscal_risk: -20
+      deductible_expense: 850
+      stress: -4
+      moral: 6
+      reputation: 4
+      fiscal_risk: -18
+      set_flags:
+        - revision_decenal_completada
   - id: acatar_regularizacion_residual_rapida
     label: Liquidar los flecos menores al contado y blindar tu paz mental
     result_text: Pagas las pequeñas discrepancias formales sin pestañear y encaras la recta final con el expediente despejado.
@@ -57,3 +64,5 @@ choices:
       stress: 2
       moral: 2
       fiscal_risk: -16
+      set_flags:
+        - revision_decenal_completada

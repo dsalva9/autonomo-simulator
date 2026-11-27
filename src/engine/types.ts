@@ -1,10 +1,12 @@
 import type {
   AssetManifest,
   BalanceConfig,
+  BusinessTier,
   CharacterDef,
   ChoiceSpec,
   EventDef,
   GestorTier,
+  SchedulePriority,
 } from "./schemas/index.ts";
 
 export type EndingId =
@@ -17,7 +19,7 @@ export type EndingId =
   | "retired_hero"
   | "retired_rich";
 
-export type VictoryBadge = "hero_120m" | "rich_150k";
+export type VictoryBadge = "hero_120m" | "rich_250k";
 
 export type TurnPhase =
   | "month_start"
@@ -58,6 +60,16 @@ export interface PendingInvoice {
   default_prob: number;
 }
 
+export interface FiscalExposureEntry {
+  id: string;
+  origin_month: number;
+  expires_month: number;
+  risk_points: number;
+  untaxed_amount: number;
+  source_event_id: string;
+  audited: boolean;
+}
+
 export interface FinanceState {
   lifetime_billed: number;
   current_quarter_billed: number;
@@ -65,6 +77,13 @@ export interface FinanceState {
   deferred_tax: DeferredTaxDebt | null;
   pending_invoices: PendingInvoice[];
   consecutive_negative_months: number;
+  historical_exposures: FiscalExposureEntry[];
+}
+
+export interface BusinessState {
+  tier: BusinessTier;
+  months_in_tier: number;
+  sl_formed_month: number | null;
 }
 
 export interface GestorState {
@@ -82,11 +101,14 @@ export interface FamilyState {
   children_count: number;
   monthly_cost: number;
   support_modifier: number;
+  neglect_months: number;
 }
 
 export interface EmployeeState {
   character_id: string;
   role_label: string;
+  headcount: number;
+  lead_monthly_cost: number;
   monthly_cost: number;
   billing_multiplier: number;
   satisfaction: number;
@@ -98,6 +120,8 @@ export interface ScheduledEvent {
   event_id: string;
   trigger_month: number;
   source_event_id: string;
+  origin_month?: number;
+  priority?: SchedulePriority;
   deferred_months?: number;
 }
 
@@ -165,14 +189,42 @@ export interface QuarterlyReport {
   accrued_tax_due: number;
   deferred_tax_due: number;
   gestor_error_surcharge: number;
+  sl_self_penalty?: number;
+  elena_compliance_event?: "warning" | "dropped" | null;
   inspection_triggered: boolean;
+  historical_audit_triggered?: boolean;
   inspection_scheduled_event_id: string | null;
   inspection_fallback_fine: number;
   can_defer: boolean;
 }
 
+export interface MonthlyEconomyBreakdown {
+  businessTier: BusinessTier;
+  corporateTaxRegime: boolean;
+  teamHeadcount: number;
+  isBoutiqueSeniorSolo: boolean;
+  grossBilling: number;
+  socialSecurityQuota: number;
+  structuralOverhead: number;
+  gestorFee: number;
+  payrollCost: number;
+  modifierExpenseDelta: number;
+  deductibleExpenses: number;
+  taxableProfit: number;
+  grossTaxWithoutDeductions: number;
+  taxShieldOnExpenses: number;
+  netTaxAccrued: number;
+  effectiveTaxRate: number;
+  marginalTaxRate: number;
+  livingCost: number;
+  familyCost: number;
+  totalExpenses: number;
+  netRecurringCash: number;
+  netCashAfterTax: number;
+}
+
 export interface GameState {
-  schema_version: 1;
+  schema_version: 2;
   run_id: string;
   prng: PrngState;
   month: number;
@@ -180,6 +232,7 @@ export interface GameState {
   indicators: Indicators;
   fiscal_risk: number;
   finances: FinanceState;
+  business: BusinessState;
   gestor: GestorState;
   family: FamilyState;
   employee: EmployeeState | null;
@@ -254,6 +307,8 @@ export interface ChoiceOutcomeSummary {
   fiscal_risk_delta: number;
   tax_accrued_delta?: number;
   employee_satisfaction_delta?: number;
+  business_tier_changed_to?: BusinessTier | null;
+  team_headcount_delta?: number;
   scheduled_event_ids: string[];
 }
 

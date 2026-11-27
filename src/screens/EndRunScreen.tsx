@@ -55,8 +55,12 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
     activeRun.phase !== "game_over" &&
     activeRun.ending === null;
 
-  const shareSummary = useMemo(() => createShareSummaryFromState(state), [state]);
-  const endingMeta = getEndingMetadata(shareSummary.endingId, locale);
+  const victoryMoney = compiledCatalog.balance.victory_money;
+  const shareSummary = useMemo(
+    () => createShareSummaryFromState(state, undefined, victoryMoney),
+    [state, victoryMoney],
+  );
+  const endingMeta = getEndingMetadata(shareSummary.endingId, locale, victoryMoney);
   const localizedQuote = resolveLocalizedEndingQuote(
     shareSummary.endingId,
     shareSummary.summaryQuote,
@@ -403,7 +407,7 @@ export function EndRunScreen({ state }: EndRunScreenProps) {
                         key={badge}
                         className="font-bureau text-xs font-bold px-2 py-0.5 rounded-md bg-[#1f5c53] text-[#fffdf8]"
                       >
-                        ★ {getVictoryBadgeLabel(badge, locale).title}
+                        ★ {getVictoryBadgeLabel(badge, locale, victoryMoney).title}
                       </span>
                     ))}
                   </div>

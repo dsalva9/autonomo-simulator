@@ -1,0 +1,59 @@
+schema_version: 1
+id: clientes_ola_inflacion_costes_fijos
+category: clientes
+title: "Espiral inflacionista: energía, proveedores y alquiler +18 %"
+body: "Llegan a la vez los correos de revisión del IPC de licencias cloud, suministro eléctrico, seguros y alquiler. Si no mueves ficha hoy, tu estructura fija se comerá 650 € extra de caja cada mes del semestre."
+tags:
+  - macro
+  - inflacion
+  - costes_fijos
+character_id: null
+illustration_id: banner_clientes_tension
+requirements:
+  min_month: 50
+weight: 12
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: repercutir_subida_a_cartera
+    label: "Repercutir la actualización de precios a toda tu cartera (+1.400 €/m)"
+    requirements:
+      stats:
+        reputation:
+          min: 60
+    result_text: "Comunicas la revisión con transparencia y datos. Tus mejores cuentas entienden la coyuntura y el ajuste protege de sobra tu margen."
+    effects:
+      stress: 4
+      reputation: 2
+      add_modifier:
+        id: mod_actualizacion_tarifas_inflacion
+        label: "Tarifas revisadas ante ola inflacionista"
+        remaining_months: 6
+        monthly_billed_delta: 1400
+  - id: absorber_inflacion_en_margen
+    label: "Callarte por miedo a perder clientes y absorber +650 €/mes"
+    result_text: "Nadie se queja de tus precios, claro: eres tú quien subvenciona la subida de la luz y las licencias con tu propio margen durante medio año."
+    effects:
+      stress: 8
+      moral: -4
+      add_modifier:
+        id: mod_sobrecoste_inflacion_fijos
+        label: "Sobrecoste fijo por espiral inflacionista"
+        remaining_months: 6
+        monthly_expense_delta: 650
+  - id: renegociar_proveedores_con_calma
+    label: "Auditar proveedores con cabeza fría y recortar el golpe a +220 €/m"
+    requirements:
+      stats:
+        stress:
+          max: 45
+    result_text: "Sin entrar en pánico, renegocias contratos anuales, podas licencias duplicadas y dejas el sobrecoste reducido a una tercera parte."
+    effects:
+      moral: 6
+      stress: 2
+      add_modifier:
+        id: mod_inflacion_amortiguada_proveedores
+        label: "Subida moderada tras renegociar proveedores"
+        remaining_months: 6
+        monthly_expense_delta: 220

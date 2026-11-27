@@ -34,10 +34,14 @@ choices:
     label: Aceptar únicamente el taller privado mejor pagado sin viajar
     result_text: Impartes cuatro horas impecables sin maletas ni hoteles y ingresas una factura limpia con esfuerzo medido.
     effects:
-      billed_income: 1150
+      billed_income: 1600
       stress: 3
       moral: 5
-      reputation: 3
+      reputation: 5
+    requirements:
+      stats:
+        moral:
+          min: 65
   - id: declinar_escenarios_este_semestre
     label: Agradecer la invitación y quedarte tranquilo en tu despacho
     result_text: Te ahorras preparar ochenta diapositivas de madrugada y disfrutas de una semana plácida en casa.

@@ -1,0 +1,55 @@
+schema_version: 1
+id: clientes_recesion_recorte_sectorial
+category: clientes
+title: "Ola de recesión: tres clientes congelan presupuestos"
+body: "El mercado frena en seco: tres direcciones financieras mandan el mismo correo de «contención de gasto trimestral» pidiendo recortar tarifas un 25 % o pausar todos los encargos previstos para el semestre."
+tags:
+  - macro
+  - recesion
+  - crisis
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: banner_clientes_tension
+requirements:
+  min_month: 60
+weight: 12
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: bajar_tarifas_para_retener
+    label: "Bajar tarifas para salvar volumen (-1.500 €/mes seis meses)"
+    result_text: "Tragas con el descuento para no ver la agenda vacía. Mantienes a los clientes vivos, aunque trabajas lo mismo cobrando bastante menos."
+    effects:
+      stress: 10
+      moral: -6
+      add_modifier:
+        id: mod_recorte_tarifas_recesion
+        label: "Tarifas rebajadas por recesión sectorial"
+        remaining_months: 6
+        monthly_billed_delta: -1500
+  - id: pivotar_a_auditorias_eficiencia
+    label: "Reposicionar oferta hacia auditorías de ahorro inmediato (6.500 €)"
+    requirements:
+      stats:
+        reputation:
+          min: 65
+        moral:
+          min: 60
+    result_text: "Cuando nadie quiere gastar en crecimiento, todos pagan por recortar costes: empaquetas auditorías de eficiencia y facturas 6.500 € a contracorriente."
+    effects:
+      billed_income: 6500
+      reputation: 6
+      moral: 6
+      stress: 6
+  - id: aguantar_tarifas_quemando_caja
+    label: "Mantener tarifas intactas y aguantar el chaparrón con caja (-4.500 €)"
+    requirements:
+      stats:
+        money:
+          min: 6000
+    result_text: "Te niegas a devaluar tu precio por pánico y tiras de reserva para pasar el invierno. Cuando pase la tormenta seguirás cobrando como un profesional."
+    effects:
+      cash_delta: -4500
+      reputation: 6
+      stress: -4

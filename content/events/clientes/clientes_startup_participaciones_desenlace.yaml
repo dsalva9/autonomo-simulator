@@ -1,0 +1,58 @@
+schema_version: 1
+id: clientes_startup_participaciones_desenlace
+category: clientes
+title: "36 meses después: aquel 8 % de la startup..."
+body: "Tres años después de firmar aquel papel que dabas por perdido, te llama el consejo de la startup. Hay una operación corporativa en marcha y ha llegado la hora de descubrir qué vale realmente tu paquete."
+tags:
+  - startup
+  - largo_plazo
+  - cadena
+character_id: cliente_regateador
+character_expression: pleased
+illustration_id: banner_clientes_base
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: ejecutar_venta_de_tus_participaciones
+    label: "Ejecutar la venta de tu 8 % y cobrar lo que salga del reparto"
+    outcomes:
+      - id: exit_millonario_participaciones
+        weight: 30
+        result_text: "Contra toda estadística del ecosistema emprendedor, un fondo compra la compañía y tu 8 % se liquida en 18.000 € limpios. Descorchas la mejor botella."
+        effects:
+          cash_delta: 18000
+          moral: 18
+          reputation: 10
+          stress: -10
+      - id: acquihire_modesto_participaciones
+        weight: 45
+        result_text: "Un grupo mayor absorbe al equipo en un acqui-hire discreto: no te retira a las Maldivas, pero te ingresan 4.500 € que ya dabas por enterrados."
+        effects:
+          cash_delta: 4500
+          moral: 8
+          reputation: 4
+      - id: liquidacion_quiebra_startup
+        weight: 25
+        result_text: "Se acabó la pista de aterrizaje y el liquidador cierra la persiana a cero euros. Te queda un título enmarcado y una anécdota carísima para cenas."
+        effects:
+          moral: -4
+          stress: 4
+  - id: negociar_canje_por_contrato_anual
+    label: "Canjear tu paquete por contrato directo garantizado (8.500 € + iguala)"
+    requirements:
+      stats:
+        reputation:
+          min: 60
+    result_text: "El comprador te conoce del sector y prefiere ficharte como proveedor preferente: cobras 8.500 € de entrada más 1.200 €/mes durante cuatro meses."
+    effects:
+      billed_income: 8500
+      moral: 10
+      reputation: 6
+      add_modifier:
+        id: mod_contrato_anual_startup_canje
+        label: "Iguala anual por canje de participaciones"
+        remaining_months: 4
+        monthly_billed_delta: 1200

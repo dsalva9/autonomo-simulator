@@ -1,0 +1,49 @@
+schema_version: 1
+id: clientes_garantia_codigo_tres_anos
+category: clientes
+title: "28 meses después: estalla aquel atajo barato"
+body: "Marta te reenvía un burofax helado: aquel encargo resuelto con prisas hace más de dos años acaba de tumbar su plataforma en plena campaña. Exigen compensación inmediata o reparación total sin cobrar un euro."
+tags:
+  - legado
+  - largo_plazo
+  - cadena
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: banner_clientes_tension
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: pagar_indemnizacion_extrajudicial
+    label: "Firmar acuerdo extrajudicial y pagar indemnización (-4.500 €)"
+    result_text: "Sueltas 4.500 € con el estómago encogido para cerrar el expediente con confidencialidad antes de que la historia llegue al juzgado mercantil."
+    effects:
+      cash_delta: -4500
+      moral: -6
+      stress: 8
+      reputation: -4
+  - id: parar_todo_y_rehacerlo_gratis
+    label: "Parar facturación y rehacer todo gratis durante dos meses"
+    result_text: "Te tragas dos meses enteros parcheando pecados pasados sin facturar un céntimo a esa cuenta. Salvas la cara, pero acabas agotado."
+    effects:
+      stress: 16
+      personal_life: -8
+      moral: -6
+      add_modifier:
+        id: mod_retrabajo_garantia_gratuito
+        label: "Retrabajo gratuito por fallo heredado"
+        remaining_months: 2
+        monthly_billed_delta: -1400
+  - id: activar_poliza_rc_homologada
+    label: "Activar tu póliza de RC homologada y pagar franquicia (950 €)"
+    requirements:
+      required_flags:
+        - homologacion_proveedor_activa
+    result_text: "Tener póliza de responsabilidad civil profesional al día te salva la vida: la aseguradora asume el golpe y tú liquidas solo 950 € de franquicia."
+    effects:
+      deductible_expense: 950
+      moral: 4
+      stress: 2
+      reputation: 2

@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_boda_fuera_plazo_entrega
 category: familia
-title: "Boda a cuatrocientos kilómetros y entrega el lunes"
-body: "Se casa alguien imprescindible en la otra punta del país con preboda viernes, banquete sábado y comida domingo. Entre sobre, hotel y gasolina vuela un buen pico justo antes de una entrega comprometida el lunes."
+title: Boda a cuatrocientos kilómetros y entrega el lunes
+body: Se casa alguien imprescindible en la otra punta del país con preboda viernes, banquete sábado y comida domingo. Entre sobre, hotel y gasolina vuela un buen pico justo antes de una entrega comprometida el lunes.
 tags:
   - boda
   - viaje
@@ -19,8 +19,8 @@ exclusive_with:
   - familia_boda_prima_entrega_martes
 choices:
   - id: llevar_portatil_al_hotel
-    label: "Asistir a la boda y encerrarte el domingo en el hotel a rematar el encargo"
-    result_text: "Cumples en las fotos y salvas la factura del lunes tecleando con resaca frente al minibar, aunque vuelves el domingo más cansado que el jueves."
+    label: Asistir a la boda y encerrarte el domingo en el hotel a rematar el encargo
+    result_text: Cumples en las fotos y salvas la factura del lunes tecleando con resaca frente al minibar, aunque vuelves el domingo más cansado que el jueves.
     effects:
       cash_delta: -440
       billed_income: 880
@@ -29,8 +29,8 @@ choices:
       personal_life: 2
       reputation: 3
   - id: desconectar_y_celebrar_todo_el_finde
-    label: "Pagar viaje, hotel y regalo digno, y dejar el portátil en casa (490 €)"
-    result_text: "Tu cuenta corriente adelgaza casi quinientos euros en cuarenta y ocho horas, pero bailas, ríes con gente querida y recuerdas que no eres un robot con NIF."
+    label: Pagar viaje, hotel y regalo digno, y dejar el portátil en casa (490 €)
+    result_text: Tu cuenta corriente adelgaza casi quinientos euros en cuarenta y ocho horas, pero bailas, ríes con gente querida y recuerdas que no eres un robot con NIF.
     effects:
       cash_delta: -490
       stress: -13
@@ -38,8 +38,8 @@ choices:
       personal_life: 13
       reputation: -2
   - id: poner_excusa_laboral_y_quedarse
-    label: "Alegar urgencia laboral, enviar un detalle y quedarte en casa facturando"
-    result_text: "Ahorras viaje y adelantas un buen pico de facturación en silencio mientras ves fotos del baile por el grupo de mensajería con un pinchazo en el pecho."
+    label: Alegar urgencia laboral, enviar un detalle y quedarte en casa facturando
+    result_text: Ahorras viaje y adelantas un buen pico de facturación en silencio mientras ves fotos del baile por el grupo de mensajería con un pinchazo en el pecho.
     effects:
       cash_delta: -160
       billed_income: 1150
@@ -47,3 +47,18 @@ choices:
       moral: -6
       personal_life: -11
       reputation: 2
+  - id: delegar_entrega_lunes_al_estudio
+    label: Delegar la entrega del lunes en tu estudio y bailar toda la boda
+    requirements:
+      team_size:
+        min: 1
+      employee_satisfaction:
+        min: 65
+    result_text: Tu equipo remata los archivos del lunes sin llamarte una sola vez mientras tú celebras la boda sin portátil y cobras la factura íntegra.
+    effects:
+      billed_income: 950
+      cash_delta: -490
+      moral: 10
+      stress: -10
+      personal_life: 14
+      reputation: 3

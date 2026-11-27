@@ -1,7 +1,7 @@
 schema_version: 1
 id: familia_ultimatum_casero_mudanza
 category: familia
-title: "El sobrino imaginario de tu casero necesita el piso"
+title: El sobrino imaginario de tu casero necesita el piso
 body: "Vence tu contrato y el casero llama con voz melosa: o aceptas un «pequeño ajuste» desorbitado para igualar el barrio, o un supuesto sobrino necesita el piso el mes que viene. Toca tragar o empaquetar tu vida."
 tags:
   - vivienda
@@ -16,31 +16,22 @@ max_occurrences: 2
 exclusive_with: []
 choices:
   - id: plantarse_con_la_ley_en_mano
-    label: "Revisar cláusulas legales y exigir la prórroga obligatoria firmada"
-    outcomes:
-      - id: prorroga_respetada
-        weight: 55
-        result_text: "En cuanto citas el artículo exacto por burofax, el supuesto sobrino desaparece por arte de magia y conservas tu renta actual."
-        effects:
-          cash_delta: -45
-          moral: 9
-          stress: -4
-          personal_life: 5
-      - id: guerra_fria_y_mudanza
-        weight: 45
-        result_text: "La negociación acaba a gritos y prefieres buscar otro piso antes que vivir pendiente de cada avería que se niegue a arreglar."
-        effects:
-          cash_delta: -580
-          stress: 12
-          moral: -3
-          set_flags:
-            - mudanza_reciente
-          schedule_events:
-            - event_id: familia_estreno_nuevo_piso
-              delay_months: 2
+    label: Revisar cláusulas legales y exigir la prórroga obligatoria firmada
+    requirements:
+      stats:
+        moral:
+          min: 62
+        stress:
+          max: 52
+    result_text: "Tu burofax sereno citando la LAU al artículo hace evaporarse al sobrino imaginario al instante: mantienes renta y techo sin mudanza."
+    effects:
+      cash_delta: -50
+      moral: 9
+      stress: -4
+      personal_life: 6
   - id: buscar_piso_y_mudarse
-    label: "Mandarle a paseo, alquilar en otro barrio y hacer mudanza (640 €)"
-    result_text: "Entre fianza, furgoneta y cajas de cartón se va un pico serio, pero te libras del chantaje anual y ganas un techo más razonable."
+    label: Mandarle a paseo, alquilar en otro barrio y hacer mudanza (640 €)
+    result_text: Entre fianza, furgoneta y cajas de cartón se va un pico serio, pero te libras del chantaje anual y ganas un techo más razonable.
     effects:
       cash_delta: -640
       stress: 8
@@ -52,15 +43,15 @@ choices:
         - event_id: familia_estreno_nuevo_piso
           delay_months: 2
   - id: tragar_con_el_nuevo_alquiler
-    label: "Firmar la subida apretando los dientes por no perder semanas de curro"
-    result_text: "No pierdes ni una hora facturable haciendo cajas, aunque cada día uno del mes sientes que trabajas medio lunes para tu casero."
+    label: Firmar la subida apretando los dientes por no perder semanas de curro
+    result_text: No pierdes ni una hora facturable haciendo cajas, aunque cada día uno del mes sientes que trabajas medio lunes para tu casero.
     effects:
       moral: -6
       stress: 6
       personal_life: -4
       add_modifier:
         id: mod_alquiler_inflado_casero
-        label: "Alquiler inflado tras renovación"
+        label: Alquiler inflado tras renovación
         remaining_months: 6
         monthly_expense_delta: 165
         monthly_stress_delta: 2

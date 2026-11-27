@@ -30,12 +30,17 @@ choices:
     label: Dejar que Paco meta hotel y tintorería como prospección
     result_text: Rascas un buen pellizco en el trimestre, rezando para que nadie pregunte qué congreso se celebra un sábado en ermita.
     effects:
-      cash_delta: 235
-      stress: 5
-      moral: -4
-      fiscal_risk: 17
+      cash_delta: 1350
+      moral: -1
+      stress: 3
+      fiscal_risk: 18
       set_flags:
         - susto_con_paco
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 24
+          probability: 0.3
+          priority: high
   - id: deducir_solo_almuerzo_viernes_con_cliente
     label: Deducir únicamente el café y comida real del viernes laboral
     result_text: Guardas la factura nominativa de la reunión verdadera del viernes y descartas el resto sin tentar a la suerte.

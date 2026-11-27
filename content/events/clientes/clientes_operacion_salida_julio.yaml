@@ -23,11 +23,15 @@ choices:
     label: Entregar avances hoy y pactar los remates reales para septiembre
     result_text: Les das tranquilidad para irse de vacaciones sin inmolarte tú por archivos que iban a dormir un mes en una bandeja.
     effects:
-      billed_income: 775
-      stress: 6
+      billed_income: 950
+      stress: -2
       moral: 3
-      personal_life: 2
+      personal_life: 5
       reputation: 1
+    requirements:
+      stats:
+        personal_life:
+          min: 65
   - id: surfear_la_ola_de_julio
     label: Encerrarte con el aire acondicionado y facturar los tres cierres
     result_text: Llegas al uno de agosto derretido en la silla, pero con una reserva espléndida para cruzar el desierto veraniego.

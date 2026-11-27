@@ -16,9 +16,11 @@ requirements:
   stats:
     money:
       min: 16000
+  forbidden_flags:
+    - patrimonio_cuentas_separadas
 weight: 13
 cooldown_months: 16
-max_occurrences: 2
+max_occurrences: 1
 choices:
   - id: presentar_complementaria_ahorro_limpia
     label: Reclasificar los intereses en la base del ahorro y abonar
@@ -41,6 +43,8 @@ choices:
       stress: -4
       moral: 6
       fiscal_risk: -15
+      set_flags:
+        - patrimonio_cuentas_separadas
   - id: alegar_provision_operativa_de_estudio
     label: Alegar que todo el saldo es fondo de maniobra profesional
     outcomes:

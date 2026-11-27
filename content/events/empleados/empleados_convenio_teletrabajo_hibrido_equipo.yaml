@@ -1,0 +1,54 @@
+schema_version: 1
+id: empleados_convenio_teletrabajo_hibrido_equipo
+category: empleados
+title: "Guerra fría: mitad quiere remoto total y mitad oficina"
+body: "El debate del teletrabajo parte la plantilla en dos bandos: unos quieren vivir fuera de la capital y otros se sienten solos en casa. Dani te avisa de que la indefinición está enrareciendo las reuniones."
+tags:
+  - plantilla
+  - teletrabajo
+  - cultura
+character_id: empleado_junior_dani
+character_expression: stressed
+illustration_id: banner_empleados_base
+requirements:
+  min_month: 50
+  team_size:
+    min: 3
+weight: 11
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: pacto_hibrido_y_ayuda_hogar
+    label: "Firmar convenio híbrido con ayuda de equipamiento (2.400 €)"
+    result_text: "Dejas por escrito dos días presenciales optativos y equipamiento deducible en casa. Se acaba el ruido de pasillo y sube el rendimiento."
+    effects:
+      deductible_expense: 2400
+      employee_satisfaction: 12
+      stress: -6
+      moral: 4
+  - id: exigir_presencialidad_estricta
+    label: "Imponer presencialidad estricta de lunes a viernes"
+    result_text: "A los clientes clásicos les encanta ver la oficina llena, pero las caras largas al fichar a las nueve pasan factura inmediata al clima interno."
+    effects:
+      employee_satisfaction: -16
+      reputation: 4
+      stress: 8
+  - id: remoto_asincrono_de_alto_nivel
+    label: "Pasar a remoto asíncrono profesional (-400 €/mes en fijos)"
+    requirements:
+      stats:
+        reputation:
+          min: 62
+      employee_satisfaction:
+        min: 65
+    result_text: "Con madurez de equipo y marca sólida, el remoto asíncrono funciona como un reloj suizo: recortas costes de oficina y disparas el bienestar."
+    effects:
+      employee_satisfaction: 14
+      personal_life: 6
+      stress: -6
+      add_modifier:
+        id: mod_ahorro_agencia_remota
+        label: "Operativa remota asíncrona sin oficina"
+        remaining_months: 6
+        monthly_expense_delta: -400

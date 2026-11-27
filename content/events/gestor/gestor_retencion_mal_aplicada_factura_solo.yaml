@@ -14,18 +14,24 @@ requirements:
   min_month: 6
   gestor_tiers:
     - self
+  max_month: 42
 weight: 12
 cooldown_months: 10
-max_occurrences: 3
+max_occurrences: 2
 choices:
   - id: dejarlo_correr_hasta_la_renta
     label: No tocar nada y esperar a que se compense en la Renta anual
     result_text: Evitas la conversación incómoda con tus clientes hoy, pero sus Modelos 111 chocarán de frente con tus libros.
     effects:
-      cash_delta: 135
+      cash_delta: 1100
+      moral: -1
       stress: 2
-      moral: -2
-      fiscal_risk: 13
+      fiscal_risk: 15
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 16
+          probability: 0.25
+          priority: high
   - id: emitir_rectificativas_y_dar_la_cara
     label: Emitir facturas rectificativas y cuadrar saldos uno por uno
     result_text: Pasas un par de tardes pidiendo disculpas a administración y devolviendo diferencias, pero dejas la trazabilidad limpia.
@@ -47,3 +53,5 @@ choices:
       stress: -3
       moral: 4
       fiscal_risk: -8
+      set_flags:
+        - plantilla_fiscal_auditada

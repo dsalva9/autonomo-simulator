@@ -7,6 +7,7 @@ export {
   copyShareText,
   createShareSummaryFromState,
   downloadShareCardPng,
+  formatShareStructureLabel,
   loadAndRenderShareCard,
   preloadShareIllustration,
   renderShareCardToCanvas,

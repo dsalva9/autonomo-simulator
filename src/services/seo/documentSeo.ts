@@ -93,7 +93,7 @@ export function buildDocumentSeoSnapshot(options: {
           canonicalUrl,
           title: `${cal.label} · Active Dossier — Autónomo Simulator`,
           description:
-            "Manage clients, monthly RETA fees, stress, and quarterly VAT/IRPF settlements in Autónomo Simulator — the satirical Spanish freelancer survival game.",
+            "Manage clients, progressive RETA fees, multi-staff payroll, S.L. scaling, and quarterly tax settlements in Autónomo Simulator — the satirical Spanish freelancer survival game.",
         }
       : {
           lang,
@@ -101,7 +101,7 @@ export function buildDocumentSeoSnapshot(options: {
           canonicalUrl,
           title: `${cal.label} · Despacho en curso — Autónomo Simulator`,
           description:
-            "Gestiona clientes, cuota mensual del RETA, estrés y cierres trimestrales de IVA e IRPF en Autónomo Simulator, el juego satírico sobre ser autónomo en España.",
+            "Gestiona clientes, cuota progresiva del RETA, equipo, salto a S.L. y cierres trimestrales en Autónomo Simulator, el juego satírico sobre ser autónomo en España.",
         };
   }
 
@@ -113,7 +113,7 @@ export function buildDocumentSeoSnapshot(options: {
           canonicalUrl,
           title: "Dossier Dashboard · Achievements — Autónomo Simulator",
           description:
-            "Start a new seeded run, resume your active dossier, browse your Hall of the Fallen certificates, and track all 15 achievements in Autónomo Simulator.",
+            "Start a new seeded run, resume your active dossier, browse your Hall of the Fallen certificates, and track all 18 career seals across 362 events in Autónomo Simulator.",
         }
       : {
           lang,
@@ -121,7 +121,7 @@ export function buildDocumentSeoSnapshot(options: {
           canonicalUrl,
           title: "Panel de Expedientes · Logros — Autónomo Simulator",
           description:
-            "Inicia una nueva alta en el RETA con semilla, reanuda tu partida, consulta el Salón de Caídos y sigue tus 15 logros en Autónomo Simulator.",
+            "Inicia una nueva alta en el RETA con semilla, reanuda tu partida, consulta el Salón de Caídos y sigue tus 18 sellos de carrera entre 362 eventos en Autónomo Simulator.",
         };
   }
 
@@ -132,7 +132,7 @@ export function buildDocumentSeoSnapshot(options: {
         canonicalUrl,
         title: "Autónomo Simulator — Spanish Freelancer Survival Game",
         description:
-          "Free satirical survival game about freelancing in Spain. Balance clients, monthly fees, stress, and quarterly VAT & IRPF for 10 years or bank 150,000 €.",
+          "Free satirical survival game about freelancing in Spain (362 events, 18 seals). Scale from solo freelancer to S.L. agency, survive 10 years, or bank 250,000 €.",
       }
     : {
         lang,
@@ -140,7 +140,7 @@ export function buildDocumentSeoSnapshot(options: {
         canonicalUrl,
         title: "Autónomo Simulator — Juego de supervivencia en el RETA",
         description:
-          "Juego web gratuito de humor y supervivencia sobre ser autónomo en España. Sobrevive 10 años entre facturas, clientes regateadores, cuotas y el Trimestre.",
+          "Juego web gratuito de humor y supervivencia sobre ser autónomo en España (362 eventos, 18 sellos). Escala a S.L. o agencia, aguanta 10 años o junta 250.000 €.",
       };
 }
 

@@ -12,6 +12,7 @@ character_expression: neutral
 illustration_id: null
 requirements:
   min_month: 18
+  max_month: 54
 weight: 11
 cooldown_months: 14
 max_occurrences: 3

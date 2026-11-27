@@ -17,8 +17,8 @@ exclusive_with:
   - hacienda_notificacion_agosto_traicionera
 choices:
   - id: abrir_y_presentar_reposicion
-    label: "Abrirla esta noche y presentar recurso de reposición con tus facturas"
-    result_text: "Sacrificas la madrugada del viernes escaneando libros de IVA y registras el recurso en plazo. Ahora toca esperar el veredicto oficial."
+    label: Abrirla esta noche y presentar recurso de reposición con tus facturas
+    result_text: Sacrificas la madrugada del viernes escaneando libros de IVA y registras el recurso en plazo. Ahora toca esperar el veredicto oficial.
     effects:
       deductible_expense: 70
       stress: 7
@@ -28,12 +28,12 @@ choices:
           delay_months: 2
           probability: 1
   - id: reenviar_aviso_lunes_gestoria
-    label: "Reenviar el aviso a tu gestoría para que conteste el lunes a primera"
+    label: Reenviar el aviso a tu gestoría para que conteste el lunes a primera
     requirements:
       gestor_tiers:
         - cheap
         - premium
-    result_text: "Tu asesoría descarga el acto administrativo el lunes a las nueve, cuadra el desajuste menor y te salva el fin de semana entero."
+    result_text: Tu asesoría descarga el acto administrativo el lunes a las nueve, cuadra el desajuste menor y te salva el fin de semana entero.
     effects:
       deductible_expense: 130
       cash_delta: -90
@@ -41,10 +41,23 @@ choices:
       moral: 2
       fiscal_risk: -8
   - id: apurar_nueve_dias_y_pagar
-    label: "No abrirla hasta el noveno día para salvar el puente y abonar el ajuste"
-    result_text: "Disfrutas del puente con una nube negra en la nuca y el lunes siguiente pagas la liquidación menor sin hacer preguntas."
+    label: No abrirla hasta el noveno día para salvar el puente y abonar el ajuste
+    result_text: Disfrutas del puente con una nube negra en la nuca y el lunes siguiente pagas la liquidación menor sin hacer preguntas.
     effects:
       cash_delta: -260
       stress: -3
       personal_life: 5
       fiscal_risk: 6
+  - id: activar_protocolo_frio_sin_estres
+    label: "Aplicar protocolo frío: leerla el lunes sereno y contestar (50 €)"
+    requirements:
+      stats:
+        stress:
+          max: 42
+    result_text: "No muerdes el anzuelo del viernes noche: disfrutas el puente entero y el lunes resuelves el trámite con cabeza fría en una hora."
+    effects:
+      deductible_expense: 50
+      moral: 4
+      stress: -3
+      personal_life: 3
+      fiscal_risk: -8

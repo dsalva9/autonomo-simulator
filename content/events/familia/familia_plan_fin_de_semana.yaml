@@ -1,7 +1,7 @@
 schema_version: 1
 id: familia_plan_fin_de_semana
 category: familia
-title: "Operación desconexión con Álex"
+title: Operación desconexión con Álex
 body: "Viernes tarde. Tras un par de citas con mucha química, Álex te propone una escapada fuera de la ciudad con una única norma: el portátil se queda apagado en casa, lejos de enchufes y de clientes de última hora."
 tags:
   - pareja
@@ -16,13 +16,14 @@ requirements:
   forbidden_flags:
     - historia_con_alex
     - ex_pareja_alex
+  max_month: 60
 weight: 10
 cooldown_months: 12
 max_occurrences: 2
 exclusive_with: []
 choices:
   - id: empezar_relacion_alex
-    label: "Apagar el portátil y apostar en serio por lo vuestro"
+    label: Apagar el portátil y apostar en serio por lo vuestro
     result_text: "Entre caminatas, sobremesas largas y cero notificaciones, volvéis el domingo con algo mucho más estable que cualquier calendario de entregas: oficialmente salís juntos."
     effects:
       set_family_status:
@@ -33,16 +34,16 @@ choices:
       moral: 8
       personal_life: 12
   - id: escapada_desconexion_total
-    label: "Aceptar el plan, silenciar el móvil y recargar pilas"
-    result_text: "Gastas algo en gasolina y comida casera, pero el lunes vuelves al escritorio recordando qué se siente al tener vida propia fuera del despacho."
+    label: Aceptar el plan, silenciar el móvil y recargar pilas
+    result_text: Gastas algo en gasolina y comida casera, pero el lunes vuelves al escritorio recordando qué se siente al tener vida propia fuera del despacho.
     effects:
       cash_delta: -90
       stress: -10
       moral: 6
       personal_life: 9
   - id: quedarse_adelantando_entregas
-    label: "Cancelar el plan a última hora para facturar encargos pendientes"
-    result_text: "Mandas un audio eterno disculpándote y pasas el sábado frente a la pantalla. Sacas una buena factura adelante, pero el piso se siente enorme y silencioso."
+    label: Cancelar el plan a última hora para facturar encargos pendientes
+    result_text: Mandas un audio eterno disculpándote y pasas el sábado frente a la pantalla. Sacas una buena factura adelante, pero el piso se siente enorme y silencioso.
     effects:
       billed_income: 650
       stress: 7

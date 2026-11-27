@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_cita_con_alex
 category: familia
-title: "Cañas que se alargan con Álex"
-body: "En el cumpleaños de una amistad común charlas tres horas seguidas con Álex, alguien con horario humano a quien le fascina qué sea un cierre trimestral. Al despediros te propone cenar esta semana sin hablar de facturas."
+title: Cañas que se alargan con Álex
+body: En el cumpleaños de una amistad común charlas tres horas seguidas con Álex, alguien con horario humano a quien le fascina qué sea un cierre trimestral. Al despediros te propone cenar esta semana sin hablar de facturas.
 tags:
   - pareja
   - citas
@@ -18,14 +18,15 @@ requirements:
   forbidden_flags:
     - historia_con_alex
     - ex_pareja_alex
+  max_month: 60
 weight: 14
 cooldown_months: 10
 max_occurrences: 1
 exclusive_with: []
 choices:
   - id: apostar_por_citas_con_alex
-    label: "Reservar mesa, guardar el móvil en la mochila y ver adónde os lleva"
-    result_text: "La cena del jueves lleva a un desayuno de domingo y, cuando quieres darte cuenta, ya hay un cepillo de dientes extra en tu cuarto de baño. Oficialmente salís juntos."
+    label: Reservar mesa, guardar el móvil en la mochila y ver adónde os lleva
+    result_text: La cena del jueves lleva a un desayuno de domingo y, cuando quieres darte cuenta, ya hay un cepillo de dientes extra en tu cuarto de baño. Oficialmente salís juntos.
     effects:
       set_family_status:
         status: dating
@@ -39,11 +40,11 @@ choices:
           delay_months: 5
           probability: 0.55
   - id: tomarselo_con_calma
-    label: "Quedar sin prisas, encajando planes cuando el trabajo dé tregua"
+    label: Quedar sin prisas, encajando planes cuando el trabajo dé tregua
     outcomes:
       - id: quimica_imparable
         weight: 60
-        result_text: "Aunque intentabais ir despacio, la complicidad puede más que tu agenda caótica y acabáis formalizando lo vuestro entre risas."
+        result_text: Aunque intentabais ir despacio, la complicidad puede más que tu agenda caótica y acabáis formalizando lo vuestro entre risas.
         effects:
           set_family_status:
             status: dating
@@ -54,14 +55,14 @@ choices:
           personal_life: 10
       - id: amistad_cordial
         weight: 40
-        result_text: "Después de cancelar dos martes seguidos por entregas urgentes, la chispa queda en una amistad simpática de mensajes esporádicos."
+        result_text: Después de cancelar dos martes seguidos por entregas urgentes, la chispa queda en una amistad simpática de mensajes esporádicos.
         effects:
           moral: 1
           stress: -2
           personal_life: 3
   - id: priorizar_cartera_clientes
     label: "Dar largas educadas: ahora mismo estás casado con tu facturación"
-    result_text: "Aprovechas las noches despejadas para cerrar presupuestos atrasados. Tu cuenta corriente engorda un poco; tu nevera sigue medio vacía."
+    result_text: Aprovechas las noches despejadas para cerrar presupuestos atrasados. Tu cuenta corriente engorda un poco; tu nevera sigue medio vacía.
     effects:
       billed_income: 550
       stress: 4

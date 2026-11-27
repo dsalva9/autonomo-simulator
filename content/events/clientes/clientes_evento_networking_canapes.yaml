@@ -9,6 +9,7 @@ tags:
   - gasto_deducible
 requirements:
   min_month: 2
+  max_month: 48
 weight: 10
 cooldown_months: 9
 max_occurrences: 4

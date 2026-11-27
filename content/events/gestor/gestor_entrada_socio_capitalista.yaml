@@ -1,0 +1,57 @@
+schema_version: 1
+id: gestor_entrada_socio_capitalista
+category: gestor
+title: "Un socio inversor ofrece 35.000 € por el 30 % de tu S.L."
+body: "Marta presenta a un inversor privado fascinado por tus márgenes: pone 35.000 € en caja mañana a cambio del 30 % de participaciones y voto en junta. Dinero fresco para despegar, pero se acabó mandar tú solo."
+tags:
+  - sociedad_limitada
+  - inversion
+  - socios
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_gestor_estrategia
+requirements:
+  min_month: 52
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+  forbidden_flags:
+    - socio_minoritario_activo
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: aceptar_ampliacion_treinta_y_cinco_mil
+    label: "Aceptar la ampliación de capital: +35.000 € por el 30 %"
+    result_text: "La transferencia ilumina tu saldo como un neón. Ahora tienes pulmón de sobra y un socio minoritario que ya pregunta por los informes trimestrales."
+    effects:
+      cash_delta: 35000
+      moral: -6
+      stress: 8
+      reputation: 6
+      set_flags:
+        - socio_minoritario_activo
+  - id: negociar_prestamo_participativo
+    label: "Negociar préstamo participativo de 18.000 € sin ceder acciones"
+    requirements:
+      stats:
+        reputation:
+          min: 65
+    result_text: "Tu trayectoria te permite cerrar 18.000 € de financiación a devolver en doce cuotas de 1.200 €, conservando el 100 % de las llaves de tu empresa."
+    effects:
+      cash_delta: 18000
+      reputation: 6
+      moral: 4
+      add_modifier:
+        id: mod_cuota_prestamo_participativo
+        label: "Devolución de préstamo participativo"
+        remaining_months: 12
+        monthly_expense_delta: 1200
+  - id: rechazar_y_mantener_cien_por_cien
+    label: "Declinar la oferta y seguir siendo dueño del 100 %"
+    result_text: "Prefieres crecer con tus propias facturas antes que explicar tus vacaciones en una junta de socios. Cierras el dossier con calma absoluta."
+    effects:
+      moral: 8
+      personal_life: 4
+      stress: -4

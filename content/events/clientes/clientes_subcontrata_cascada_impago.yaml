@@ -27,11 +27,15 @@ choices:
     label: "Enviar requerimiento formal: tu contrato es con ellos, no con la cima"
     result_text: Les recuerdas por escrito que su riesgo comercial no es asunto tuyo. Refunfuñan, pero sueltan la transferencia para evitar juzgado.
     effects:
-      billed_income: 950
+      billed_income: 1150
       deductible_expense: 50
-      stress: 8
+      stress: 3
       moral: 3
       reputation: 2
+    requirements:
+      stats:
+        moral:
+          min: 62
   - id: dar_factura_por_incobrable
     label: Asumir el quebranto hoy antes de gastar más dinero en reclamar
     result_text: Tachas la deuda con rabia contenida, cortas toda relación con intermediarios piramidales y pasas página.

@@ -12,9 +12,12 @@ character_expression: pleased
 illustration_id: null
 requirements:
   min_month: 2
+  forbidden_flags:
+    - app_primo_resuelta
+  max_month: 36
 weight: 9
 cooldown_months: 16
-max_occurrences: 2
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: entrar_a_riesgo_por_participaciones
@@ -29,6 +32,13 @@ choices:
           moral: 8
           personal_life: -6
           reputation: 5
+          set_flags:
+            - app_primo_resuelta
+          schedule_events:
+            - event_id: clientes_startup_participaciones_desenlace
+              delay_months: 36
+              probability: 1
+              priority: high
       - id: pivote_a_kombucha
         weight: 75
         result_text: Tras dos meses de notas de voz eternas, tu primo se aburre y decide que el futuro real está en criar setas gourmet.
@@ -36,6 +46,13 @@ choices:
           stress: 12
           moral: -7
           personal_life: -6
+          set_flags:
+            - app_primo_resuelta
+          schedule_events:
+            - event_id: clientes_startup_participaciones_desenlace
+              delay_months: 36
+              probability: 1
+              priority: high
   - id: pagar_los_cortados_y_huir
     label: Invitar a los cafés y salir corriendo antes de firmar una servilleta
     result_text: Los tres euros mejor invertidos del trimestre. Vuelves a tu despacho sano, salvo y dueño de tus tardes.
@@ -44,11 +61,19 @@ choices:
       stress: -5
       moral: 3
       personal_life: 3
+      set_flags:
+        - app_primo_resuelta
   - id: cobrar_prototipo_cerrado
     label: Ofrecer una fase inicial pequeñita pero cobrada con factura real
-    result_text: En cuanto hay que poner 800 € de verdad sobre la mesa, filtran la paja mental, pagan entre los dos un boceto serio y tú cobras tu tiempo.
+    result_text: En cuanto pones tu caché y 950 € de verdad sobre la mesa, filtran la paja mental, pagan un boceto serio y cobras tu tiempo.
     effects:
-      billed_income: 800
+      billed_income: 950
       stress: 3
       moral: 4
       reputation: 2
+      set_flags:
+        - app_primo_resuelta
+    requirements:
+      stats:
+        reputation:
+          min: 40

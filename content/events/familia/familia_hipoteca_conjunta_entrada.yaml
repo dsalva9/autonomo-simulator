@@ -1,0 +1,65 @@
+schema_version: 1
+id: familia_hipoteca_conjunta_entrada
+category: familia
+title: "La entrada del piso: 12.000 € o alquiler eterno"
+body: "Tras meses visitando zulos a precio de palacio encontráis un piso decente. El banco exige demostrar tres ejercicios limpios y poner ya la entrada con impuestos; Álex pregunta si de verdad vais a dar el paso o seguir pagando caseros."
+tags:
+  - pareja
+  - vivienda
+  - hipoteca
+character_id: pareja_alex
+character_expression: neutral
+illustration_id: banner_familia_hogar
+requirements:
+  min_month: 30
+  max_month: 96
+  family_statuses:
+    - cohabiting
+  forbidden_flags:
+    - vivienda_propia_comprada
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: firmar_compra_con_entrada_fuerte
+    label: "Aportar 12.000 € de entrada y firmar una cuota mensual holgada"
+    requirements:
+      stats:
+        money:
+          min: 13500
+    result_text: "Firmáis en notaría con el estómago encogido al vaciar la cuenta, pero salís con llaves propias y una cuota más baja que vuestro viejo alquiler."
+    effects:
+      cash_delta: -12000
+      personal_life: 18
+      moral: 14
+      stress: -8
+      set_flags:
+        - vivienda_propia_comprada
+      add_modifier:
+        id: mod_hipoteca_entrada_fuerte
+        label: "Hipoteca moderada tras entrada fuerte"
+        remaining_months: 12
+        monthly_expense_delta: -250
+  - id: hipoteca_al_noventa_pct_cara
+    label: "Entrar con 4.500 € y aceptar hipoteca al 90 % más cara cada mes"
+    result_text: "Os dan las llaves conservando liquidez para el negocio, aunque el banco os cobra con gusto cada punto extra de financiación."
+    effects:
+      cash_delta: -4500
+      personal_life: 10
+      stress: 6
+      set_flags:
+        - vivienda_propia_comprada
+      add_modifier:
+        id: mod_hipoteca_noventa_pct
+        label: "Cuota alta de hipoteca al 90 %"
+        remaining_months: 12
+        monthly_expense_delta: 320
+  - id: frenar_compra_por_miedo_caja
+    label: "Echar el freno en el último minuto: prefieres no atarte siendo autónomo"
+    result_text: "Tu cuenta respira aliviada, pero Álex guarda los planos del piso en el cajón con una decepción difícil de maquillar."
+    effects:
+      personal_life: -14
+      moral: -6
+      set_flags:
+        - crisis_pareja_latente

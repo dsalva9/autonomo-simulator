@@ -12,8 +12,8 @@ illustration_id: null
 requirements:
   min_month: 3
 weight: 10
-cooldown_months: 14
-max_occurrences: 3
+cooldown_months: 36
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: comprar_equipo_profesional_nuevo
@@ -28,6 +28,8 @@ choices:
       stress: -4
       moral: 5
       reputation: 3
+      set_flags:
+        - equipo_profesional_nuevo
   - id: parche_taller_barrio
     label: Pagar una reparación de urgencia en la tienda de la esquina
     outcomes:

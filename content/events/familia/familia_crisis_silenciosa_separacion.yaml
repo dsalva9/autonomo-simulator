@@ -1,0 +1,72 @@
+schema_version: 1
+id: familia_crisis_silenciosa_separacion
+category: familia
+title: "Maletas en el pasillo: el precio de vivir al 100 %"
+body: "No hay gritos ni portazos, solo dos maletas junto a la entrada y Álex con la voz rota: «Llevo meses viviendo con un fantasma pegado a una pantalla». Aquí ya no vale una cena improvisada ni prometer que el próximo trimestre será distinto."
+tags:
+  - pareja
+  - crisis_pareja
+  - pareja_ultimatum
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: illus_hito_crisis_familiar
+requirements:
+  min_month: 18
+  family_statuses:
+    - dating
+    - cohabiting
+  stats:
+    personal_life:
+      max: 38
+weight: 20
+cooldown_months: 18
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: frenar_negocio_tres_meses_y_terapia
+    label: "Recortar cartera tres meses y pagar terapia seria juntos (1.500 €)"
+    result_text: "Cuesta horrores decir no a clientes rentables, pero volver a cenar sin móvil y hablar sin armadura rescata la relación justo al borde del abismo."
+    effects:
+      cash_delta: -1500
+      personal_life: 24
+      moral: 12
+      stress: -16
+      clear_flags:
+        - crisis_pareja_latente
+      add_modifier:
+        id: mod_freno_rescate_pareja
+        label: "Ritmo reducido para salvar el hogar"
+        remaining_months: 3
+        monthly_billed_delta: -1600
+  - id: asumir_ruptura_y_liquidar_piso
+    label: "Admitir que ya llegaste tarde y liquidar fianza y gastos (3.200 €)"
+    result_text: "Partís muebles, facturas atrasadas y copias de llaves con una frialdad que duele más que el golpe en la cuenta. La silla del despacho nunca pareció tan fría."
+    effects:
+      cash_delta: -3200
+      moral: -16
+      stress: 16
+      personal_life: -14
+      set_family_status:
+        status: separated
+        partner_character_id: null
+      clear_flags:
+        - convivencia_estable
+        - crisis_pareja_latente
+  - id: rescate_apoyado_en_terapia_activa
+    label: "Apoyarte en tu terapia activa y pactar dos meses de tregua (600 €)"
+    requirements:
+      required_flags:
+        - terapia_activa
+    result_text: "Haber empezado a trabajar tus límites meses atrás os da lenguaje común: frenáis dos meses sin hundir el estudio y el pasillo vuelve a respirar."
+    effects:
+      cash_delta: -600
+      personal_life: 20
+      moral: 10
+      stress: -12
+      clear_flags:
+        - crisis_pareja_latente
+      add_modifier:
+        id: mod_pausa_terapia_pareja
+        label: "Pausa breve con apoyo terapéutico"
+        remaining_months: 2
+        monthly_billed_delta: -800

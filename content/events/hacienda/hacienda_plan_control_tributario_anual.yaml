@@ -59,3 +59,14 @@ choices:
       moral: 6
       reputation: 2
       fiscal_risk: -14
+  - id: superar_barrido_con_riesgo_cero
+    label: Dejar correr el barrido algorítmico con tu perfil de riesgo impecable
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 10
+    result_text: El algoritmo de Hacienda escanea tu NIF impoluto y salta directamente a la siguiente carpeta. Duermes como un lirón sin gastar un euro.
+    effects:
+      moral: 8
+      stress: -8
+      reputation: 3

@@ -9,6 +9,7 @@ tags:
   - cadena_fantasma
 requirements:
   min_month: 4
+  max_month: 48
 weight: 11
 cooldown_months: 14
 max_occurrences: 3

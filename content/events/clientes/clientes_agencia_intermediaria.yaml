@@ -37,12 +37,16 @@ choices:
     requirements:
       stats:
         reputation:
-          min: 50
+          min: 52
+      business_tiers:
+        - estudio_consolidado
+        - sociedad_limitada
+        - agencia_consultora
     result_text: No tienen a nadie capaz de entregarlo a tiempo y ceden. Cobras lo que vale tu oficio y sumas un caso potente a tu cartera.
     effects:
-      billed_income: 1550
+      billed_income: 2100
       stress: 6
       moral: 4
-      reputation: 4
+      reputation: 5
       set_flags:
         - portfolio_actualizado

@@ -1,0 +1,66 @@
+schema_version: 1
+id: hacienda_inspeccion_efectivo_tres_anos
+category: hacienda
+title: "Ejercicio de hace 3 años: efectivo sin factura"
+body: "Hacienda tiene memoria de elefante. Tres años después de aquellos cobros en mano, Gómez cruza ingresos en cajero, gastos incompatibles y facturas de terceros: abre acta por rentas no declaradas dentro del plazo legal de cuatro años."
+tags:
+  - prescripcion_fiscal
+  - inspeccion
+  - dinero_b
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: illus_hito_inspeccion_hacienda
+requirements: null
+weight: 0
+cooldown_months: 12
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: pagar_acta_y_sancion_reducida
+    label: "Firmar conformidad para salvar la reducción de sanción (4.200 €)"
+    result_text: "Tragas saliva y pagas 4.200 € entre cuota, recargo e intereses. El efectivo sin factura sale caro cuando la rueda de la AEAT tarda treinta meses en girar."
+    effects:
+      cash_delta: -4200
+      fiscal_risk: -24
+      stress: 14
+      moral: -8
+      clear_flags:
+        - cobro_en_b_reciente
+  - id: estrategia_paco_reconstruccion
+    label: "Dejar que Paco reconstruya justificantes con su carpeta de la churrería"
+    requirements:
+      gestor_tiers:
+        - cheap
+    outcomes:
+      - id: reconstruccion_paco_colada
+        weight: 50
+        result_text: "Milagro burocrático: Paco sepulta la mesa de Gómez en extractos añejos y préstamos familiares viejos. Cierran el acta por 950 € más 350 € de minuta."
+        effects:
+          cash_delta: -950
+          deductible_expense: 350
+          fiscal_risk: -12
+          moral: 4
+          stress: 4
+      - id: reconstruccion_paco_estalla
+        weight: 50
+        result_text: "Un justificante de Paco tiene fecha de domingo bisiesto y despierta la furia de Gómez. Pierdes toda reducción y el sablazo sube a 6.800 €."
+        effects:
+          cash_delta: -6800
+          fiscal_risk: 15
+          stress: 18
+          moral: -12
+  - id: recurrir_via_economico_administrativa
+    label: "Impugnar el acta en vía económico-administrativa ante el TEAC (1.100 €)"
+    requirements:
+      stats:
+        money:
+          min: 1500
+    result_text: "Apostas 1.100 € a los defectos formales del expediente. La pelota queda en el tejado del TEAC durante dieciocho largos meses."
+    effects:
+      deductible_expense: 1100
+      stress: 10
+      schedule_events:
+        - event_id: hacienda_resolucion_teac_tardia
+          delay_months: 18
+          probability: 1
+          priority: high

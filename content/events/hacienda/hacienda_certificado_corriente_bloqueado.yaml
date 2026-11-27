@@ -48,3 +48,16 @@ choices:
       moral: 5
       reputation: 4
       fiscal_risk: -8
+  - id: desbloquear_por_expediente_limpio
+    label: Pedir desbloqueo prioritario por historial fiscal inmaculado
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 12
+    result_text: "Al ver cero alertas en tu NIF, el funcionario anula el error informático en el acto: descargas el certificado positivo y cobras 950 €."
+    effects:
+      billed_income: 950
+      stress: -4
+      moral: 6
+      reputation: 3
+      fiscal_risk: -6

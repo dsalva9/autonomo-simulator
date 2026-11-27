@@ -30,6 +30,7 @@ choices:
           delay_months: 2
       set_flags:
         - cliente_internacional_activo
+        - alta_roi_vies_aprobada
   - id: tramitar_alta_europea_y_firmar
     label: Tramitar el alta intracomunitaria y lanzarse en inglés
     result_text: Sobrevives al papeleo censal y a dos videollamadas puntuales al minuto. Pagan el día acordado sin regatear ni media coma.
@@ -43,6 +44,7 @@ choices:
           delay_months: 2
       set_flags:
         - cliente_internacional_activo
+        - alta_roi_vies_aprobada
   - id: quedarse_en_mercado_nacional
     label: "Declinar educadamente: bastante tienes con el BOE en castellano"
     result_text: Agradeces el interés sin complicarte con modelos intracomunitarios ni reuniones en otro idioma.

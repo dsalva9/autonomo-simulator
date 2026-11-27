@@ -1,0 +1,57 @@
+schema_version: 1
+id: gestor_impuesto_sociedades_modelo_200
+category: gestor
+title: "Julio societario: Modelo 200 y reserva de capitalización"
+body: "Llega el 25 de julio con 38 grados y el cierre anual del Impuesto de Sociedades sobre la mesa. Puedes reforzar fondos propios con reserva legal, repartir dividendo a tu bolsillo o forzar ajustes agresivos al cierre."
+tags:
+  - sociedad_limitada
+  - impuesto_sociedades
+  - cierre_anual
+character_id: gestor_premium_elena
+character_expression: neutral
+illustration_id: banner_hacienda_trimestre
+requirements:
+  min_month: 42
+  months_of_year:
+    - 7
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 14
+cooldown_months: 11
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: dotar_reserva_capitalizacion
+    label: "Dotar reserva de capitalización y blindar balance (4.500 €)"
+    requirements:
+      stats:
+        money:
+          min: 6000
+    result_text: "Inmovilizas capital hoy para reducir la base imponible con todas las bendiciones legales. Los bancos y grandes clientes miran tu balance con otros ojos."
+    effects:
+      deductible_expense: 4500
+      fiscal_risk: -10
+      reputation: 6
+      moral: 5
+      stress: -4
+  - id: repartir_dividendo_ordinario
+    label: "Repartir dividendo limpio asumiendo retención del 19 % (-1.600 €)"
+    result_text: "Pagas el peaje del Modelo 123 como manda el reglamento y disfrutas por fin en casa de los frutos de un ejercicio entero sin remordimientos."
+    effects:
+      cash_delta: -1600
+      moral: 6
+      personal_life: 8
+      fiscal_risk: -4
+  - id: forzar_gastos_deducibles_cierre
+    label: "Colar gastos mixtos en el cierre para liberar +2.600 € de caja"
+    result_text: "La factura fiscal baja de golpe y tu cuenta respira en pleno verano, mientras el algoritmo de sociedades anota tu ratio en la cola de revisiones."
+    effects:
+      cash_delta: 2600
+      fiscal_risk: 20
+      stress: 4
+      schedule_events:
+        - event_id: hacienda_revision_sociedad_interpuesta_tardia
+          delay_months: 30
+          probability: 0.35
+          priority: high

@@ -21,12 +21,16 @@ max_occurrences: 4
 choices:
   - id: no_mover_un_dedo_sin_orden_compra
     label: Bloquear el inicio hasta tener número de pedido oficial firmado
-    result_text: En cuanto ven peligrar su calendario, aparece misteriosamente una partida de urgencia de 1.500 € para la fase inicial.
+    result_text: "Tu peso profesional acelera Compras como por arte de magia: en 24 horas desbloquean una orden de urgencia de 1.850 €."
     effects:
-      billed_income: 1500
+      billed_income: 1850
       moral: 4
-      stress: 2
+      stress: 0
       reputation: 3
+    requirements:
+      stats:
+        reputation:
+          min: 50
   - id: adelantar_trabajo_confiando_en_marzo
     label: Empezar de buena fe esperando cobrarlo todo junto en primavera
     outcomes:

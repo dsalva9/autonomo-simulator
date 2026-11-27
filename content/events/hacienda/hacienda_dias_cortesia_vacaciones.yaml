@@ -13,9 +13,12 @@ requirements:
   months_of_year:
     - 6
     - 7
+  forbidden_flags:
+    - dias_cortesia_configurados
+  max_month: 48
 weight: 9
 cooldown_months: 14
-max_occurrences: 3
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: dejarlo_para_la_vispera_del_viaje
@@ -34,6 +37,8 @@ choices:
       moral: 6
       personal_life: 7
       fiscal_risk: -2
+      set_flags:
+        - dias_cortesia_configurados
   - id: planificar_calendario_con_gestor
     label: Coordinar con tu gestoría los tramos críticos de todo el ejercicio
     requirements:
@@ -47,3 +52,5 @@ choices:
       moral: 6
       personal_life: 4
       fiscal_risk: -5
+      set_flags:
+        - dias_cortesia_configurados

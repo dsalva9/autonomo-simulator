@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_contractura_lumbar_silla
 category: familia
-title: "Crujido lumbar tras diez horas en la silla barata"
-body: "Te agachas a enchufar el cargador y un latigazo en las lumbares te deja clavado mirando el rodapié durante dos minutos eternos. La silla heredada del comedor ha dictado sentencia contra tu columna vertebral en plena semana de cierre."
+title: Crujido lumbar tras diez horas en la silla barata
+body: Te agachas a enchufar el cargador y un latigazo en las lumbares te deja clavado mirando el rodapié durante dos minutos eternos. La silla heredada del comedor ha dictado sentencia contra tu columna vertebral en plena semana de cierre.
 tags:
   - salud
   - espalda
@@ -10,14 +10,17 @@ tags:
   - ergonomia
 requirements:
   min_month: 4
+  forbidden_flags:
+    - silla_ergonomica_comprada
+  max_month: 42
 weight: 12
 cooldown_months: 11
-max_occurrences: 4
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: ibuprofeno_y_seguir_tecleando
-    label: "Tirar de manta eléctrica, antiinflamatorios y no frenar entregas"
-    result_text: "Sacas adelante la facturación sentado de medio lado como una gamba, aunque tu espalda toma nota silenciosa del agravio."
+    label: Tirar de manta eléctrica, antiinflamatorios y no frenar entregas
+    result_text: Sacas adelante la facturación sentado de medio lado como una gamba, aunque tu espalda toma nota silenciosa del agravio.
     effects:
       cash_delta: -18
       billed_income: 580
@@ -29,8 +32,8 @@ choices:
           delay_months: 2
           probability: 0.85
   - id: fisio_y_silla_ergonomica
-    label: "Ir al fisioterapeuta y comprar por fin una silla ergonómica seria"
-    result_text: "El fisio te deshace nudos del tamaño de nueces y la silla nueva amortizable te devuelve la dignidad postural cada mañana."
+    label: Ir al fisioterapeuta y comprar por fin una silla ergonómica seria
+    result_text: El fisio te deshace nudos del tamaño de nueces y la silla nueva amortizable te devuelve la dignidad postural cada mañana.
     effects:
       cash_delta: -120
       deductible_expense: 240
@@ -39,13 +42,15 @@ choices:
       personal_life: 7
       add_modifier:
         id: mod_espalda_cuidada
-        label: "Ergonomía y espalda al día"
+        label: Ergonomía y espalda al día
         remaining_months: 4
         monthly_stress_delta: -2
         monthly_billed_delta: 80
+      set_flags:
+        - silla_ergonomica_comprada
   - id: reposo_y_estiramientos_dos_dias
-    label: "Parar cuarenta y ocho horas, caminar suave y retrasar lo secundario"
-    result_text: "Bajas el ritmo antes de romperte del todo. Pierdes algo de tracción comercial esta semana, pero vuelves a caminar erguido."
+    label: Parar cuarenta y ocho horas, caminar suave y retrasar lo secundario
+    result_text: Bajas el ritmo antes de romperte del todo. Pierdes algo de tracción comercial esta semana, pero vuelves a caminar erguido.
     effects:
       stress: -7
       moral: 4

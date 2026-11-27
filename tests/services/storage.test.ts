@@ -16,7 +16,7 @@ import {
 } from "../../src/services/storage/index.ts";
 
 describe("StoragePort & Save Migrations", () => {
-  it("saves and reloads an active run with exact GameState fidelity on Phase 2 engine build", async () => {
+  it("saves and reloads an active run with exact GameState fidelity on v2 engine build", async () => {
     const driver = createMemoryStorageDriver();
     const storage = createStorageAdapter(driver);
 
@@ -31,21 +31,22 @@ describe("StoragePort & Save Migrations", () => {
     expect(loaded.corruptedRecovery).toBeNull();
     expect(loaded.envelope).not.toBeNull();
     expect(loaded.envelope?.save_version).toBe(CURRENT_SAVE_VERSION);
-    expect(loaded.envelope?.engine_build).toBe("0.3.0-phase2");
-    expect(ENGINE_BUILD).toBe("0.3.0-phase2");
+    expect(CURRENT_SAVE_VERSION).toBe(2);
+    expect(loaded.envelope?.engine_build).toBe("2.0.0");
+    expect(ENGINE_BUILD).toBe("2.0.0");
     expect(loaded.envelope?.state).toEqual(state);
   });
 
-  it("exposes all 15 unique snake_case achievements (preserving all 9 Phase 1 IDs + 6 Phase 2 milestones)", () => {
-    expect(ACHIEVEMENT_CATALOG).toHaveLength(15);
-    expect(KNOWN_ACHIEVEMENT_IDS.size).toBe(15);
+  it("exposes all 18 unique snake_case achievements (preserving all v1 IDs with ricachon_250k + 3 v2 progression seals)", () => {
+    expect(ACHIEVEMENT_CATALOG).toHaveLength(18);
+    expect(KNOWN_ACHIEVEMENT_IDS.size).toBe(18);
 
     const ids = ACHIEVEMENT_CATALOG.map((item) => item.id);
     for (const id of ids) {
       expect(id).toMatch(/^[a-z0-9]+(?:_[a-z0-9]+)*$/);
     }
 
-    // All 9 Phase 1 IDs must remain intact
+    // All 9 Phase 1 IDs (with ricachon_150k -> ricachon_250k) must remain intact
     for (const legacyId of [
       "primer_trimestre",
       "primer_ano",
@@ -55,21 +56,24 @@ describe("StoragePort & Save Migrations", () => {
       "familia_formada",
       "cinco_anos",
       "heroe_120m",
-      "ricachon_150k",
+      "ricachon_250k",
     ] as const) {
       expect(ids).toContain(legacyId);
     }
 
-    // All 6 Phase 2 IDs must be registered
-    for (const phase2Id of [
+    // All 6 Phase 2 + 3 v2 IDs must be registered
+    for (const extraId of [
       "aplazamiento_solicitado",
       "numeros_rojos_superados",
       "colchon_10k",
       "criatura_en_casa",
       "facturacion_100k",
       "modo_infinito",
+      "sociedad_limitada",
+      "agencia_consolidada",
+      "ejercicio_prescrito",
     ] as const) {
-      expect(ids).toContain(phase2Id);
+      expect(ids).toContain(extraId);
     }
   });
 
@@ -150,6 +154,8 @@ describe("StoragePort & Save Migrations", () => {
       employee: {
         character_id: "empleado_junior_dani",
         role_label: "Asistente júnior",
+        headcount: 1,
+        lead_monthly_cost: 1450,
         monthly_cost: 1450,
         billing_multiplier: 1.35,
         satisfaction: 75,
@@ -219,24 +225,37 @@ describe("StoragePort & Save Migrations", () => {
     expect(syncM120Start.newlyUnlocked).toEqual(["cinco_anos"]);
     expect(syncM120Start.profile.achievements.heroe_120m).toBeUndefined();
 
-    // Late-game & Endless milestones: 100k billed, 120m hero seal, 150k rich, endless_mode
+    // Late-game & Endless milestones: 100k billed, 120m hero seal, 250k rich, endless_mode + 3 v2 progression seals
     const endlessVeteranState: GameState = {
       ...month12State,
       month: 121,
       phase: "event_resolution",
       endless_mode: true,
-      indicators: { ...baseState.indicators, money: 155_000 },
+      business: { tier: "agencia_consultora", months_in_tier: 12, sl_formed_month: 60 },
+      employee: {
+        ...midCareerState.employee!,
+        headcount: 5,
+        monthly_cost: 8850,
+      },
+      flags: {
+        ...midCareerState.flags,
+        ejercicio_prescrito_limpio: true,
+      },
+      indicators: { ...baseState.indicators, money: 255_000 },
       finances: { ...month12State.finances, lifetime_billed: 142_000 },
-      earned_victories: ["hero_120m", "rich_150k"],
+      earned_victories: ["hero_120m", "rich_250k"],
     };
     const syncVet = await storage.syncRunProgress(endlessVeteranState, "2026-11-11T12:00:00.000Z");
     expect(syncVet.newlyUnlocked).toEqual([
       "facturacion_100k",
       "heroe_120m",
-      "ricachon_150k",
+      "ricachon_250k",
       "modo_infinito",
+      "sociedad_limitada",
+      "agencia_consolidada",
+      "ejercicio_prescrito",
     ]);
-    expect(Object.keys(syncVet.profile.achievements)).toHaveLength(15);
+    expect(Object.keys(syncVet.profile.achievements)).toHaveLength(18);
   });
 
   it("enforces post-tax wealth deductions during quarterly_tax and requires non-ended run for superviviente_hacienda", async () => {
@@ -329,32 +348,32 @@ describe("StoragePort & Save Migrations", () => {
     );
     expect(syncPostTax10k.newlyUnlocked).toContain("colchon_10k");
 
-    const preTaxInflated150k: GameState = {
+    const preTaxInflated250k: GameState = {
       ...postTaxTrue10k,
       month: 36,
       phase: "quarterly_tax",
-      indicators: { ...postTaxTrue10k.indicators, money: 153_000 },
+      indicators: { ...postTaxTrue10k.indicators, money: 253_000 },
       finances: {
         ...postTaxTrue10k.finances,
         accrued_tax_liability: 2_800,
-        deferred_tax: { principal: 600, surcharge: 60, due_month: 36 }, // effectiveMoney = 153_000 - 2_800 - 660 = 149_540 < 150_000
+        deferred_tax: { principal: 600, surcharge: 60, due_month: 36 }, // effectiveMoney = 253_000 - 2_800 - 660 = 249_540 < 250_000
       },
     };
-    const syncPreTax150k = await storage.syncRunProgress(
-      preTaxInflated150k,
+    const syncPreTax250k = await storage.syncRunProgress(
+      preTaxInflated250k,
       "2026-11-12T09:15:00.000Z",
     );
-    expect(syncPreTax150k.newlyUnlocked).not.toContain("ricachon_150k");
+    expect(syncPreTax250k.newlyUnlocked).not.toContain("ricachon_250k");
 
-    const postTaxTrue150k: GameState = {
-      ...preTaxInflated150k,
-      indicators: { ...preTaxInflated150k.indicators, money: 154_000 }, // 154_000 - 2_800 - 660 = 150_540 >= 150_000
+    const postTaxTrue250k: GameState = {
+      ...preTaxInflated250k,
+      indicators: { ...preTaxInflated250k.indicators, money: 254_000 }, // 254_000 - 2_800 - 660 = 250_540 >= 250_000
     };
-    const syncPostTax150k = await storage.syncRunProgress(
-      postTaxTrue150k,
+    const syncPostTax250k = await storage.syncRunProgress(
+      postTaxTrue250k,
       "2026-11-12T09:16:00.000Z",
     );
-    expect(syncPostTax150k.newlyUnlocked).toContain("ricachon_150k");
+    expect(syncPostTax250k.newlyUnlocked).toContain("ricachon_250k");
   });
 
   it("also unlocks numeros_rojos_superados when consecutive_negative_months > 0 and cash rebounds mid-month, but never on game_over", async () => {
@@ -443,9 +462,10 @@ describe("StoragePort & Save Migrations", () => {
     });
     expect(migratedV0.ok).toBe(true);
     if (migratedV0.ok) {
-      expect(migratedV0.envelope.save_version).toBe(1);
-      expect(migratedV0.envelope.engine_build).toBe("0.3.0-phase2");
+      expect(migratedV0.envelope.save_version).toBe(2);
+      expect(migratedV0.envelope.engine_build).toBe("2.0.0");
       expect(migratedV0.envelope.state.run_id).toBe("run_legacy_v0");
+      expect(migratedV0.envelope.state.schema_version).toBe(2);
     }
 
     const normalizedProfile = migrateProfileEnvelope({
@@ -453,11 +473,28 @@ describe("StoragePort & Save Migrations", () => {
       achievements: {
         primer_trimestre: "2026-11-10T00:00:00.000Z",
         aplazamiento_Solicitado: "2026-11-10T01:00:00.000Z",
+        ricachon_150k: "2026-11-10T02:00:00.000Z",
       },
-      hall_of_fame: [],
+      hall_of_fame: [
+        {
+          run_id: "run_v1_rich",
+          seed: "OLD-RICH",
+          finished_at: "2026-11-10T03:00:00.000Z",
+          months_survived: 88,
+          ending_id: "retired_rich",
+          summary_quote: "150k",
+          final_money: 155_000,
+          lifetime_billed: 290_000,
+          earned_victories: ["rich_150k", "hero_120m"],
+          endless_mode: false,
+        },
+      ],
       settings: { reduced_motion: true, locale: "es-ES" },
     });
     expect(normalizedProfile.achievements.aplazamiento_solicitado).toBe("2026-11-10T01:00:00.000Z");
+    expect(normalizedProfile.achievements.ricachon_250k).toBe("2026-11-10T02:00:00.000Z");
+    expect(normalizedProfile.achievements.ricachon_150k).toBeUndefined();
+    expect(normalizedProfile.hall_of_fame[0]?.earned_victories).toEqual(["rich_250k", "hero_120m"]);
 
     const driver = createMemoryStorageDriver({
       [ACTIVE_RUN_KEY]: "{not-valid-json",
@@ -537,7 +574,7 @@ describe("StoragePort & Save Migrations", () => {
 
     // Malformed pending_turn should be stripped without corrupting the valid GameState
     const migratedMalformed = migrateSaveEnvelope({
-      save_version: 1,
+      save_version: 2,
       state,
       pending_turn: { pending_outcome: "invalid" },
     });
@@ -545,6 +582,168 @@ describe("StoragePort & Save Migrations", () => {
     if (migratedMalformed.ok) {
       expect(migratedMalformed.envelope.state).toEqual(state);
       expect(migratedMalformed.envelope.pending_turn).toBeUndefined();
+    }
+  });
+
+  it("losslessly migrates v1 SaveEnvelope (including pending_turn preview/queued states, S.L./Estudio inference, staff backfill, and rich_150k mapping) to v2", () => {
+    const { state: baseV2 } = startNewRun(compiledCatalog, {
+      seed: "V1-TO-V2-MIGRATE",
+      runId: "run_v1_active",
+    });
+    const sampleEvent = compiledCatalog.events[0]!;
+    const sampleChoice = sampleEvent.choices[0]!;
+
+    const makeLegacyV1State = (overrides: Record<string, unknown> = {}) => {
+      const clone = structuredClone(baseV2) as unknown as Record<string, unknown>;
+      clone.schema_version = 1;
+      Reflect.deleteProperty(clone, "business");
+      const fin = clone.finances as Record<string, unknown>;
+      Reflect.deleteProperty(fin, "historical_exposures");
+      const fam = clone.family as Record<string, unknown>;
+      Reflect.deleteProperty(fam, "neglect_months");
+      return { ...clone, ...overrides };
+    };
+
+    const legacySlState = makeLegacyV1State({
+      month: 54,
+      flags: { sociedad_limitada_activa: true },
+      employee: {
+        character_id: "empleada_senior_laura",
+        role_label: "Especialista sénior",
+        monthly_cost: 2100,
+        billing_multiplier: 2.05,
+        satisfaction: 80,
+        months_employed: 12,
+      },
+      earned_victories: ["rich_150k", "hero_120m", "rich_150k"],
+      pending_victory_badge: "rich_150k",
+      history: [
+        {
+          id: "h_vic",
+          month: 54,
+          kind: "victory_unlocked",
+          summary: "rich_150k",
+        },
+      ],
+      scheduled_queue: [
+        {
+          queue_id: "q_old",
+          event_id: "hacienda_carta_certificada",
+          trigger_month: 58,
+          source_event_id: "clientes_pago_sin_factura",
+        },
+      ],
+    });
+
+    const legacyPreviewState = makeLegacyV1State({
+      month: 54,
+      flags: { estudio_calle_alquilado: true },
+      employee: null,
+    });
+
+    const legacyFatalFinalState = makeLegacyV1State({
+      month: 54,
+      phase: "game_over",
+      flags: {},
+      employee: {
+        character_id: "empleado_junior_dani",
+        role_label: "Junior Multiusos",
+        monthly_cost: 1350,
+        billing_multiplier: 1.58,
+        satisfaction: 65,
+        months_employed: 30,
+      },
+      ending: {
+        id: "defeat_burnout_stress",
+        month: 54,
+        summary_quote: "Colapso.",
+      },
+    });
+
+    const migrated = migrateSaveEnvelope({
+      save_version: 1,
+      engine_build: "0.3.0-phase2",
+      updated_at: "2026-11-12T10:00:00.000Z",
+      state: legacySlState,
+      pending_turn: {
+        pending_outcome: {
+          event: sampleEvent,
+          choiceId: sampleChoice.id,
+          choiceLabel: sampleChoice.label,
+          outcome: {
+            event_id: sampleEvent.id,
+            choice_id: sampleChoice.id,
+            outcome_id: null,
+            result_text: "Resultado v1.",
+            money_delta: 400,
+            moral_delta: 0,
+            stress_delta: 2,
+            personal_life_delta: 0,
+            reputation_delta: 1,
+            fiscal_risk_delta: 0,
+            scheduled_event_ids: [],
+          },
+        },
+        outcome_preview_state: legacyPreviewState,
+        queued_final_state: legacyFatalFinalState,
+        queued_post_outcome_deltas: { stress: 1 },
+        queued_month_start: null,
+        last_deltas: { money: 400 },
+        last_month_start: null,
+      },
+    });
+
+    expect(migrated.ok).toBe(true);
+    if (!migrated.ok) {
+      return;
+    }
+
+    const { envelope } = migrated;
+    expect(envelope.save_version).toBe(2);
+    expect(envelope.engine_build).toBe("2.0.0");
+
+    // Main state v1 -> v2 assertions
+    expect(envelope.state.schema_version).toBe(2);
+    expect(envelope.state.business).toEqual({
+      tier: "sociedad_limitada",
+      months_in_tier: 0,
+      sl_formed_month: 53,
+    });
+    expect(envelope.state.employee?.headcount).toBe(1);
+    expect(envelope.state.employee?.lead_monthly_cost).toBe(2100);
+    expect(envelope.state.family.neglect_months).toBe(0);
+    expect(envelope.state.finances.historical_exposures).toEqual([]);
+    expect(envelope.state.earned_victories).toEqual(["rich_250k", "hero_120m"]);
+    expect(envelope.state.pending_victory_badge).toBe("rich_250k");
+    expect(envelope.state.history[0]?.summary).toBe("rich_250k");
+    expect(envelope.state.scheduled_queue[0]).toMatchObject({
+      queue_id: "q_old",
+      origin_month: 56,
+      priority: "normal",
+    });
+
+    // pending_turn MUST be preserved and BOTH nested states migrated to v2
+    expect(envelope.pending_turn).toBeDefined();
+    expect(envelope.pending_turn?.outcome_preview_state?.schema_version).toBe(2);
+    expect(envelope.pending_turn?.outcome_preview_state?.business.tier).toBe("estudio_consolidado");
+    expect(envelope.pending_turn?.queued_final_state?.schema_version).toBe(2);
+    // employee != null && month >= 24 -> inferred estudio_consolidado
+    expect(envelope.pending_turn?.queued_final_state?.business.tier).toBe("estudio_consolidado");
+    expect(envelope.pending_turn?.queued_final_state?.employee?.headcount).toBe(1);
+    expect(envelope.pending_turn?.queued_final_state?.employee?.lead_monthly_cost).toBe(1350);
+
+    // Solo v1 state with month < 24 and no studio/SL flags infers solo_autonomo
+    const soloMigrated = migrateSaveEnvelope({
+      save_version: 1,
+      state: makeLegacyV1State({ month: 8, flags: {}, employee: null }),
+    });
+    expect(soloMigrated.ok).toBe(true);
+    if (soloMigrated.ok) {
+      expect(soloMigrated.envelope.state.business).toEqual({
+        tier: "solo_autonomo",
+        months_in_tier: 0,
+        sl_formed_month: null,
+      });
     }
   });
 });

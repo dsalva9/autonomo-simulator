@@ -1,0 +1,54 @@
+schema_version: 1
+id: familia_alex_aval_negocio_crisis
+category: familia
+title: "«Tira de mis ahorros, salimos de esta juntos»"
+body: "Te pilla un bache de tesorería con la cuenta al límite y el trimestre asomando. Álex abre su libreta de ahorros en la mesa del comedor sin dramatismos: «Para eso somos un equipo. Coge un puente sin intereses y respira»."
+tags:
+  - pareja
+  - sinergia_pareja
+  - red_pareja
+character_id: pareja_alex
+character_expression: neutral
+illustration_id: banner_familia_hogar
+requirements:
+  min_month: 16
+  family_statuses:
+    - cohabiting
+  stats:
+    personal_life:
+      min: 70
+    money:
+      max: 2500
+weight: 16
+cooldown_months: 24
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: aceptar_puente_familiar_sin_intereses
+    label: "Aceptar el puente de 4.500 € de Álex y esquivar el descubierto"
+    result_text: "Dejas el orgullo fuera del comedor y aceptas el cable con contrato entre privados a tipo cero. El banco se queda sin sus comisiones de abuso."
+    effects:
+      cash_delta: 4500
+      moral: 10
+      stress: -12
+      personal_life: 6
+  - id: recorte_domestico_conjunto_trimestre
+    label: "No tocar sus ahorros y aplicar plan de austeridad común cuatro meses"
+    result_text: "Canceláis caprichos, cocináis táper de campeonato y Álex asume parte extra de los recibos. La liquidez remonta sin deber un euro."
+    effects:
+      personal_life: 8
+      stress: -6
+      moral: 4
+      add_modifier:
+        id: mod_recorte_domestico_conjunto
+        label: "Austeridad compartida en casa"
+        remaining_months: 4
+        monthly_expense_delta: -450
+  - id: rechazar_por_orgullo_y_apretar
+    label: "Declinar por orgullo y sacar un encargo relámpago de madrugada"
+    result_text: "Sacas 1.800 € a fuerza de ojeras para demostrar que puedes con todo solo, aunque Álex se queda dolido por no haberle dejado sostenerte."
+    effects:
+      billed_income: 1800
+      stress: 10
+      personal_life: -6
+      reputation: 2

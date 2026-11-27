@@ -51,3 +51,19 @@ choices:
       reputation: 4
       set_flags:
         - cliente_internacional_activo
+  - id: cubrir_eeuu_con_turno_equipo
+    label: Cubrir la franja de tarde americana con turnos rotativos del equipo
+    requirements:
+      team_size:
+        min: 2
+      employee_satisfaction:
+        min: 65
+    result_text: "Organizáis guardias rotativas de tarde en el estudio: facturáis tarifas californianas sin que nadie pierda cenas ni sueño."
+    effects:
+      billed_income: 3100
+      stress: 2
+      moral: 6
+      personal_life: 2
+      reputation: 4
+      set_flags:
+        - cliente_internacional_activo

@@ -33,6 +33,7 @@ export function compileLocaleOverlays(rootDir = process.cwd()): CompiledLocalesM
         .sort((a, b) => a.localeCompare(b));
 
       const rawTable: Record<string, string> = {};
+      const keyOrigins = new Map<string, string>();
       for (const fileName of files) {
         const filePath = resolve(localeDir, fileName);
         const parsed = parseYaml(readFileSync(filePath, "utf8"));
@@ -45,11 +46,18 @@ export function compileLocaleOverlays(rootDir = process.cwd()): CompiledLocalesM
           );
         }
         for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+          const prevOrigin = keyOrigins.get(key);
+          if (prevOrigin) {
+            throw new Error(
+              `content/locales/${locale}/${fileName}: duplicate translation key '${key}' (already defined in ${prevOrigin}).`,
+            );
+          }
           if (typeof value !== "string" || value.trim().length === 0) {
             throw new Error(
               `content/locales/${locale}/${fileName} key '${key}' must be a non-empty string.`,
             );
           }
+          keyOrigins.set(key, fileName);
           rawTable[key] = value;
         }
       }

@@ -19,6 +19,7 @@ requirements:
   gestor_tiers:
     - self
     - cheap
+  max_month: 48
 weight: 11
 cooldown_months: 12
 max_occurrences: 3

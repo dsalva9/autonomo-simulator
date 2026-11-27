@@ -1,7 +1,7 @@
 schema_version: 1
 id: gestor_certificado_fnmt_caducado
 category: gestor
-title: "Certificado digital caducado a veinticuatro horas"
+title: Certificado digital caducado a veinticuatro horas
 body: "Vas a firmar el modelo trimestral en la sede electrónica y salta una alerta glacial: tu certificado FNMT expiró ayer a medianoche. En tu ciudad no queda ni una cita presencial libre hasta dentro de tres semanas."
 tags:
   - autogestion
@@ -11,6 +11,7 @@ requirements:
   min_month: 3
   gestor_tiers:
     - self
+  max_month: 48
 weight: 12
 cooldown_months: 10
 max_occurrences: 3
@@ -18,11 +19,11 @@ exclusive_with:
   - hacienda_certificado_caducado
 choices:
   - id: peregrinar_ayuntamiento_comarcal
-    label: "Conducir cuarenta kilómetros hasta un registro comarcal sin cita"
+    label: Conducir cuarenta kilómetros hasta un registro comarcal sin cita
     outcomes:
       - id: funcionario_apiadado
         weight: 60
-        result_text: "Un administrativo veterano se apiada de tus ojeras, valida tu código en dos minutos y regresas a tiempo de presentar."
+        result_text: Un administrativo veterano se apiada de tus ojeras, valida tu código en dos minutos y regresas a tiempo de presentar.
         effects:
           cash_delta: -25
           stress: 6
@@ -31,7 +32,7 @@ choices:
           fiscal_risk: -3
       - id: ventanilla_cerrada_a_las_dos
         weight: 40
-        result_text: "Cierran la persiana en tus narices para el desayuno largo y acabas pagando una gestoría exprés de barrio para no entrar en recargo."
+        result_text: Cierran la persiana en tus narices para el desayuno largo y acabas pagando una gestoría exprés de barrio para no entrar en recargo.
         effects:
           deductible_expense: 115
           stress: 11
@@ -39,20 +40,20 @@ choices:
           personal_life: -4
           fiscal_risk: 2
   - id: pagar_videoidentificacion_urgente
-    label: "Pagar la videoidentificación exprés homologada desde casa (45 €)"
-    result_text: "Enseñas el DNI a cámara con cara de náufrago, descargas el certificado nuevo por la tarde y firmas en plazo sin pisar la calle."
+    label: Pagar la videoidentificación exprés homologada desde casa (45 €)
+    result_text: Enseñas el DNI a cámara con cara de náufrago, descargas el certificado nuevo por la tarde y firmas en plazo sin pisar la calle.
     effects:
       deductible_expense: 45
       stress: -4
       moral: 3
       fiscal_risk: -5
   - id: autorizar_presentacion_colaborador
-    label: "Pagar a un colaborador social para presentar este trimestre (95 €)"
+    label: Pagar a un colaborador social para presentar este trimestre (95 €)
     requirements:
       stats:
         money:
           min: 150
-    result_text: "Un despacho autorizado presenta tus modelos con su firma colegiada en diez minutos mientras tramitas la renovación sin prisas."
+    result_text: Un despacho autorizado presenta tus modelos con su firma colegiada en diez minutos mientras tramitas la renovación sin prisas.
     effects:
       deductible_expense: 95
       stress: -6

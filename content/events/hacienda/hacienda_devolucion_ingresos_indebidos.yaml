@@ -28,22 +28,16 @@ choices:
       fiscal_risk: -4
   - id: solicitar_rectificacion_telematica
     label: Presentar solicitud de rectificación de autoliquidación por tu cuenta
-    outcomes:
-      - id: abono_integro_con_intereses
-        weight: 75
-        result_text: ¡Fumata blanca! Estimada tu solicitud, te transfieren el exceso íntegro más unos eurillos de intereses de demora.
-        effects:
-          cash_delta: 640
-          stress: -7
-          moral: 9
-          fiscal_risk: -4
-      - id: devolucion_parcial_revisada
-        weight: 25
-        result_text: Tras mirar con lupa dos tickets sueltos, te devuelven la mayor parte del importe sin abrir mayores líos.
-        effects:
-          cash_delta: 380
-          stress: 2
-          moral: 4
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 15
+    result_text: ¡Fumata blanca sin trabas! Tu historial impecable acelera el acuerdo y recibes 780 € con intereses de demora incluidos.
+    effects:
+      cash_delta: 780
+      stress: -8
+      moral: 9
+      fiscal_risk: -6
   - id: tramitar_escrito_con_gestoria
     label: Encargar a tu gestoría un escrito milimétrico con todos los recibos
     requirements:

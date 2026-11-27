@@ -1,0 +1,56 @@
+schema_version: 1
+id: hacienda_retenciones_dividendos_sl
+category: hacienda
+title: "Modelo 123: retenciones y cuenta socio-sociedad"
+body: "Gómez pone el foco en la cuenta 551 de tu S.L.: retiradas de tesorería que no pasaron por nómina ni retención del 19 % en el Modelo 123. Para Hacienda, sacar dinero de tu propia sociedad sin papeles huele a dividendo encubierto."
+tags:
+  - sociedad_limitada
+  - modelo_123
+  - comprobacion
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: banner_hacienda_trimestre
+requirements:
+  min_month: 52
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 11
+cooldown_months: 20
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: liquidar_retencion_19_y_regularizar
+    label: "Regularizar el Modelo 123 al 19 % y saldar la cuenta socio (3.200 €)"
+    result_text: "Ingresas 3.200 € de retenciones atrasadas y recargo. Duele pagar por mover dinero que ya ganaste tú, pero cierras la cuenta 551 en paz."
+    effects:
+      cash_delta: -3200
+      fiscal_risk: -14
+      stress: 6
+      moral: -4
+  - id: documentar_prestamo_mercantil_con_elena
+    label: "Formalizar contrato de préstamo mercantil con Elena Montes (950 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+      stats:
+        fiscal_risk:
+          max: 35
+    result_text: "Elena acredita los intereses legales, las actas de junta y el calendario de devolución. Gómez archiva la comprobación con gesto serio."
+    effects:
+      deductible_expense: 950
+      fiscal_risk: -16
+      moral: 4
+      stress: -2
+  - id: reclasificar_como_dietas_y_aguantar
+    label: "Reclasificar saldos como dietas pendientes y retener 1.600 € de caja"
+    result_text: "Salvas 1.600 € de liquidez inmediata estirando las actas internas, aunque Gómez anota tu CIF para futuras campañas sobre sociedades profesionales."
+    effects:
+      cash_delta: 1600
+      fiscal_risk: 22
+      stress: 6
+      schedule_events:
+        - event_id: hacienda_revision_sociedad_interpuesta_tardia
+          delay_months: 28
+          probability: 0.4
+          priority: high

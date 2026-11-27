@@ -106,7 +106,7 @@ describe("Share Summary & i18n Helpers", () => {
       ...state,
       month: 134,
       endless_mode: true,
-      earned_victories: ["hero_120m", "rich_150k"],
+      earned_victories: ["hero_120m", "rich_250k"],
       indicators: { ...state.indicators, money: -5200, stress: 100 },
       finances: { ...state.finances, lifetime_billed: 312_450 },
       ending: {
@@ -125,7 +125,7 @@ describe("Share Summary & i18n Helpers", () => {
     expect(text).toContain("-5.200 €");
     expect(text).toContain("312.450 €");
     expect(text).toContain("¡Eres un héroe! (120 meses)");
-    expect(text).toContain("Ricachón (150.000 €)");
+    expect(text).toContain("Ricachón (250.000 €)");
     expect(text).toContain("SHARE-SEED-99");
     expect(text).toContain("https://autonomo.example/juego");
   });
@@ -233,7 +233,7 @@ describe("Share Summary & i18n Helpers", () => {
         {
           ...state,
           endless_mode: true,
-          earned_victories: ["hero_120m", "rich_150k"],
+          earned_victories: ["hero_120m", "rich_250k"],
           ending: {
             id: endingId,
             month: 48,
@@ -291,7 +291,7 @@ describe("Share Summary & i18n Helpers", () => {
       const summary = createShareSummaryFromState({
         ...state,
         endless_mode: true,
-        earned_victories: ["hero_120m", "rich_150k"],
+        earned_victories: ["hero_120m", "rich_250k"],
         ending: {
           id: endingId,
           month: 126,
@@ -453,5 +453,53 @@ describe("Share Summary & i18n Helpers", () => {
       expect(valueCall.text).toContain("186");
       expect(valueCall.y).toBeLessThanOrEqual(885);
     }
+  });
+
+  it("showcases v2 businessTier & teamHeadcount in BOX [04] and share text across ES and EN while preserving 1080×1350 bounds", () => {
+    const { state } = startNewRun(compiledCatalog, { seed: "AGENCY-SHARE-V2" });
+    const agencyState: GameState = {
+      ...state,
+      month: 96,
+      business: { tier: "agencia_consultora", months_in_tier: 18, sl_formed_month: 54 },
+      employee: {
+        character_id: "empleada_senior_laura",
+        role_label: "Especialista sénior",
+        headcount: 7,
+        lead_monthly_cost: 2450,
+        monthly_cost: 13_550,
+        billing_multiplier: 2.05,
+        satisfaction: 80,
+        months_employed: 48,
+      },
+      indicators: { ...state.indicators, money: 265_000, reputation: 88 },
+      earned_victories: ["rich_250k"],
+      ending: {
+        id: "retired_rich",
+        month: 96,
+        summary_quote:
+          "Con 250.000 € limpios en el banco, por fin puedes decir la frase mágica: «Consultadlo con mi asesor».",
+      },
+    };
+
+    const summary = createShareSummaryFromState(agencyState, "https://autonomo.example/v2");
+    expect(summary.businessTier).toBe("agencia_consultora");
+    expect(summary.teamHeadcount).toBe(7);
+
+    const esText = buildShareText(summary, "es-ES");
+    const enText = buildShareText(summary, "en");
+    expect(esText).toContain("Agencia · 7 pers.");
+    expect(esText).toContain("Ricachón (250.000 €)");
+    expect(enText).toContain("Agency · 7 staff");
+    expect(enText).toContain("Rolling in It (250,000 €)");
+
+    const esHarness = createRecordedCanvasHarness();
+    expect(renderShareCardToCanvas(esHarness.fakeCanvas, summary, { locale: "es-ES" })).toBe(true);
+    expect(esHarness.drawnText.some((t) => t.text === "CASILLA [04] · ESTRUCTURA")).toBe(true);
+    expect(esHarness.drawnText.some((t) => t.text === "Agencia · 7 pers.")).toBe(true);
+
+    const enHarness = createRecordedCanvasHarness();
+    expect(renderShareCardToCanvas(enHarness.fakeCanvas, summary, { locale: "en" })).toBe(true);
+    expect(enHarness.drawnText.some((t) => t.text === "BOX [04] · STRUCTURE")).toBe(true);
+    expect(enHarness.drawnText.some((t) => t.text === "Agency · 7 staff")).toBe(true);
   });
 });

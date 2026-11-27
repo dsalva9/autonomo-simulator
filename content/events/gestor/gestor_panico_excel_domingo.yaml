@@ -16,9 +16,12 @@ requirements:
     - 10
   gestor_tiers:
     - self
+  forbidden_flags:
+    - plantilla_fiscal_auditada
+  max_month: 36
 weight: 13
 cooldown_months: 7
-max_occurrences: 4
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: rehacer_formulas_de_madrugada
@@ -41,8 +44,10 @@ choices:
       stress: -4
       moral: 4
       fiscal_risk: -6
+      set_flags:
+        - plantilla_fiscal_auditada
   - id: rendirse_y_llamar_a_paco
-    label: Mandar el archivo a Paco el lunes a primera hora (60 €/mes)
+    label: Mandar el archivo a Paco el lunes a primera hora (85 €/mes)
     result_text: Le entregas tus recibos arrugados encima de la churrería y juras no volver a programar macros fiscales de madrugada.
     effects:
       set_gestor:

@@ -29,10 +29,13 @@ choices:
     label: Justificar cada conversión con el cambio oficial del día
     result_text: Cruzas fechas de cobro real con tablas del Banco Central Europeo y desmontas casi toda la discrepancia.
     effects:
-      deductible_expense: 60
-      stress: 6
-      moral: 5
-      fiscal_risk: -11
+      stress: 2
+      moral: 7
+      fiscal_risk: -14
+    requirements:
+      stats:
+        stress:
+          max: 50
   - id: presentar_conciliacion_multidivisa_gestor
     label: Encargar informe de diferencias de cambio a tu gestoría
     requirements:

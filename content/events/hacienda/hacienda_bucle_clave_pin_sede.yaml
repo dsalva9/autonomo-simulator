@@ -10,9 +10,12 @@ tags:
 character_id: null
 requirements:
   min_month: 2
+  forbidden_flags:
+    - lector_dnie_instalado
+  max_month: 36
 weight: 11
 cooldown_months: 12
-max_occurrences: 3
+max_occurrences: 2
 exclusive_with:
   - gestor_bucle_sms_clave_pin
 choices:
@@ -28,6 +31,8 @@ choices:
       stress: -4
       moral: 5
       fiscal_risk: -5
+      set_flags:
+        - lector_dnie_instalado
   - id: pelear_con_tres_navegadores
     label: Borrar caché, probar tres navegadores y jurar en arameo dos horas
     result_text: En el quinto intento desde una ventana de incógnito se obra el milagro y descargas el PDF con un tic en el párpado.

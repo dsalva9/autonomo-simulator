@@ -339,6 +339,76 @@
                 "boolean",
                 "null"
               ]
+            },
+            "business_tiers": {
+              "anyOf": [
+                {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "solo_autonomo",
+                      "estudio_consolidado",
+                      "sociedad_limitada",
+                      "agencia_consultora"
+                    ]
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "team_size": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "min": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "max": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "children_count": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "min": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "max": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
             }
           },
           "additionalProperties": false
@@ -376,6 +446,9 @@
         "minLength": 1,
         "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
       }
+    },
+    "scale_with_tier": {
+      "type": "boolean"
     },
     "choices": {
       "minItems": 2,
@@ -653,6 +726,76 @@
                       "boolean",
                       "null"
                     ]
+                  },
+                  "business_tiers": {
+                    "anyOf": [
+                      {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "solo_autonomo",
+                            "estudio_consolidado",
+                            "sociedad_limitada",
+                            "agencia_consultora"
+                          ]
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "team_size": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "min": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "max": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "children_count": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "min": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "max": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "additionalProperties": false
@@ -765,6 +908,13 @@
                           "type": "number",
                           "minimum": 0,
                           "maximum": 1
+                        },
+                        "priority": {
+                          "type": "string",
+                          "enum": [
+                            "normal",
+                            "high"
+                          ]
                         }
                       },
                       "required": [
@@ -901,6 +1051,75 @@
                     ],
                     "additionalProperties": false
                   },
+                  "set_business_tier": {
+                    "type": "object",
+                    "properties": {
+                      "tier": {
+                        "type": "string",
+                        "enum": [
+                          "solo_autonomo",
+                          "estudio_consolidado",
+                          "sociedad_limitada",
+                          "agencia_consultora"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "tier"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "expand_team": {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 6
+                      },
+                      "avg_monthly_cost": {
+                        "type": "integer",
+                        "minimum": 800,
+                        "maximum": 6000
+                      },
+                      "lead_character_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                      },
+                      "role_label": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "shrink_team": {
+                    "type": "object",
+                    "properties": {
+                      "count": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 12
+                      },
+                      "severance_per_person": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "dismiss_all": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "count",
+                      "severance_per_person"
+                    ],
+                    "additionalProperties": false
+                  },
                   "trigger_ending": {
                     "type": "string",
                     "enum": [
@@ -1028,6 +1247,13 @@
                                 "type": "number",
                                 "minimum": 0,
                                 "maximum": 1
+                              },
+                              "priority": {
+                                "type": "string",
+                                "enum": [
+                                  "normal",
+                                  "high"
+                                ]
                               }
                             },
                             "required": [
@@ -1161,6 +1387,75 @@
                           },
                           "required": [
                             "severance_cost"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "set_business_tier": {
+                          "type": "object",
+                          "properties": {
+                            "tier": {
+                              "type": "string",
+                              "enum": [
+                                "solo_autonomo",
+                                "estudio_consolidado",
+                                "sociedad_limitada",
+                                "agencia_consultora"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "tier"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "expand_team": {
+                          "type": "object",
+                          "properties": {
+                            "count": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 6
+                            },
+                            "avg_monthly_cost": {
+                              "type": "integer",
+                              "minimum": 800,
+                              "maximum": 6000
+                            },
+                            "lead_character_id": {
+                              "type": "string",
+                              "minLength": 1,
+                              "pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"
+                            },
+                            "role_label": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "count"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "shrink_team": {
+                          "type": "object",
+                          "properties": {
+                            "count": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12
+                            },
+                            "severance_per_person": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "dismiss_all": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "count",
+                            "severance_per_person"
                           ],
                           "additionalProperties": false
                         },

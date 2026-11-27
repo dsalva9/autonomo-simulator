@@ -347,6 +347,8 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
       const mockEmployee = {
         character_id: "empleado_junior_dani",
         role_label: "Asistente júnior",
+        headcount: 1,
+        lead_monthly_cost: 1450,
         monthly_cost: 1450,
         billing_multiplier: 1.35,
         satisfaction: 75,
@@ -377,6 +379,15 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
         })?.id,
       ).toBe("bg_despacho_estudio");
 
+      // Priority 3 via v2 upgraded business.tier !== "solo_autonomo" even with 0 staff
+      expect(
+        resolveDeskBackgroundAsset(manifest, {
+          indicators: { ...baseState.indicators, stress: 30, money: 4000, reputation: 50 },
+          employee: null,
+          business: { tier: "sociedad_limitada" },
+        })?.id,
+      ).toBe("bg_despacho_estudio");
+
       // Priority 3 via money >= 25_000 && reputation >= 65
       expect(
         resolveDeskBackgroundAsset(manifest, {
@@ -385,11 +396,12 @@ describe("Phase 1 Asset Resolution Helpers (catalog.ts)", () => {
         })?.id,
       ).toBe("bg_despacho_estudio");
 
-      // Below reputation threshold -> base desk
+      // Below reputation threshold & solo_autonomo -> base desk
       expect(
         resolveDeskBackgroundAsset(manifest, {
           indicators: { ...baseState.indicators, stress: 40, money: 25_000, reputation: 64 },
           employee: null,
+          business: { tier: "solo_autonomo" },
         })?.id,
       ).toBe("bg_despacho_base");
     });

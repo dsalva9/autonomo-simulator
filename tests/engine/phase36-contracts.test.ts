@@ -108,7 +108,7 @@ describe("Phase 3.6 studio background & achievement timing predicates", () => {
       "superviviente_hacienda",
     );
 
-    // 3. colchon_10k & ricachon_150k subtract accrued_tax_liability during quarterly_tax phase
+    // 3. colchon_10k & ricachon_250k subtract accrued_tax_liability during quarterly_tax phase
     const preTaxIllusion10k: GameState = {
       ...started,
       month: 6,
@@ -128,15 +128,15 @@ describe("Phase 3.6 studio background & achievement timing predicates", () => {
       "colchon_10k",
     );
 
-    const preTaxIllusion150k: GameState = {
+    const preTaxIllusion250k: GameState = {
       ...started,
       month: 90,
       phase: "quarterly_tax",
-      indicators: { ...started.indicators, money: 151_000 },
+      indicators: { ...started.indicators, money: 251_000 },
       finances: { ...started.finances, accrued_tax_liability: 4_000 },
     };
-    expect(evaluateUnlockedAchievements(preTaxIllusion150k, {}).newlyUnlocked).not.toContain(
-      "ricachon_150k",
+    expect(evaluateUnlockedAchievements(preTaxIllusion250k, {}).newlyUnlocked).not.toContain(
+      "ricachon_250k",
     );
   });
 });

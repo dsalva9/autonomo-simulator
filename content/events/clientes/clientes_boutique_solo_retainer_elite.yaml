@@ -1,0 +1,72 @@
+schema_version: 1
+id: clientes_boutique_solo_retainer_elite
+category: clientes
+title: "Boutique Sénior: dos clientes de 4.500 €/mes sin contratar a nadie"
+body: "Sin empleados ni oficina gigante, tu reputación de especialista independiente vuela sola: Marta y otro director quieren cerrarte a la vez en iguala boutique de alto ticket con pago inicial y fijo semestral."
+tags:
+  - boutique_solo
+  - iguala
+  - alto_ticket
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements:
+  min_month: 54
+  business_tiers:
+    - solo_autonomo
+    - estudio_consolidado
+    - sociedad_limitada
+  team_size:
+    max: 0
+  stats:
+    reputation:
+      min: 68
+weight: 14
+cooldown_months: 14
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: firmar_doble_retainer_elite
+    label: "Firmar los dos retainers a la vez (9.000 € + 2.200 €/mes)"
+    result_text: "Sin pagar una sola nómina facturas cifras de agencia mediana. Tu saldo despega como un cohete mientras haces malabares con dos agendas exigentes."
+    effects:
+      billed_income: 9000
+      stress: 12
+      personal_life: -6
+      reputation: 8
+      add_modifier:
+        id: mod_doble_retainer_boutique_elite
+        label: "Doble iguala boutique de alto ticket"
+        remaining_months: 6
+        monthly_billed_delta: 2200
+  - id: firmar_un_retainer_y_cuidar_vida
+    label: "Quedarte con uno solo y vivir bien (4.800 € + 1.100 €/mes)"
+    result_text: "El lujo definitivo del perfil boutique: eliges un solo cliente excelente, cobras como un directivo y cierras el portátil a las cinco."
+    effects:
+      billed_income: 4800
+      stress: -6
+      personal_life: 8
+      reputation: 6
+      moral: 6
+      add_modifier:
+        id: mod_retainer_boutique_equilibrado
+        label: "Iguala boutique sénior con agenda sana"
+        remaining_months: 6
+        monthly_billed_delta: 1100
+  - id: subir_tarifa_por_escasez
+    label: "Subir tarifa por lista de espera a uno solo (7.500 € + 1.600 €/m)"
+    requirements:
+      stats:
+        reputation:
+          min: 82
+    result_text: "Cuando eres el único especialista disponible, el precio lo pones tú: aceptan tu tarifa de escasez sin regatear un solo euro."
+    effects:
+      billed_income: 7500
+      stress: 2
+      personal_life: 4
+      reputation: 8
+      add_modifier:
+        id: mod_retainer_boutique_escasez
+        label: "Tarifa boutique por lista de espera"
+        remaining_months: 6
+        monthly_billed_delta: 1600

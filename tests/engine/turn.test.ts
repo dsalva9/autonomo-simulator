@@ -151,11 +151,11 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
     };
     const afterRichTurn = applyPlayerChoice(richSetup, catalog, "facturar");
     expect(afterRichTurn.state.phase).toBe("victory_prompt");
-    expect(afterRichTurn.state.earned_victories).toContain("rich_150k");
+    expect(afterRichTurn.state.earned_victories).toContain("rich_250k");
 
     const endless = resolveVictoryPrompt(afterRichTurn.state, catalog, "continue");
     expect(endless.state.endless_mode).toBe(true);
-    expect(endless.state.earned_victories).toContain("rich_150k");
+    expect(endless.state.earned_victories).toContain("rich_250k");
 
     const burnoutSetup: GameState = {
       ...endless.state,
@@ -165,7 +165,7 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
     const burnedOut = applyPlayerChoice(burnoutSetup, catalog, "quemarse");
     expect(burnedOut.state.phase).toBe("game_over");
     expect(burnedOut.state.ending?.id).toBe("defeat_burnout_stress");
-    expect(burnedOut.state.earned_victories).toContain("rich_150k");
+    expect(burnedOut.state.earned_victories).toContain("rich_250k");
   });
 
   it("preserves exact state determinism across mid-month JSON save/reload", () => {
@@ -595,6 +595,8 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
       employee: {
         character_id: "empleado_junior_dani",
         role_label: "Junior Multiusos",
+        headcount: 1,
+        lead_monthly_cost: 1350,
         monthly_cost: 1350,
         billing_multiplier: 1.58,
         satisfaction: 75,
@@ -794,7 +796,7 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
     });
     expect(heroRetired.state.earned_victories).toEqual(["hero_120m"]);
 
-    // Retiring in Endless mode after earning rich_150k (or holding >= 150,000 €) awards retired_rich
+    // Retiring in Endless mode after earning rich_250k (or holding >= victory_money) awards retired_rich
     const richEndlessCandidate: GameState = {
       ...earlyState,
       month: 134,
@@ -809,8 +811,8 @@ describe("Turn pipeline, cooldown relaxation, victories, annual summary & save d
       month: 134,
       summary_quote: catalog.balance.ending_quotes!.retired_rich,
     });
-    expect(richRetired.state.earned_victories).toEqual(["hero_120m", "rich_150k"]);
-    expect(richRetired.resolution.unlockedVictories).toEqual(["rich_150k"]);
+    expect(richRetired.state.earned_victories).toEqual(["hero_120m", "rich_250k"]);
+    expect(richRetired.resolution.unlockedVictories).toEqual(["rich_250k"]);
 
     // Cannot retire again once already in game_over
     expect(() => retireFromRun(richRetired.state, catalog)).toThrow();

@@ -28,24 +28,36 @@ choices:
     label: Inflar conceptos y devolverle una mordida en mano como sugiere
     outcomes:
       - id: cuela_de_momento
-        weight: 50
+        weight: 70
         result_text: Cobras tu parte rápida en efectivo mientras rezas para que ningún auditor cruce las capturas justificativas dentro de un año.
         effects:
-          cash_delta: 950
-          stress: 22
-          moral: -11
-          fiscal_risk: 30
+          cash_delta: 2700
+          moral: -4
+          stress: 7
+          fiscal_risk: 26
           set_flags:
             - cobro_en_b_reciente
+          schedule_events:
+            - event_id: hacienda_inspeccion_efectivo_tres_anos
+              delay_months: 32
+              probability: 0.4
+              priority: high
       - id: expediente_denegado_y_bronca
-        weight: 50
-        result_text: El organismo detecta incoherencias, tumba la subvención y Borja desaparece dejándote las horas perdidas y el susto en el cuerpo.
+        weight: 30
+        result_text: El organismo recorta parte de las memorias y Borja se queda más mordida de la pactada, aunque aun así salen 1.900 € en efectivo con un rastro feo.
         effects:
-          cash_delta: -150
-          stress: 14
-          moral: -9
-          fiscal_risk: 20
-          reputation: -4
+          cash_delta: 1900
+          moral: -4
+          stress: 10
+          fiscal_risk: 26
+          reputation: -2
+          set_flags:
+            - cobro_en_b_reciente
+          schedule_events:
+            - event_id: hacienda_inspeccion_efectivo_tres_anos
+              delay_months: 32
+              probability: 0.4
+              priority: high
   - id: ejecutar_expediente_legal_impecable
     label: Hacer el proyecto real y justificar hasta la última coma legal
     result_text: Rellenas memorias hasta soñar con sellos oficiales, pero entregas valor real y aseguras un cobro limpio garantizado.
@@ -53,9 +65,13 @@ choices:
       deferred_invoice:
         amount: 1650
         delay_months: 3
-        default_prob: 0.04
+        default_prob: 0.02
       deductible_expense: 90
-      stress: 9
+      stress: 4
       moral: 1
       reputation: 1
       fiscal_risk: -3
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 20

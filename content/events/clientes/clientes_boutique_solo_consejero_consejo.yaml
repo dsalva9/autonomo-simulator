@@ -1,0 +1,51 @@
+schema_version: 1
+id: clientes_boutique_solo_consejero_consejo
+category: clientes
+title: "Asesor independiente de presidencia: 14.000 € por 12 días al año"
+body: "Sin estructura ni empleados, tu nombre ya pesa en los consejos: Marta propone ficharte como consejero externo independiente para doce sesiones ejecutivas al año por 14.000 €, con cláusulas algo estrictas de lealtad."
+tags:
+  - boutique_solo
+  - prestigio
+  - alto_ticket
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements:
+  min_month: 78
+  team_size:
+    max: 0
+  stats:
+    reputation:
+      min: 75
+weight: 12
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: aceptar_silla_independiente
+    label: "Aceptar la silla del consejo con honorarios íntegros (14.000 €)"
+    result_text: "Te sientas en la mesa de caoba doce días al año y facturas 14.000 € limpios. Un salto de estatus enorme, aunque toca medir cada palabra en público."
+    effects:
+      billed_income: 14000
+      reputation: 10
+      moral: 8
+      stress: 6
+  - id: imponer_clausula_etica_e_independencia
+    label: "Exigir cláusula de independencia editorial total (11.500 €)"
+    requirements:
+      stats:
+        moral:
+          min: 70
+    result_text: "Tu entereza ética convence al presidente: renuncias a un pico de honorarios a cambio de libertad absoluta para decir la verdad sin mordazas."
+    effects:
+      billed_income: 11500
+      moral: 12
+      reputation: 8
+      stress: -4
+      personal_life: 6
+  - id: declinar_por_libertad_total
+    label: "Declinar el sillón corporativo y conservar soberanía total"
+    result_text: "Agradeces el honor con elegancia y vuelves a tu mesa sin consejos, sin actas y sin jefes encubiertos."
+    effects:
+      personal_life: 8
+      stress: -6

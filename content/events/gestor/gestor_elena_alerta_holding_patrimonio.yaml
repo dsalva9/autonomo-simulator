@@ -24,8 +24,8 @@ choices:
     label: Seguir el criterio de Elena y blindar tu actividad real
     result_text: Descartas atajos de salón de hotel y refuerzas la defensa documental de tu patrimonio profesional limpio.
     effects:
-      deductible_expense: 190
-      stress: -8
+      deductible_expense: 350
+      stress: -4
       moral: 7
       fiscal_risk: -12
       add_modifier:
@@ -33,25 +33,35 @@ choices:
         label: Cobertura jurídica tributaria
         remaining_months: 4
         monthly_expense_delta: 30
-        monthly_stress_delta: -2
+        monthly_stress_delta: -1
   - id: probar_esquema_agresivo_del_ponencia
     label: Forzar deducciones patrimoniales siguiendo los trucos del gurú
-    result_text: Recortas cuota a corto plazo, pero Elena deja constancia por escrito de su advertencia ante el riesgo evidente.
+    result_text: Retienes 3.200 € netos aplicando el esquema agresivo del ponente, pero Elena anota un aviso formal de cumplimiento en tu expediente.
     effects:
-      cash_delta: 620
-      stress: 7
-      moral: -5
+      cash_delta: 3200
+      stress: 5
+      moral: -2
       fiscal_risk: 24
+      set_flags:
+        - elena_aviso_cumplimiento
+      schedule_events:
+        - event_id: hacienda_revision_sociedad_interpuesta_tardia
+          delay_months: 30
+          probability: 0.4
+          priority: high
   - id: canalizar_excedente_a_activos_productivos
-    label: Invertir el excedente en equipamiento productivo real
+    label: Invertir el excedente en equipamiento productivo real (1.800 €)
     requirements:
       stats:
         money:
-          min: 1300
+          min: 2500
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
     result_text: Transformas liquidez ociosa en medios reales afectos al estudio con deducción limpia e indiscutible.
     effects:
-      deductible_expense: 920
+      deductible_expense: 1800
       stress: -5
       moral: 6
-      reputation: 4
-      fiscal_risk: -9
+      reputation: 6
+      fiscal_risk: -10

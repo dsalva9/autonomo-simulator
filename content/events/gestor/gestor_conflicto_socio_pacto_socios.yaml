@@ -1,0 +1,49 @@
+schema_version: 1
+id: gestor_conflicto_socio_pacto_socios
+category: gestor
+title: "Junta de socios al rojo vivo: dividendos hoy o reinversión"
+body: "Tu socio minoritario llega a la junta con abogado y calculadora exigiendo un reparto inmediato de 12.000 € de dividendos. O sueltas caja hoy, o le compras su paquete de una vez para recuperar el control total."
+tags:
+  - sociedad_limitada
+  - socios
+  - conflicto
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: banner_gestor_urgencia
+requirements:
+  min_month: 66
+  required_flags:
+    - socio_minoritario_activo
+weight: 14
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: repartir_doce_mil_de_dividendos
+    label: "Aprobar reparto extraordinario de dividendos (-12.000 €)"
+    result_text: "La tesorería adelgaza de un golpe, pero el socio firma el acta con una sonrisa y deja de enviarte burofaxes durante una buena temporada."
+    effects:
+      cash_delta: -12000
+      stress: -6
+      moral: 4
+  - id: recomprar_participaciones_socio
+    label: "Ejecutar opción de recompra de su 30 % (-22.000 €)"
+    requirements:
+      stats:
+        money:
+          min: 24000
+    result_text: "Vuelves a la notaría y recompras hasta la última participación. El golpe de caja es histórico, pero recuperas el 100 % del timón para siempre."
+    effects:
+      cash_delta: -22000
+      clear_flags:
+        - socio_minoritario_activo
+      moral: 16
+      reputation: 8
+      stress: -10
+  - id: bloquear_junta_y_aguantar_pulso
+    label: "Bloquear el reparto alegando prudencia y aguantar el pulso"
+    result_text: "Impides que salga un euro de la cuenta hoy, a cambio de meses de actas impugnadas, tensiones legales y noches en vela revisando el pacto."
+    effects:
+      stress: 18
+      moral: -10
+      reputation: -6

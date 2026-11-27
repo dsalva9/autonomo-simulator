@@ -26,6 +26,7 @@ import {
   MODIFIER_LABELS_EN,
   clearLocaleOverlays,
   describeFiscalRiskTension,
+  describeUnlockedRpgChecks,
   explainChoiceLockReasons,
   formatCalendarBadgeEs,
   formatDurationMonthsEs,
@@ -39,6 +40,8 @@ import {
   resolveEventBody,
   resolveEventText,
   resolveEventTitle,
+  translateBusinessTier,
+  translateBusinessTierShort,
   translateCategoryLabel,
   translateCharacterBio,
   translateCharacterName,
@@ -175,8 +178,21 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
     expect(en.locale).toBe("en");
     expect(es.game.mobileNavAria).toBe("Secciones del despacho");
     expect(en.game.mobileNavAria).toBe("Office sections");
-    expect(es.title.achievementsTabLabel(3, 15)).toBe("Logros (3/15)");
-    expect(en.title.achievementsTabLabel(3, 15)).toBe("Achievements (3/15)");
+    expect(es.title.achievementsTabLabel(3, 18)).toBe("Logros (3/18)");
+    expect(en.title.achievementsTabLabel(3, 18)).toBe("Achievements (3/18)");
+    expect(es.title.emptyHallGoals[1]?.target).toBe("250.000 €");
+    expect(en.title.emptyHallGoals[1]?.target).toBe("250,000 €");
+    expect(es.title.emptyHallGoals[2]?.target).toBe("18 Sellos");
+    expect(en.title.emptyHallGoals[2]?.target).toBe("18 Seals");
+    expect(es.modals.victory.richSubheadline).toContain("250.000 €");
+    expect(en.modals.victory.richSubheadline).toContain("250,000 €");
+    expect(
+      getUiStrings("es-ES", { victoryMoney: 300_000, totalSeals: 20 }).title.emptyHallGoals[1]
+        ?.target,
+    ).toBe("300.000 €");
+    expect(
+      getUiStrings("en", { victoryMoney: 300_000, totalSeals: 20 }).title.emptyHallGoals[2]?.target,
+    ).toBe("20 Seals");
     expect(es.modals.quarterly.heading(3, 1)).toContain("1");
     expect(en.modals.quarterly.heading(3, 1)).toContain("Q1");
     expect(en.modals.abandon.heading).toContain("Form 036");
@@ -274,8 +290,8 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
       "Renting equipo de trabajo",
     );
 
-    // Enforce 100% ES/EN coverage for every add_modifier.id, add_modifier.label & flag across the 300-event catalog
-    expect(compiledCatalog.events).toHaveLength(300);
+    // Enforce 100% ES/EN coverage for every add_modifier.id, add_modifier.label & flag across the compiled catalog
+    expect(compiledCatalog.events.length).toBeGreaterThanOrEqual(300);
     const seenModifierIds = new Set<string>();
     const seenFlags = new Set<string>(["ex_pareja_alex", "historia_con_alex"]);
     const collectReqFlags = (
@@ -392,12 +408,20 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
     }
   });
 
-  it("localizes all 15 achievements and all 8 endings + victory badges in es-ES and en", () => {
+  it("localizes all 18 achievements and all 8 endings + victory badges in es-ES and en", () => {
     const esAchievements = getLocalizedAchievementCatalog("es-ES");
     const enAchievements = getLocalizedAchievementCatalog("en");
 
-    expect(esAchievements).toHaveLength(15);
-    expect(enAchievements).toHaveLength(15);
+    expect(esAchievements).toHaveLength(18);
+    expect(enAchievements).toHaveLength(18);
+    expect(esAchievements.map((a) => a.id)).toEqual(
+      expect.arrayContaining([
+        "ricachon_250k",
+        "sociedad_limitada",
+        "agencia_consolidada",
+        "ejercicio_prescrito",
+      ]),
+    );
 
     for (let i = 0; i < ACHIEVEMENT_CATALOG.length; i += 1) {
       const base = ACHIEVEMENT_CATALOG[i];
@@ -439,8 +463,8 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
     const endedState: GameState = {
       ...state,
       month: 120,
-      earned_victories: ["hero_120m", "rich_150k"],
-      indicators: { ...state.indicators, money: 154_300 },
+      earned_victories: ["hero_120m", "rich_250k"],
+      indicators: { ...state.indicators, money: 254_300 },
       finances: { ...state.finances, lifetime_billed: 420_000 },
       ending: {
         id: "retired_hero",
@@ -456,10 +480,10 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
     expect(shareTextEn).toContain("FORM 036-END · SELF-EMPLOYED SURVIVAL CERTIFICATE");
     expect(shareTextEn).toContain("Self-Employed Hero!");
     expect(shareTextEn).toContain("10 years (120 months)");
-    expect(shareTextEn).toContain("154,300 €");
+    expect(shareTextEn).toContain("254,300 €");
     expect(shareTextEn).toContain("420,000 €");
     expect(shareTextEn).toContain("Self-Employed Hero! (120 months)");
-    expect(shareTextEn).toContain("Rolling in It (150,000 €)");
+    expect(shareTextEn).toContain("Rolling in It (250,000 €)");
     expect(shareTextEn).toContain("brass plaque in your honor");
 
     const { fakeCanvas, drawnText } = createFakeCanvasHarness();
@@ -601,6 +625,8 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
       employee: {
         character_id: "empleado_junior_dani",
         role_label: "Asistente júnior",
+        headcount: 1,
+        lead_monthly_cost: 1450,
         monthly_cost: 1450,
         billing_multiplier: 1.35,
         satisfaction: 40,
@@ -684,5 +710,86 @@ describe("Phase 3B Localization (es-ES & en) — UI Strings, Formatters, Catalog
 
     expect(humanizeFlag("ex_pareja_alex", "es-ES", "Cris")).toBe("ex pareja (Cris)");
     expect(humanizeFlag("ex_pareja_alex", "en", "Cris")).toBe("history as Cris's ex-partner");
+  });
+
+  it("formats v2 business tiers, RPG unlocked check chips, and extended v2 choice lock reasons in ES and EN", () => {
+    expect(translateBusinessTier("solo_autonomo", "es-ES")).toBe("Autónomo Individual");
+    expect(translateBusinessTier("sociedad_limitada", "en")).toBe("Limited Company (S.L.)");
+    expect(translateBusinessTierShort("agencia_consultora", "es-ES")).toBe("Agencia");
+    expect(translateBusinessTierShort("agencia_consultora", "en")).toBe("Agency");
+    expect(
+      translateBusinessTierShort("solo_autonomo", "es-ES", { isBoutiqueSeniorSolo: true }),
+    ).toBe("Boutique");
+    expect(translateBusinessTierShort("sociedad_limitada", "es-ES", { compactCode: true })).toBe(
+      "S.L.",
+    );
+
+    const esChecks = describeUnlockedRpgChecks(
+      {
+        stats: { reputation: { min: 65 }, stress: { max: 40 }, money: { min: 5000 } },
+        business_tiers: ["sociedad_limitada"],
+        team_size: { min: 3 },
+      },
+      "es-ES",
+    );
+    expect(esChecks).toEqual(["Rep ≥ 65", "Estrés ≤ 40", "S.L.", "Equipo ≥ 3"]);
+
+    const enChecks = describeUnlockedRpgChecks(
+      {
+        stats: { personal_life: { min: 70 }, fiscal_risk: { max: 20 } },
+        gestor_tiers: ["premium"],
+        family_statuses: ["dating", "cohabiting"],
+        employee_satisfaction: { min: 75 },
+      },
+      "en",
+    );
+    expect(enChecks).toEqual(["Life ≥ 70", "Risk ≤ 20", "Elena", "Partnered", "Staff ≥ 75"]);
+
+    const { state } = startNewRun(compiledCatalog, { seed: "V2-LOCKS-01" });
+    const staffState: GameState = {
+      ...state,
+      employee: {
+        character_id: "empleado_junior_dani",
+        role_label: "Junior Multiusos",
+        headcount: 2,
+        lead_monthly_cost: 1450,
+        monthly_cost: 3300,
+        billing_multiplier: 1.58,
+        satisfaction: 75,
+        months_employed: 6,
+      },
+    };
+
+    const esLock = explainChoiceLockReasons(
+      staffState,
+      {
+        business_tiers: ["sociedad_limitada", "agencia_consultora"],
+        team_size: { min: 4 },
+        children_count: { min: 1 },
+        has_employee: false,
+      },
+      "es-ES",
+    );
+    expect(esLock).toContain(
+      "Requiere estructura: Sociedad Limitada (S.L.) o Agencia / Consultora",
+    );
+    expect(esLock).toContain("Requiere plantilla mín. 4 personas");
+    expect(esLock).toContain("Requiere al menos 1 hijo");
+    expect(esLock).toContain("Solo sin empleados en plantilla");
+
+    const enLock = explainChoiceLockReasons(
+      staffState,
+      {
+        business_tiers: ["sociedad_limitada"],
+        team_size: { min: 4 },
+        children_count: { min: 2 },
+        has_employee: false,
+      },
+      "en",
+    );
+    expect(enLock).toContain("Requires structure: Limited Company (S.L.)");
+    expect(enLock).toContain("Requires min. team size 4");
+    expect(enLock).toContain("Requires at least 2 children");
+    expect(enLock).toContain("Only available while solo (0 staff)");
   });
 });

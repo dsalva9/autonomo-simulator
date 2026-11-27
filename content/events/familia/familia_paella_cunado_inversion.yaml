@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_paella_cunado_inversion
 category: familia
-title: "Paella dominical y el chollo infalible del cuñado"
-body: "Entre el socarrat y el café con hielo, un cuñado todólogo sentencia que «los autónomos cambiáis tiempo por dinero» y te ofrece meter hoy 1.500 € en un chollo «cien por cien seguro» de máquinas gourmet con un socio del gimnasio."
+title: Paella dominical y el chollo infalible del cuñado
+body: Entre el socarrat y el café con hielo, un cuñado todólogo sentencia que «los autónomos cambiáis tiempo por dinero» y te ofrece meter hoy 1.500 € en un chollo «cien por cien seguro» de máquinas gourmet con un socio del gimnasio.
 tags:
   - familia
   - cunado
@@ -17,37 +17,47 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: meter_dinero_por_probar
-    label: "Meter los 1.500 € en el «negocio redondo» por si suena la flauta"
+    label: Meter los 1.500 € en el «negocio redondo» por si suena la flauta
     outcomes:
       - id: humo_y_silencio_familiar
-        weight: 70
-        result_text: "Tres semanas después resulta que el socio del gimnasio «está reestructurando la logística» y tu cuñado cambia misteriosamente de conversación en cada cumpleaños."
+        weight: 65
+        result_text: Tres semanas después resulta que el socio del gimnasio «está reestructurando la logística» y tu cuñado cambia misteriosamente de conversación en cada cumpleaños.
         effects:
           cash_delta: -1500
           moral: -9
           stress: 12
           personal_life: -5
+          fiscal_risk: 6
       - id: pelotazo_inexplicable
-        weight: 30
-        result_text: "Contra toda ley económica colocan el lote antes de que pase la moda y recuperas tu parte con beneficio; lo malo es aguantar el «¿ves cómo yo sabía?» hasta 2040."
+        weight: 35
+        result_text: Contra toda ley económica colocan el lote antes de que pase la moda y recuperas tu parte con beneficio; lo malo es aguantar el «¿ves cómo yo sabía?» hasta 2040.
         effects:
-          cash_delta: 2200
+          cash_delta: 3200
           moral: 4
           stress: 3
           personal_life: -2
-          fiscal_risk: 8
+          fiscal_risk: 18
+          schedule_events:
+            - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+              delay_months: 24
+              probability: 0.35
+              priority: high
   - id: cambiar_de_tema_con_elegancia
-    label: "Asentir sonriendo, elogiar el punto del arroz y cambiar de tema"
-    result_text: "Esquivas la emboscada financiera con cintura torera, repites flan casero y vuelves a casa con la cuenta intacta y la paciencia razonablemente entera."
+    label: Asentir sonriendo, elogiar el punto del arroz y cambiar de tema
+    result_text: Esquivas la emboscada financiera con cintura torera, repites flan casero y vuelves a casa con la cuenta intacta y la paciencia razonablemente entera.
     effects:
       cash_delta: -25
       moral: 3
       stress: -4
       personal_life: 6
   - id: desmontar_su_plan_con_numeros
-    label: "Sacar una servilleta y desmontarle los márgenes e impuestos delante de todos"
-    result_text: "Tu repaso sobre costes fijos, amortización y Hacienda deja la sobremesa muda. Tu dignidad profesional queda por las nubes; la armonía familiar, regular."
+    label: Sacar una servilleta y desmontarle los márgenes e impuestos delante de todos
+    result_text: "Sin alterarte ni un grado, desmontas sus márgenes con humor brillante en una servilleta: toda la mesa estalla en risas y quedas como un rey."
     effects:
-      moral: 6
-      stress: 4
-      personal_life: -7
+      moral: 8
+      personal_life: 4
+      stress: -2
+    requirements:
+      stats:
+        stress:
+          max: 45

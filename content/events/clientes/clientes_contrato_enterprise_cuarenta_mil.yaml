@@ -1,0 +1,69 @@
+schema_version: 1
+id: clientes_contrato_enterprise_cuarenta_mil
+category: clientes
+title: "Licitación IBEX 35: despliegue anual de 44.000 €"
+body: "Marta trae el contrato de tu carrera: una multinacional del IBEX 35 busca agencia para un despliegue de seis meses valorado en 44.000 € (22.000 € al arranque y 3.600 €/mes). El ritmo exige equipo engrasado."
+tags:
+  - corporativo
+  - agencia
+  - alto_ticket
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements:
+  min_month: 72
+  business_tiers:
+    - agencia_consultora
+  team_size:
+    min: 5
+weight: 13
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: ejecucion_agencia_alto_rendimiento
+    label: "Liderar el despliegue completo con tu equipo motivado (44.000 €)"
+    requirements:
+      employee_satisfaction:
+        min: 70
+    result_text: "Con la plantilla cohesionada el despliegue va como un tren de alta velocidad: 22.000 € al arrancar, 3.600 €/mes seis meses y prestigio nacional."
+    effects:
+      billed_income: 22000
+      deductible_expense: 4200
+      stress: 10
+      reputation: 12
+      moral: 10
+      employee_satisfaction: 6
+      add_modifier:
+        id: mod_despliegue_enterprise_sano
+        label: "Despliegue anual IBEX a pleno ritmo"
+        remaining_months: 6
+        monthly_billed_delta: 3600
+  - id: aceptar_forzando_plantilla
+    label: "Firmar los 44.000 € apretando turnos aunque el equipo chirríe"
+    result_text: "Entras en la Champions de facturación a golpe de horas extra y atajos apresurados. El banco sonríe; tu equipo reza para no romper producción."
+    effects:
+      billed_income: 22000
+      deductible_expense: 4200
+      stress: 22
+      employee_satisfaction: -14
+      personal_life: -8
+      reputation: 8
+      add_modifier:
+        id: mod_despliegue_enterprise_forzado
+        label: "Despliegue IBEX a marchas forzadas"
+        remaining_months: 6
+        monthly_billed_delta: 3600
+        monthly_stress_delta: 2
+      schedule_events:
+        - event_id: clientes_garantia_codigo_tres_anos
+          delay_months: 28
+          probability: 0.3
+          priority: high
+  - id: vender_solo_fase_estrategia
+    label: "Vender solo la fase de arquitectura y estrategia (14.000 €)"
+    result_text: "Acotas el riesgo entregando el plan director por 14.000 € y dejas la picadora operativa a otra consultora. Dinero limpio y margen sano."
+    effects:
+      billed_income: 14000
+      stress: 4
+      reputation: 6

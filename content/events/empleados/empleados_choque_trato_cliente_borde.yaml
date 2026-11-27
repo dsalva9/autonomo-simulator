@@ -1,8 +1,8 @@
 schema_version: 1
 id: empleados_choque_trato_cliente_borde
 category: empleados
-title: "Falta de respeto en videollamada grupal"
-body: "Un cliente con buena facturación pierde las formas en directo y culpa con desprecio a tu persona en plantilla de un retraso que causó él mismo. Al colgar, en el estudio se corta el silencio esperando ver cómo reaccionas."
+title: Falta de respeto en videollamada grupal
+body: Un cliente con buena facturación pierde las formas en directo y culpa con desprecio a tu persona en plantilla de un retraso que causó él mismo. Al colgar, en el estudio se corta el silencio esperando ver cómo reaccionas.
 tags:
   - plantilla
   - liderazgo
@@ -17,8 +17,8 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: absorber_tu_al_cliente_dificil
-    label: "Asumir tú el trato directo con esa cuenta y darle la tarde libre"
-    result_text: "Proteges a tu equipo del mal trago y salvas la factura, a cambio de tragarte tú solo todas las llamadas tensas del mes."
+    label: Asumir tú el trato directo con esa cuenta y darle la tarde libre
+    result_text: Proteges a tu equipo del mal trago y salvas la factura, a cambio de tragarte tú solo todas las llamadas tensas del mes.
     effects:
       billed_income: 1350
       moral: 3
@@ -26,33 +26,23 @@ choices:
       personal_life: -3
       employee_satisfaction: 8
   - id: parar_los_pies_por_escrito
-    label: "Enviar un mensaje firme exigiendo respeto y centralizando el trato"
-    outcomes:
-      - id: disculpa_y_limites_claros
-        weight: 70
-        result_text: "El cliente recoge cable por correo a la media hora y la lealtad interna dentro de tu estudio sube diez peldaños de golpe."
-        effects:
-          billed_income: 1500
-          moral: 8
-          stress: -3
-          reputation: 4
-          employee_satisfaction: 16
-          clear_flags:
-            - desgaste_plantilla
-      - id: ruptura_digna_de_cuenta
-        weight: 30
-        result_text: "Ofendido en su orgullo, cancela la siguiente fase. Pierdes algo de caja este mes, pero ganas un equipo capaz de ir contigo al fin del mundo."
-        effects:
-          cash_delta: -300
-          moral: 7
-          stress: 4
-          reputation: 1
-          employee_satisfaction: 15
-          clear_flags:
-            - desgaste_plantilla
+    label: Enviar un mensaje firme exigiendo respeto y centralizando el trato
+    requirements:
+      stats:
+        moral:
+          min: 65
+    result_text: "Tu firmeza impecable desarma al cliente en veinte minutos: pide disculpas por escrito, paga 1.350 € y tu equipo iría contigo al fin del mundo."
+    effects:
+      billed_income: 1350
+      moral: 8
+      stress: -3
+      reputation: 5
+      employee_satisfaction: 18
+      clear_flags:
+        - desgaste_plantilla
   - id: pedir_tragar_porque_paga_bien
-    label: "Decir en frío que quien paga manda y que no conviene hacer olas"
-    result_text: "La transferencia entra puntual en el banco, pero algo importante se rompe para siempre en la confianza del despacho."
+    label: Decir en frío que quien paga manda y que no conviene hacer olas
+    result_text: La transferencia entra puntual en el banco, pero algo importante se rompe para siempre en la confianza del despacho.
     effects:
       billed_income: 1550
       moral: -9

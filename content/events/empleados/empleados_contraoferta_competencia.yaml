@@ -1,8 +1,8 @@
 schema_version: 1
 id: empleados_contraoferta_competencia
 category: empleados
-title: "Contraoferta agresiva de una agencia rival"
-body: "Una consultora competidora le pone sobre la mesa a tu persona en plantilla un veinticinco por ciento más de sueldo si se incorpora en quince días. Te pide hablar hoy mismo antes de firmar nada en pleno pico de entregas."
+title: Contraoferta agresiva de una agencia rival
+body: Una consultora competidora le pone sobre la mesa a tu persona en plantilla un veinticinco por ciento más de sueldo si se incorpora en quince días. Te pide hablar hoy mismo antes de firmar nada en pleno pico de entregas.
 tags:
   - plantilla
   - retencion
@@ -18,12 +18,12 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: igualar_con_variable_y_autonomia
-    label: "Retener con prima inmediata (600 €) y participación por proyectos"
+    label: Retener con prima inmediata (600 €) y participación por proyectos
     requirements:
       stats:
         money:
           min: 1400
-    result_text: "Rechaza a la consultora esa misma tarde. Te aprietas el cinturón en caja, pero blindas el conocimiento del estudio y disparas la implicación."
+    result_text: Rechaza a la consultora esa misma tarde. Te aprietas el cinturón en caja, pero blindas el conocimiento del estudio y disparas la implicación.
     effects:
       cash_delta: -600
       moral: 7
@@ -34,14 +34,14 @@ choices:
         - desgaste_plantilla
       add_modifier:
         id: mod_retencion_clave_estudio
-        label: "Compromiso reforzado frente a la competencia"
+        label: Compromiso reforzado frente a la competencia
         remaining_months: 6
         monthly_billed_delta: 440
         monthly_expense_delta: 240
         monthly_stress_delta: -2
   - id: invocar_clausulas_y_tensar_cuerda
-    label: "Amenazar con cláusulas de permanencia y exigir preaviso estricto"
-    result_text: "Frenas su firma en caliente a golpe de tecnicismos legales, pero el aire del despacho se vuelve irrespirable y el conflicto queda servido."
+    label: Amenazar con cláusulas de permanencia y exigir preaviso estricto
+    result_text: Frenas su firma en caliente a golpe de tecnicismos legales, pero el aire del despacho se vuelve irrespirable y el conflicto queda servido.
     effects:
       moral: -6
       stress: 10
@@ -53,8 +53,8 @@ choices:
           delay_months: 1
           probability: 1
   - id: desear_suerte_y_pactar_traspaso
-    label: "Asumir que no puedes igualarlo y pactar dos semanas de relevo limpio"
-    result_text: "Cerráis carpetas con elegancia sin indemnización de salida, apoyándote en un refuerzo puntual para no fallar a tus clientes activos."
+    label: Asumir que no puedes igualarlo y pactar dos semanas de relevo limpio
+    result_text: Cerráis carpetas con elegancia sin indemnización de salida, apoyándote en un refuerzo puntual para no fallar a tus clientes activos.
     effects:
       dismiss_employee:
         severance_cost: 0
@@ -65,4 +65,28 @@ choices:
       clear_flags:
         - empleado_dani_activo
         - empleada_laura_activa
+        - desgaste_plantilla
+      set_flags:
+        - exempleado_salida_amistosa
+      schedule_events:
+        - event_id: empleados_exempleado_competidor_o_aliado
+          delay_months: 24
+          probability: 0.65
+          priority: high
+  - id: retener_por_cultura_y_carrera_agencia
+    label: Retener ofreciendo plan de carrera en tu S.L. y bonus moderado (400 €)
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      employee_satisfaction:
+        min: 75
+    result_text: "Tu proyecto societario y el gran clima interno vencen el talonario rival: rechaza la consultora y apuesta por crecer liderando contigo."
+    effects:
+      deductible_expense: 400
+      moral: 8
+      stress: -8
+      reputation: 4
+      employee_satisfaction: 18
+      clear_flags:
         - desgaste_plantilla

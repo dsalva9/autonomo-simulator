@@ -12,9 +12,11 @@ character_expression: neutral
 illustration_id: null
 requirements:
   min_month: 24
+  forbidden_flags:
+    - homologacion_proveedor_activa
 weight: 9
 cooldown_months: 14
-max_occurrences: 3
+max_occurrences: 2
 choices:
   - id: facturar_a_traves_de_partner_homologado
     label: Ceder un 18 % a un colega ya homologado para no tocar el portal
@@ -37,14 +39,14 @@ choices:
         - proveedor_corporativo_activo
         - homologacion_proveedor_activa
   - id: delegar_expediente_en_gestoria_premium
-    label: Encargar el expediente y el seguro de 240 € a tu asesoría sénior
+    label: Encargar expediente y póliza a tu asesoría sénior (520 €)
     requirements:
       gestor_tiers:
         - premium
     result_text: Elena sube cada certificado a la primera. Quedas homologado como proveedor preferente y entra el primer bloque de horas.
     effects:
       billed_income: 2200
-      deductible_expense: 240
+      deductible_expense: 520
       moral: 6
       stress: -2
       reputation: 6
@@ -55,5 +57,5 @@ choices:
         id: mod_bolsa_horas_ariba
         label: Bolsa de horas corporativa
         remaining_months: 4
-        monthly_billed_delta: 450
+        monthly_billed_delta: 225
         monthly_stress_delta: 2

@@ -42,19 +42,13 @@ choices:
       personal_life: 7
   - id: solicitar_transferencia_inmediata
     label: Pedir el ingreso en cuenta ya mismo pese a la leyenda urbana
-    outcomes:
-      - id: transferencia_limpia
-        weight: 80
-        result_text: A los pocos días entra la transferencia oficial con puntualidad suiza. Haces una captura de pantalla para enmarcarla.
-        effects:
-          cash_delta: 820
-          stress: -8
-          moral: 8
-      - id: verificacion_rutinaria_previa
-        weight: 20
-        result_text: Antes de soltar un euro te piden adjuntar dos certificados de retenciones, pero tras el papeleo cobras íntegro.
-        effects:
-          cash_delta: 720
-          stress: 3
-          moral: 3
-          fiscal_risk: 4
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 12
+    result_text: "Con un historial fiscal inmaculado no saltan filtros: la transferencia de 920 € aterriza en cuenta con puntualidad suiza."
+    effects:
+      cash_delta: 920
+      stress: -9
+      moral: 9
+      fiscal_risk: -4

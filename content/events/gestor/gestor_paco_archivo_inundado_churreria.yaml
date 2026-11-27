@@ -15,9 +15,11 @@ requirements:
   min_month: 38
   gestor_tiers:
     - cheap
+  forbidden_flags:
+    - archivo_paco_inundado
 weight: 11
 cooldown_months: 14
-max_occurrences: 2
+max_occurrences: 1
 choices:
   - id: confiar_en_el_calefactor_de_paco
     label: Confiar en que el calefactor salve los papeles y no mirar
@@ -28,6 +30,12 @@ choices:
       fiscal_risk: 13
       set_flags:
         - susto_con_paco
+        - archivo_paco_inundado
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 16
+          probability: 0.25
+          priority: high
   - id: escanear_supervivientes_y_pedir_copias
     label: Rescatar los legajos húmedos y pedir duplicados en PDF
     result_text: Tu despacho huele a papel mojado tres días, pero reconstruyes el archivo digital antes de que se borre la tinta.
@@ -37,8 +45,10 @@ choices:
       moral: 3
       personal_life: -4
       fiscal_risk: -5
+      set_flags:
+        - archivo_paco_inundado
   - id: migrar_todo_a_boveda_digital_elena
-    label: Rescatar tu historial y migrar a la bóveda en nube de Elena
+    label: Rescatar tu historial y migrar a Elena (desde 260 €/mes)
     requirements:
       stats:
         money:
@@ -54,3 +64,5 @@ choices:
       fiscal_risk: -14
       clear_flags:
         - susto_con_paco
+      set_flags:
+        - archivo_paco_inundado

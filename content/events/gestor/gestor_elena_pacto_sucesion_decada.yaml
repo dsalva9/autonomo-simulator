@@ -16,38 +16,46 @@ requirements:
   min_month: 96
   gestor_tiers:
     - premium
+  forbidden_flags:
+    - propiedad_intelectual_registrada
 weight: 12
 cooldown_months: 18
-max_occurrences: 2
+max_occurrences: 1
 choices:
   - id: protocolizar_licencias_y_cartera_b2b
-    label: Protocolizar licencias de uso y contratos marco con Elena
+    label: Protocolizar licencias de uso y contratos marco con Elena (2.200 €)
     requirements:
       stats:
         money:
-          min: 1100
+          min: 3500
+        fiscal_risk:
+          max: 30
     result_text: Tus activos intangibles quedan blindados y generan cánones recurrentes con tratamiento fiscal impecable.
     effects:
-      deductible_expense: 640
-      stress: -9
-      moral: 8
-      reputation: 6
-      fiscal_risk: -10
+      deductible_expense: 2200
+      stress: -6
+      moral: 6
+      reputation: 8
+      fiscal_risk: -8
       add_modifier:
         id: mod_licencias_recurrentes_b2b
         label: Estructura mercantil B2B
         remaining_months: 6
-        monthly_billed_delta: 320
+        monthly_billed_delta: 400
         monthly_expense_delta: 75
+      set_flags:
+        - propiedad_intelectual_registrada
   - id: registrar_solo_propiedad_intelectual_clave
     label: Registrar únicamente las piezas clave sin gastos notariales
     result_text: Proteges la autoría de tus metodologías principales manteniendo una estructura administrativa ligera.
     effects:
-      deductible_expense: 210
+      deductible_expense: 480
       stress: -5
       moral: 5
       reputation: 3
       fiscal_risk: -6
+      set_flags:
+        - propiedad_intelectual_registrada
   - id: seguir_facturando_proyectos_a_pulso
     label: Posponer papeleos societarios y cerrar un encargo directo
     result_text: Prefieres la facturación directa inmediata antes que sentarte a redactar cláusulas de cesión.

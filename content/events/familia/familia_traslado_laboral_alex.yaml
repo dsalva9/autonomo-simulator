@@ -1,0 +1,72 @@
+schema_version: 1
+id: familia_traslado_laboral_alex
+category: familia
+title: "La oferta de Álex a 400 kilómetros"
+body: "Álex llega a casa con una oferta irrechazable a cuatrocientos kilómetros: ascenso real, contrato fijo y plazo hasta el lunes. Tu cartera vive en esta ciudad y esta vez no existe un parche barato para contentar a los dos."
+tags:
+  - pareja
+  - crisis_pareja
+  - traslado
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: illus_hito_crisis_familiar
+requirements:
+  min_month: 24
+  max_month: 96
+  family_statuses:
+    - cohabiting
+weight: 12
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: mudarse_con_alex_y_rehacer_cartera
+    label: "Hacer cajas, mudarte con Álex y reconstruir tu cartera allí (2.400 €)"
+    result_text: "Entre fianza, mudanza y clientes presenciales que se caen sangras caja, pero Álex no olvidará jamás que apostaste de verdad por el proyecto común."
+    effects:
+      cash_delta: -2400
+      personal_life: 16
+      moral: 12
+      reputation: -4
+      add_modifier:
+        id: mod_mudanza_ciudad_alex
+        label: "Mudanza y cartera en reconstrucción"
+        remaining_months: 4
+        monthly_billed_delta: -450
+  - id: puente_ave_semanal
+    label: "Mantener dos bases y vivir entre billetes de AVE cada semana"
+    result_text: "Memorizas cada curva de la línea de alta velocidad mientras facturas en la mesita del vagón. Salvas clientes y convivencia, pero acabas molido."
+    effects:
+      stress: 12
+      personal_life: 6
+      moral: 4
+      add_modifier:
+        id: mod_puente_ave_semanal
+        label: "Puente semanal en AVE por Álex"
+        remaining_months: 6
+        monthly_expense_delta: 420
+  - id: pedir_a_alex_que_renuncie
+    label: "Pedirle que rechace el puesto: tu negocio aún no soporta mudarse"
+    outcomes:
+      - id: renuncia_con_rencor
+        weight: 65
+        result_text: "Álex cuelga el teléfono rechazando el ascenso de su vida. Nadie grita durante la cena, pero el silencio que queda en el salón corta el aire."
+        effects:
+          personal_life: -22
+          moral: -10
+          stress: 10
+          set_flags:
+            - crisis_pareja_latente
+      - id: ruptura_por_traslado
+        weight: 35
+        result_text: "Álex acepta la oferta y recoge sus cajas el sábado con tristeza serena. Tu cartera sigue intacta; el piso resuena el doble de vacío."
+        effects:
+          personal_life: -22
+          moral: -12
+          stress: 14
+          set_family_status:
+            status: separated
+            partner_character_id: null
+          clear_flags:
+            - convivencia_estable
+            - crisis_pareja_latente

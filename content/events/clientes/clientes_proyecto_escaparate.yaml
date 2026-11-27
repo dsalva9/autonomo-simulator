@@ -12,6 +12,7 @@ character_expression: neutral
 illustration_id: null
 requirements:
   min_month: 3
+  max_month: 36
 weight: 10
 cooldown_months: 10
 max_occurrences: 3
@@ -39,6 +40,11 @@ choices:
           reputation: 9
           set_flags:
             - portfolio_actualizado
+          schedule_events:
+            - event_id: clientes_probono_retorna_como_vp
+              delay_months: 30
+              probability: 0.45
+              priority: high
       - id: creditos_recortados
         weight: 35
         result_text: El proyecto queda precioso, pero en la nota de prensa olvidan poner tu nombre y agradecen solo al patrocinador de cervezas.
@@ -47,6 +53,11 @@ choices:
           stress: 10
           moral: -6
           reputation: 2
+          schedule_events:
+            - event_id: clientes_probono_retorna_como_vp
+              delay_months: 30
+              probability: 0.45
+              priority: high
   - id: pasar_del_festival
     label: Agradecer la invitación y guardar energías para quien pague en euros
     result_text: Ves la inauguración desde el sofá sin ojeras ni rencor.

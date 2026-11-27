@@ -25,10 +25,14 @@ choices:
     result_text: Echas dos mañanas enteras al teléfono cuadrando céntimos, pero presentas unos modelos anuales intachables.
     effects:
       deductible_expense: 50
-      stress: 6
-      moral: 3
+      stress: 2
+      moral: 5
       reputation: 2
-      fiscal_risk: -7
+      fiscal_risk: -10
+    requirements:
+      stats:
+        stress:
+          max: 50
   - id: presentar_sustitutiva_fuera_de_hora
     label: Cerrar con estimaciones y asumir después el recargo de sustitutiva
     result_text: Salvas la semana de entregas urgentes pagando más tarde la tarifa plana administrativa por corregir casillas.

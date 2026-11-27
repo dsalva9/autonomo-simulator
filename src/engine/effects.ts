@@ -1,18 +1,106 @@
-import { clampStat, enqueueScheduledEvent, resolveEndingQuote } from "./economy.ts";
+import {
+  clampStat,
+  computeEffectiveGestorFee,
+  computeMarginalTaxRate,
+  enqueueScheduledEvent,
+  resolveEndingQuote,
+} from "./economy.ts";
 import { nextFloat, pickWeighted } from "./prng.ts";
-import type { ChoiceSpec, EffectsSpec, EventDef } from "./schemas/index.ts";
-import { appendHistory, resolvePartnerName, substitutePartnerName } from "./state.ts";
+import type { BusinessTier, ChoiceSpec, EffectsSpec, EventDef } from "./schemas/index.ts";
+import {
+  appendHistory,
+  getBusinessTierConfig,
+  getPrescripcionConfig,
+  getTeamHeadcount,
+  getTeamScalingConfig,
+  resolvePartnerName,
+  scaleMonetaryValue,
+  substitutePartnerName,
+} from "./state.ts";
 import type {
+  BusinessState,
   ChoiceOutcomeSummary,
   ContentCatalog,
   EmployeeState,
   FamilyState,
+  FiscalExposureEntry,
   GameState,
   GestorState,
   PendingInvoice,
   ScheduledEvent,
   TemporalModifier,
 } from "./types.ts";
+
+export function getEffectiveScaledChoiceEffects(
+  state: Pick<GameState, "business">,
+  catalog: Pick<ContentCatalog, "balance">,
+  event: Pick<EventDef, "scale_with_tier">,
+  effects: EffectsSpec,
+): EffectsSpec {
+  if (!event.scale_with_tier) {
+    return effects;
+  }
+  const mult = getBusinessTierConfig(state, catalog).event_stakes_multiplier;
+  if (mult === 1) {
+    return effects;
+  }
+
+  const scaled: EffectsSpec = { ...effects };
+
+  if (scaled.billed_income != null) {
+    scaled.billed_income = Math.max(0, scaleMonetaryValue(scaled.billed_income, mult));
+  }
+  if (scaled.cash_delta != null) {
+    scaled.cash_delta = scaleMonetaryValue(scaled.cash_delta, mult);
+  }
+  if (scaled.deductible_expense != null) {
+    scaled.deductible_expense = Math.max(0, scaleMonetaryValue(scaled.deductible_expense, mult));
+  }
+  if (scaled.deferred_invoice) {
+    scaled.deferred_invoice = {
+      ...scaled.deferred_invoice,
+      amount: Math.max(1, scaleMonetaryValue(scaled.deferred_invoice.amount, mult)),
+    };
+  }
+  if (scaled.add_modifier) {
+    scaled.add_modifier = {
+      ...scaled.add_modifier,
+      ...(scaled.add_modifier.monthly_billed_delta != null
+        ? {
+            monthly_billed_delta: scaleMonetaryValue(
+              scaled.add_modifier.monthly_billed_delta,
+              mult,
+            ),
+          }
+        : {}),
+      ...(scaled.add_modifier.monthly_expense_delta != null
+        ? {
+            monthly_expense_delta: scaleMonetaryValue(
+              scaled.add_modifier.monthly_expense_delta,
+              mult,
+            ),
+          }
+        : {}),
+    };
+  }
+  if (scaled.dismiss_employee) {
+    scaled.dismiss_employee = {
+      ...scaled.dismiss_employee,
+      severance_cost: Math.max(0, scaleMonetaryValue(scaled.dismiss_employee.severance_cost, mult)),
+    };
+  }
+  if (scaled.shrink_team) {
+    scaled.shrink_team = {
+      ...scaled.shrink_team,
+      severance_per_person: Math.max(
+        0,
+        scaleMonetaryValue(scaled.shrink_team.severance_per_person, mult),
+      ),
+    };
+  }
+
+  return scaled;
+}
 
 export function resolveChoiceEffects(
   state: GameState,
@@ -22,7 +110,7 @@ export function resolveChoiceEffects(
 ): { state: GameState; summary: ChoiceOutcomeSummary } {
   const { balance } = catalog;
   let prng = state.prng;
-  let effects: EffectsSpec;
+  let rawEffects: EffectsSpec;
   let outcomeId: string | null = null;
   let resultText: string | null = choice.result_text ?? null;
 
@@ -31,14 +119,16 @@ export function resolveChoiceEffects(
     prng = picked.prng;
     outcomeId = picked.item.id;
     resultText = picked.item.result_text;
-    effects = picked.item.effects;
+    rawEffects = picked.item.effects;
   } else if (choice.effects) {
-    effects = choice.effects;
+    rawEffects = choice.effects;
   } else {
     throw new Error(
       `Choice '${choice.id}' in event '${event.id}' has neither effects nor outcomes.`,
     );
   }
+
+  const effects = getEffectiveScaledChoiceEffects(state, catalog, event, rawEffects);
 
   const startMoney = state.indicators.money;
   const startMoral = state.indicators.moral;
@@ -46,6 +136,7 @@ export function resolveChoiceEffects(
   const startPersonalLife = state.indicators.personal_life;
   const startReputation = state.indicators.reputation;
   const startFiscalRisk = state.fiscal_risk;
+  const startHeadcount = getTeamHeadcount(state);
 
   let money = startMoney;
   let moral = startMoral;
@@ -59,6 +150,18 @@ export function resolveChoiceEffects(
   const startAccruedTax = state.finances.accrued_tax_liability;
   let accruedTaxLiability = startAccruedTax;
   const pendingInvoices: PendingInvoice[] = [...state.finances.pending_invoices];
+  const historicalExposures: FiscalExposureEntry[] = [
+    ...(state.finances.historical_exposures ?? []),
+  ];
+
+  const preChoiceTierConfig = getBusinessTierConfig(state, catalog);
+  const marginalTaxRate = computeMarginalTaxRate(state, catalog);
+  const usesProgressiveOrCorporateTax =
+    preChoiceTierConfig.corporate_tax_regime ||
+    Boolean(balance.irpf_brackets && balance.irpf_brackets.length > 0);
+  const deductibleTaxRate = usesProgressiveOrCorporateTax
+    ? marginalTaxRate
+    : balance.deductible_tax_fraction;
 
   let annualBilled = state.annual_snapshot.billed;
   let annualExpenses = state.annual_snapshot.expenses;
@@ -70,7 +173,7 @@ export function resolveChoiceEffects(
 
   if (effects.billed_income != null && effects.billed_income > 0) {
     const billed = Math.round(effects.billed_income);
-    const taxAccrual = Math.round(billed * balance.effective_quarterly_tax_rate);
+    const taxAccrual = Math.round(billed * marginalTaxRate);
     money += billed;
     lifetimeBilled += billed;
     currentQuarterBilled += billed;
@@ -88,7 +191,7 @@ export function resolveChoiceEffects(
 
   if (effects.deductible_expense != null && effects.deductible_expense > 0) {
     const expense = Math.round(effects.deductible_expense);
-    const taxRelief = Math.round(expense * balance.deductible_tax_fraction);
+    const taxRelief = Math.round(expense * deductibleTaxRate);
     money -= expense;
     accruedTaxLiability = Math.max(0, accruedTaxLiability - taxRelief);
     annualExpenses += expense;
@@ -121,6 +224,25 @@ export function resolveChoiceEffects(
     fiscalRisk = clampStat(fiscalRisk + effects.fiscal_risk);
   }
 
+  // Record 4-year prescripción fiscal exposure on qualifying risky choices (ADR 004 §4.2)
+  const presc = getPrescripcionConfig(catalog);
+  const rawFiscalRiskDelta = effects.fiscal_risk ?? 0;
+  const untaxedCash = Math.max(0, Math.round(effects.cash_delta ?? 0));
+  if (
+    rawFiscalRiskDelta >= presc.min_risk_points_recorded ||
+    (rawFiscalRiskDelta >= 6 && untaxedCash >= 1000)
+  ) {
+    historicalExposures.push({
+      id: `exp_${state.month}_${historicalExposures.length + 1}_${event.id}`,
+      origin_month: state.month,
+      expires_month: state.month + presc.window_months,
+      risk_points: Math.round(rawFiscalRiskDelta),
+      untaxed_amount: untaxedCash,
+      source_event_id: event.id,
+      audited: false,
+    });
+  }
+
   const flags = { ...state.flags };
   if (effects.clear_flags) {
     for (const flag of effects.clear_flags) {
@@ -131,6 +253,49 @@ export function resolveChoiceEffects(
     for (const flag of effects.set_flags) {
       flags[flag] = true;
     }
+  }
+
+  // Business tier transitions + automatic sociedad_limitada_activa sync (ADR 004 §2.1)
+  let business: BusinessState = {
+    ...(state.business ?? {
+      tier: "solo_autonomo" as const,
+      months_in_tier: 0,
+      sl_formed_month: null,
+    }),
+  };
+  let businessTierChangedTo: BusinessTier | null = null;
+
+  if (effects.set_business_tier) {
+    const targetTier = effects.set_business_tier.tier;
+    const entersCorporate =
+      targetTier === "sociedad_limitada" || targetTier === "agencia_consultora";
+    if (targetTier !== business.tier) {
+      businessTierChangedTo = targetTier;
+      business = {
+        tier: targetTier,
+        months_in_tier: 0,
+        sl_formed_month: entersCorporate
+          ? (business.sl_formed_month ?? state.month)
+          : business.sl_formed_month,
+      };
+      milestones.push(`tier:${targetTier}`);
+    } else if (entersCorporate && business.sl_formed_month === null) {
+      business = { ...business, sl_formed_month: state.month };
+    }
+    if (entersCorporate) {
+      flags.sociedad_limitada_activa = true;
+    }
+  } else if (
+    effects.set_flags?.includes("sociedad_limitada_activa") &&
+    (business.tier === "solo_autonomo" || business.tier === "estudio_consolidado")
+  ) {
+    businessTierChangedTo = "sociedad_limitada";
+    business = {
+      tier: "sociedad_limitada",
+      months_in_tier: 0,
+      sl_formed_month: business.sl_formed_month ?? state.month,
+    };
+    milestones.push("tier:sociedad_limitada");
   }
 
   let scheduledQueue: ScheduledEvent[] = [...state.scheduled_queue];
@@ -147,13 +312,18 @@ export function resolveChoiceEffects(
         hit = roll.value < prob;
       }
       if (hit) {
-        scheduledEventIds.push(sched.event_id);
-        scheduledQueue = enqueueScheduledEvent(scheduledQueue, {
+        const nextQueue = enqueueScheduledEvent(scheduledQueue, {
           queue_id: `sched_${state.month}_${scheduledQueue.length + 1}_${sched.event_id}`,
           event_id: sched.event_id,
           trigger_month: state.month + sched.delay_months,
+          origin_month: state.month,
+          priority: sched.priority ?? "normal",
           source_event_id: event.id,
         });
+        if (nextQueue.length > scheduledQueue.length) {
+          scheduledEventIds.push(sched.event_id);
+        }
+        scheduledQueue = nextQueue;
       }
     }
   }
@@ -189,7 +359,7 @@ export function resolveChoiceEffects(
       };
     } else {
       const charDef = character_id ? catalog.characters[character_id] : undefined;
-      const fee = balance.gestor_tiers[tier].monthly_fee ?? charDef?.gestor_params?.monthly_fee;
+      const fee = computeEffectiveGestorFee(tier, business.tier, catalog);
       const shield =
         balance.gestor_tiers[tier].inspection_shield ?? charDef?.gestor_params?.inspection_shield;
       gestor = {
@@ -201,6 +371,11 @@ export function resolveChoiceEffects(
       };
     }
     milestones.push(`gestor:${tier}`);
+  } else if (businessTierChangedTo !== null && gestor.tier !== "self") {
+    gestor = {
+      ...gestor,
+      monthly_fee: computeEffectiveGestorFee(gestor.tier, business.tier, catalog),
+    };
   }
 
   let family: FamilyState = state.family;
@@ -210,6 +385,7 @@ export function resolveChoiceEffects(
       if (status === "separated") {
         flags.ex_pareja_alex = true;
       }
+      Reflect.deleteProperty(flags, "crisis_pareja_latente");
       family = {
         status,
         partner_character_id: null,
@@ -217,6 +393,7 @@ export function resolveChoiceEffects(
         children_count: family.children_count,
         monthly_cost: family.children_count * balance.child_monthly_cost,
         support_modifier: 0,
+        neglect_months: 0,
       };
     } else {
       flags.historia_con_alex = true;
@@ -238,6 +415,7 @@ export function resolveChoiceEffects(
         children_count: family.children_count,
         monthly_cost: partnerCost + family.children_count * balance.child_monthly_cost,
         support_modifier: supportMod,
+        neglect_months: family.neglect_months ?? 0,
       };
     }
     milestones.push(`family:${status}`);
@@ -254,6 +432,8 @@ export function resolveChoiceEffects(
   }
 
   let employee: EmployeeState | null = state.employee;
+  let employeeSatisfactionDelta = 0;
+
   if (effects.hire_employee) {
     const charId = effects.hire_employee.character_id;
     const charDef = catalog.characters[charId];
@@ -263,6 +443,8 @@ export function resolveChoiceEffects(
     employee = {
       character_id: charId,
       role_label: charDef.employee_params.role_label,
+      headcount: 1,
+      lead_monthly_cost: charDef.employee_params.monthly_cost,
       monthly_cost: charDef.employee_params.monthly_cost,
       billing_multiplier: charDef.employee_params.billing_multiplier,
       satisfaction: 75,
@@ -271,24 +453,144 @@ export function resolveChoiceEffects(
     milestones.push(`hire:${charId}`);
   }
 
+  if (effects.expand_team) {
+    const spec = effects.expand_team;
+    const postTierConfig = getBusinessTierConfig({ business }, catalog);
+    const maxCap = Math.min(12, postTierConfig.max_team_size);
+    const teamScaling = getTeamScalingConfig(catalog);
+    const unitCost = spec.avg_monthly_cost ?? teamScaling.default_staff_monthly_cost;
+
+    if (employee === null) {
+      const effectiveTotal = Math.min(spec.count, maxCap);
+      if (effectiveTotal > 0) {
+        const leadId = spec.lead_character_id ?? "empleado_junior_dani";
+        const leadDef = catalog.characters[leadId];
+        if (!leadDef || !leadDef.employee_params) {
+          throw new Error(`Invalid lead employee character '${leadId}' referenced by expand_team.`);
+        }
+        const leadCost = leadDef.employee_params.monthly_cost;
+        employee = {
+          character_id: leadId,
+          role_label: spec.role_label ?? leadDef.employee_params.role_label,
+          headcount: effectiveTotal,
+          lead_monthly_cost: leadCost,
+          monthly_cost: leadCost + (effectiveTotal - 1) * unitCost,
+          billing_multiplier: leadDef.employee_params.billing_multiplier,
+          satisfaction: 75,
+          months_employed: 0,
+        };
+        milestones.push(`expand_team:+${effectiveTotal}`);
+      }
+    } else {
+      let nextCharId = employee.character_id;
+      let nextRoleLabel = spec.role_label ?? employee.role_label;
+      let nextLeadCost = employee.lead_monthly_cost ?? employee.monthly_cost;
+      let nextBillingMultiplier = employee.billing_multiplier;
+      let nextMonthlyCost = employee.monthly_cost;
+
+      if (spec.lead_character_id && spec.lead_character_id !== employee.character_id) {
+        const newLeadDef = catalog.characters[spec.lead_character_id];
+        if (!newLeadDef || !newLeadDef.employee_params) {
+          throw new Error(
+            `Invalid lead employee character '${spec.lead_character_id}' referenced by expand_team.`,
+          );
+        }
+        const newLeadCost = newLeadDef.employee_params.monthly_cost;
+        nextMonthlyCost = Math.max(newLeadCost, nextMonthlyCost + (newLeadCost - nextLeadCost));
+        nextCharId = spec.lead_character_id;
+        nextRoleLabel = spec.role_label ?? newLeadDef.employee_params.role_label;
+        nextLeadCost = newLeadCost;
+        nextBillingMultiplier = newLeadDef.employee_params.billing_multiplier;
+      }
+
+      const currentHeadcount = Math.max(1, employee.headcount ?? 1);
+      const added = Math.max(0, Math.min(spec.count, maxCap - currentHeadcount));
+      employee = {
+        ...employee,
+        character_id: nextCharId,
+        role_label: nextRoleLabel,
+        headcount: currentHeadcount + added,
+        lead_monthly_cost: nextLeadCost,
+        monthly_cost: nextMonthlyCost + added * unitCost,
+        billing_multiplier: nextBillingMultiplier,
+      };
+      if (added > 0) {
+        milestones.push(`expand_team:+${added}`);
+      }
+    }
+  }
+
+  if (effects.shrink_team && employee !== null) {
+    const spec = effects.shrink_team;
+    const currentHeadcount = Math.max(1, employee.headcount ?? 1);
+    const removed = spec.dismiss_all ? currentHeadcount : Math.min(spec.count, currentHeadcount);
+    const totalSeverance = Math.round(removed * spec.severance_per_person);
+    money -= totalSeverance;
+    annualExpenses += totalSeverance;
+
+    if (currentHeadcount - removed <= 0) {
+      employee = null;
+    } else {
+      const leadCost = employee.lead_monthly_cost ?? employee.monthly_cost;
+      const nonLeadCount = Math.max(1, currentHeadcount - 1);
+      const avgNonLeadCost = Math.max(
+        0,
+        Math.round((employee.monthly_cost - leadCost) / nonLeadCount),
+      );
+      const nextMonthlyCost = Math.max(leadCost, employee.monthly_cost - removed * avgNonLeadCost);
+      const beforeSat = employee.satisfaction;
+      const nextSat = effects.employee_satisfaction != null ? beforeSat : clampStat(beforeSat - 6);
+      employeeSatisfactionDelta += nextSat - beforeSat;
+      employee = {
+        ...employee,
+        headcount: currentHeadcount - removed,
+        monthly_cost: nextMonthlyCost,
+        satisfaction: nextSat,
+      };
+    }
+    milestones.push(`shrink_team:-${removed}`);
+  }
+
   if (effects.dismiss_employee) {
     const severance = Math.round(effects.dismiss_employee.severance_cost);
     money -= severance;
     annualExpenses += severance;
-    employee = null;
+    if (employee !== null) {
+      const currentHeadcount = Math.max(1, employee.headcount ?? 1);
+      if (currentHeadcount <= 1) {
+        employee = null;
+      } else {
+        const leadCost = employee.lead_monthly_cost ?? employee.monthly_cost;
+        const avgNonLeadCost = Math.max(
+          0,
+          Math.round((employee.monthly_cost - leadCost) / (currentHeadcount - 1)),
+        );
+        const beforeSat = employee.satisfaction;
+        const nextSat = clampStat(beforeSat - 5);
+        employeeSatisfactionDelta += nextSat - beforeSat;
+        employee = {
+          ...employee,
+          headcount: currentHeadcount - 1,
+          monthly_cost: Math.max(leadCost, employee.monthly_cost - avgNonLeadCost),
+          satisfaction: nextSat,
+        };
+      }
+    }
     milestones.push("dismiss_employee");
   }
 
-  let employeeSatisfactionDelta = 0;
   if (effects.employee_satisfaction != null && employee !== null) {
     const beforeSat = employee.satisfaction;
     const nextSat = clampStat(beforeSat + Math.round(effects.employee_satisfaction));
-    employeeSatisfactionDelta = nextSat - beforeSat;
+    employeeSatisfactionDelta += nextSat - beforeSat;
     employee = {
       ...employee,
       satisfaction: nextSat,
     };
   }
+
+  const endHeadcount = employee ? Math.max(1, employee.headcount ?? 1) : 0;
+  const teamHeadcountDelta = endHeadcount - startHeadcount;
 
   const occurrences = {
     ...state.occurrences,
@@ -370,7 +672,9 @@ export function resolveChoiceEffects(
       current_quarter_billed: currentQuarterBilled,
       accrued_tax_liability: accruedTaxLiability,
       pending_invoices: pendingInvoices,
+      historical_exposures: historicalExposures,
     },
+    business,
     gestor,
     family,
     employee,
@@ -406,6 +710,8 @@ export function resolveChoiceEffects(
       fiscal_risk_delta: fiscalRisk - startFiscalRisk,
       tax_accrued_delta: accruedTaxLiability - startAccruedTax,
       employee_satisfaction_delta: employeeSatisfactionDelta,
+      business_tier_changed_to: businessTierChangedTo,
+      team_headcount_delta: teamHeadcountDelta,
       scheduled_event_ids: scheduledEventIds,
     },
   };

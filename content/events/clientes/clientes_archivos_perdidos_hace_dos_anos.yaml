@@ -11,6 +11,7 @@ character_id: cliente_regateador
 character_expression: angry
 requirements:
   min_month: 16
+  max_month: 60
 weight: 9
 cooldown_months: 12
 max_occurrences: 3
@@ -20,10 +21,14 @@ choices:
     label: Cobrar rescate de archivo histórico más puesta al día técnica
     result_text: Desempolvas tu disco duro externo, actualizas formatos obsoletos y conviertes su descuido en una factura limpísima de media tarde.
     effects:
-      billed_income: 650
+      billed_income: 950
       stress: 3
       moral: 6
-      reputation: 2
+      reputation: 3
+    requirements:
+      stats:
+        reputation:
+          min: 45
   - id: enviar_copia_cortesia_y_vender_mantenimiento
     label: Mandar el respaldo como gesto comercial proponiendo mantenimiento
     outcomes:

@@ -12,6 +12,7 @@ character_id: hacienda_inspector_gomez
 character_expression: neutral
 requirements:
   min_month: 15
+  max_month: 48
 weight: 10
 cooldown_months: 14
 max_occurrences: 3
@@ -21,10 +22,15 @@ choices:
     label: Defender que eran piezas sueltas de escaso valor para deducirlo todo ya
     result_text: Salvas la liquidez inmediata forzando la interpretación contable, pero Gómez toma nota mental para futuras revisiones.
     effects:
-      cash_delta: 160
-      stress: 7
-      moral: -3
+      cash_delta: 1150
+      moral: -1
+      stress: 4
       fiscal_risk: 20
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 24
+          probability: 0.35
+          priority: high
   - id: aplicar_amortizacion_acelerada_gestor
     label: Pedir a tu gestoría aplicar incentivos de reducida dimensión al cálculo
     requirements:
@@ -46,3 +52,17 @@ choices:
       stress: 5
       moral: -2
       fiscal_risk: -8
+  - id: defender_amortizacion_sl_pyme
+    label: Invocar libertad de amortización de pyme societaria sin pagar multa
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      stats:
+        fiscal_risk:
+          max: 25
+    result_text: "Acreditas requisitos de empresa de reducida dimensión con libros limpios: Gómez archiva el requerimiento sin cobrarte un solo euro."
+    effects:
+      moral: 6
+      stress: -4
+      fiscal_risk: -12

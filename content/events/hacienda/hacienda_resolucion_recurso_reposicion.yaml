@@ -40,8 +40,7 @@ choices:
         - premium
     result_text: Elena presenta un escrito quirúrgico de cierre, consolida el criterio a tu favor y deja tu expediente reluciente.
     effects:
-      deductible_expense: 160
-      cash_delta: 90
+      deductible_expense: 280
       stress: -4
       moral: 6
       fiscal_risk: -15

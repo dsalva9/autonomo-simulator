@@ -24,10 +24,15 @@ choices:
     label: Ignorar el aviso estadístico y exprimir hasta el último ticket del mes
     result_text: Te ahorras el ajuste hoy mismo convencido de que es un farol informático, aunque tu expediente pasa a carpeta roja.
     effects:
-      cash_delta: 180
-      stress: 6
-      moral: -2
-      fiscal_risk: 18
+      cash_delta: 1550
+      moral: -1
+      stress: 4
+      fiscal_risk: 20
+      schedule_events:
+        - event_id: hacienda_inspeccion_efectivo_tres_anos
+          delay_months: 30
+          probability: 0.35
+          priority: high
   - id: presentar_ajuste_prudencial
     label: Darse por aludido y presentar un pequeño ajuste voluntario (250 €)
     result_text: Recortas un par de partidas fronterizas mediante complementaria preventiva y sales del radar algorítmico al instante.

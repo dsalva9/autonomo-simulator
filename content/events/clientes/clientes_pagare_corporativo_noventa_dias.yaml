@@ -51,3 +51,18 @@ choices:
       moral: 1
       personal_life: 2
       reputation: -4
+  - id: exigir_transferencia_como_sl
+    label: Imponer transferencia SEPA inmediata con protocolo de S.L. (2.600 €)
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      stats:
+        reputation:
+          min: 60
+    result_text: Ante una sociedad consolidada, Tesorería guarda el papel timbrado de 1990 y autoriza transferencia SEPA limpia de 2.600 €.
+    effects:
+      billed_income: 2600
+      stress: -2
+      moral: 6
+      reputation: 5

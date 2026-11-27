@@ -2,7 +2,7 @@ schema_version: 1
 id: gestor_apagon_vacaciones_julio
 category: gestor
 title: "Quince de julio: gestoría en servicios mínimos"
-body: "Treinta y nueve grados en la calle y cinco días para cerrar el trimestre de verano. Necesitas aclarar dos facturas con retención, pero salta el contestador y Paco manda una foto borrosa desde un chiringuito."
+body: Treinta y nueve grados en la calle y cinco días para cerrar el trimestre de verano. Necesitas aclarar dos facturas con retención, pero salta el contestador y Paco manda una foto borrosa desde un chiringuito.
 tags:
   - verano
   - trimestre
@@ -16,17 +16,18 @@ requirements:
     - 7
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 12
 cooldown_months: 11
 max_occurrences: 3
 exclusive_with: []
 choices:
   - id: cuadrar_asientos_con_cafe_con_hielo
-    label: "Armarte de ventilador y cuadrar tú mismo los asientos antes del veinte"
+    label: Armarte de ventilador y cuadrar tú mismo los asientos antes del veinte
     outcomes:
       - id: cuadre_veraniego_limpio
         weight: 60
-        result_text: "Pierdes una tarde entera repasando casillas a treinta grados, pero clavas la autoliquidación sin gastar un euro extra."
+        result_text: Pierdes una tarde entera repasando casillas a treinta grados, pero clavas la autoliquidación sin gastar un euro extra.
         effects:
           stress: 9
           moral: 3
@@ -34,7 +35,7 @@ choices:
           fiscal_risk: -2
       - id: gasto_olvidado_por_calor
         weight: 40
-        result_text: "Con las prisas dejas fuera varias facturas deducibles por prudencia excesiva y terminas ingresando de más este trimestre."
+        result_text: Con las prisas dejas fuera varias facturas deducibles por prudencia excesiva y terminas ingresando de más este trimestre.
         effects:
           cash_delta: -260
           stress: 11
@@ -43,20 +44,20 @@ choices:
           set_flags:
             - susto_con_paco
   - id: pagar_revision_externa_guardia
-    label: "Pagar una revisión puntual de guardia para presentar en plazo (190 €)"
-    result_text: "Un fiscalista que veranea en agosto repasa tus libros en una hora, corrige las retenciones y deja todo listo para domiciliar sin sustos."
+    label: Pagar una revisión puntual de guardia para presentar en plazo (190 €)
+    result_text: Un fiscalista que veranea en agosto repasa tus libros en una hora, corrige las retenciones y deja todo listo para domiciliar sin sustos.
     effects:
       deductible_expense: 190
       stress: -4
       moral: 2
       fiscal_risk: -8
   - id: saltar_a_elena_en_pleno_julio
-    label: "Cortar con el chiringuito y fichar al despacho de Elena Montes (170 €/mes)"
+    label: Cortar con el chiringuito y fichar a Elena Montes (260 €/mes)
     requirements:
       stats:
         money:
           min: 350
-    result_text: "La socia de guardia del despacho de Elena asume tus libros en media hora, clava el cierre de julio y jubila para siempre los audios playeros."
+    result_text: La socia de guardia del despacho de Elena asume tus libros en media hora, clava el cierre de julio y jubila para siempre los audios playeros.
     effects:
       set_gestor:
         tier: premium

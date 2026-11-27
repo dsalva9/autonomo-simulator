@@ -45,3 +45,15 @@ choices:
       moral: -3
       personal_life: 2
       reputation: -4
+  - id: resolver_via_certificado_sl_limpio
+    label: Tramitar por vía rápida acreditando expediente tributario impoluto
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 15
+    result_text: "Tu historial limpio ante Hacienda agiliza el desbloqueo en Intervención: aprueban la factura con recargo de gestión el mismo día."
+    effects:
+      billed_income: 1250
+      stress: -2
+      moral: 5
+      fiscal_risk: -3

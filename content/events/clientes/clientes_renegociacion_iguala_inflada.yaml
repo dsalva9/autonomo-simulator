@@ -27,28 +27,21 @@ choices:
       reputation: 0
   - id: presentar_informe_horas_y_actualizar_cuota
     label: Mostrar el desglose real de horas y subir la iguala a su volumen
-    outcomes:
-      - id: aceptan_nuevo_tramo
-        weight: 65
-        result_text: "Con los datos delante no tienen réplica posible: aprueban el tramo superior y por fin cobras cada hora que trabajas."
-        effects:
-          add_modifier:
-            id: mod_iguala_recalculada
-            label: Iguala reajustada a horas reales
-            remaining_months: 4
-            monthly_billed_delta: 360
-            monthly_stress_delta: 2
-          moral: 4
-          reputation: 1
-          stress: 8
-      - id: prefieren_cenirse_a_diez_horas
-        weight: 35
-        result_text: No suben presupuesto, pero frenan en seco las peticiones extra para no pasarse del cupo. Recuperas veinte horas libres al mes.
-        effects:
-          billed_income: 400
-          stress: 2
-          moral: 2
-          personal_life: 4
+    requirements:
+      stats:
+        stress:
+          max: 52
+    result_text: Con temple sereno y métricas irrebatibles sobre la mesa, aprueban sin pestañear el tramo superior y cobras cada hora real.
+    effects:
+      add_modifier:
+        id: mod_iguala_recalculada
+        label: Iguala reajustada a horas reales
+        remaining_months: 4
+        monthly_billed_delta: 300
+        monthly_stress_delta: 1
+      moral: 5
+      reputation: 2
+      stress: 2
   - id: callar_y_seguir_regalando_horas
     label: No abrir el melón por miedo a que cancelen el contrato
     result_text: Conservas la relación sin roces, pero regalas dieciocho horas extra sin facturar un solo euro adicional.

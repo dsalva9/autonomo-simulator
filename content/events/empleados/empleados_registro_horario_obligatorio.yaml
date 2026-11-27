@@ -1,8 +1,8 @@
 schema_version: 1
 id: empleados_registro_horario_obligatorio
 category: empleados
-title: "El parte diario de registro horario"
-body: "Un colega del polígono te avisa tomando café de que Inspección de Trabajo está pidiendo el registro diario de jornada en despachos pequeños. Ahora mismo vuestro control horario consiste en buena fe y un pósit arrugado."
+title: El parte diario de registro horario
+body: Un colega del polígono te avisa tomando café de que Inspección de Trabajo está pidiendo el registro diario de jornada en despachos pequeños. Ahora mismo vuestro control horario consiste en buena fe y un pósit arrugado.
 tags:
   - plantilla
   - normativa_laboral
@@ -13,14 +13,15 @@ requirements:
   has_employee: true
   forbidden_flags:
     - registro_horario_al_dia
+  max_month: 48
 weight: 9
 cooldown_months: 14
 max_occurrences: 2
 exclusive_with: []
 choices:
   - id: implantar_app_fichaje_homologada
-    label: "Contratar una aplicación sencilla de fichaje digital (210 €)"
-    result_text: "Configuráis el fichaje desde el móvil en diez minutos, pactáis desconexión digital real y duermes sabiendo que tienes todos los informes en regla."
+    label: Contratar una aplicación sencilla de fichaje digital (210 €)
+    result_text: Configuráis el fichaje desde el móvil en diez minutos, pactáis desconexión digital real y duermes sabiendo que tienes todos los informes en regla.
     effects:
       deductible_expense: 210
       moral: 3
@@ -30,23 +31,24 @@ choices:
       set_flags:
         - registro_horario_al_dia
   - id: llevar_hojas_firmadas_a_mano
-    label: "Imprimir cuadrantes mensuales en papel y perseguir firmas cada viernes"
-    result_text: "No gastas ni un euro en programas, aunque cada fin de mes toca buscar bolígrafo y archivar carpetas como en una oficina de 1994."
+    label: Imprimir cuadrantes mensuales en papel y perseguir firmas cada viernes
+    result_text: No gastas ni un euro en programas, aunque cada fin de mes toca buscar bolígrafo y archivar carpetas como en una oficina de 1994.
     effects:
       moral: -2
       stress: 4
       employee_satisfaction: -3
   - id: pasar_del_tramite_por_pequenos
-    label: "Ignorar el papeleo confiando en que nadie mira un estudio diminuto"
+    label: Ignorar el papeleo confiando en que nadie mira un estudio diminuto
     outcomes:
       - id: trimestre_sin_visitas
         weight: 65
-        result_text: "Pasan los meses sin noticias del ministerio y te ahorras otra rutina administrativa más en la semana."
+        result_text: Pasan los meses sin noticias del ministerio y te ahorras otra rutina administrativa más en la semana.
         effects:
           stress: -1
+          cash_delta: 350
       - id: requerimiento_sancion_leve
         weight: 35
-        result_text: "Llega requerimiento formal por falta de registro documental y toca abonar 750 € de sanción no deducible con cara de circunstancias."
+        result_text: Llega requerimiento formal por falta de registro documental y toca abonar 750 € de sanción no deducible con cara de circunstancias.
         effects:
           cash_delta: -750
           moral: -5

@@ -1,7 +1,7 @@
 schema_version: 1
 id: gestor_paco_pierde_facturas
 category: gestor
-title: "«Oye, ¿no tendrás otra copia de los gastos del trimestre?»"
+title: «Oye, ¿no tendrás otra copia de los gastos del trimestre?»
 body: "A dos días del cierre trimestral, Paco llama con ruido de freidora de fondo: una mancha de aceite arruinó tu carpeta de gastos deducibles y mezcló dos facturas tuyas con las de una frutería."
 tags:
   - gestoria
@@ -19,17 +19,18 @@ requirements:
     - 10
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 12
 cooldown_months: 9
 max_occurrences: 3
 exclusive_with: []
 choices:
   - id: dejar_que_presente_a_ojo
-    label: "Decirle que presente con lo que tenga y rezar fuerte"
+    label: Decirle que presente con lo que tenga y rezar fuerte
     outcomes:
       - id: pasa_desapercibido
         weight: 55
-        result_text: "Pierdes parte de las deducciones por el camino, pero nadie levanta la liebre este trimestre."
+        result_text: Pierdes parte de las deducciones por el camino, pero nadie levanta la liebre este trimestre.
         effects:
           cash_delta: -180
           stress: 5
@@ -39,7 +40,7 @@ choices:
             - susto_con_paco
       - id: descuadre_cantoso
         weight: 45
-        result_text: "El baile de cifras salta en los cruces automáticos y sales del trimestre jurando buscar una asesoría seria cuanto antes."
+        result_text: El baile de cifras salta en los cruces automáticos y sales del trimestre jurando buscar una asesoría seria cuanto antes.
         effects:
           cash_delta: -280
           stress: 11
@@ -52,8 +53,8 @@ choices:
               delay_months: 1
               probability: 0.85
   - id: reconstruir_facturas_de_madrugada
-    label: "Pasar la noche descargando duplicados PDF de veinte proveedores"
-    result_text: "Llegas al alba con los ojos cuadrados, pero rescatas cada euro deducible y obligas a Paco a cuadrar el modelo al céntimo."
+    label: Pasar la noche descargando duplicados PDF de veinte proveedores
+    result_text: Llegas al alba con los ojos cuadrados, pero rescatas cada euro deducible y obligas a Paco a cuadrar el modelo al céntimo.
     effects:
       deductible_expense: 220
       stress: 10
@@ -61,8 +62,8 @@ choices:
       personal_life: -5
       fiscal_risk: -3
   - id: despedir_a_paco_en_el_acto
-    label: "Recoger tus carpetas ahora mismo y volver a la autogestión"
-    result_text: "Subes encima de la churrería, rescatas tus papeles supervivientes y decides que para equivocarte ya te bastas tú solo."
+    label: Recoger tus carpetas ahora mismo y volver a la autogestión
+    result_text: Subes encima de la churrería, rescatas tus papeles supervivientes y decides que para equivocarte ya te bastas tú solo.
     effects:
       set_gestor:
         tier: self

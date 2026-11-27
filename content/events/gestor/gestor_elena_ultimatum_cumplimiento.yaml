@@ -1,0 +1,59 @@
+schema_version: 1
+id: gestor_elena_ultimatum_cumplimiento
+category: gestor
+title: "Elena cierra tu carpeta: «Así no firmo tus libros»"
+body: "Elena te cita sin café ni cortesías: tu riesgo fiscal acumulado supera la línea roja de su colegio profesional. O pagas una limpieza forense antes del cierre o su despacho renuncia a tu representación hoy mismo."
+tags:
+  - gestoria
+  - elena
+  - cumplimiento
+character_id: gestor_premium_elena
+character_expression: stressed
+illustration_id: banner_gestor_urgencia
+requirements:
+  min_month: 18
+  gestor_tiers:
+    - premium
+  stats:
+    fiscal_risk:
+      min: 48
+weight: 22
+cooldown_months: 12
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: pagar_auditoria_forense_y_limpieza
+    label: "Pagar limpieza forense y complementarias (2.400 € deducibles)"
+    requirements:
+      stats:
+        money:
+          min: 2600
+    result_text: "El sablazo escuece, pero Elena reordena cuatro trimestres de cabriolas contables y vuelve a firmar tus modelos sin temblarle el pulso."
+    effects:
+      deductible_expense: 2400
+      fiscal_risk: -24
+      stress: 4
+      moral: -4
+      clear_flags:
+        - elena_aviso_cumplimiento
+  - id: bajar_a_paco_el_rapido
+    label: "Recoger tus carpetas y volver con Paco el Rápido"
+    result_text: "Elena archiva tu renuncia con frialdad notarial. Paco te recibe con los brazos abiertos y un archivador de anillas heredado de 2008."
+    effects:
+      set_gestor:
+        tier: cheap
+        character_id: gestor_barato_paco
+      stress: 6
+      reputation: -4
+      clear_flags:
+        - elena_aviso_cumplimiento
+  - id: volver_a_autogestion
+    label: "Romper con la asesoría y presentar tú los modelos"
+    result_text: "Te ahorras su iguala y sus sermones, aunque a partir del próximo trimestre vuelves a pelear tú solo contra la Sede Electrónica."
+    effects:
+      set_gestor:
+        tier: self
+      stress: 10
+      reputation: -6
+      clear_flags:
+        - elena_aviso_cumplimiento

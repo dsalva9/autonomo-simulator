@@ -1,0 +1,61 @@
+schema_version: 1
+id: gestor_auditoria_cuentas_anuales_registro
+category: gestor
+title: "Depósito de Cuentas Anuales en el Registro Mercantil"
+body: "Se acerca el 30 de julio y toca legalizar libros, aprobar la memoria y depositar las Cuentas Anuales de la sociedad. Si se pasa el plazo, el Registro cierra tu hoja mercantil y el ICAC reparte sanciones."
+tags:
+  - sociedad_limitada
+  - registro_mercantil
+character_id: null
+illustration_id: banner_gestor_base
+requirements:
+  min_month: 54
+  months_of_year:
+    - 6
+    - 7
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 12
+cooldown_months: 11
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: depositar_cuentas_en_plazo
+    label: "Preparar memoria y depositar cuentas en plazo (1.400 €)"
+    result_text: "Entre tasas registrales y cuadres de última hora pierdes tres tardes, pero tu sociedad sigue abierta y presentable ante cualquier licitación."
+    effects:
+      deductible_expense: 1400
+      fiscal_risk: -8
+      reputation: 3
+      stress: 2
+  - id: cierre_express_con_elena
+    label: "Delegar el depósito completo en el equipo de Elena (950 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+    result_text: "Elena presenta balance, memoria y certificación de junta antes del puente, dejándote el verano despejado y el expediente impecable."
+    effects:
+      deductible_expense: 950
+      fiscal_risk: -10
+      reputation: 4
+      stress: -4
+  - id: retrasar_deposito_y_arriesgar_hoja
+    label: "Dejarlo para otoño y confiar en que no salte sanción"
+    outcomes:
+      - id: multa_icac_hoja_cerrada
+        weight: 45
+        result_text: "El ICAC abre expediente sancionador y un banco congela una línea por hoja registral bloqueada: 2.800 € de multa para volver a la casilla de salida."
+        effects:
+          cash_delta: -2800
+          fiscal_risk: 12
+          reputation: -4
+          stress: 10
+          moral: -5
+      - id: prorroga_sin_sancion
+        weight: 55
+        result_text: "El atasco del verano te da margen para presentar fuera de plazo sin multa inmediata, aunque tu rating mercantil baja unos escalones."
+        effects:
+          fiscal_risk: 12
+          reputation: -4
+          stress: 4

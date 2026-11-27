@@ -13,6 +13,7 @@ requirements:
   min_month: 12
   months_of_year:
     - 1
+  max_month: 48
 weight: 12
 cooldown_months: 11
 max_occurrences: 4
@@ -21,9 +22,15 @@ choices:
     label: Retocar una base imponible a mano para que trague el envío
     result_text: El formulario valida en verde en dos minutos, pero dejas un descuadre entre el anual y tus trimestres previos.
     effects:
+      cash_delta: 1100
+      moral: -1
       stress: -2
-      moral: -2
-      fiscal_risk: 12
+      fiscal_risk: 15
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 18
+          probability: 0.3
+          priority: high
   - id: puntear_cuatro_trimestres_factura_a_factura
     label: Revisar los cuatro trimestres hasta cazar el céntimo rebelde
     result_text: Encuentras dos facturas con tres decimales de junio, ajustas el cuarto trimestre y cierras el año limpio.

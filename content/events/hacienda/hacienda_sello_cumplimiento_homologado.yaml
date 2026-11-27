@@ -19,7 +19,7 @@ requirements:
     - expediente_inspeccion_abierto
 weight: 12
 cooldown_months: 14
-max_occurrences: 3
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: celebrar_expediente_sin_mas_carga
@@ -54,3 +54,5 @@ choices:
       moral: 7
       reputation: 4
       fiscal_risk: -10
+      set_flags:
+        - homologacion_proveedor_activa

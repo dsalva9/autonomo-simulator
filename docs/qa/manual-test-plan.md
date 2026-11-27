@@ -1,6 +1,6 @@
-# Manual Test Plan — Autónomo Simulator (Phase 3.6)
+# Manual Test Plan — Autónomo Simulator (v2 Overhaul)
 
-Human-readable and Playwright-automated QA scenarios validating Phase 0–3.6 gameplay, the 300-event (`clientes: 90`, `hacienda: 56`, `familia: 57`, `empleados: 48`, `gestor: 49`) / 8-character catalog, full Spanish (`es-ES`) and English (`en`, `2,518` keys + full EN temporal modifier map) localization (`ES | EN` switcher + `L` hotkey), two-step cashflow & tax-adjusted liquidity (`Caja` vs `Libre`), 60 `"ready"` Style A Franco-Spanish editorial comic `.webp` & reactive `.svg` assets, Phase 3.6 spatial reorganization (`< 1024px` zero-scroll `Despacho` vs live `Entorno` diorama, `< 768px` `[⚙]` utility sheet, `667×375` `58px` left rail, `>= 1024px` `lg:` symmetric `100dvh` 2-column/3-column workspace through `1920×1080`), procedural Web Audio & *Modo ágil* 2.0, Year-10 `AnnualSummaryModal` → `VictoryModal` sequencing, Endless Mode (`0.5x` post-M120 living-cost taper + *Jubilarse con honores*), offline PWA + OpenGraph + portable `itch.io` bundle (`pnpm package:itch`), IndexedDB persistence, 15 achievements, and illustrated `1080×1350` shareable certificate generation.
+Human-readable and Playwright-automated QA scenarios validating v2 gameplay, the 362-event / 8-character catalog, 4-stage business tier progression (`Autónomo` → `Estudio` → `S.L.` → `Agencia` + `Boutique Sénior`), multi-staff payroll & Entorno climate, progressive RETA & IRPF brackets vs S.L. *Impuesto de Sociedades* (24%), 4-year *prescripción fiscal* historical audit window, Elena compliance enforcement, RPG stat-check choice gates, full Spanish (`es-ES`) and English (`en`) localization (`ES | EN` switcher + `L` hotkey), two-step cashflow & tax-adjusted liquidity (`Caja` vs `Libre`), 66 `"ready"` Style A Franco-Spanish editorial comic `.webp` & reactive `.svg` assets, spatial ergonomics (`< 1024px` zero-scroll `Despacho` vs live `Entorno` diorama, `< 768px` `[⚙]` utility sheet, `667×375` `58px` left rail, `>= 1024px` `lg:` symmetric `100dvh` 2-column/3-column workspace through `1920×1080`), procedural Web Audio & *Modo ágil* 2.0, Year-10 `AnnualSummaryModal` → `VictoryModal` (`250.000 €` / `120 meses`) sequencing, Endless Mode, offline PWA + OpenGraph + portable `itch.io` bundle (`pnpm package:itch`), IndexedDB persistence (`v1 → v2` migration), 18 achievements, and illustrated `1080×1350` shareable certificate generation (`BOX [04]` structure).
 
 ---
 
@@ -41,12 +41,12 @@ All targets below are **mandatory** verification gates for user-facing releases 
 - **Preconditions**: Fresh browser context with empty `IndexedDB` (`autonomo:active_run` unset).
 - **Steps**:
   1. Open the application root URL.
-  2. Verify `TitleScreen` (`[data-testid="title-screen"]`) displays official header (`MODELO 036`), title **Autónomo Simulator**, quote *«Sé tu propio jefe. Descubre por qué era mala idea.»*, and tabs for **Salón de Caídos (0)** and **Logros (0/15)**.
+  2. Verify `TitleScreen` (`[data-testid="title-screen"]`) displays official header (`MODELO 036`), title **Autónomo Simulator**, quote *«Sé tu propio jefe. Descubre por qué era mala idea.»*, and tabs for **Salón de Caídos (0)** and **Logros (0/18)**.
   3. Enter reproducible seed `FASE0-QA-2026` into `[data-testid="seed-input"]`.
   4. Click **Nueva alta en el RETA** (`[data-testid="start-run-btn"]`).
 - **Expected Result**:
   - Transitions to `GameScreen` (`[data-testid="game-screen"]`).
-  - Top `IndicatorBar` shows `Año 1 · Mes 1`, `Trimestre en 2 meses`, positive `Caja` (`3.052 €` after Month 1 recurring `+452 €` net cashflow on `2.600 €` starting capital), `Reserva Trimestre: -520 € · Libre: 2.532 €`, and bounded gauges (`Moral`, `Estrés`, `Vida personal`, `Reputación`).
+  - Top `IndicatorBar` shows `Año 1 · Mes 1`, `Trimestre en 2 meses`, positive `Caja` (`3.194 €` after Month 1 recurring `+394 €` net cashflow on `2.800 €` starting capital), `Reserva Trimestre: -430 € · Libre: 2.764 €`, and bounded gauges (`Moral`, `Estrés`, `Vida personal`, `Reputación`).
   - `EventStage` displays the docked Month 1 recurring economy strip (`month-economy-strip`) and an active narrative `[data-testid="event-card"]` with at least 2 choices and at least 1 enabled choice.
 
 ---
@@ -115,23 +115,23 @@ All targets below are **mandatory** verification gates for user-facing releases 
 ## 3. Phase 1 Art, Polaroids, Achievements & Endings Scenarios (`tests/ui/phase1.spec.ts`)
 
 ### QA-08: Style A `.webp` Reactive Desk States & `.svg` Desk Props
-- **Preconditions**: Active runs exercising calm desk (`P35-PACO-493`), dating/family (`P36-ALEX-24`), and high-stress escalation (`P36-BURN-35`). On `< 1024px`, switch to `mobile-tab-entorno` when inspecting `scene-bg` and `scene-prop-*`, then switch back to `mobile-tab-despacho` to play turns.
+- **Preconditions**: Active runs exercising calm desk (`P35-PACO-493`), dating/family (`P36-ALEX-24`), and high-stress escalation (`V2-BURN-232`). On `< 1024px`, switch to `mobile-tab-entorno` when inspecting `scene-bg` and `scene-prop-*`, then switch back to `mobile-tab-despacho` to play turns.
 - **Steps**:
   1. Start `P35-PACO-493`, hire Paco (`contratar_paco_barato`), advance to Month 2 (`entrega_express_contado`), and inspect `[data-testid="scene-bg"]` and `[data-testid="scene-prop-facturas"]`.
-  2. In `P36-ALEX-24`, resolve Month 1 (`familia_cita_con_alex` → `apostar_por_citas_con_alex`) and inspect `[data-testid="scene-prop-familia"]`.
-  3. In `P36-BURN-35`, escalate stress past `50` (verify `[data-testid="scene-prop-cafe"]`) and past `75` (verify `[data-testid="scene-bg"]` switches `data-asset-id` to `bg_despacho_burnout`).
+  2. In `P36-ALEX-24`, resolve Month 1 (`escapada_desconexion_total`) and Month 2 (`familia_cita_con_alex` → `apostar_por_citas_con_alex`) and inspect `[data-testid="scene-prop-familia"]`.
+  3. In `V2-BURN-232`, escalate stress past `50` (verify `[data-testid="scene-prop-cafe"]`) and past `75` (verify `[data-testid="scene-bg"]` switches `data-asset-id` to `bg_despacho_burnout`).
 - **Expected Result**:
   - Desk `.webp` backgrounds decode at `1280 × 720` and `.svg` props decode at `256 × 256` with HTTP `200`, `status: "ready"`, and zero broken images.
 
 ---
 
-### QA-09: Modular `8:3` Category Banners vs `16:9` Bespoke Milestone Panels
-- **Preconditions**: Seed `P35-PACO-493` (standard event) and `P36-BURN-35` on a milestone event (`hacienda_carta_certificada`), alongside the 60-asset `"ready"` catalog.
+### QA-09: Modular `16:9` Category Banners vs `16:9` Bespoke Milestone Panels
+- **Preconditions**: Seed `P35-PACO-493` (standard event) and `V2-BURN-232` on a milestone event (`hacienda_carta_certificada`), alongside the 66-asset `"ready"` catalog.
 - **Steps**:
   1. On `P35-PACO-493` Month 1 (`gestor_oferta_servicios`), inspect `[data-testid="event-banner-art"]`.
   2. On `hacienda_carta_certificada`, inspect `[data-testid="event-banner-art"]`.
 - **Expected Result**:
-  - Standard events render modular `8:3` banner (`data-banner-kind="banner"`, `960 × 360` `.webp`).
+  - Standard events render modular `16:9` banner (`data-banner-kind="banner"`, `960 × 540` `.webp`).
   - Milestone events with `illustration_id` render bespoke `16:9` comic scene (`data-banner-kind="milestone"`, `960 × 540` `.webp`).
 
 ---
@@ -140,7 +140,7 @@ All targets below are **mandatory** verification gates for user-facing releases 
 - **Preconditions**: Seed `P35-PACO-493` on both Desktop (`1440×900`) and Mobile (`390×844`).
 - **Steps**:
   1. Select `contratar_paco_barato` on Month 1 and inspect `[data-testid="entorno-polaroid-gestor"]` inside `EntornoPanel`.
-  2. Advance through Month 3 Trimestre to Month 4 (`gestor_paco_espantada_benidorm`) and inspect `[data-testid="event-character-polaroid"]`, `data-expression="pleased"`, `data-asset-id="char_gestor_barato_paco_confiado"`, `[data-testid="event-character-polaroid-img"]`, and `figcaption` nameplate.
+  2. Advance through Month 3 Trimestre to Month 4 (`gestor_paco_caja_zapatos_tickets`) and inspect `[data-testid="event-character-polaroid"]`, `data-expression="stressed"`, `data-asset-id="char_gestor_barato_paco_estresado"`, `[data-testid="event-character-polaroid-img"]`, and `figcaption` nameplate.
   3. Measure document-space bounding boxes of `event-character-polaroid` and every `[data-testid^="choice-btn-"]` on both `1440×900` and `390×844`.
 - **Expected Result**:
   - Square `512 × 512` `.webp` bust portrait sits inside crisp HTML/CSS Polaroid frame (`#fffdf8`, `2px solid #1f2421`, red pushpin, visible Spanish nameplate).
@@ -152,19 +152,19 @@ All targets below are **mandatory** verification gates for user-facing releases 
 ### QA-11: Accessibility Reduced-Motion Override & Achievement Catalog Preservation
 - **Preconditions**: Fresh `TitleScreen` with OS `prefers-reduced-motion: no-preference`.
 - **Steps**:
-  1. Click **Logros (0/15)** (`[data-testid="title-tab-achievements"]`) and inspect `[data-testid="achievements-list"]`.
+  1. Click **Logros (0/18)** (`[data-testid="title-tab-achievements"]`) and inspect `[data-testid="achievements-list"]`.
   2. Click `[data-testid="toggle-reduced-motion"]` (`Reducido: SÍ`), then start a run with an NPC card (`P36-ALEX-24`).
   3. Inspect `getComputedStyle(polaroid).transform` on `[data-testid="event-character-polaroid"]`.
 - **Expected Result**:
-  - `achievements-list` preserves all 9 original Phase 1 achievement IDs within the expanded 15-achievement catalog.
+  - `achievements-list` preserves all 9 original Phase 1 achievement IDs within the expanded 18-achievement v2 catalog.
   - Root container carries `data-reduced-motion="true"`, flattening `.polaroid-card` CSS transform to `none` (`matrix(1, 0, 0, 1, 0, 0)`).
 
 ---
 
 ### QA-12: Deterministic Burnout Game Over, Bespoke `16:9` Ending Comic Panel & Achievement Sync
-- **Preconditions**: Seed `P36-BURN-35` played deterministically through `defeat_burnout_stress`.
+- **Preconditions**: Seed `V2-BURN-232` played deterministically through `defeat_burnout_stress`.
 - **Steps**:
-  1. Complete the deterministic high-stress escalation path (`P36-BURN-35`) until `stress >= 100`, acknowledge the fatal `outcome-panel`, and enter `EndRunScreen`.
+  1. Complete the deterministic high-stress escalation path (`V2-BURN-232`) until `stress >= 100`, acknowledge the fatal `outcome-panel`, and enter `EndRunScreen`.
   2. Inspect `[data-testid="end-run-illustration"]`, `[data-testid="end-run-quote"]`, fiscal breakdown cards, and `[data-testid="share-canvas"]`.
   3. Click `[data-testid="end-return-title-btn"]` and open **Logros**.
 - **Expected Result**:
@@ -187,13 +187,13 @@ All targets below are **mandatory** verification gates for user-facing releases 
 ### QA-14: Two-Step Cashflow Timing & Tax-Adjusted Liquidity (`Caja` vs `Libre`)
 - **Preconditions**: Fresh seeded run (`P35-CASH-158`) with `fastPacing` disabled (`Normal`).
 - **Steps**:
-  1. Start `P35-CASH-158` (`initial_indicators.money = 2.600 €` + Month 1 net recurring `+452 €`) and inspect `[data-testid="indicator-money"]`, `[data-testid="indicator-net-cash"]`, and `[data-testid="ledger-net-after-tax"]` in `CuentasPanel`.
+  1. Start `P35-CASH-158` (`initial_indicators.money = 2.800 €` + Month 1 net recurring `+394 €`) and inspect `[data-testid="indicator-money"]`, `[data-testid="indicator-net-cash"]`, and `[data-testid="ledger-net-after-tax"]` in `CuentasPanel`.
   2. Select cash-reducing choice `escapada_desconexion_total` (`-90 €`) on Month 1 and inspect HUD **before** clicking **Continuar**.
-  3. Click `[data-testid="outcome-continue-btn"]` and inspect HUD transition to Month 2 (`Caja: 3.445 €`).
+  3. Click `[data-testid="outcome-continue-btn"]` and inspect HUD transition to Month 2 (`Caja: 3.509 €`).
   4. Select cash-increasing choice `exigir_euros_aunque_sea_en_dos_plazos` (`+600 €`) on Month 2 and inspect HUD **before** clicking **Continuar**, then acknowledge.
 - **Expected Result**:
-  - Month 1 HUD displays `Caja: 3.052 €` alongside `Reserva Trimestre: -520 € · Libre: 2.532 €`, and `CuentasPanel` displays `Margen tras provisión fiscal: -79 €` (`[data-testid="ledger-net-after-tax"]`).
-  - While `[data-testid="outcome-panel"]` is open on Month `N`, `[data-testid="indicator-calendar"]` remains on `Año 1 · Mes N` (never jumping prematurely to `N+1`), `[data-testid="indicator-money-value"]` reflects the immediate post-choice balance (`2.962 €` then `4.045 €`), and `[data-testid="indicator-money-delta"]` shows `-90 €` (red `#9e221b`) on cash loss and `+600 €` (green `#1f5c53`) on cash gain.
+  - Month 1 HUD displays `Caja: 3.194 €` alongside `Reserva Trimestre: -430 € · Libre: 2.764 €`, and `CuentasPanel` displays `Margen tras provisión fiscal: -40 €` (`[data-testid="ledger-net-after-tax"]`).
+  - While `[data-testid="outcome-panel"]` is open on Month `N`, `[data-testid="indicator-calendar"]` remains on `Año 1 · Mes N` (never jumping prematurely to `N+1`), `[data-testid="indicator-money-value"]` reflects the immediate post-choice balance (`3.104 €` then `4.109 €`), and `[data-testid="indicator-money-delta"]` shows `-90 €` (red `#9e221b`) on cash loss and `+600 €` (green `#1f5c53`) on cash gain.
   - Only clicking `[data-testid="outcome-continue-btn"]` advances `indicator-calendar` to `Mes N+1` and applies the next month's recurring cashflow.
 
 ---
@@ -211,16 +211,16 @@ All targets below are **mandatory** verification gates for user-facing releases 
 
 ---
 
-### QA-16: Strict 3-Column Desktop Tidy Alignment & 15-Seal `HistorialPanel` Audit (`1440×900`)
+### QA-16: Strict 3-Column Desktop Tidy Alignment & 18-Seal `HistorialPanel` Audit (`1440×900`)
 - **Preconditions**: Desktop viewport `{ width: 1440, height: 900 }`, active run (`P35-BANNER-139`) scrolled to top (`scrollY === 0`).
 - **Steps**:
   1. Assert `document.documentElement.scrollWidth <= 1440` and `document.documentElement.scrollHeight <= 902`.
   2. Measure bounding boxes of Left column (`[data-testid="scene-renderer"]` + `EntornoPanel`), Center column (`[data-testid="event-card"]` with docked `[data-testid="month-economy-strip"]`), and Right column (`[data-testid="panel-cuentas"]` + `[data-testid="panel-historial"]`).
-  3. Inspect `[data-testid="panel-historial"]` career seals counter (`Sellos de carrera 0/15`), `.historial-seals-grid > span` 15-item grid, and `scrollWidth <= clientWidth + 1`.
+  3. Inspect `[data-testid="panel-historial"]` career seals counter (`Sellos de carrera 0/18`), `.historial-seals-grid > span` 18-item grid, and `scrollWidth <= clientWidth + 1`.
 - **Expected Result**:
   - Strict 3-track horizontal non-overlap (`leftBox.x + leftBox.width <= centerBox.x + 1` and `centerBox.x + centerBox.width <= rightBox.x + 1`) within `1440px`.
   - Symmetrical top edges across all 3 columns (`Math.max(topLeft, topCenter, topRight) - Math.min(topLeft, topCenter, topRight) <= 2`).
-  - `HistorialPanel` renders all `15` career seals cleanly alongside `CuentasPanel` without horizontal overflow.
+  - `HistorialPanel` renders all `18` career seals cleanly alongside `CuentasPanel` without horizontal overflow.
 
 ---
 
@@ -245,13 +245,13 @@ All targets below are **mandatory** verification gates for user-facing releases 
 
 ---
 
-### QA-19: Illustrated `1080×1350` Share Card & Expanded 15-Achievement Catalog
+### QA-19: Illustrated `1080×1350` Share Card & Expanded 18-Achievement Catalog
 - **Preconditions**: Fresh `TitleScreen` → active run exited via `AbandonRunModal` (`abandon_oposiciones`) to `EndRunScreen`.
 - **Steps**:
-  1. On `TitleScreen`, open **Logros (0/15)** (`[data-testid="title-tab-achievements"]`) and verify all 15 `achievement-item-*` rows render (`primer_trimestre`, `primer_ano`, `gestor_contratado`, `aplazamiento_solicitado`, `numeros_rojos_superados`, `superviviente_hacienda`, `colchon_10k`, `primer_empleado`, `familia_formada`, `criatura_en_casa`, `cinco_anos`, `facturacion_100k`, `heroe_120m`, `ricachon_150k`, `modo_infinito`).
+  1. On `TitleScreen`, open **Logros (0/18)** (`[data-testid="title-tab-achievements"]`) and verify all 18 `achievement-item-*` rows render (`primer_trimestre`, `primer_ano`, `gestor_contratado`, `aplazamiento_solicitado`, `numeros_rojos_superados`, `superviviente_hacienda`, `colchon_10k`, `primer_empleado`, `familia_formada`, `criatura_en_casa`, `cinco_anos`, `facturacion_100k`, `heroe_120m`, `ricachon_250k`, `modo_infinito`, `sociedad_limitada`, `agencia_consolidada`, `ejercicio_prescrito`).
   2. Trigger voluntary exit (`abandon-oposiciones-btn`) and inspect `[data-testid="end-run-illustration"]` (`960 × 540`) and `[data-testid="share-canvas"]` (`1080 × 1350`).
 - **Expected Result**:
-  - `loadAndRenderShareCard` preloads the ending `.webp` illustration and composites a multi-color framed `16:9` (`512 × 288`) comic vignette (`ANEXO GRÁFICO [00]`) onto the `1080 × 1350` `<canvas>` with zero text overlap and valid PNG output.
+  - `loadAndRenderShareCard` preloads the ending `.webp` illustration and composites a multi-color framed `16:9` (`512 × 288`) comic vignette (`ANEXO GRÁFICO [00]`) plus `CASILLA [04] · ESTRUCTURA` onto the `1080 × 1350` `<canvas>` with zero text overlap and valid PNG output.
 
 ---
 
@@ -260,7 +260,7 @@ All targets below are **mandatory** verification gates for user-facing releases 
 Fast, deterministic UX checks executed on every major change so obvious usability regressions (yo-yo scrolling, below-the-fold buttons, toast/header click occlusion, stranded scroll state, silent text clipping, or broken column baselines) are caught immediately without playing a 120-month run.
 
 ### QA-20: Zero Desktop Yo-Yo Scroll — Event Banner, Body, All Choices & Outcome Fit 100% Above the Fold (`1366×768` & `1440×900`)
-- **Preconditions**: Desktop Chromium resized to both `1366 × 768` (laptop) and `1440 × 900` (desktop), seeded run `P35-M4-HITO-72`.
+- **Preconditions**: Desktop Chromium resized to both `1366 × 768` (laptop) and `1440 × 900` (desktop), seeded run `V2-M4-HITO-37`.
 - **Steps**:
   1. Play Months 1 through 3, settle Trimestre (`trimestre-defer-btn`), and reach Month 4 (`hacienda_carta_certificada` featuring a `16:9` milestone comic banner + NPC Inspector Polaroid + 3 choices).
   2. On every active event card and every post-choice `outcome-panel`, measure `window.scrollY`, `document.documentElement.scrollHeight`, `window.innerHeight`, and the live viewport bounding boxes of `event-title`, `event-body`, every `choice-btn-*`, `outcome-panel`, `outcome-result-text`, and `outcome-continue-btn` **without** calling `scrollIntoViewIfNeeded()`.
@@ -322,7 +322,7 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 ---
 
 ### QA-25: Year-10 `AnnualSummaryModal` → `VictoryModal` Sequencing, Focus Trap & Above-the-Fold Layout (`1366×768`)
-- **Preconditions**: Desktop Chromium at `1366 × 768`, active run staged at Month 120 Q40 (`quarterly_tax`) / `victory_prompt` (`pending_victory_badge: "hero_120m"` / `"rich_150k"`).
+- **Preconditions**: Desktop Chromium at `1366 × 768`, active run staged at Month 120 Q40 (`quarterly_tax`) / `victory_prompt` (`pending_victory_badge: "hero_120m"` / `"rich_250k"`).
 - **Steps**:
   1. At Month 120 Q40, settle `QuarterlyTaxModal` (`trimestre-pay-btn`) and verify `AnnualSummaryModal` (`[data-testid="annual-summary-modal"]` for Año 10) opens **before** `VictoryModal`; dismiss `AnnualSummaryModal` via `[data-testid="annual-summary-close-btn"]` (`Enter`) and verify `VictoryModal` (`[data-testid="victory-modal"]`) opens immediately next.
   2. Verify `victory-continue-btn` and `victory-retire-btn` fit 100% inside `[0, 768]`, verify `victory-continue-btn` is auto-focused, press `Tab` 4 times to assert focus remains trapped inside `victory-modal`, press `ArrowDown` to focus `victory-retire-btn`, and press `Enter` to retire.
@@ -334,8 +334,8 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 ### QA-26: Full English (`en`) Localization, `ES <-> EN` Toggle + `L` Hotkey, Reload Persistence, Modifier Translation & Zero-Scroll UX (`1366×768` & `360×780`)
 - **Preconditions**: Executed in both `desktop-chromium` (`1366 × 768`) and `mobile-chromium` (`360 × 780`), using deterministic seed `P35-EN-LOCALE-134`.
 - **Steps**:
-  1. On `TitleScreen`, verify default `<html lang="es">`, click `[data-testid="locale-toggle-btn"]` (`ES | EN`), verify `<html lang="en">` and English CTAs/tabs (`Register as Self-Employed`, `Hall of the Fallen (0)`, `Achievements (0/15)`), and toggle `EN -> ES -> EN` using the `L` hotkey.
-  2. Start `P35-EN-LOCALE-134` and verify English HUD (`Year 1 · Month 1`, comma-formatted `3,052 €` and `Net: 2,532 €`), toggle `EN -> ES -> EN` via `L` and `locale-toggle-btn` (inside `mobile-utility-sheet` on `360×780`), and verify English event copy (`clientes_encargo_urgente`) + translated NPC Polaroid (`Borja "Mr. Exposure"`).
+  1. On `TitleScreen`, verify default `<html lang="es">`, click `[data-testid="locale-toggle-btn"]` (`ES | EN`), verify `<html lang="en">` and English CTAs/tabs (`Register as Self-Employed`, `Hall of the Fallen (0)`, `Achievements (0/18)`), and toggle `EN -> ES -> EN` using the `L` hotkey.
+  2. Start `P35-EN-LOCALE-134` and verify English HUD (`Year 1 · Month 1`, comma-formatted `3,194 €` and `Net: 2,764 €`), toggle `EN -> ES -> EN` via `L` and `locale-toggle-btn` (inside `mobile-utility-sheet` on `360×780`), and verify English event copy (`clientes_encargo_urgente`) + translated NPC Polaroid (`Borja "Mr. Exposure"`).
   3. On `1366×768` desktop, verify `window.scrollY === 0`, `scrollHeight <= innerHeight + 2`, all narrative/choice/outcome controls fit 100% inside `[headerBottom, 768]` without `scrollIntoViewIfNeeded()`, hit targets are unoccluded (`document.elementFromPoint`), narrative/choice text has zero silent truncation, and English side panels (`Account Ledger`, `Support Network`, `Dossier Logbook`) are visible. On `360×780` mobile, verify `scrollWidth <= 360`, unoccluded `Office sections` bottom tabs (`Desk`, `Ledger`, `Network`, `Logbook`), zero-scroll `Desk` choices above `mobile-desk-nav`, and automatic `scrollY === 0` reset on turn transitions.
   4. Select `entrega_express_contado`, verify English `outcome-panel` + `Continue`, advance to `Year 1 · Month 2`, reload the browser (`page.reload()`), verify `<html lang="en">` + `Continue run` (`Year 1 · Month 2`) persist in IndexedDB, and resume.
   5. Advance through Month 2 (`familia_gimnasio_abandonado` → `ir_dos_dias_fijos_a_entrenar`) and Month 3 (`instalar_lector_dni_electronico`), settle the English `QuarterlyTaxModal` (`FORM 303 / 130`), and inspect `[data-testid="panel-cuentas"]`.
@@ -347,7 +347,7 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 ### QA-27: Real Non-Fullscreen Windows Laptop (`1366×650`) & `1080p @ 150% DPI` (`1280×600`) Zero-Scroll Turn Loop + `2×2` 4-Choice Grid
 - **Preconditions**: Desktop Chromium resized to `{ width: 1366, height: 650 }` and `{ width: 1280, height: 600 }`.
 - **Steps**:
-  1. Start `P35-M4-HITO-72` and audit active event cards (`event-title`, `event-body`, all `choice-btn-*`) and post-choice `outcome-panel` + `outcome-continue-btn` at `scrollY === 0` without calling `scrollIntoViewIfNeeded()`.
+  1. Start `V2-M4-HITO-37` and audit active event cards (`event-title`, `event-body`, all `choice-btn-*`) and post-choice `outcome-panel` + `outcome-continue-btn` at `scrollY === 0` without calling `scrollIntoViewIfNeeded()`.
   2. Stage a 4-choice event (`familia_encrucijada_agotamiento` with one locked choice) and measure `scrollHeight`, `innerHeight`, `choice-btn-0` vs `choice-btn-1` side-by-side geometry (`2×2` grid), and WCAG AA effective contrast on the locked reason line.
 - **Expected Result**:
   - `window.scrollY === 0` and `scrollHeight <= innerHeight + 2` across both `1366×650` and `1280×600` viewports on 2-, 3-, and 4-choice cards as well as `outcome-panel`.
@@ -379,11 +379,11 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 
 ---
 
-### QA-30: `TitleScreen` Overwrite Guard (`confirm-overwrite-run-modal`), Endless Mode Taper (`2.013 €` at M128) & *Jubilarse con honores*, and Fatal `outcome-panel` Reload Persistence
+### QA-30: `TitleScreen` Overwrite Guard (`confirm-overwrite-run-modal`), Endless Mode Taper (`2.502 €` at M128) & *Jubilarse con honores*, and Fatal `outcome-panel` Reload Persistence
 - **Preconditions**: Desktop Chromium at `1366 × 768`.
 - **Steps**:
   1. Start `P35-CASH-158`, return to `TitleScreen`, click `start-run-btn` while `continue-run-card` is active, test `cancel-overwrite-run-btn` (preserves saved run) and `confirm-overwrite-run-btn` (starts fresh run cleanly).
-  2. Stage an Endless Mode run at Month 128 (`endless_mode: true`, `earned_victories: ["hero_120m", "rich_150k"]`), verify post-M120 `0.5x` living-cost taper (`2.013 €` living cost at M128 in `CuentasPanel`), open `AbandonRunModal`, verify `[data-testid="retire-honorable-section"]`, and click `[data-testid="retire-honorable-confirm-btn"]`.
+  2. Stage an Endless Mode run at Month 128 (`endless_mode: true`, `earned_victories: ["hero_120m", "rich_250k"]`), verify post-M120 `0.5x` living-cost taper matches `computeMonthlyLivingCost({ month: 128 }, compiledCatalog)` in `CuentasPanel`, open `AbandonRunModal`, verify `[data-testid="retire-honorable-section"]`, and click `[data-testid="retire-honorable-confirm-btn"]`.
   3. Stage a near-burnout run (`stress: 95` on `clientes_encargo_urgente`), select `entrega_express_contado` (`+9` stress -> `104` fatal burnout), verify `outcome-panel` displays the narrative `result_text` before `EndRunScreen`, reload the browser (`page.reload()`), and click `continue-run-btn`.
 - **Expected Result**:
   - `TitleScreen` prevents accidental active-run loss with `confirm-overwrite-run-modal` (100% above the fold).
@@ -396,7 +396,7 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 - **Preconditions**: Desktop Chromium resized sequentially across all 6 desktop viewports (`1024×768`, `1152×720`, `1280×720`, `1366×768`, `1440×900`, `1920×1080`).
 - **Steps**:
   1. Audit `TitleScreen` in both Fresh (`0` runs) and Veteran (active saved run + archived Hall of Fame runs) states at `window.scrollY === 0`.
-  2. Enter `GameScreen` (`P35-M4-HITO-72`), verify `mobile-desk-nav` is hidden, measure `documentElement.scrollHeight <= innerHeight + 2`, measure top-edge and bottom-edge `y`-coordinates of all visible workspace columns (`Left` / `Center` / `Right`), click Choice 0 without scrolling, and measure `outcome-panel` top-edge vs `event-card` top-edge (`<= 2px` jump).
+  2. Enter `GameScreen` (`V2-M4-HITO-37`), verify `mobile-desk-nav` is hidden, measure `documentElement.scrollHeight <= innerHeight + 2`, measure top-edge and bottom-edge `y`-coordinates of all visible workspace columns (`Left` / `Center` / `Right`), click Choice 0 without scrolling, and measure `outcome-panel` top-edge vs `event-card` top-edge (`<= 2px` jump).
   3. Verify `HistorialPanel` (`Diario de Expediente`) is simultaneously visible below `CuentasPanel` on `1366×768`, `1440×900`, and `1920×1080`, and accessible via `desktop-right-tab-historial` on `1024×768`, `1152×720`, and `1280×720`.
   4. On `1920×1080`, measure HUD Command Band 1 height (`<= 40px`) and vertical center alignment (`<= 4px`) across Calendar, Treasury Strip, and Toolbar.
 - **Expected Result**:
@@ -407,7 +407,7 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
 ---
 
 ### QA-32: Phase 3.6 Mobile & Landscape Zero-Scroll `Despacho` Loop + `Entorno` Diorama Showcase (`375×667`, `360×780`, `390×844`, `412×915`, `667×375`)
-- **Preconditions**: Mobile Chromium resized across `375×667`, `360×780`, `390×844`, `412×915`, and `667×375`, seeded run `P35-M4-HITO-72` (including 3-choice `16:9` milestone card + NPC Polaroid at Month 4).
+- **Preconditions**: Mobile Chromium resized across `375×667`, `360×780`, `390×844`, `412×915`, and `667×375`, seeded run `V2-M4-HITO-37` (including 3-choice `16:9` milestone card + NPC Polaroid at Month 4).
 - **Steps**:
   1. On `Despacho` (`mobile-tab-despacho`), assert `[data-testid="scene-bg"]` is NOT mounted (`count === 0` or hidden) and measure every `choice-btn-*` at `window.scrollY === 0` without scrolling.
   2. Click a choice at `window.scrollY === 0` and measure `outcome-continue-btn` against `mobile-desk-nav` (portrait) or `innerHeight` (`667×375` landscape left rail).
@@ -448,11 +448,11 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
   2. On separated `LandingScreen` (`[data-testid="landing-screen"]`), inspect `[data-testid="landing-guide-card"]`, `[data-testid="landing-hero-illustration"]` (`960×540` `illus_portada_landing`, `fetchpriority="high"`), `[data-testid="landing-enter-btn"]`, `[data-testid="kofi-landing-banner-link"]` (`https://ko-fi.com/dsal80`), and `[data-testid="landing-social-slot"]` across mobile and desktop (with zero scroll on `1024×768`..`1920×1080`).
   3. Click `[data-testid="landing-enter-btn"]` to open the Dashboard (`[data-testid="title-screen"]`): verify dynamic SEO `<title>` updates (`Panel de Expedientes` / `Dossier Dashboard`), `[data-testid="career-summary-card"]` is visible, Ko-fi is absent on the Dashboard, Left & Right columns align symmetrically (`<= 2px` top/bottom delta, bounded `<= 620px` column height on `1440×900` & `1920×1080`), and `[data-testid="open-landing-btn"]` (`Portada`) returns cleanly to `LandingScreen`.
   4. Navigate to `./en/` and verify `<html lang="en">`, self-referencing `/en/` canonical, English `<title>` (`Spanish Freelancer Survival Game`), `960×540` hero illustration loading cleanly via `../assets/`, and English Ko-fi CTA (`Buy me a coffee on Ko-fi`); also verify legacy `./?lang=en` resolves to English and canonicalizes to `/en/`.
-  5. Enter the Dashboard, start a run (verifying dynamic `GameScreen` `<title>`), stage Year 15 (`month: 180`, `endless_mode: true`) `AnnualSummaryModal` → `150,000 €` `VictoryModal` → `EndRunScreen`, verify `[data-testid="kofi-annual-banner-link"]`, `[data-testid="kofi-victory-banner-link"]`, and `[data-testid="kofi-endrun-banner-link"]` are visible and unoccluded on both mobile and desktop, and click `end-return-title-btn` to verify return goes straight to the Dashboard with updated `career-summary-runs`.
+  5. Enter the Dashboard, start a run (verifying dynamic `GameScreen` `<title>`), stage Year 15 (`month: 180`, `endless_mode: true`) `AnnualSummaryModal` → `250,000 €` `VictoryModal` → `EndRunScreen`, verify `[data-testid="kofi-annual-banner-link"]`, `[data-testid="kofi-victory-banner-link"]`, and `[data-testid="kofi-endrun-banner-link"]` are visible and unoccluded on both mobile and desktop, and click `end-return-title-btn` to verify return goes straight to the Dashboard with updated `career-summary-runs`.
 - **Expected Result**:
   - `robots.txt`, `sitemap.xml`, JSON-LD, `hreflang`, `?lang=en` deep link, and dynamic 4-view `<title>` / `<meta description>` all validate cleanly.
   - Separated `LandingScreen` stays crisp and focused with `Guía rápida`, big Play CTA, Ko-fi, and reserved social slot; Dashboard (`TitleScreen`) stays clean and symmetric (`<= 2px` top/bottom delta) with `Resumen de carrera` balancing `Salón de Caídos / Logros`.
-  - Ko-fi support (`https://ko-fi.com/dsal80`) is accessible, high-contrast (`>= 4.5:1`), and unoccluded across `LandingScreen`, `EndRunScreen`, `VictoryModal` (`120m` & `150k €`), and post-victory Endless `AnnualSummaryModal` (including Year 15+) on both mobile and desktop.
+  - Ko-fi support (`https://ko-fi.com/dsal80`) is accessible, high-contrast (`>= 4.5:1`), and unoccluded across `LandingScreen`, `EndRunScreen`, `VictoryModal` (`120m` & `250k €`), and post-victory Endless `AnnualSummaryModal` (including Year 15+) on both mobile and desktop.
 
 ---
 
@@ -464,3 +464,63 @@ Fast, deterministic UX checks executed on every major change so obvious usabilit
   3. Verify `play_session` pauses when switching tabs (`visibilitychange`), flushes foreground playtime on tab hide/`pagehide` when `>= 10s`, resets the stretch accumulator to prevent double-counting, and deduplicates `run_milestone` and `run_ended` per `run_id` (including hydrated saves).
 - **Expected Result**:
   - Zero cookies, zero PII (raw seed strings never transmitted), zero Playwright/bot traffic inflation, and accurate foreground playtime & funnel telemetry once `VITE_UMAMI_WEBSITE_ID` is configured in Vercel.
+
+---
+
+## 6. Autónomo Simulator v2 Overhaul Scenarios (`tests/ui/ux-usability.spec.ts` `QA-37`)
+
+### QA-37: Business Tiers (`Autónomo` → `Estudio` → `S.L.` → `Agencia` + `Boutique Sénior`), Multi-Staff `Entorno` & `SceneRenderer` Upgrade (`360×780`, `390×844`, `1366×768`, `1440×900`)
+- **Preconditions**: Active run staged across `solo_autonomo` (including `Boutique Sénior` solo: `employee === null`, `month >= 24`, `reputation >= 75`), `estudio_consolidado`, `sociedad_limitada` (`4` staff led by Dani, `neglect_months >= 3`, `personal_life <= 38`), and `agencia_consultora` (`5` staff).
+- **Steps**:
+  1. Inspect `[data-testid="indicator-business-tier"]` inside `[data-testid="indicator-calendar"]` across mobile and desktop viewports, measuring HUD height (`<= 102px` desktop, `<= 124px` mobile) and horizontal width (`scrollWidth <= innerWidth`).
+  2. Inspect `EntornoPanel` (`[data-testid="entorno-structure-badge"]`, `[data-testid="entorno-partner-climate"]`, `[data-testid="entorno-team-summary"]`, `[data-testid="entorno-boutique-badge"]`) and `SceneRenderer` (`[data-testid="scene-bg"]`, `[data-testid="scene-structure-chip"]`).
+  3. Inspect `AnnualSummaryModal` (`[data-testid="annual-business-tier-badge"]` and multi-staff count) on `agencia_consultora` with `5` staff.
+- **Expected Result**:
+  - `indicator-business-tier` renders inline with zero extra HUD height (`Autónomo`/`Estudio`/`S.L.`/`Agencia`/`Boutique` on `>= 640px`; hidden for base `solo_autonomo` and compact 3-char `EST`/`S.L.`/`AGE`/`BTQ` on `< 640px`).
+  - `EntornoPanel` displays tier + tax regime (`IRPF` vs `Imp. Sociedades`), live partner climate (`Tensión en casa` / `Strain at home` vs `Apoyo activo` / `Active support`), multi-staff payroll/multiplier/clima (`4 personas · Líder: Dani`), and `Boutique Sénior` badge when solo senior.
+  - `SceneRenderer` automatically upgrades `[data-testid="scene-bg"]` to `bg_despacho_estudio` whenever `business.tier !== "solo_autonomo"` and renders `scene-structure-chip` without intruding into the 4 prop lanes.
+
+---
+
+### QA-38: RPG Stat-Check Unlock Chips (`<= 4` Cap), Tier-Scaled Stakes & Zero-Scroll Ergonomics (`360×780`, `390×844`, `1366×768`, `1440×900`)
+- **Preconditions**: Active run staged at an event containing non-money RPG requirements (e.g., `clientes_agencia_intermediaria`, choice #2 requiring `reputation >= 52` + `business_tiers`) on `sociedad_limitada` (`reputation: 72`).
+- **Steps**:
+  1. Verify `[data-testid="choice-rpg-unlock-2"]` renders with high-contrast unlocked stat-check text and measure total chips inside `[data-testid="choice-stakes-2"] > span`.
+  2. Measure desktop (`1366×768`, `1440×900`) `scrollHeight <= innerHeight + 2` at `scrollY === 0` and mobile (`360×780`, `390×844`) choice containment strictly above `mobile-desk-nav` (`>= 48px` height, `>= 6px` gap, unoccluded hit targets, zero silent text truncation).
+  3. Inspect locked choices requiring higher `business_tiers`, `team_size`, `children_count`, or solo-only `has_employee: false` to confirm localized ES/EN lock reasons and tier-scaled Euro thresholds.
+- **Expected Result**:
+  - Eligible RPG choices surface unlocked stat-check badges while strictly capping total chips per choice button at `<= 4`, preserving Zero Desktop Yo-Yo Scroll and Zero-Scroll Mobile Decision Stage across all 4 viewports.
+  - Euro stake previews and outcome delta pills reflect tier-scaled amounts (`getEffectiveScaledChoiceEffects`) and include structural badges for `business_tier_changed_to` and `team_headcount_delta`.
+
+---
+
+### QA-39: Progressive RETA / IRPF vs S.L. *Impuesto de Sociedades* (24%), Elena Compliance Alert & 4-Year *Prescripción Fiscal* (`CuentasPanel` + `QuarterlyTaxModal`)
+- **Preconditions**: Active `sociedad_limitada` run with `4` staff, `gestor.tier === "premium"` (Elena), and at least 1 unexpired unaudited entry in `finances.historical_exposures`; followed by `quarterly_tax` phase with `sl_self_penalty > 0`, `elena_compliance_event: "warning"` (and `"dropped"`), and `historical_audit_triggered: true`.
+- **Steps**:
+  1. Open `CuentasPanel` (desktop right column or `mobile-tab-cuentas`) and verify `Autónomo societario`, `[data-testid="ledger-structural-overhead"]`, `Nóminas (4 pers.)`, `[data-testid="ledger-tax-provision"]` (`Imp. Sociedades (24%)`), and `[data-testid="ledger-prescripcion-warning"]` (`Ejercicios en prescripción AEAT (4 años): 1`). Compare against a `solo_autonomo` run displaying `Cuota RETA (tramo)` and `Provisión IRPF (~XX%)`.
+  2. Open `QuarterlyTaxModal` and verify `[data-testid="trimestre-form-badge"]` (`MODELO 303 / 202 (S.L.)` vs `MODELO 303 / 130`), `[data-testid="trimestre-sl-self-penalty"]`, `[data-testid="trimestre-elena-compliance-alert"]`, and `[data-testid="trimestre-historical-audit-alert"]`.
+  3. Verify pinned 2-column footer CTAs (`trimestre-pay-btn`, `trimestre-defer-btn`) remain 100% above the fold and unoccluded without page scrolling.
+- **Expected Result**:
+  - `CuentasPanel` reflects pure `computeMonthlyEconomyBreakdown()` output with zero duplicated formula drift between engine and UI.
+  - `QuarterlyTaxModal` surfaces corporate regime forms, self-managed S.L. penalty, Elena compliance warning/termination, and 4-year *prescripción* retrospective audits inside its scrollable body while keeping settlement CTAs pinned above the fold.
+
+---
+
+### QA-40: `250,000 €` Victory Goal, 18 Career Seals & Illustrated `1080×1350` Share Card `BOX [04]` Structure (`ES` & `EN`)
+- **Preconditions**: Runs reaching `250,000 €` (`rich_250k`) and unlocking the 3 new v2 seals (`sociedad_limitada`, `agencia_consolidada`, `ejercicio_prescrito`) across both `ES` and `EN`.
+- **Steps**:
+  1. Verify dynamic `250.000 €` / `250,000 €` goal copy across `LandingScreen`, `TitleScreen`, `VictoryModal`, `EndRunScreen`, `HistorialPanel` (`0/18` → `18/18`), and `TitleScreen` `Logros (0/18)` / `Achievements (0/18)`.
+  2. Trigger `EndRunScreen` with an upgraded tier/team (e.g., `sociedad_limitada`, `4` staff) and inspect `share-canvas` (`1080×1350`) and copied share text (`buildShareText`).
+- **Expected Result**:
+  - Zero stale `150.000 €` / `150,000 €` / `0/15` strings remain in ES or EN UI copy.
+  - Share card renders `CASILLA [04] · ESTRUCTURA` / `BOX [04] · STRUCTURE` cleanly within `1080×1350` bounds alongside the `16:9` comic vignette.
+
+---
+
+### QA-41: Legacy `v1 → v2` IndexedDB Save Migration (`save_version: 1`)
+- **Preconditions**: Existing `autonomo:active_run` record in IndexedDB patched to `save_version: 1` with `earned_victories: ["rich_150k"]`, `flags.sociedad_limitada_activa: true`, missing `business` object, and legacy `employee` object lacking `headcount` / `lead_monthly_cost`.
+- **Steps**:
+  1. Reload the application, enter the Dashboard, and click `[data-testid="continue-run-btn"]`.
+  2. Inspect `GameScreen`, `[data-testid="indicator-business-tier"]`, `EntornoPanel`, and browser console/page errors.
+- **Expected Result**:
+  - Save migrates silently with zero console/page errors: `rich_150k` maps to `rich_250k`, `sociedad_limitada_activa` hydrates `business.tier === "sociedad_limitada"` (`S.L.`), legacy `employee` defaults to `headcount: 1`, and active turn loop resumes cleanly.

@@ -1,0 +1,53 @@
+schema_version: 1
+id: empleados_exempleado_competidor_o_aliado
+category: empleados
+title: "24 meses después: tu ex-empleado abre estudio propio"
+body: "Dos años después de salir de tu equipo, su estudio propio ya despega y acaba de cruzarse con tu cartera. Si la despedida fue limpia, trae un encargo conjunto de 9.500 €; si fue tensa, está llamando a tus clientes con precios de derribo."
+tags:
+  - plantilla
+  - largo_plazo
+  - cadena
+character_id: empleada_senior_laura
+character_expression: neutral
+illustration_id: banner_empleados_tension
+requirements: null
+weight: 0
+cooldown_months: 0
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: cobrar_comision_y_proyecto_referido
+    label: "Aceptar su alianza y facturar el proyecto conjunto (9.500 €)"
+    requirements:
+      required_flags:
+        - exempleado_salida_amistosa
+    result_text: "Despedir bien sale baratísimo con el tiempo: el antiguo compañero te pasa un cliente enorme que no puede asumir solo y celebráis el cierre sin rencores."
+    effects:
+      billed_income: 9500
+      moral: 12
+      reputation: 8
+      stress: -6
+  - id: defender_tu_cartera_del_ataque
+    label: "Lanzar defensa comercial urgente ante el robo de clientes (1.400 €)"
+    result_text: "Te toca bajar al barro con visitas, descuentos defensivos y llamadas a fuego lento. Aguantas el tipo, pero el bache comercial escuece cuatro meses."
+    effects:
+      deductible_expense: 1400
+      stress: 12
+      reputation: -6
+      add_modifier:
+        id: mod_presion_competencia_exempleado
+        label: "Presión comercial de excompañero rival"
+        remaining_months: 4
+        monthly_billed_delta: -1100
+  - id: blindar_cuentas_por_reputacion
+    label: "Blindar cuentas con tu prestigio y cerrar anexo de 3.800 €"
+    requirements:
+      stats:
+        reputation:
+          min: 70
+    result_text: "Tus clientes ni abren su correo: llaman para avisarte, renuevan confianza contigo y cierran un anexo extra para no arriesgar la operación."
+    effects:
+      billed_income: 3800
+      moral: 6
+      reputation: 4
+      stress: 2

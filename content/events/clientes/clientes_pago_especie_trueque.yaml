@@ -11,6 +11,7 @@ character_id: cliente_regateador
 character_expression: pleased
 requirements:
   min_month: 2
+  max_month: 36
 weight: 9
 cooldown_months: 10
 max_occurrences: 3
@@ -18,15 +19,20 @@ exclusive_with: []
 choices:
   - id: aceptar_mitad_efectivo_y_cajas
     label: Aceptar el apaño fuera de libros y llenarte la despensa
-    result_text: Cobras un pellizco limpio y cenas vino decente dos meses, aunque el pago en especie sin declarar tiene mal despertar fiscal.
+    result_text: Te llevas un buen sobre libre de impuestos y vino decente para dos meses, aunque el pago en especie sin declarar deja huella en el reloj fiscal.
     effects:
-      cash_delta: 550
-      stress: 15
-      moral: -2
-      personal_life: 5
-      fiscal_risk: 22
+      cash_delta: 1950
+      personal_life: 6
+      moral: 0
+      stress: 4
+      fiscal_risk: 18
       set_flags:
         - cobro_en_b_reciente
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 16
+          probability: 0.25
+          priority: high
   - id: exigir_euros_aunque_sea_en_dos_plazos
     label: "Rechazar el vino: en el banco no admiten botellas para la cuota"
     result_text: Le plantas un calendario de dos pagos en euros reales. Cobras la mitad hoy y el resto queda documentado.

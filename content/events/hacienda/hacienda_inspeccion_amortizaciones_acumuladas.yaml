@@ -33,7 +33,7 @@ choices:
         - premium
     result_text: Elena entrega un inventario de inmovilizado tan pulcro que el inspector cierra la comprobación en media mañana.
     effects:
-      deductible_expense: 175
+      deductible_expense: 420
       stress: -6
       moral: 8
       reputation: 3
@@ -42,7 +42,11 @@ choices:
     label: Enviar fotos de números de serie y albaranes de reciclaje oficial
     result_text: "Tu síndrome de Diógenes documental triunfa: cada equipo viejo tiene su resguardo y Gómez archiva sin reparos."
     effects:
-      deductible_expense: 85
+      deductible_expense: 50
       stress: 5
-      moral: 6
-      fiscal_risk: -10
+      moral: 8
+      fiscal_risk: -14
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 20

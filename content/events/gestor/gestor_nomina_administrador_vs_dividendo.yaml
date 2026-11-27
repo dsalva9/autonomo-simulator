@@ -1,0 +1,56 @@
+schema_version: 1
+id: gestor_nomina_administrador_vs_dividendo
+category: gestor
+title: "¿Nómina estatutaria, autofactura o dividendo?"
+body: "Una nueva sentencia del Supremo vuelve a agitar cómo cobras de tu propia S.L. Si los estatutos dicen «cargo gratuito» y sacas dinero a ojo, Hacienda puede tumbar toda la deducibilidad de tu retribución."
+tags:
+  - sociedad_limitada
+  - administrador
+  - fiscal
+character_id: gestor_premium_elena
+character_expression: stressed
+illustration_id: banner_gestor_estrategia
+requirements:
+  min_month: 48
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 12
+cooldown_months: 16
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: fijar_nomina_administrador_en_estatutos
+    label: "Modificar estatutos y fijar nómina de administrador (1.800 €)"
+    result_text: "Pagas notaría, junta y registro para dejar tu sueldo escrito en piedra. Duele soltar el dinero, pero cierras una grieta clásica de inspección."
+    effects:
+      deductible_expense: 1800
+      fiscal_risk: -10
+      moral: 4
+      stress: 2
+  - id: autofacturar_desde_fuera_como_socio
+    label: "Autofacturar a tu S.L. sin tocar estatutos (+2.900 € de ahorro)"
+    result_text: "Te ahorras notario y retenciones de administrador en el corto plazo, dejando una operación vinculada de libro lista para saltar dentro de dos años."
+    effects:
+      cash_delta: 2900
+      fiscal_risk: 22
+      stress: 5
+      schedule_events:
+        - event_id: hacienda_revision_sociedad_interpuesta_tardia
+          delay_months: 30
+          probability: 0.4
+          priority: high
+  - id: blindar_retribucion_con_elena
+    label: "Aprobar paquete mixto nómina y dividendo con Elena (1.200 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+      stats:
+        fiscal_risk:
+          max: 30
+    result_text: "Con tus libros limpios, Elena calibra retribuciones a valor de mercado y deja un acta mercantil a prueba de cualquier requerimiento."
+    effects:
+      deductible_expense: 1200
+      fiscal_risk: -14
+      moral: 6
+      stress: -4

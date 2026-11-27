@@ -1,21 +1,22 @@
-import type {
-  ChoiceOutcomeSummary,
-  EndingId,
-  EventDef,
-  GameState,
-  HistoryEntryKind,
-  Indicators,
-  MonthStartSummary,
-  VictoryBadge,
+import {
+  type ChoiceOutcomeSummary,
+  type EndingId,
+  type EventDef,
+  type GameState,
+  type HistoryEntryKind,
+  type Indicators,
+  type MonthStartSummary,
+  type VictoryBadge,
+  getTeamHeadcount,
 } from "../../engine/index.ts";
 
 export const ACTIVE_RUN_KEY = "autonomo:active_run";
 export const PROFILE_KEY = "autonomo:profile";
 export const CORRUPT_BACKUP_KEY = "autonomo:corrupt_backup";
 
-export const CURRENT_SAVE_VERSION = 1 as const;
+export const CURRENT_SAVE_VERSION = 2 as const;
 export const CURRENT_PROFILE_VERSION = 1 as const;
-export const ENGINE_BUILD = "0.3.0-phase2";
+export const ENGINE_BUILD = "2.0.0";
 export const MAX_HALL_OF_FAME_ENTRIES = 50;
 
 export type AchievementId =
@@ -32,8 +33,11 @@ export type AchievementId =
   | "cinco_anos"
   | "facturacion_100k"
   | "heroe_120m"
-  | "ricachon_150k"
-  | "modo_infinito";
+  | "ricachon_250k"
+  | "modo_infinito"
+  | "sociedad_limitada"
+  | "agencia_consolidada"
+  | "ejercicio_prescrito";
 
 export interface AchievementDefinition {
   id: AchievementId;
@@ -130,10 +134,10 @@ export const ACHIEVEMENT_CATALOG: readonly AchievementDefinition[] = [
     description: "Sobrevivir diez años completos (120 meses) como trabajador autónomo.",
   },
   {
-    id: "ricachon_150k",
-    code: "CAJA-150K",
+    id: "ricachon_250k",
+    code: "CAJA-250K",
     title: "Ricachón",
-    description: "Acumular al menos 150.000 € de liquidez disponible en tu cuenta.",
+    description: "Acumular al menos 250.000 € de liquidez disponible en tu cuenta.",
   },
   {
     id: "modo_infinito",
@@ -141,6 +145,26 @@ export const ACHIEVEMENT_CATALOG: readonly AchievementDefinition[] = [
     title: "Masoquista Cotizante",
     description:
       "Rechazar el retiro tras conquistar una victoria y seguir cotizando en Modo Infinito.",
+  },
+  {
+    id: "sociedad_limitada",
+    code: "MOD-200",
+    title: "Sociedad Limitada",
+    description:
+      "Constituir una Sociedad Limitada y dar el salto del RETA al Impuesto de Sociedades.",
+  },
+  {
+    id: "agencia_consolidada",
+    code: "TGSS-05",
+    title: "Agencia Consolidada",
+    description: "Dirigir una plantilla activa de al menos cinco personas en nómina.",
+  },
+  {
+    id: "ejercicio_prescrito",
+    code: "LGT-48M",
+    title: "Ejercicio Prescrito",
+    description:
+      "Superar el plazo legal de cuatro años hasta que prescriba limpiamente un ejercicio arriesgado.",
   },
 ] as const;
 
@@ -294,6 +318,7 @@ export function evaluateUnlockedAchievements(
   state: GameState,
   existing: Record<string, string>,
   nowIso: string = new Date().toISOString(),
+  victoryMoney = 250_000,
 ): {
   achievements: Record<string, string>;
   newlyUnlocked: AchievementId[];
@@ -368,11 +393,17 @@ export function evaluateUnlockedAchievements(
   maybeUnlock("facturacion_100k", state.finances.lifetime_billed >= 100_000);
   maybeUnlock("heroe_120m", state.earned_victories.includes("hero_120m"));
   maybeUnlock(
-    "ricachon_150k",
-    (canUnlockWealthSeal && effectiveMoney >= 150_000) ||
-      state.earned_victories.includes("rich_150k"),
+    "ricachon_250k",
+    (canUnlockWealthSeal && effectiveMoney >= victoryMoney) ||
+      state.earned_victories.includes("rich_250k"),
   );
   maybeUnlock("modo_infinito", state.endless_mode === true);
+  maybeUnlock(
+    "sociedad_limitada",
+    state.business?.tier === "sociedad_limitada" || state.business?.tier === "agencia_consultora",
+  );
+  maybeUnlock("agencia_consolidada", getTeamHeadcount(state) >= 5);
+  maybeUnlock("ejercicio_prescrito", Boolean(state.flags.ejercicio_prescrito_limpio));
 
   return { achievements: next, newlyUnlocked };
 }

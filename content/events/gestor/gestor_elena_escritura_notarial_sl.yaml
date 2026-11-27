@@ -14,14 +14,16 @@ requirements:
     - premium
   required_flags:
     - dossier_sl_elena
+  forbidden_flags:
+    - sociedad_limitada_activa
 weight: 0
 cooldown_months: 0
-max_occurrences: 2
+max_occurrences: 1
 exclusive_with: []
 choices:
   - id: adoptar_blindaje_sin_constituir
-    label: "Quedarte como autónomo aplicando solo las mejoras contables (140 €)"
-    result_text: "Aprovechas las cláusulas y criterios de amortización del informe sin cargar con el Impuesto de Sociedades ni libros registrales."
+    label: Quedarte como autónomo aplicando solo las mejoras contables (140 €)
+    result_text: Aprovechas las cláusulas y criterios de amortización del informe sin cargar con el Impuesto de Sociedades ni libros registrales.
     effects:
       deductible_expense: 140
       stress: -5
@@ -30,30 +32,27 @@ choices:
       clear_flags:
         - dossier_sl_elena
   - id: activar_estructura_comercial_b2b
-    label: "Firmar el despliegue mercantil para captar cuentas mayores (480 €)"
+    label: Constituir tu Sociedad Limitada ante notario (2.400 €)
     requirements:
       stats:
         money:
-          min: 900
-    result_text: "Sales de la notaría con sello nuevo: asumes más rigor administrativo, pero tus presupuestos corporativos ganan empaque inmediato."
+          min: 3500
+    result_text: "Sales de la notaría con CIF societario propio: pasas a Impuesto de Sociedades (24 %), suben los costes fijos y desbloqueas grandes contratos."
     effects:
-      deductible_expense: 480
-      moral: 5
-      reputation: 7
-      fiscal_risk: -8
+      deductible_expense: 2400
+      moral: 6
+      stress: 6
+      reputation: 8
+      fiscal_risk: -6
+      set_business_tier:
+        tier: sociedad_limitada
       set_flags:
         - sociedad_limitada_activa
       clear_flags:
         - dossier_sl_elena
-      add_modifier:
-        id: mod_estructura_mercantil_b2b
-        label: "Estructura mercantil B2B"
-        remaining_months: 6
-        monthly_billed_delta: 330
-        monthly_expense_delta: 80
   - id: guardar_proyecto_en_el_cajon
-    label: "Archivar la carpeta mercantil hasta tiempos de mayor holgura"
-    result_text: "Cierras el expediente sin asumir ni un euro más de estructura fija y sigues facturando con tu agilidad habitual."
+    label: Archivar la carpeta mercantil hasta tiempos de mayor holgura
+    result_text: Cierras el expediente sin asumir ni un euro más de estructura fija y sigues facturando con tu agilidad habitual.
     effects:
       stress: -3
       moral: 1

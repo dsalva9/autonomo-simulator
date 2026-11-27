@@ -369,8 +369,13 @@ export function GameScreen({ state }: GameScreenProps) {
   };
 
   // Ambient mobile tab status dots (< 1024px)
+  const isPartnerStrained =
+    (state.family.status === "dating" || state.family.status === "cohabiting") &&
+    (state.indicators.personal_life <= 38 || (state.family.neglect_months ?? 0) >= 3);
   const hasEntornoAlert =
-    state.indicators.stress >= 70 || (state.employee !== null && state.employee.satisfaction < 45);
+    state.indicators.stress >= 70 ||
+    isPartnerStrained ||
+    (state.employee !== null && state.employee.satisfaction < 45);
   const hasCuentasAlert = Boolean(state.finances.deferred_tax) || state.month % 3 === 0;
   const hasHistorialAlert = newlyUnlockedAchievements.length > 0;
 

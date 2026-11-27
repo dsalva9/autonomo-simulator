@@ -18,38 +18,40 @@ requirements:
     - premium
 weight: 14
 cooldown_months: 11
-max_occurrences: 4
+max_occurrences: 3
 exclusive_with: []
 choices:
   - id: escalonar_vencimientos_enero
-    label: "Ajustar retenciones y ordenar entregas sin gastar tesorería hoy"
-    result_text: "Reordenáis el calendario de cierres con elegancia legal y llegas a fin de año sin sustos ni desembolsos extraordinarios."
+    label: Ajustar retenciones y ordenar entregas sin gastar tesorería hoy
+    result_text: Reordenáis el calendario de cierres con elegancia legal y llegas a fin de año sin sustos ni desembolsos extraordinarios.
     effects:
-      stress: -4
-      moral: 3
-      fiscal_risk: -5
+      moral: 1
+      stress: 2
+      fiscal_risk: -3
   - id: facturar_a_tope_ignorando_tramo
-    label: "Ignorar el aviso y exprimir entregas extra antes de Nochevieja"
-    result_text: "Haces caja bruta rápida este mes a cambio de un atracón de horas y una mordida fiscal bastante más áspera al liquidar."
+    label: Ignorar el aviso y exprimir entregas extra antes de Nochevieja
+    result_text: Haces caja bruta rápida este mes a cambio de un atracón de horas y una mordida fiscal bastante más áspera al liquidar.
     effects:
-      billed_income: 920
-      stress: 8
-      personal_life: -4
-      fiscal_risk: 3
+      billed_income: 1800
+      stress: 11
+      personal_life: -6
+      fiscal_risk: 8
   - id: adelantar_gastos_fijos_deducibles
-    label: "Adelantar seguros y licencias anuales antes del cierre (390 €)"
+    label: Adelantar seguros y licencias anuales antes del cierre (650 €)
     requirements:
       stats:
         money:
-          min: 650
-    result_text: "Frenas en seco el salto de tramo y disfrutas de los próximos meses con tus costes fijos operativos ya cubiertos de antemano."
+          min: 1100
+        fiscal_risk:
+          max: 30
+    result_text: Frenas en seco el salto de tramo y disfrutas de los próximos meses con tus costes fijos operativos ya cubiertos de antemano.
     effects:
-      deductible_expense: 390
-      stress: -7
-      moral: 5
-      fiscal_risk: -9
+      deductible_expense: 650
+      stress: -4
+      moral: 3
+      fiscal_risk: -7
       add_modifier:
         id: mod_precierre_noviembre_elena
-        label: "Tramo anual amortiguado"
-        remaining_months: 4
-        monthly_expense_delta: -95
+        label: Tramo anual amortiguado
+        remaining_months: 3
+        monthly_expense_delta: -140

@@ -1,0 +1,56 @@
+schema_version: 1
+id: clientes_licitacion_ministerio_treinta_mil
+category: clientes
+title: "Concurso público nacional: 32.000 € y aval bancario"
+body: "Sale a licitación un lote estatal de 32.000 € hecho a medida de tu sociedad. Pide solvencia técnica, certificados al corriente y un aval de 3.500 € que te exige músculo financiero y paciencia de santo."
+tags:
+  - licitacion
+  - administracion
+  - alto_ticket
+character_id: cliente_corporativo_marta
+character_expression: neutral
+illustration_id: banner_clientes_corporativo
+requirements:
+  min_month: 54
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+  team_size:
+    min: 3
+weight: 13
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: concursar_solitario_con_solvencia
+    label: "Ganar el lote entero en solitario (16.000 € hoy + 16.000 € en 3m)"
+    requirements:
+      required_flags:
+        - homologacion_proveedor_activa
+      stats:
+        fiscal_risk:
+          max: 20
+    result_text: "Tu expediente inmaculado barre en la mesa de contratación. Cobras el primer hito de 16.000 € y dejas el segundo certificado a 90 días."
+    effects:
+      billed_income: 16000
+      deferred_invoice:
+        amount: 16000
+        delay_months: 3
+        default_prob: 0.05
+      deductible_expense: 3500
+      reputation: 10
+      stress: 12
+  - id: presentarse_en_ute_compartida
+    label: "Concurrir en UTE compartida repartiendo aval y carga (18.000 €)"
+    result_text: "Compartes pliegos y riesgos con una firma aliada: facturas 18.000 € con menos gasto previo y sumas una referencia pública de primer nivel."
+    effects:
+      billed_income: 18000
+      deductible_expense: 2200
+      reputation: 6
+      stress: 6
+  - id: descartar_concurso_publico
+    label: "Pasar del BOE y evitar meses de pliegos y subsanaciones"
+    result_text: "Dejas la plataforma de contratación a quien disfrute rellenando anexos en PDF y conservas tus tardes y tu liquidez sin avales bloqueados."
+    effects:
+      personal_life: 4
+      stress: -4

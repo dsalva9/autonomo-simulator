@@ -171,13 +171,13 @@ describe("Cookieless Umami Analytics & Foreground Playtime Tracker (umamiAnalyti
     trackRunProgress(m12State, "es-ES");
     trackRunProgress(m12State, "es-ES"); // duplicate sync must not re-fire year_1
 
-    // Reach Month 120 Hero + 150k + ended
+    // Reach Month 120 Hero + 250k + ended
     fakeNow += 180_000;
     const endedState: GameState = {
       ...state,
       month: 120,
       endless_mode: false,
-      earned_victories: ["hero_120m", "rich_150k"],
+      earned_victories: ["hero_120m", "rich_250k"],
       ending: { id: "retired_rich", month: 120, summary_quote: "Ricachón" },
     };
     trackRunProgress(endedState, "es-ES");
@@ -194,7 +194,7 @@ describe("Cookieless Umami Analytics & Foreground Playtime Tracker (umamiAnalyti
       "run_milestone", // year_3
       "run_milestone", // year_5
       "run_milestone", // year_10_hero
-      "run_milestone", // rich_150k
+      "run_milestone", // rich_250k
       "run_ended",
       "result_shared",
       "kofi_clicked",

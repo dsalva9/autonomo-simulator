@@ -1,0 +1,59 @@
+schema_version: 1
+id: familia_divorcio_reparto_bienes
+category: familia
+title: "Burofax de liquidación: el coste real de separarse"
+body: "Cuando creías que el duelo ya había pasado, llega el capítulo administrativo de la ruptura con Álex: cuenta conjunta, fianza, electrodomésticos y gastos acumulados. Nadie avisa de cuánto cuesta cerrar una etapa con papeles."
+tags:
+  - pareja
+  - separacion
+  - legal
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: banner_familia_tension
+requirements:
+  min_month: 20
+  family_statuses:
+    - separated
+  required_flags:
+    - ex_pareja_alex
+  forbidden_flags:
+    - reparto_separacion_cerrado
+weight: 16
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: mediacion_limpia_de_bienes
+    label: "Pactar reparto justo mediante mediador neutral y cerrar etapa (2.400 €)"
+    result_text: "Cuesta un pico serio liquidar la cuenta común y honorarios, pero en dos tardes firmáis paz definitiva sin cruzaros jamás en un juzgado."
+    effects:
+      cash_delta: -2400
+      moral: 4
+      stress: -4
+      personal_life: 4
+      set_flags:
+        - reparto_separacion_cerrado
+  - id: pleito_abogados_por_cada_euro
+    label: "Contratar despacho agresivo y pelear cada euro hasta el final (4.500 €)"
+    result_text: "Meses de burofaxes, procuradores y rencor para acabar perdiendo casi el doble en minutas que lo que discutíais por los muebles."
+    effects:
+      cash_delta: -4500
+      moral: -12
+      stress: 16
+      personal_life: -10
+      set_flags:
+        - reparto_separacion_cerrado
+  - id: acuerdo_amistoso_sin_despachos
+    label: "Sentarte con Álex a un café honesto y cuadrarlo sin abogados (900 €)"
+    requirements:
+      stats:
+        personal_life:
+          min: 55
+    result_text: "Haber cuidado las formas pese al desgaste os ahorra miles de euros en despachos. Firmáis el acuerdo privado con respeto y cerráis el libro."
+    effects:
+      cash_delta: -900
+      moral: 8
+      stress: -8
+      personal_life: 8
+      set_flags:
+        - reparto_separacion_cerrado

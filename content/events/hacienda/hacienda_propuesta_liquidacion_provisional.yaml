@@ -48,8 +48,8 @@ choices:
         - premium
     result_text: Elena reconstruye el origen fiscal de cada euro con precisión forense y desmonta casi toda la presunción administrativa.
     effects:
-      deductible_expense: 240
-      cash_delta: -90
+      deductible_expense: 550
+      cash_delta: -240
       stress: 2
       moral: 6
       fiscal_risk: -22

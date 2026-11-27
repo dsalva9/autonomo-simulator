@@ -27,12 +27,17 @@ choices:
     label: Cobrar una parte fuera de factura y darle el sobre en mano
     result_text: Os ahorráis impuestos hoy en la cafetería de la esquina, sumando otro movimiento opaco que más vale que nadie cruce.
     effects:
-      cash_delta: 950
-      stress: 19
-      moral: -7
-      fiscal_risk: 25
+      cash_delta: 2200
+      moral: -2
+      stress: 6
+      fiscal_risk: 20
       set_flags:
         - cobro_en_b_reciente
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 22
+          probability: 0.3
+          priority: high
   - id: declinar_por_falta_de_hueco
     label: Agradecer el detalle y pasar el turno a otro compañero
     result_text: Quedas bien en la red profesional sin exprimir tus noches esta semana.
@@ -41,3 +46,17 @@ choices:
       moral: 1
       personal_life: 3
       reputation: -4
+  - id: negociar_alianza_reciproca_sin_comision
+    label: Pactar alianza recíproca entre colegas y ahorrar el 10 % de comisión
+    requirements:
+      stats:
+        reputation:
+          min: 60
+        personal_life:
+          min: 65
+    result_text: "Tu reputación y trato cercano bastan: pactáis devolución de favores mutua sin peaje del diez por ciento y facturas íntegro el encargo."
+    effects:
+      billed_income: 1650
+      stress: 4
+      moral: 6
+      reputation: 4

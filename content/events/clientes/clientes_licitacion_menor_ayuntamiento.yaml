@@ -58,3 +58,18 @@ choices:
       moral: 6
       stress: 4
       reputation: 6
+  - id: presentar_como_sl_homologada
+    label: Presentar oferta directa como S.L. con solvencia fiscal limpia (4.600 €)
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      stats:
+        fiscal_risk:
+          max: 15
+    result_text: "Tu solvencia societaria y certificado limpio barren la mesa de contratación: adjudicación ampliada por 4.600 € sin un solo reparo."
+    effects:
+      billed_income: 4600
+      stress: 2
+      moral: 7
+      reputation: 7

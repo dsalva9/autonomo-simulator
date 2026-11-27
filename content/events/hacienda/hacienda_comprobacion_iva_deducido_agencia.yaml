@@ -1,0 +1,53 @@
+schema_version: 1
+id: hacienda_comprobacion_iva_deducido_agencia
+category: hacienda
+title: "Lupa sobre devolución de IVA y prorrata corporativa"
+body: "Tras meses de inversión fuerte y proveedores internacionales, tu sociedad acumula IVA a compensar. Gómez paraliza la devolución y cuestiona la prorrata de gastos mixtos, vehículos y facturas de subcontratas."
+tags:
+  - prescripcion_fiscal
+  - inspeccion
+  - iva
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: banner_hacienda_inspeccion
+requirements:
+  min_month: 64
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 12
+cooldown_months: 22
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: asumir_recorte_prorrata_iva
+    label: "Aceptar el recorte de prorrata de IVA para desbloquear caja (4.800 €)"
+    result_text: "Renuncias a 4.800 € de IVA deducido para cerrar rápido la comprobación y evitar bloqueos de tesorería en plena temporada."
+    effects:
+      cash_delta: -4800
+      fiscal_risk: -18
+      stress: 10
+      moral: -6
+  - id: auditoria_sii_impecable
+    label: "Presentar libros registro y trazabilidad impecable de facturas (900 €)"
+    requirements:
+      stats:
+        fiscal_risk:
+          max: 18
+    result_text: "Con un historial limpio y cada asiento cuadrado al céntimo con extractos bancarios, Gómez valida tus deducciones y desbloquea el expediente."
+    effects:
+      deductible_expense: 900
+      moral: 8
+      fiscal_risk: -18
+      stress: -4
+  - id: recurrir_prorrata_en_teac
+    label: "Impugnar el recorte de IVA deducible ante el TEAC (1.600 €)"
+    result_text: "Pones 1.600 € en un recurso sólido sobre el principio de neutralidad del IVA. Toca aguardar dieciocho meses para conocer el desenlace."
+    effects:
+      deductible_expense: 1600
+      stress: 10
+      schedule_events:
+        - event_id: hacienda_resolucion_teac_tardia
+          delay_months: 18
+          probability: 1
+          priority: high

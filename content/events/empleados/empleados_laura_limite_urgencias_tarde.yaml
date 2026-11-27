@@ -1,8 +1,8 @@
 schema_version: 1
 id: empleados_laura_limite_urgencias_tarde
 category: empleados
-title: "Las seis en punto y una falsa urgencia"
-body: "A las seis menos cinco entra un correo de cliente exigiendo rehacer una entrega para mañana sin motivo real. Laura cierra el portátil con gesto serio y te recuerda que tragar con falsas urgencias destruye cualquier método de trabajo."
+title: Las seis en punto y una falsa urgencia
+body: A las seis menos cinco entra un correo de cliente exigiendo rehacer una entrega para mañana sin motivo real. Laura cierra el portátil con gesto serio y te recuerda que tragar con falsas urgencias destruye cualquier método de trabajo.
 tags:
   - plantilla
   - senior
@@ -21,20 +21,24 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: respaldar_criterio_y_tarifar_extra
-    label: "Respaldar a Laura y presupuestar recargo exprés si lo quieren mañana"
-    result_text: "De pronto la urgencia vital podía esperar o bien aprueban el suplemento sin discutir. Laura sonríe orgullosa de estar en tu barco."
+    label: Respaldar a Laura y presupuestar recargo exprés si lo quieren mañana
+    result_text: De pronto la urgencia vital podía esperar o bien aprueban el suplemento sin discutir. Laura sonríe orgullosa de estar en tu barco.
     effects:
-      billed_income: 950
+      billed_income: 1350
       moral: 7
       stress: -4
       personal_life: 3
-      reputation: 3
-      employee_satisfaction: 14
+      reputation: 5
+      employee_satisfaction: 16
       clear_flags:
         - desgaste_plantilla
+    requirements:
+      stats:
+        moral:
+          min: 62
   - id: asumirlo_tu_solo_de_noche
-    label: "Despedir a Laura a su hora y quedarte tú solo sacando el marrón"
-    result_text: "Respetas su horario sagrado a costa de cenar frente a la pantalla a las once de la noche preguntándote quién manda aquí."
+    label: Despedir a Laura a su hora y quedarte tú solo sacando el marrón
+    result_text: Respetas su horario sagrado a costa de cenar frente a la pantalla a las once de la noche preguntándote quién manda aquí.
     effects:
       billed_income: 1250
       moral: -3
@@ -43,8 +47,8 @@ choices:
       reputation: 4
       employee_satisfaction: 4
   - id: presionar_para_quedarse_ambos
-    label: "Pedirle como excepción crítica que se quede hoy contigo hasta tarde"
-    result_text: "Sacáis el encargo completo en dos horas tensas, pero Laura toma nota mental del límite cruzado en su libreta."
+    label: Pedirle como excepción crítica que se quede hoy contigo hasta tarde
+    result_text: Sacáis el encargo completo en dos horas tensas, pero Laura toma nota mental del límite cruzado en su libreta.
     effects:
       billed_income: 1550
       moral: -7

@@ -1,6 +1,7 @@
 import { Award, LogOut, Trophy, X } from "lucide-react";
 import { useRef } from "react";
 import type { AbandonEndingId } from "../../engine/index.ts";
+import { compiledCatalog } from "../../services/content/catalog.ts";
 import { formatDurationMonthsEs, formatEuros } from "../../services/i18n/resolveEventText.ts";
 import { getUiStrings } from "../../services/i18n/uiStrings.ts";
 import { canRetireHonorably, useGameStore } from "../../store/gameStore.ts";
@@ -22,7 +23,9 @@ export function AbandonRunModal({
   const retireActiveRun = useGameStore((s) => s.retireActiveRun);
 
   const locale = localeProp ?? storeLocale;
-  const ab = getUiStrings(locale).modals.abandon;
+  const ab = getUiStrings(locale, {
+    victoryMoney: compiledCatalog.balance.victory_money,
+  }).modals.abandon;
   const honorable = canRetireHonorably(activeRun);
 
   const dialogRef = useRef<HTMLDialogElement | null>(null);

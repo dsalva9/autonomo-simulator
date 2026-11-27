@@ -1,0 +1,68 @@
+schema_version: 1
+id: clientes_perdida_cuenta_ancla_cuarenta_pct
+category: clientes
+title: "Correo a las 9:01: tu cuenta ancla rescinde (-40 % facturación)"
+body: "Sin aviso previo, Marta te reenvía un comunicado frío: cambio de dirección global y cancelación fulminante de tu mayor cuenta recurrente. El agujero amenaza con comerse el 40 % de tu facturación mensual."
+tags:
+  - crisis
+  - cartera
+  - macro
+character_id: cliente_corporativo_marta
+character_expression: angry
+illustration_id: banner_clientes_tension
+requirements:
+  min_month: 54
+  business_tiers:
+    - estudio_consolidado
+    - sociedad_limitada
+    - agencia_consultora
+weight: 14
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: absorber_golpe_y_reajustar
+    label: "Encajar el golpe a pecho descubierto (-2.400 €/mes cinco meses)"
+    result_text: "Recortas todo lo accesorio y aprietas los dientes durante cinco meses durísimos mientras reconstruyes cartera desde cero."
+    effects:
+      stress: 18
+      moral: -10
+      employee_satisfaction: -6
+      add_modifier:
+        id: mod_caida_cuenta_ancla_severa
+        label: "Hueco tras pérdida de cuenta ancla"
+        remaining_months: 5
+        monthly_billed_delta: -2400
+  - id: sprint_comercial_de_emergencia
+    label: "Lanzar sprint comercial de choque con campaña y viajes (2.800 €)"
+    requirements:
+      stats:
+        reputation:
+          min: 65
+        money:
+          min: 3500
+    result_text: "Inviertes 2.800 € en prospección quirúrgica tirando de reputación y contactos: tapas más de la mitad del boquete en apenas un trimestre."
+    effects:
+      deductible_expense: 2800
+      stress: 10
+      reputation: 4
+      add_modifier:
+        id: mod_transicion_cuenta_ancla_sprint
+        label: "Bache parcial durante sprint comercial"
+        remaining_months: 3
+        monthly_billed_delta: -1100
+  - id: activar_colchon_cartera_internacional
+    label: "Redirigir capacidad a tu cartera internacional y corporativa"
+    requirements:
+      required_flags:
+        - cliente_internacional_activo
+        - proveedor_corporativo_activo
+    result_text: "Haber diversificado cuentas en Europa y grandes corporaciones te salva del naufragio: amplías dos contratos activos y el golpe queda en un susto menor."
+    effects:
+      stress: 4
+      moral: 4
+      add_modifier:
+        id: mod_amortiguacion_cartera_diversa
+        label: "Ajuste leve cubierto por cartera diversa"
+        remaining_months: 3
+        monthly_billed_delta: -700

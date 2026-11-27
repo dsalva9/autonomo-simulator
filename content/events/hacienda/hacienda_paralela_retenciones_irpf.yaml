@@ -29,12 +29,16 @@ choices:
     result_text: Subes el lote de extractos demostrando que cobraste el neto retenido y quedas pendiente de que crucen datos con el cliente.
     effects:
       deductible_expense: 60
-      stress: 6
-      moral: 2
+      stress: 2
+      moral: 4
       schedule_events:
         - event_id: hacienda_fallo_alegaciones_paralela
           delay_months: 2
           probability: 1
+    requirements:
+      stats:
+        stress:
+          max: 50
   - id: reclamar_certificados_con_gestor
     label: Encargar a tu gestoría exigir el certificado al cliente y contestar
     requirements:

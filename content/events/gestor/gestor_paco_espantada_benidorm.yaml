@@ -1,8 +1,8 @@
 schema_version: 1
 id: gestor_paco_espantada_benidorm
 category: gestor
-title: "Diecinueve de abril y Paco sube estado en Benidorm"
-body: "Faltan veinticuatro horas para cerrar el primer trimestre y tus modelos siguen sin presentar. Descubres por su estado de WhatsApp que Paco está en Benidorm con una jarra de sangría y ha dejado al mando a su sobrino Kevin."
+title: Diecinueve de abril y Paco sube estado en Benidorm
+body: Faltan veinticuatro horas para cerrar el primer trimestre y tus modelos siguen sin presentar. Descubres por su estado de WhatsApp que Paco está en Benidorm con una jarra de sangría y ha dejado al mando a su sobrino Kevin.
 tags:
   - gestoria
   - paco
@@ -15,13 +15,14 @@ requirements:
     - 4
   gestor_tiers:
     - cheap
+  max_month: 48
 weight: 14
 cooldown_months: 10
 max_occurrences: 3
 exclusive_with: []
 choices:
   - id: guiar_al_sobrino_por_videollamada
-    label: "Hacer videollamada con el sobrino Kevin y dictarle casilla a casilla"
+    label: Hacer videollamada con el sobrino Kevin y dictarle casilla a casilla
     outcomes:
       - id: kevin_sorprende_y_acierta
         weight: 60
@@ -32,7 +33,7 @@ choices:
           fiscal_risk: -2
       - id: kevin_marca_casilla_equivocada
         weight: 40
-        result_text: "Kevin confunde el IVA soportado con el devengado entre risas nerviosas y toca pagar un pequeño ajuste para enmendar el entuerto."
+        result_text: Kevin confunde el IVA soportado con el devengado entre risas nerviosas y toca pagar un pequeño ajuste para enmendar el entuerto.
         effects:
           cash_delta: -165
           stress: 10
@@ -41,19 +42,19 @@ choices:
           set_flags:
             - susto_con_paco
   - id: contratar_presentacion_urgente_externa
-    label: "Pagar una presentación de urgencia en otra asesoría seria (155 €)"
+    label: Pagar una presentación de urgencia en otra asesoría seria (155 €)
     requirements:
       stats:
         money:
           min: 220
-    result_text: "Otro despacho rescata tus libros en dos horas, presenta todo clavado y le mandas el justificante a Paco para que se atragante con la aceituna."
+    result_text: Otro despacho rescata tus libros en dos horas, presenta todo clavado y le mandas el justificante a Paco para que se atragante con la aceituna.
     effects:
       deductible_expense: 155
       stress: -4
       moral: 3
       fiscal_risk: -7
   - id: revocar_autorizacion_y_volver_solo
-    label: "Cortar con Paco hoy mismo y presentar tú con tu propio certificado"
+    label: Cortar con Paco hoy mismo y presentar tú con tu propio certificado
     result_text: "Cancelas la domiciliación de la gestoría en el acto: para financiar vacaciones en Levante, prefieres ahorrarte la cuota."
     effects:
       set_gestor:

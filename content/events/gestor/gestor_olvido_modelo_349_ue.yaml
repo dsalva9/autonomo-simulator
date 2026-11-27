@@ -14,6 +14,7 @@ requirements:
   min_month: 10
   gestor_tiers:
     - self
+  max_month: 48
 weight: 11
 cooldown_months: 12
 max_occurrences: 3
@@ -27,14 +28,14 @@ choices:
       moral: 1
       fiscal_risk: -6
   - id: pagar_consulta_puntual_operador_ue
-    label: Pagar a un fiscalista una revisión puntual de operaciones UE
+    label: Pagar a un fiscalista una revisión puntual UE (450 €)
     requirements:
       stats:
         money:
-          min: 240
+          min: 650
     result_text: El especialista cuadra tus NIF europeos en VIES, subsana el modelo y deja tus libros listos para cualquier cruce.
     effects:
-      deductible_expense: 145
+      deductible_expense: 450
       stress: -5
       moral: 4
       reputation: 2
@@ -43,6 +44,12 @@ choices:
     label: Ignorar el formulario confiando en que no mueve dinero
     result_text: Te ahorras el trámite hoy, pero dejas una discrepancia cantosa entre tu IVA trimestral y el censo europeo VIES.
     effects:
+      cash_delta: 650
       stress: -2
-      moral: -3
-      fiscal_risk: 14
+      moral: -2
+      fiscal_risk: 16
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 20
+          probability: 0.3
+          priority: high

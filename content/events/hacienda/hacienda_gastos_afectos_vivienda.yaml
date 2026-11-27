@@ -18,6 +18,7 @@ requirements:
   stats:
     fiscal_risk:
       min: 15
+  max_month: 48
 weight: 10
 cooldown_months: 14
 max_occurrences: 3

@@ -1,0 +1,61 @@
+schema_version: 1
+id: familia_hipoteca_euribor_disparado
+category: familia
+title: "Revisión del Euríbor: +380 €/mes de golpe"
+body: "Llega el correo más temido del banco: revisión anual del tipo variable y la cuota hipotecaria pega un salto de 380 € al mes. Álex repasa el Excel doméstico en la cocina mientras el recibo amenaza con comerse tu margen."
+tags:
+  - vivienda
+  - hipoteca
+  - macro
+character_id: pareja_alex
+character_expression: stressed
+illustration_id: banner_familia_tension
+requirements:
+  min_month: 42
+  required_flags:
+    - vivienda_propia_comprada
+  forbidden_flags:
+    - hipoteca_tipo_fijo_activa
+weight: 11
+cooldown_months: 20
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: absorber_subida_euribor_un_ano
+    label: "Apretar los dientes y asumir los +380 €/mes hasta la próxima revisión"
+    result_text: "Cada día uno notas el bocado del banco antes siquiera de abrir el correo. Mantienes tu caja intacta hoy, pero el año se hace cuesta arriba."
+    effects:
+      stress: 12
+      moral: -6
+      add_modifier:
+        id: mod_revision_euribor_anual
+        label: "Revisión al alza del Euríbor"
+        remaining_months: 12
+        monthly_expense_delta: 380
+  - id: amortizar_capital_parcial
+    label: "Amortizar 6.000 € de capital para neutralizar el sablazo mensual"
+    requirements:
+      stats:
+        money:
+          min: 7500
+    result_text: "El traspaso al banco escuece en el momento, pero la letra vuelve a cifras humanas y en casa se vuelve a dormir sin mirar tipos."
+    effects:
+      cash_delta: -6000
+      stress: -8
+      personal_life: 8
+      moral: 6
+  - id: subrogar_con_expediente_limpio
+    label: "Subrogar a tipo fijo exhibiendo historial fiscal impoluto (1.400 €)"
+    requirements:
+      stats:
+        reputation:
+          min: 60
+        fiscal_risk:
+          max: 15
+    result_text: "Dos bancos se pelean por tus declaraciones impecables. Por 1.400 € de gastos cierras tipo fijo para siempre y te despides del Euríbor."
+    effects:
+      cash_delta: -1400
+      stress: -10
+      moral: 10
+      set_flags:
+        - hipoteca_tipo_fijo_activa

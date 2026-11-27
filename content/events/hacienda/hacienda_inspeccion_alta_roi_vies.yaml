@@ -16,9 +16,12 @@ requirements:
   stats:
     fiscal_risk:
       min: 17
+  forbidden_flags:
+    - alta_roi_vies_aprobada
+  max_month: 48
 weight: 14
 cooldown_months: 15
-max_occurrences: 2
+max_occurrences: 1
 choices:
   - id: aportar_contratos_europeos_y_medios
     label: Enviar propuestas firmadas, web profesional y correos UE
@@ -32,6 +35,8 @@ choices:
           moral: 6
           reputation: 3
           fiscal_risk: -12
+          set_flags:
+            - alta_roi_vies_aprobada
       - id: peticion_documental_adicional
         weight: 35
         result_text: Falta traducir un anexo contractual, el alta se retrasa semanas y pierdes parte del encargo inicial.
@@ -54,6 +59,8 @@ choices:
       moral: 6
       reputation: 3
       fiscal_risk: -15
+      set_flags:
+        - alta_roi_vies_aprobada
   - id: desistir_del_alta_y_repercutir_iva_nacional
     label: Retirar la solicitud por ahora y facturar con IVA español
     result_text: Cierras el requerimiento al instante, aunque el cliente europeo tuerce el gesto ante el sobrecoste administrativo.

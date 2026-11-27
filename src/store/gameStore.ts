@@ -13,6 +13,7 @@ import {
   createInitialGameState,
   dismissAnnualSummary,
   getActiveEvent,
+  getBusinessTierConfig,
   resolveEndingQuote,
   resolvePartnerName,
   resolveVictoryPrompt,
@@ -213,16 +214,22 @@ function tryAutoSettleQuarterlyTax(state: GameState): {
   }
 
   const report = state.quarterly_report;
+  const tierConfig = getBusinessTierConfig(state, compiledCatalog);
+  const minBuffer = Math.round(
+    FAST_PACING_AUTO_SETTLE_MIN_BUFFER * tierConfig.event_stakes_multiplier,
+  );
+  const hasCriticalQuarterlyEvent =
+    Boolean(report.inspection_triggered) ||
+    Boolean(report.historical_audit_triggered) ||
+    report.elena_compliance_event != null ||
+    (report.sl_self_penalty ?? 0) > 0;
   const totalDue =
     (report.accrued_tax_due ?? 0) +
     (report.deferred_tax_due ?? 0) +
     (report.gestor_error_surcharge ?? 0) +
     (report.inspection_fallback_fine ?? 0);
 
-  if (
-    !report.inspection_triggered &&
-    state.indicators.money - totalDue >= FAST_PACING_AUTO_SETTLE_MIN_BUFFER
-  ) {
+  if (!hasCriticalQuarterlyEvent && state.indicators.money - totalDue >= minBuffer) {
     const settled = settleQuarter(state, compiledCatalog, "pay");
     const paidAmount =
       settled.resolution.quarterlySettlement?.paid_amount ??

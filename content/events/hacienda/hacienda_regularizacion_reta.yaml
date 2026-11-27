@@ -16,6 +16,7 @@ requirements:
     - 4
     - 10
     - 11
+  max_month: 54
 weight: 9
 cooldown_months: 9
 max_occurrences: 4

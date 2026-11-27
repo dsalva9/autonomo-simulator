@@ -28,35 +28,52 @@ choices:
       moral: 3
       fiscal_risk: -7
   - id: encargar_memoria_tecnica_certificada
-    label: Pagar memoria técnica certificada y aplicar la deducción
+    label: Pagar memoria técnica certificada y aplicar deducción (780 €)
     requirements:
       stats:
         money:
-          min: 550
+          min: 900
+        fiscal_risk:
+          max: 25
     result_text: Con el dictamen pericial adjunto al expediente, capturas un ahorro fiscal jugoso y refuerzas tu imagen técnica.
     effects:
-      deductible_expense: 340
-      cash_delta: 690
-      stress: -4
-      moral: 6
+      deductible_expense: 780
+      cash_delta: 520
+      stress: -2
+      moral: 4
       reputation: 5
       fiscal_risk: -6
+      add_modifier:
+        id: mod_memoria_id_certificada
+        label: Acreditación I+D certificada
+        remaining_months: 3
+        monthly_billed_delta: 180
   - id: marcar_casilla_innovacion_sin_peritaje
     label: Aplicar la deducción íntegra ahorrándote la certificación
     outcomes:
       - id: memoria_interna_supera_filtro
-        weight: 45
+        weight: 75
         result_text: El dosier interno preparado con Elena basta este ejercicio y te embolsas la minoración completa.
         effects:
-          cash_delta: 640
+          cash_delta: 1900
           stress: 4
-          moral: 5
-          fiscal_risk: 6
+          moral: 0
+          fiscal_risk: 20
+          schedule_events:
+            - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+              delay_months: 22
+              probability: 0.35
+              priority: high
       - id: criterio_restringido_en_revision
-        weight: 55
-        result_text: Gestión Tributaria exige certificación externa que no tienes y te obliga a devolver la ventaja con intereses.
+        weight: 25
+        result_text: Gestión Tributaria recorta parte del incentivo por falta de peritaje externo, pero retienes 900 € de ahorro mientras el expediente queda bajo lupa.
         effects:
-          cash_delta: -290
-          stress: 9
-          moral: -4
-          fiscal_risk: 9
+          cash_delta: 900
+          stress: 8
+          moral: -3
+          fiscal_risk: 20
+          schedule_events:
+            - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+              delay_months: 22
+              probability: 0.35
+              priority: high

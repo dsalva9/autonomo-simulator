@@ -1,0 +1,61 @@
+schema_version: 1
+id: hacienda_resolucion_teac_tardia
+category: hacienda
+title: "Resolución del TEAC tras año y medio de espera"
+body: "Dieciocho meses después, cuando casi habías borrado aquel recurso de tu memoria, aparece la notificación oficial del Tribunal Económico-Administrativo Central. Hoy se decide si el pulso contra Gómez te sale a devolver o con intereses."
+tags:
+  - recurso
+  - teac
+  - largo_plazo
+character_id: hacienda_inspector_gomez
+character_expression: neutral
+illustration_id: banner_hacienda_base
+requirements: null
+weight: 0
+cooldown_months: 6
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: abrir_fallo_del_tribunal
+    label: "Descargar el PDF del fallo y acatar la resolución definitiva del TEAC"
+    outcomes:
+      - id: teac_estimacion_total
+        weight: 45
+        result_text: "¡Estimación total! El tribunal anula el acta por defecto de motivación y te abona 3.400 € entre devolución e intereses de demora a tu favor."
+        effects:
+          cash_delta: 3400
+          moral: 14
+          stress: -12
+          fiscal_risk: -18
+      - id: teac_desestimacion_con_intereses
+        weight: 55
+        result_text: "Desestimado. El TEAC respalda a Gómez y los dieciocho meses de espera añaden intereses de demora hasta elevar la carta de pago a 6.400 €."
+        effects:
+          cash_delta: -6400
+          stress: 18
+          moral: -12
+          fiscal_risk: -20
+  - id: negociar_suspension_y_fraccionamiento
+    label: "Gestionar la ejecución del fallo y sus garantías con Elena Montes (650 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+    outcomes:
+      - id: teac_victoria_con_elena
+        weight: 60
+        result_text: "Los fundamentos que redactó Elena convencen al tribunal: anulación limpia y 2.600 € de ingreso a tu favor tras los 650 € de honorarios."
+        effects:
+          cash_delta: 2600
+          deductible_expense: 650
+          moral: 12
+          stress: -10
+          fiscal_risk: -18
+      - id: teac_estimacion_parcial_elena
+        weight: 40
+        result_text: "El TEAC estima parcialmente el recurso: Elena tumba la sanción y reduce la factura final a 2.400 € más 650 € de gestión."
+        effects:
+          cash_delta: -2400
+          deductible_expense: 650
+          stress: 6
+          moral: -2
+          fiscal_risk: -18

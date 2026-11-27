@@ -1,0 +1,67 @@
+schema_version: 1
+id: empleados_salto_estudio_dos_personas
+category: empleados
+title: "De autónomo con ayudante a Estudio Consolidado (2–3 personas)"
+body: "Los proyectos ya no caben en dos mesas y Dani pide manos para no vivir apagando incendios. Toca decidir si dar el salto oficial a Estudio Consolidado y ampliar plantilla o mantener el chiringuito manejable."
+tags:
+  - plantilla
+  - crecimiento
+  - estudio
+character_id: empleado_junior_dani
+character_expression: pleased
+illustration_id: banner_empleados_estudio
+requirements:
+  min_month: 24
+  team_size:
+    min: 1
+    max: 2
+  business_tiers:
+    - solo_autonomo
+    - estudio_consolidado
+weight: 14
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: ampliar_estudio_a_dos_o_tres
+    label: "Subir a Estudio Consolidado e incorporar +1 perfil (1.800 €)"
+    requirements:
+      stats:
+        money:
+          min: 3200
+    result_text: "Añades un puesto nuevo, ordenas entregas por turnos y estrenas estructura de estudio serio. Sube la nómina fija, pero por fin dejas de rechazar encargos."
+    effects:
+      deductible_expense: 1800
+      set_business_tier:
+        tier: estudio_consolidado
+      expand_team:
+        count: 1
+        avg_monthly_cost: 1750
+      reputation: 6
+      employee_satisfaction: 8
+      moral: 6
+  - id: fichaje_doble_estudio
+    label: "Apostar fuerte: Estudio Consolidado y +2 fichajes (3.000 €)"
+    requirements:
+      stats:
+        money:
+          min: 5500
+        reputation:
+          min: 55
+    result_text: "Tu marca ya atrae talento sin suplicar. Duplicas capacidad productiva de golpe y te preparas para pelear cuentas medianas con músculo real."
+    effects:
+      deductible_expense: 3000
+      set_business_tier:
+        tier: estudio_consolidado
+      expand_team:
+        count: 2
+        avg_monthly_cost: 1800
+      reputation: 10
+      employee_satisfaction: 8
+      stress: 6
+  - id: mantener_tamano_actual_prudente
+    label: "Mantener el equipo actual y priorizar tranquilidad de caja"
+    result_text: "Frenas la fiebre de crecer por crecer: renuncias a algunos encargos voluminosos, pero tus nóminas de fin de mes siguen cabiendo en la almohada."
+    effects:
+      moral: 2
+      stress: -4

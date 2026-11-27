@@ -1,0 +1,57 @@
+schema_version: 1
+id: familia_cuidado_padres_dependencia
+category: familia
+title: "Residencia o cuidadora en casa: la factura real"
+body: "Tus padres ya no se apañan solos con las compras, las consultas ni las caídas tontas. La ayuda pública a la dependencia avanza a velocidad geológica y toca organizar cuidados de verdad antes del próximo susto."
+tags:
+  - padres
+  - cuidados
+  - veterania
+character_id: null
+character_expression: null
+illustration_id: banner_familia_tension
+requirements:
+  min_month: 72
+weight: 11
+cooldown_months: 24
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: contratar_cuidadora_especializada
+    label: "Contratar asistencia domiciliaria profesional dada de alta (1.200 €)"
+    requirements:
+      stats:
+        money:
+          min: 3500
+    result_text: "Asumes 550 € al mes con contrato y alta en regla, pero tus padres siguen en su barrio bien atendidos y tú trabajas sin miedo al teléfono."
+    effects:
+      cash_delta: -1200
+      personal_life: 14
+      moral: 10
+      stress: -6
+      add_modifier:
+        id: mod_cuidadora_padres
+        label: "Asistencia domiciliaria para tus padres"
+        remaining_months: 12
+        monthly_expense_delta: 550
+  - id: adaptar_vivienda_y_turnos
+    label: "Reformar baño, instalar teleasistencia y organizar turnos (4.200 €)"
+    result_text: "La obra rápida y los ajustes vacían un buen mordisco de tu tesorería, pero convierten la casa en un lugar seguro sin hipotecar cada mes."
+    effects:
+      cash_delta: -4200
+      personal_life: 10
+      stress: 8
+      moral: 6
+  - id: recortar_horas_y_cuidar_tu
+    label: "Recortar cartera seis meses para hacerte cargo tú cada mañana"
+    result_text: "Tus ingresos caen durante medio año y algún cliente impaciente se enfría, pero compartes sobremesas y cuidados que jamás te reprocharás."
+    effects:
+      personal_life: 18
+      moral: 12
+      stress: -4
+      reputation: -4
+      add_modifier:
+        id: mod_cuidados_familiares_jornada
+        label: "Jornada recortada por cuidados familiares"
+        remaining_months: 6
+        monthly_billed_delta: -900

@@ -1,4 +1,5 @@
 import {
+  type BusinessTier,
   type CharacterDef,
   type ChoiceSpec,
   type EventDef,
@@ -7,7 +8,9 @@ import {
   type GestorTier,
   type RequirementsSpec,
   type TemporalModifier,
+  getTeamHeadcount,
   resolvePartnerName,
+  scaleMonetaryValue,
   substitutePartnerName,
 } from "../../engine/index.ts";
 
@@ -262,6 +265,71 @@ export function translateGestorTier(tier: GestorTier, locale: SupportedLocale = 
   }
 }
 
+export function translateBusinessTier(
+  tier: BusinessTier,
+  locale: SupportedLocale = "es-ES",
+): string {
+  if (normalizeLocale(locale) === "en") {
+    switch (tier) {
+      case "solo_autonomo":
+        return "Solo Freelancer";
+      case "estudio_consolidado":
+        return "Boutique Studio";
+      case "sociedad_limitada":
+        return "Limited Company (S.L.)";
+      case "agencia_consultora":
+        return "Agency / Consultancy";
+    }
+  }
+  switch (tier) {
+    case "solo_autonomo":
+      return "Autónomo Individual";
+    case "estudio_consolidado":
+      return "Estudio Consolidado";
+    case "sociedad_limitada":
+      return "Sociedad Limitada (S.L.)";
+    case "agencia_consultora":
+      return "Agencia / Consultora";
+  }
+}
+
+export function translateBusinessTierShort(
+  tier: BusinessTier,
+  locale: SupportedLocale = "es-ES",
+  options?: { isBoutiqueSeniorSolo?: boolean; compactCode?: boolean },
+): string {
+  const isEn = normalizeLocale(locale) === "en";
+  if (
+    options?.isBoutiqueSeniorSolo &&
+    tier !== "sociedad_limitada" &&
+    tier !== "agencia_consultora"
+  ) {
+    return options.compactCode ? "BTQ" : "Boutique";
+  }
+  if (options?.compactCode) {
+    switch (tier) {
+      case "solo_autonomo":
+        return "RETA";
+      case "estudio_consolidado":
+        return isEn ? "STD" : "EST";
+      case "sociedad_limitada":
+        return "S.L.";
+      case "agencia_consultora":
+        return isEn ? "AGY" : "AGE";
+    }
+  }
+  switch (tier) {
+    case "solo_autonomo":
+      return isEn ? "Solo" : "Autónomo";
+    case "estudio_consolidado":
+      return isEn ? "Studio" : "Estudio";
+    case "sociedad_limitada":
+      return "S.L.";
+    case "agencia_consultora":
+      return isEn ? "Agency" : "Agencia";
+  }
+}
+
 export function translateFamilyStatus(
   status: FamilyStatus,
   locale: SupportedLocale = "es-ES",
@@ -499,6 +567,58 @@ export const MODIFIER_LABELS_BY_ID_EN: Readonly<Record<string, string>> = {
   mod_regularizacion_reta: "Contribution bracket adjustment",
   mod_mini_aplazamiento_aeat: "Interest-bearing mini tax deferral",
   mod_reta_veterano_tramo: "Veteran RETA bracket true-up",
+  // v2 Scaling, Enterprise & Boutique
+  mod_contrato_anual_startup_canje: "Annual retainer swapped for startup equity",
+  mod_retrabajo_garantia_gratuito: "Unpaid rework fixing legacy shortcut",
+  mod_despliegue_enterprise_sano: "Annual IBEX rollout at full stride",
+  mod_despliegue_enterprise_forzado: "Overstretched IBEX rollout crunch",
+  mod_caida_cuenta_ancla_severa: "Revenue gap after anchor-client exit",
+  mod_transicion_cuenta_ancla_sprint: "Partial dip during sales blitz",
+  mod_amortiguacion_cartera_diversa: "Mild dip cushioned by global roster",
+  mod_recorte_tarifas_recesion: "Recession-discounted client rates",
+  mod_ventaja_flujo_ia_propio: "Proprietary AI workflow margin boost",
+  mod_guerra_precios_ia: "Rate erosion from low-cost AI war",
+  mod_actualizacion_tarifas_inflacion: "Rates indexed to inflation surge",
+  mod_sobrecoste_inflacion_fijos: "Inflation spike in fixed studio costs",
+  mod_inflacion_amortiguada_proveedores: "Contained cost hike after renegotiation",
+  mod_cartera_reducida_tras_venta: "Slimmer roster after unit sale",
+  mod_transicion_venta_parcial_cartera: "Account handover after partial sale",
+  mod_doble_retainer_boutique_elite: "Dual high-ticket boutique retainers",
+  mod_retainer_boutique_equilibrado: "Balanced senior boutique retainer",
+  mod_retainer_boutique_escasez: "Waitlist-priced boutique retainer",
+  mod_presion_competencia_exempleado: "Commercial squeeze from ex-employee rival",
+  mod_poliza_credito_nominas: "Payroll bridge credit line interest",
+  mod_paquete_retencion_seniors: "Senior-talent retention bonus plan",
+  mod_vacio_fuga_dos_seniors: "Delivery dip after senior walkout",
+  mod_erte_reduccion_temporal: "Temporary short-time furlough (ERTE)",
+  mod_alquiler_sede_agencia: "Central agency headquarters lease",
+  mod_ahorro_agencia_remota: "Lean async remote agency savings",
+  mod_mandos_intermedios_activos: "Middle leads unlocking agency scale",
+  mod_cuota_prestamo_participativo: "Participating loan repayment",
+  // v2 Family & Life Arcs
+  mod_mudanza_ciudad_alex: "Relocation and rebuilding client roster",
+  mod_puente_ave_semanal: "Weekly high-speed train commute for Álex",
+  mod_sosten_unico_hogar: "Sole household earner after layoff",
+  mod_apoyo_operativo_alex: "Álex pitching in on studio ops",
+  mod_hipoteca_entrada_fuerte: "Manageable mortgage after big deposit",
+  mod_hipoteca_noventa_pct: "Steep 90% loan-to-value mortgage",
+  mod_revision_euribor_anual: "Upward Euribor mortgage reset",
+  mod_freno_rescate_pareja: "Scaled-back workload to save the home",
+  mod_pausa_terapia_pareja: "Short slowdown backed by therapy",
+  mod_iguala_red_alex: "Corporate retainer via Álex's network",
+  mod_recorte_domestico_conjunto: "Shared household budget tightening",
+  mod_colegio_concertado_curso: "Charter school, lunch, and bus",
+  mod_comedor_extraescolares: "School canteen and after-school clubs",
+  mod_jornada_reducida_colegio: "Afternoons cleared for school pick-up",
+  mod_cuidadora_padres: "In-home care for your parents",
+  mod_cuidados_familiares_jornada: "Reduced hours for family caregiving",
+  mod_parada_tecnica_quince_dias: "Two-week burnout pit stop",
+  mod_apoyo_hogar_y_terapia: "Household help and ongoing therapy",
+  mod_baja_segunda_criatura: "Shared parenting with two kids",
+  // v2 Content Overhaul Additions
+  mod_memoria_id_certificada: "Certified R&D tax credit",
+  mod_reta_base_minima_provisional: "Provisional minimum RETA bracket savings",
+  mod_plan_crecimiento_sl_equipo: "S.L. career track & phantom shares",
 };
 
 export const MODIFIER_LABELS_EN: Readonly<Record<string, string>> = {
@@ -584,6 +704,55 @@ export const MODIFIER_LABELS_EN: Readonly<Record<string, string>> = {
   "Regularización tramo cuota": "Contribution bracket adjustment",
   "Miniaplazamiento con intereses": "Interest-bearing mini tax deferral",
   "Ajuste veterano de tramo RETA": "Veteran RETA bracket true-up",
+  "Iguala anual por canje de participaciones": "Annual retainer swapped for startup equity",
+  "Retrabajo gratuito por fallo heredado": "Unpaid rework fixing legacy shortcut",
+  "Despliegue anual IBEX a pleno ritmo": "Annual IBEX rollout at full stride",
+  "Despliegue IBEX a marchas forzadas": "Overstretched IBEX rollout crunch",
+  "Hueco tras pérdida de cuenta ancla": "Revenue gap after anchor-client exit",
+  "Bache parcial durante sprint comercial": "Partial dip during sales blitz",
+  "Ajuste leve cubierto por cartera diversa": "Mild dip cushioned by global roster",
+  "Tarifas rebajadas por recesión sectorial": "Recession-discounted client rates",
+  "Flujo propio de IA con margen premium": "Proprietary AI workflow margin boost",
+  "Erosión de tarifas por guerra low-cost": "Rate erosion from low-cost AI war",
+  "Tarifas revisadas ante ola inflacionista": "Rates indexed to inflation surge",
+  "Sobrecoste fijo por espiral inflacionista": "Inflation spike in fixed studio costs",
+  "Subida moderada tras renegociar proveedores": "Contained cost hike after renegotiation",
+  "Cartera ajustada tras venta de división": "Slimmer roster after unit sale",
+  "Traspaso de cuentas tras venta parcial": "Account handover after partial sale",
+  "Doble iguala boutique de alto ticket": "Dual high-ticket boutique retainers",
+  "Iguala boutique sénior con agenda sana": "Balanced senior boutique retainer",
+  "Tarifa boutique por lista de espera": "Waitlist-priced boutique retainer",
+  "Presión comercial de excompañero rival": "Commercial squeeze from ex-employee rival",
+  "Intereses de póliza puente de nóminas": "Payroll bridge credit line interest",
+  "Plus de retención de perfiles sénior": "Senior-talent retention bonus plan",
+  "Bache operativo tras fuga de séniores": "Delivery dip after senior walkout",
+  "ERTE temporal de jornada reducida": "Temporary short-time furlough (ERTE)",
+  "Alquiler de sede céntrica de agencia": "Central agency headquarters lease",
+  "Operativa remota asíncrona sin oficina": "Lean async remote agency savings",
+  "Mandos intermedios liberando dirección": "Middle leads unlocking agency scale",
+  "Devolución de préstamo participativo": "Participating loan repayment",
+  "Mudanza y cartera en reconstrucción": "Relocation and rebuilding client roster",
+  "Puente semanal en AVE por Álex": "Weekly high-speed train commute for Álex",
+  "Sostén único del hogar tras ERE": "Sole household earner after layoff",
+  "Apoyo operativo de Álex en casa": "Álex pitching in on studio ops",
+  "Hipoteca moderada tras entrada fuerte": "Manageable mortgage after big deposit",
+  "Cuota alta de hipoteca al 90 %": "Steep 90% loan-to-value mortgage",
+  "Revisión al alza del Euríbor": "Upward Euribor mortgage reset",
+  "Ritmo reducido para salvar el hogar": "Scaled-back workload to save the home",
+  "Pausa breve con apoyo terapéutico": "Short slowdown backed by therapy",
+  "Iguala corporativa vía red de Álex": "Corporate retainer via Álex's network",
+  "Austeridad compartida en casa": "Shared household budget tightening",
+  "Colegio concertado, comedor y ruta": "Charter school, lunch, and bus",
+  "Comedor escolar y extraescolares": "School canteen and after-school clubs",
+  "Tardes despejadas para el colegio": "Afternoons cleared for school pick-up",
+  "Asistencia domiciliaria para tus padres": "In-home care for your parents",
+  "Jornada recortada por cuidados familiares": "Reduced hours for family caregiving",
+  "Parada técnica de quince días": "Two-week burnout pit stop",
+  "Apoyo doméstico y terapia activa": "Household help and ongoing therapy",
+  "Crianza compartida con dos criaturas": "Shared parenting with two kids",
+  "Acreditación I+D certificada": "Certified R&D tax credit",
+  "Cuota RETA en base mínima provisional": "Provisional minimum RETA bracket savings",
+  "Plan de carrera y phantom shares S.L.": "S.L. career track & phantom shares",
 };
 
 export function translateCharacterName(
@@ -717,6 +886,65 @@ export const EXACT_FLAG_LABELS_ES: Readonly<Record<string, string>> = {
   regularizacion_reta_pendiente: "regularización de tramo RETA pendiente",
   mascota_en_casa: "mascota en casa",
   sin_mascota_decidido: "decisión de seguir sin mascota",
+  elena_aviso_cumplimiento: "aviso de cumplimiento de Elena",
+  elena_rescision_cumplimiento: "rescisión de Elena por riesgo fiscal",
+  auditoria_ejercicio_anterior: "auditoría de ejercicio anterior",
+  ejercicio_prescrito_limpio: "ejercicio fiscal prescrito sin sanción",
+  aficion_desconexion_activa: "afición de desconexión activa",
+  alta_roi_vies_aprobada: "alta ROI/VIES europea aprobada",
+  app_fiscal_lowcost_cerrada: "app fiscal low-cost cerrada",
+  app_primo_resuelta: "propuesta de app familiar resuelta",
+  archivo_digitalizado_certificado: "archivo fiscal digitalizado y certificado",
+  archivo_paco_inundado: "archivo de Paco inundado",
+  boda_con_alex_celebrada: "boda con Álex celebrada",
+  cartera_mantenimiento_vendida: "cartera de mantenimiento vendida",
+  conector_conciliacion_activo: "conector de conciliación bancaria activo",
+  coworking_plantilla_activo: "pase de coworking para plantilla activo",
+  cuenta_multidivisa_activa: "cuenta multidivisa activa",
+  dani_ascendido_senior: "Dani ascendido a perfil intermedio",
+  dani_formacion_automatizacion: "formación en automatización de Dani",
+  dias_cortesia_configurados: "días de cortesía AEAT configurados",
+  epigrafe_iae_regularizado: "epígrafe IAE regularizado",
+  equipo_profesional_nuevo: "equipo informático profesional renovado",
+  estudio_aislado_climatizado: "estudio aislado y climatizado",
+  exempleado_salida_amistosa: "salida amistosa de ex-empleado",
+  exempleado_salida_conflictiva: "salida conflictiva de ex-empleado",
+  gimnasio_resuelto: "cuota de gimnasio resuelta",
+  habitacion_infantil_cedida: "habitación infantil cedida",
+  hipoteca_tipo_fijo_activa: "hipoteca a tipo fijo activa",
+  kit_digital_declarado: "Kit Digital declarado en IRPF",
+  lector_dnie_instalado: "lector de DNIe instalado",
+  licencia_ia_privada_activa: "licencia corporativa de IA activa",
+  linea_movil_profesional_separada: "línea móvil profesional exclusiva",
+  linea_pericial_activa: "servicio pericial publicado en web",
+  manual_procesos_estudio_activo: "manual interno de procesos activo",
+  modulo_laboral_externo_activo: "módulo laboral externalizado activo",
+  muela_juicio_extraida: "muela del juicio extraída",
+  obra_referencia_completada: "obra de referencia completada",
+  paco_semijubilado: "Paco semijubilado con su sobrino Kevin",
+  patrimonio_cuentas_separadas: "patrimonio y cuentas separados",
+  perifericos_ergonomicos_comprados: "periféricos ergonómicos comprados",
+  plantilla_fiscal_auditada: "plantilla fiscal auditada",
+  plantilla_remoto_aprobado: "teletrabajo provincial aprobado",
+  posicionamiento_boutique_elite: "posicionamiento boutique de élite",
+  primaria_iniciada: "colegio de primaria iniciado",
+  prl_estudio_al_dia: "prevención de riesgos laborales al día",
+  propiedad_intelectual_registrada: "propiedad intelectual registrada",
+  puesto_plantilla_renovado: "puesto de plantilla renovado",
+  relevo_familiar_resuelto: "relevo de cliente histórico resuelto",
+  reparto_separacion_cerrado: "reparto de separación cerrado",
+  revision_decenal_completada: "verificación decenal completada",
+  router_portatil_pueblo: "router portátil 4G para el pueblo",
+  sede_agencia_propia: "sede céntrica propia de la agencia",
+  segunda_criatura_decidida: "decisión sobre segundo hijo cerrada",
+  silla_ergonomica_comprada: "silla ergonómica comprada",
+  socio_minoritario_activo: "socio inversor minoritario en la S.L.",
+  sofa_paco_resuelto: "dilema del sofá de Paco resuelto",
+  stack_software_libre_activo: "herramientas de software libre activas",
+  terapia_activa: "terapia psicológica activa",
+  ticket_minimo_implantado: "ticket mínimo de proyecto implantado",
+  verifactu_implantado: "facturación VeriFactu implantada",
+  vivienda_propia_comprada: "vivienda propia comprada",
 };
 
 export const EXACT_FLAG_LABELS_EN: Readonly<Record<string, string>> = {
@@ -762,6 +990,65 @@ export const EXACT_FLAG_LABELS_EN: Readonly<Record<string, string>> = {
   regularizacion_reta_pendiente: "pending RETA bracket true-up",
   mascota_en_casa: "pet at home",
   sin_mascota_decidido: "decided against getting a pet",
+  elena_aviso_cumplimiento: "Elena's compliance warning",
+  elena_rescision_cumplimiento: "Elena's compliance termination",
+  auditoria_ejercicio_anterior: "prior-year tax audit",
+  ejercicio_prescrito_limpio: "statute-barred fiscal year cleared",
+  aficion_desconexion_activa: "active screen-free hobby",
+  alta_roi_vies_aprobada: "approved EU ROI/VIES VAT registration",
+  app_fiscal_lowcost_cerrada: "closed budget tax app",
+  app_primo_resuelta: "cousin's app pitch settled",
+  archivo_digitalizado_certificado: "certified digital tax archive",
+  archivo_paco_inundado: "Paco's flooded paper archive",
+  boda_con_alex_celebrada: "wedding with Álex celebrated",
+  cartera_mantenimiento_vendida: "legacy maintenance roster sold",
+  conector_conciliacion_activo: "active bank-reconciliation connector",
+  coworking_plantilla_activo: "active staff coworking pass",
+  cuenta_multidivisa_activa: "active multi-currency account",
+  dani_ascendido_senior: "Dani promoted to mid-level",
+  dani_formacion_automatizacion: "Dani's automation training completed",
+  dias_cortesia_configurados: "AEAT courtesy vacation days set",
+  epigrafe_iae_regularizado: "regularized IAE activity tax code",
+  equipo_profesional_nuevo: "new pro workstation",
+  estudio_aislado_climatizado: "insulated and climate-controlled studio",
+  exempleado_salida_amistosa: "amicable former-employee exit",
+  exempleado_salida_conflictiva: "contentious former-employee exit",
+  gimnasio_resuelto: "gym membership resolved",
+  habitacion_infantil_cedida: "home-office room given to child",
+  hipoteca_tipo_fijo_activa: "fixed-rate mortgage active",
+  kit_digital_declarado: "EU Digital Kit grant declared",
+  lector_dnie_instalado: "USB eID card reader installed",
+  licencia_ia_privada_activa: "private team AI license active",
+  linea_movil_profesional_separada: "dedicated business mobile SIM",
+  linea_pericial_activa: "forensic witness service listed online",
+  manual_procesos_estudio_activo: "studio SOP playbook active",
+  modulo_laboral_externo_activo: "outsourced payroll module active",
+  muela_juicio_extraida: "wisdom tooth extracted",
+  obra_referencia_completada: "signature flagship project completed",
+  paco_semijubilado: "Paco semi-retired with nephew Kevin",
+  patrimonio_cuentas_separadas: "personal and business accounts separated",
+  perifericos_ergonomicos_comprados: "ergonomic keyboard and mouse bought",
+  plantilla_fiscal_auditada: "audited tax spreadsheet template",
+  plantilla_remoto_aprobado: "full-remote relocation approved",
+  posicionamiento_boutique_elite: "elite high-margin boutique positioning",
+  primaria_iniciada: "primary school started",
+  prl_estudio_al_dia: "workplace safety (PRL) up to date",
+  propiedad_intelectual_registrada: "intellectual property registered",
+  puesto_plantilla_renovado: "staff workstation upgraded",
+  relevo_familiar_resuelto: "legacy family-client handover resolved",
+  reparto_separacion_cerrado: "separation settlement closed",
+  revision_decenal_completada: "decade-mark tax verification completed",
+  router_portatil_pueblo: "portable 4G village router",
+  sede_agencia_propia: "central agency headquarters office",
+  segunda_criatura_decidida: "second-child decision settled",
+  silla_ergonomica_comprada: "ergonomic chair purchased",
+  socio_minoritario_activo: "minority equity investor in your S.L.",
+  sofa_paco_resuelto: "Paco's office-sofa dilemma settled",
+  stack_software_libre_activo: "open-source toolstack active",
+  terapia_activa: "ongoing therapy sessions",
+  ticket_minimo_implantado: "minimum project fee threshold set",
+  verifactu_implantado: "VeriFactu compliant invoicing deployed",
+  vivienda_propia_comprada: "purchased own home",
 };
 
 const FLAG_WORD_GLOSSARY_EN: Readonly<Record<string, string>> = {
@@ -965,6 +1252,10 @@ export function humanizeFlag(
   return substitutePartnerName(EXACT_FLAG_LABELS_ES[flag] ?? flag.replace(/_/g, " "), partnerName);
 }
 
+export interface ExplainLockReasonsOptions {
+  moneyScaleMultiplier?: number;
+}
+
 /**
  * Produces human-readable localized reasons explaining why a choice's requirements
  * are not currently met by `state`.
@@ -973,6 +1264,7 @@ export function explainChoiceLockReasons(
   state: GameState,
   requirements?: RequirementsSpec | null,
   locale: SupportedLocale = "es-ES",
+  options?: ExplainLockReasonsOptions,
 ): string[] {
   if (!requirements) {
     return [];
@@ -980,6 +1272,7 @@ export function explainChoiceLockReasons(
 
   const isEn = normalizeLocale(locale) === "en";
   const partnerName = resolvePartnerName(state);
+  const moneyScale = options?.moneyScaleMultiplier ?? 1;
   const reasons: string[] = [];
 
   if (requirements.min_month != null && state.month < requirements.min_month) {
@@ -1008,16 +1301,30 @@ export function explainChoiceLockReasons(
       }
       const currentVal = key === "fiscal_risk" ? state.fiscal_risk : state.indicators[key];
       const label = isEn ? STAT_LABELS_EN[key] : STAT_LABELS_ES[key];
-      if (range.min != null && currentVal < range.min) {
-        const formattedMin = key === "money" ? formatEuros(range.min, locale) : String(range.min);
+      const effectiveMin =
+        range.min != null
+          ? key === "money" && moneyScale !== 1
+            ? scaleMonetaryValue(range.min, moneyScale)
+            : range.min
+          : null;
+      const effectiveMax =
+        range.max != null
+          ? key === "money" && moneyScale !== 1
+            ? scaleMonetaryValue(range.max, moneyScale)
+            : range.max
+          : null;
+      if (effectiveMin != null && currentVal < effectiveMin) {
+        const formattedMin =
+          key === "money" ? formatEuros(effectiveMin, locale) : String(effectiveMin);
         reasons.push(
           isEn
             ? `Requires min. ${label} ${formattedMin}`
             : `Requiere ${label} mín. ${formattedMin}`,
         );
       }
-      if (range.max != null && currentVal > range.max) {
-        const formattedMax = key === "money" ? formatEuros(range.max, locale) : String(range.max);
+      if (effectiveMax != null && currentVal > effectiveMax) {
+        const formattedMax =
+          key === "money" ? formatEuros(effectiveMax, locale) : String(effectiveMax);
         reasons.push(
           isEn
             ? `Requires max. ${label} ${formattedMax}`
@@ -1042,6 +1349,16 @@ export function explainChoiceLockReasons(
         const humanized = humanizeFlag(flag, locale, partnerName);
         reasons.push(isEn ? `Unavailable with "${humanized}"` : `No disponible con «${humanized}»`);
       }
+    }
+  }
+
+  if (requirements.business_tiers && requirements.business_tiers.length > 0) {
+    const currentTier = state.business?.tier ?? "solo_autonomo";
+    if (!requirements.business_tiers.includes(currentTier)) {
+      const allowed = requirements.business_tiers
+        .map((tier) => translateBusinessTier(tier, locale))
+        .join(isEn ? " or " : " o ");
+      reasons.push(isEn ? `Requires structure: ${allowed}` : `Requiere estructura: ${allowed}`);
     }
   }
 
@@ -1090,13 +1407,65 @@ export function explainChoiceLockReasons(
         reasons.push(
           requirements.has_employee
             ? "Requires an employee on payroll"
-            : "Maximum 1 employee on payroll",
+            : "Only available while solo (0 staff)",
         );
       } else {
         reasons.push(
           requirements.has_employee
             ? "Requiere tener un empleado en plantilla"
-            : "Máximo 1 empleado en plantilla",
+            : "Solo sin empleados en plantilla",
+        );
+      }
+    }
+  }
+
+  if (requirements.team_size) {
+    const { min, max } = requirements.team_size;
+    const headcount = getTeamHeadcount(state);
+    if (min != null && headcount < min) {
+      if (min === 1 && pushedMissingEmployee) {
+        // Already stated employee requirement
+      } else {
+        reasons.push(
+          isEn
+            ? `Requires min. team size ${min}`
+            : `Requiere plantilla mín. ${min} ${min === 1 ? "persona" : "personas"}`,
+        );
+      }
+    }
+    if (max != null && headcount > max) {
+      if (max === 0) {
+        reasons.push(
+          isEn ? "Only available while solo (0 staff)" : "Solo sin empleados en plantilla",
+        );
+      } else {
+        reasons.push(
+          isEn
+            ? `Requires max. team size ${max}`
+            : `Requiere plantilla máx. ${max} ${max === 1 ? "persona" : "personas"}`,
+        );
+      }
+    }
+  }
+
+  if (requirements.children_count) {
+    const { min, max } = requirements.children_count;
+    const children = state.family.children_count;
+    if (min != null && children < min) {
+      reasons.push(
+        isEn
+          ? `Requires at least ${min} ${min === 1 ? "child" : "children"}`
+          : `Requiere al menos ${min} ${min === 1 ? "hijo" : "hijos"}`,
+      );
+    }
+    if (max != null && children > max) {
+      if (max === 0) {
+        reasons.push(isEn ? "Only available without children" : "Solo disponible sin hijos");
+      } else {
+        reasons.push(
+          isEn
+            ? `Requires max. ${max} ${max === 1 ? "child" : "children"}`
+            : `Requiere máx. ${max} ${max === 1 ? "hijo" : "hijos"}`,
         );
       }
     }
@@ -1132,4 +1501,122 @@ export function explainChoiceLockReasons(
   }
 
   return reasons;
+}
+
+/**
+ * Produces compact localized RPG check labels for an eligible choice that passed non-money
+ * requirements (stats, business tier, team size, advisor tier, family status, staff morale).
+ */
+export function describeUnlockedRpgChecks(
+  requirements?: RequirementsSpec | null,
+  locale: SupportedLocale = "es-ES",
+): string[] {
+  if (!requirements) {
+    return [];
+  }
+
+  const isEn = normalizeLocale(locale) === "en";
+  const checks: string[] = [];
+
+  if (requirements.stats) {
+    const statOrder: Array<{
+      key: Exclude<keyof NonNullable<RequirementsSpec["stats"]>, "money">;
+      es: string;
+      en: string;
+    }> = [
+      { key: "reputation", es: "Rep", en: "Rep" },
+      { key: "personal_life", es: "Vida", en: "Life" },
+      { key: "stress", es: "Estrés", en: "Stress" },
+      { key: "moral", es: "Moral", en: "Morale" },
+      { key: "fiscal_risk", es: "Riesgo", en: "Risk" },
+    ];
+    for (const item of statOrder) {
+      const range = requirements.stats[item.key];
+      if (!range) {
+        continue;
+      }
+      const label = isEn ? item.en : item.es;
+      if (range.min != null && range.max != null) {
+        checks.push(`${label} ${range.min}–${range.max}`);
+      } else if (range.min != null) {
+        checks.push(`${label} ≥ ${range.min}`);
+      } else if (range.max != null) {
+        checks.push(`${label} ≤ ${range.max}`);
+      }
+    }
+  }
+
+  if (requirements.business_tiers && requirements.business_tiers.length > 0) {
+    const tierShort = requirements.business_tiers
+      .map((tier) => translateBusinessTierShort(tier, locale))
+      .join("/");
+    checks.push(tierShort);
+  }
+
+  if (requirements.team_size) {
+    const { min, max } = requirements.team_size;
+    if (max === 0 && (min == null || min === 0)) {
+      checks.push("Solo");
+    } else if (min != null && max != null) {
+      checks.push(isEn ? `Team ${min}–${max}` : `Equipo ${min}–${max}`);
+    } else if (min != null) {
+      checks.push(isEn ? `Team ≥ ${min}` : `Equipo ≥ ${min}`);
+    } else if (max != null) {
+      checks.push(isEn ? `Team ≤ ${max}` : `Equipo ≤ ${max}`);
+    }
+  }
+
+  if (requirements.gestor_tiers && requirements.gestor_tiers.length > 0) {
+    const hasCheap = requirements.gestor_tiers.includes("cheap");
+    const hasPremium = requirements.gestor_tiers.includes("premium");
+    if (requirements.gestor_tiers.length === 2 && hasCheap && hasPremium) {
+      checks.push(isEn ? "Advisor" : "Gestoría");
+    } else {
+      const gestorShort = requirements.gestor_tiers
+        .map((tier) => {
+          if (tier === "premium") return "Elena";
+          if (tier === "cheap") return "Paco";
+          return isEn ? "Self" : "Autogest.";
+        })
+        .join("/");
+      checks.push(gestorShort);
+    }
+  }
+
+  if (requirements.family_statuses && requirements.family_statuses.length > 0) {
+    const hasDating = requirements.family_statuses.includes("dating");
+    const hasCohab = requirements.family_statuses.includes("cohabiting");
+    if (requirements.family_statuses.length === 2 && hasDating && hasCohab) {
+      checks.push(isEn ? "Partnered" : "En pareja");
+    } else {
+      const famShort = requirements.family_statuses
+        .map((status) => translateFamilyStatus(status, locale))
+        .join("/");
+      checks.push(famShort);
+    }
+  }
+
+  if (requirements.employee_satisfaction) {
+    const { min, max } = requirements.employee_satisfaction;
+    if (min != null && max != null) {
+      checks.push(isEn ? `Staff ${min}–${max}` : `Clima ${min}–${max}`);
+    } else if (min != null) {
+      checks.push(isEn ? `Staff ≥ ${min}` : `Clima ≥ ${min}`);
+    } else if (max != null) {
+      checks.push(isEn ? `Staff ≤ ${max}` : `Clima ≤ ${max}`);
+    }
+  }
+
+  if (requirements.children_count) {
+    const { min, max } = requirements.children_count;
+    if (min != null && max != null) {
+      checks.push(isEn ? `Kids ${min}–${max}` : `Hijos ${min}–${max}`);
+    } else if (min != null) {
+      checks.push(isEn ? `Kids ≥ ${min}` : `Hijos ≥ ${min}`);
+    } else if (max != null) {
+      checks.push(isEn ? `Kids ≤ ${max}` : `Hijos ≤ ${max}`);
+    }
+  }
+
+  return checks;
 }

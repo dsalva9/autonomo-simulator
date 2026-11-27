@@ -1,10 +1,21 @@
 import { pickWeighted } from "./prng.ts";
 import type { ChoiceSpec, EventDef, RequirementsSpec } from "./schemas/index.ts";
+import {
+  getBusinessTierConfig,
+  getPartnerPressureConfig,
+  getTeamHeadcount,
+  scaleMonetaryValue,
+} from "./state.ts";
 import type { ContentCatalog, GameState, PrngState, ScheduledEvent } from "./types.ts";
+
+export interface EvaluateRequirementsOptions {
+  moneyScaleMultiplier?: number;
+}
 
 export function evaluateRequirements(
   state: GameState,
   requirements?: RequirementsSpec | null,
+  options?: EvaluateRequirementsOptions,
 ): boolean {
   if (!requirements) {
     return true;
@@ -23,6 +34,8 @@ export function evaluateRequirements(
     }
   }
 
+  const moneyScale = options?.moneyScaleMultiplier ?? 1;
+
   if (requirements.stats) {
     const statEntries = Object.entries(requirements.stats) as [
       keyof NonNullable<RequirementsSpec["stats"]>,
@@ -34,10 +47,22 @@ export function evaluateRequirements(
         continue;
       }
       const currentVal = statKey === "fiscal_risk" ? state.fiscal_risk : state.indicators[statKey];
-      if (range.min != null && currentVal < range.min) {
+      const minVal =
+        range.min != null
+          ? statKey === "money" && moneyScale !== 1
+            ? scaleMonetaryValue(range.min, moneyScale)
+            : range.min
+          : null;
+      const maxVal =
+        range.max != null
+          ? statKey === "money" && moneyScale !== 1
+            ? scaleMonetaryValue(range.max, moneyScale)
+            : range.max
+          : null;
+      if (minVal != null && currentVal < minVal) {
         return false;
       }
-      if (range.max != null && currentVal > range.max) {
+      if (maxVal != null && currentVal > maxVal) {
         return false;
       }
     }
@@ -101,15 +126,60 @@ export function evaluateRequirements(
     }
   }
 
+  if (requirements.business_tiers && requirements.business_tiers.length > 0) {
+    const currentTier = state.business?.tier ?? "solo_autonomo";
+    if (!requirements.business_tiers.includes(currentTier)) {
+      return false;
+    }
+  }
+
+  if (
+    requirements.team_size &&
+    (requirements.team_size.min != null || requirements.team_size.max != null)
+  ) {
+    const headcount = getTeamHeadcount(state);
+    if (requirements.team_size.min != null && headcount < requirements.team_size.min) {
+      return false;
+    }
+    if (requirements.team_size.max != null && headcount > requirements.team_size.max) {
+      return false;
+    }
+  }
+
+  if (
+    requirements.children_count &&
+    (requirements.children_count.min != null || requirements.children_count.max != null)
+  ) {
+    const children = state.family.children_count;
+    if (requirements.children_count.min != null && children < requirements.children_count.min) {
+      return false;
+    }
+    if (requirements.children_count.max != null && children > requirements.children_count.max) {
+      return false;
+    }
+  }
+
   return true;
 }
 
-export function isChoiceEligible(state: GameState, choice: ChoiceSpec): boolean {
-  return evaluateRequirements(state, choice.requirements);
+export function isChoiceEligible(
+  state: GameState,
+  choice: ChoiceSpec,
+  event?: Pick<EventDef, "scale_with_tier">,
+  catalog?: Pick<ContentCatalog, "balance">,
+): boolean {
+  const moneyScaleMultiplier = event?.scale_with_tier
+    ? getBusinessTierConfig(state, catalog).event_stakes_multiplier
+    : 1;
+  return evaluateRequirements(state, choice.requirements, { moneyScaleMultiplier });
 }
 
-export function getEligibleChoices(state: GameState, event: EventDef): ChoiceSpec[] {
-  return event.choices.filter((choice) => isChoiceEligible(state, choice));
+export function getEligibleChoices(
+  state: GameState,
+  event: EventDef,
+  catalog?: Pick<ContentCatalog, "balance">,
+): ChoiceSpec[] {
+  return event.choices.filter((choice) => isChoiceEligible(state, choice, event, catalog));
 }
 
 export function isEventOnCooldown(state: GameState, eventId: string): boolean {
@@ -121,6 +191,7 @@ export function isEventHardEligible(
   state: GameState,
   event: EventDef,
   excludedEventIds?: ReadonlySet<string>,
+  catalog?: Pick<ContentCatalog, "balance">,
 ): boolean {
   if (excludedEventIds?.has(event.id)) {
     return false;
@@ -145,8 +216,12 @@ export function isEventHardEligible(
     return false;
   }
 
-  return getEligibleChoices(state, event).length >= 1;
+  return getEligibleChoices(state, event, catalog).length >= 1;
 }
+
+const CRITICAL_PARTNER_TAGS = new Set(["crisis_pareja", "pareja_ultimatum"]);
+const PARTNER_CRISIS_TAGS = new Set(["crisis_pareja", "pareja"]);
+const PARTNER_SYNERGY_TAGS = new Set(["sinergia_pareja", "red_pareja"]);
 
 export function computeEffectiveEventWeight(
   event: EventDef,
@@ -157,11 +232,45 @@ export function computeEffectiveEventWeight(
     return 0;
   }
   const seenCount = state.occurrences[event.id] ?? 0;
-  if (seenCount <= 0) {
-    return event.weight;
-  }
   const decayK = catalog.balance.event_novelty_decay_k ?? 0.85;
-  return event.weight / (1 + decayK * seenCount) ** 1.35;
+  const baseWeight =
+    seenCount <= 0 ? event.weight : event.weight / (1 + decayK * seenCount) ** 1.35;
+
+  const pp = getPartnerPressureConfig(catalog);
+  let contextMultiplier = 1;
+
+  const isPartnered = state.family.status === "dating" || state.family.status === "cohabiting";
+  if (isPartnered && event.category === "familia") {
+    const neglectMonths = state.family.neglect_months ?? 0;
+    const personalLife = state.indicators.personal_life;
+    const isPartnerChar = event.character_id === "pareja_alex";
+    const hasCriticalTag = Boolean(event.tags?.some((tag) => CRITICAL_PARTNER_TAGS.has(tag)));
+    const hasCrisisTag = Boolean(event.tags?.some((tag) => PARTNER_CRISIS_TAGS.has(tag)));
+    const hasSynergyTag = Boolean(event.tags?.some((tag) => PARTNER_SYNERGY_TAGS.has(tag)));
+
+    if ((personalLife <= 25 || neglectMonths >= 5) && (isPartnerChar || hasCriticalTag)) {
+      contextMultiplier *= pp.critical_crisis_weight_multiplier;
+    } else if (
+      (personalLife <= pp.neglect_personal_life_threshold || neglectMonths >= 3) &&
+      (isPartnerChar || hasCrisisTag)
+    ) {
+      contextMultiplier *= pp.crisis_weight_multiplier;
+    }
+
+    if (personalLife >= pp.synergy_personal_life_threshold && hasSynergyTag) {
+      contextMultiplier *= pp.synergy_weight_multiplier;
+    }
+  }
+
+  const businessTier = state.business?.tier ?? "solo_autonomo";
+  if (
+    (businessTier === "sociedad_limitada" || businessTier === "agencia_consultora") &&
+    event.requirements?.business_tiers?.includes(businessTier)
+  ) {
+    contextMultiplier *= pp.tier_event_weight_multiplier;
+  }
+
+  return baseWeight * contextMultiplier;
 }
 
 export function pickNoveltyWeightedEvent(
@@ -192,38 +301,66 @@ export function drawTurnEvents(state: GameState, catalog: ContentCatalog): DrawT
 
   let prng = state.prng;
   let slot1Event: EventDef | null = null;
-  const remainingQueue: ScheduledEvent[] = [];
+  const dueWithIndex: { entry: ScheduledEvent; originalIndex: number }[] = [];
+  const futureQueue: ScheduledEvent[] = [];
 
-  for (const queued of state.scheduled_queue) {
+  for (let i = 0; i < state.scheduled_queue.length; i += 1) {
+    const queued = state.scheduled_queue[i]!;
     if (queued.trigger_month > state.month) {
-      remainingQueue.push(queued);
-      continue;
+      futureQueue.push(queued);
+    } else {
+      dueWithIndex.push({ entry: queued, originalIndex: i });
     }
+  }
 
+  dueWithIndex.sort((a, b) => {
+    const prioA = a.entry.priority === "high" ? 0 : 1;
+    const prioB = b.entry.priority === "high" ? 0 : 1;
+    if (prioA !== prioB) {
+      return prioA - prioB;
+    }
+    if (a.entry.trigger_month !== b.entry.trigger_month) {
+      return a.entry.trigger_month - b.entry.trigger_month;
+    }
+    return a.originalIndex - b.originalIndex;
+  });
+
+  const remainingDue: ScheduledEvent[] = [];
+
+  for (const { entry: queued } of dueWithIndex) {
     if (slot1Event !== null) {
-      remainingQueue.push(queued);
+      remainingDue.push(queued);
       continue;
     }
 
     const targetEvent = eventMap.get(queued.event_id);
+    const bypassFiscalRisk =
+      queued.source_event_id === "quarterly_inspection" ||
+      queued.source_event_id === "historical_audit";
     const minFiscalRiskReq = targetEvent?.requirements?.stats?.fiscal_risk?.min;
     const queuedEvalState =
-      queued.source_event_id === "quarterly_inspection" &&
-      minFiscalRiskReq != null &&
-      state.fiscal_risk < minFiscalRiskReq
+      bypassFiscalRisk && minFiscalRiskReq != null && state.fiscal_risk < minFiscalRiskReq
         ? { ...state, fiscal_risk: minFiscalRiskReq }
         : state;
-    if (targetEvent && isEventHardEligible(queuedEvalState, targetEvent)) {
+
+    const deferredSoFar = queued.deferred_months ?? 0;
+    const initialTriggerMonth = queued.trigger_month - deferredSoFar;
+    const scheduledHorizon =
+      queued.origin_month != null ? initialTriggerMonth - queued.origin_month : 0;
+    const maxDefer = queued.priority === "high" || scheduledHorizon >= 12 ? 12 : 6;
+
+    if (targetEvent && isEventHardEligible(queuedEvalState, targetEvent, undefined, catalog)) {
       slot1Event = targetEvent;
-    } else if (targetEvent && (queued.deferred_months ?? 0) < 6) {
-      remainingQueue.push({
+    } else if (targetEvent && deferredSoFar < maxDefer) {
+      remainingDue.push({
         ...queued,
         trigger_month: state.month + 1,
-        deferred_months: (queued.deferred_months ?? 0) + 1,
+        deferred_months: deferredSoFar + 1,
       });
     }
   }
 
+  const remainingQueue: ScheduledEvent[] = [...remainingDue, ...futureQueue];
   remainingQueue.sort((a, b) => a.trigger_month - b.trigger_month);
 
   const excludedIds = new Set<string>();
@@ -237,7 +374,7 @@ export function drawTurnEvents(state: GameState, catalog: ContentCatalog): DrawT
   }
 
   const hardEligibleRandomPool = catalog.events.filter(
-    (event) => event.weight > 0 && isEventHardEligible(state, event, excludedIds),
+    (event) => event.weight > 0 && isEventHardEligible(state, event, excludedIds, catalog),
   );
 
   const readyPool = hardEligibleRandomPool.filter((event) => !isEventOnCooldown(state, event.id));
@@ -401,7 +538,7 @@ export function selectInspectableHaciendaEvent(
     (event) =>
       !alreadyQueued.has(event.id) &&
       isInspectableHaciendaEvent(event) &&
-      isEventHardEligible(evaluationState, event),
+      isEventHardEligible(evaluationState, event, undefined, catalog),
   );
 
   if (hardEligible.length === 0) {
@@ -412,6 +549,48 @@ export function selectInspectableHaciendaEvent(
   const candidates = nonCooldown.length > 0 ? nonCooldown : hardEligible;
   const picked = pickWeighted(state.prng, candidates);
   return { eventId: picked.item.id, prng: picked.prng };
+}
+
+export function selectHistoricalAuditEvent(
+  state: GameState,
+  catalog: ContentCatalog,
+): { eventId: string | null; prng: PrngState } {
+  const targetMonth = state.month % 3 === 0 ? state.month + 1 : state.month;
+  const alreadyQueued = new Set(state.scheduled_queue.map((q) => q.event_id));
+  const hardEligible = catalog.events.filter((event) => {
+    if (
+      event.category !== "hacienda" ||
+      !event.tags?.includes("prescripcion_fiscal") ||
+      alreadyQueued.has(event.id)
+    ) {
+      return false;
+    }
+    const minFiscalRiskReq = event.requirements?.stats?.fiscal_risk?.min;
+    const evaluationState: GameState = {
+      ...state,
+      month: targetMonth,
+      fiscal_risk:
+        minFiscalRiskReq != null && state.fiscal_risk < minFiscalRiskReq
+          ? minFiscalRiskReq
+          : state.fiscal_risk,
+    };
+    return isEventHardEligible(evaluationState, event, undefined, catalog);
+  });
+
+  if (hardEligible.length === 0) {
+    return { eventId: null, prng: state.prng };
+  }
+
+  const evalForCooldown: GameState =
+    targetMonth === state.month ? state : { ...state, month: targetMonth };
+  const nonCooldown = hardEligible.filter((event) => !isEventOnCooldown(evalForCooldown, event.id));
+  const candidates = nonCooldown.length > 0 ? nonCooldown : hardEligible;
+  const weighted = candidates.map((event) => ({
+    event,
+    weight: Math.max(1, event.weight),
+  }));
+  const picked = pickWeighted(state.prng, weighted);
+  return { eventId: picked.item.event.id, prng: picked.prng };
 }
 
 export function findInspectableHaciendaEventId(

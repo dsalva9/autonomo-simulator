@@ -12,9 +12,11 @@ character_expression: null
 illustration_id: null
 requirements:
   min_month: 82
+  forbidden_flags:
+    - relevo_familiar_resuelto
 weight: 9
 cooldown_months: 16
-max_occurrences: null
+max_occurrences: 1
 choices:
   - id: ofrecer_descuento_defensivo_por_miedo
     label: Ofrecer 15 % de descuento si abona el trimestre por adelantado (2.550 €)
@@ -24,30 +26,27 @@ choices:
       moral: -4
       stress: 6
       reputation: -1
+      set_flags:
+        - relevo_familiar_resuelto
   - id: presentar_retorno_historico_y_plan_modernizacion
-    label: Anticiparte con un informe de impacto real y nueva hoja de ruta de 3.100 €
-    outcomes:
-      - id: le_haces_brillar_ante_el_consejo
-        weight: 70
-        result_text: "Le das exactamente los indicadores que necesitaba para lucirse ante su familia: renueva ampliando alcance."
-        effects:
-          billed_income: 3100
-          moral: 7
-          stress: 3
-          reputation: 6
-          add_modifier:
-            id: mod_cliente_relevo_historico
-            label: Acuerdo con nueva dirección
-            remaining_months: 5
-            monthly_billed_delta: 420
-      - id: divide_cuenta_con_agencia_amiga
-        weight: 30
-        result_text: Reparte la mitad del pastel con una consultora de su escuela de negocios, pero retienes el núcleo crítico por 1.800 €.
-        effects:
-          billed_income: 1800
-          moral: 1
-          stress: 4
-          reputation: 2
+    label: Anticiparte con informe de impacto real y hoja de ruta de 3.600 €
+    requirements:
+      stats:
+        reputation:
+          min: 65
+    result_text: "Tu trayectoria impecable le da exactamente las métricas que necesita ante el consejo familiar: renueva por 3.600 € y amplía iguala."
+    effects:
+      billed_income: 3600
+      moral: 7
+      stress: 3
+      reputation: 6
+      set_flags:
+        - relevo_familiar_resuelto
+      add_modifier:
+        id: mod_cliente_relevo_historico
+        label: Acuerdo con nueva dirección
+        remaining_months: 5
+        monthly_billed_delta: 360
   - id: pactar_salida_elegante_y_formacion_relevo
     label: Facturar 2.150 € por formar a su nuevo equipo y cerrar etapa con honores
     result_text: Te despides por la puerta grande antes de aguantar microgestión ajena, cobrando bien el traspaso de conocimiento.
@@ -57,3 +56,5 @@ choices:
       stress: -5
       personal_life: 4
       reputation: 5
+      set_flags:
+        - relevo_familiar_resuelto

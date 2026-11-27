@@ -115,6 +115,7 @@ export function resolveDeskBackgroundAsset(
   manifest: AssetManifest,
   state: Pick<GameState, "indicators" | "employee"> & {
     flags?: GameState["flags"];
+    business?: Pick<GameState["business"], "tier">;
   },
 ): ResolvedAsset | null {
   let targetId = "bg_despacho_base";
@@ -124,6 +125,7 @@ export function resolveDeskBackgroundAsset(
   } else if (state.indicators.money < 0) {
     targetId = "bg_despacho_numeros_rojos";
   } else if (
+    (state.business?.tier != null && state.business.tier !== "solo_autonomo") ||
     state.employee !== null ||
     Boolean(state.flags?.estudio_calle_alquilado || state.flags?.estudio_propio_activo) ||
     (state.indicators.reputation >= 75 && state.indicators.money >= 18_000) ||

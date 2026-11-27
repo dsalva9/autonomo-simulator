@@ -17,7 +17,7 @@ requirements:
     reputation:
       min: 55
     fiscal_risk:
-      min: 15
+      min: 10
 weight: 15
 cooldown_months: 16
 max_occurrences: 3
@@ -49,13 +49,16 @@ choices:
               delay_months: 2
               probability: 1
   - id: desplegar_auditoria_defensiva_elena
-    label: Blindar la comparecencia con el equipo fiscalista de Elena
+    label: Blindar la comparecencia con el equipo fiscalista de Elena (720 €)
     requirements:
       gestor_tiers:
         - premium
+      stats:
+        fiscal_risk:
+          max: 50
     result_text: Elena entrega un informe pericial de márgenes sectoriales que desactiva el control en una sola mañana.
     effects:
-      deductible_expense: 290
+      deductible_expense: 720
       stress: -2
       moral: 7
       reputation: 3
@@ -68,3 +71,19 @@ choices:
       stress: 5
       moral: -4
       fiscal_risk: -20
+  - id: cierre_rapido_por_solvencia_sl
+    label: Presentar contabilidad mercantil auditada de tu S.L. (250 €)
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      stats:
+        fiscal_risk:
+          max: 15
+    result_text: "Tus cuentas anuales depositadas y libros limpios convencen a Gestión Tributaria en una mañana: cierre limpio sin acta ni sustos."
+    effects:
+      deductible_expense: 250
+      moral: 8
+      stress: -4
+      reputation: 4
+      fiscal_risk: -22

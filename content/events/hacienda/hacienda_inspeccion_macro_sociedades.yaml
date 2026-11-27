@@ -1,0 +1,56 @@
+schema_version: 1
+id: hacienda_inspeccion_macro_sociedades
+category: hacienda
+title: "Inspección general de Sociedades: IVA, IS y sueldos"
+body: "Con el volumen actual de tu sociedad entras en la liga mayor de la AEAT. El Inspector Gómez abre procedimiento general sobre Impuesto de Sociedades, IVA y retribuciones del administrador de los últimos ejercicios abiertos."
+tags:
+  - prescripcion_fiscal
+  - inspeccion
+  - sociedad_limitada
+character_id: hacienda_inspector_gomez
+character_expression: angry
+illustration_id: illus_hito_inspeccion_hacienda
+requirements:
+  min_month: 66
+  business_tiers:
+    - sociedad_limitada
+    - agencia_consultora
+weight: 13
+cooldown_months: 24
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: defensa_integral_elena_limpia
+    label: "Desplegar defensa integral con Elena y libros limpios (1.800 € + 800 €)"
+    requirements:
+      gestor_tiers:
+        - premium
+      stats:
+        fiscal_risk:
+          max: 25
+    result_text: "Elena tumba casi todas las regularizaciones con contabilidad mercantil impoluta. Cierras la inspección con 800 € de ajuste y 1.800 € de minuta."
+    effects:
+      deductible_expense: 1800
+      cash_delta: -800
+      fiscal_risk: -20
+      moral: 6
+      stress: 2
+  - id: firmar_acta_sociedades_conformidad
+    label: "Firmar el acta societaria en conformidad y asumir el ajuste (6.500 €)"
+    result_text: "Asumes 6.500 € de liquidación para evitar una guerra eterna con el equipo de inspección. Golpe duro a la tesorería, pero tu S.L. sigue rodando."
+    effects:
+      cash_delta: -6500
+      fiscal_risk: -25
+      stress: 14
+      moral: -8
+  - id: elevar_expediente_al_teac
+    label: "Firmar en disconformidad y llevar el acta de Sociedades al TEAC (2.400 €)"
+    result_text: "Consignas 2.400 € en defensa jurídica especializada y mandas el pulso al TEAC. En dieciocho meses sabrás si Gómez se pasó de frenada."
+    effects:
+      deductible_expense: 2400
+      stress: 12
+      schedule_events:
+        - event_id: hacienda_resolucion_teac_tardia
+          delay_months: 18
+          probability: 1
+          priority: high

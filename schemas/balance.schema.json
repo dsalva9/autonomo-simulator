@@ -122,6 +122,11 @@
       "minimum": 0,
       "maximum": 1
     },
+    "corporate_tax_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
     "deferral_surcharge_pct": {
       "type": "number",
       "minimum": 0,
@@ -341,6 +346,507 @@
         "fallback_fine_base",
         "fallback_fine_per_risk",
         "fallback_stress_penalty"
+      ],
+      "additionalProperties": false
+    },
+    "business_tiers": {
+      "type": "object",
+      "properties": {
+        "solo_autonomo": {
+          "type": "object",
+          "properties": {
+            "billing_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "event_stakes_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "monthly_structural_overhead": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gestor_fee_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max_team_size": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "hard_debt_floor": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 0
+            },
+            "corporate_tax_regime": {
+              "type": "boolean"
+            },
+            "societario_quota": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "billing_multiplier",
+            "event_stakes_multiplier",
+            "monthly_structural_overhead",
+            "gestor_fee_multiplier",
+            "max_team_size",
+            "hard_debt_floor",
+            "corporate_tax_regime"
+          ],
+          "additionalProperties": false
+        },
+        "estudio_consolidado": {
+          "type": "object",
+          "properties": {
+            "billing_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "event_stakes_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "monthly_structural_overhead": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gestor_fee_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max_team_size": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "hard_debt_floor": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 0
+            },
+            "corporate_tax_regime": {
+              "type": "boolean"
+            },
+            "societario_quota": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "billing_multiplier",
+            "event_stakes_multiplier",
+            "monthly_structural_overhead",
+            "gestor_fee_multiplier",
+            "max_team_size",
+            "hard_debt_floor",
+            "corporate_tax_regime"
+          ],
+          "additionalProperties": false
+        },
+        "sociedad_limitada": {
+          "type": "object",
+          "properties": {
+            "billing_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "event_stakes_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "monthly_structural_overhead": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gestor_fee_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max_team_size": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "hard_debt_floor": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 0
+            },
+            "corporate_tax_regime": {
+              "type": "boolean"
+            },
+            "societario_quota": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "billing_multiplier",
+            "event_stakes_multiplier",
+            "monthly_structural_overhead",
+            "gestor_fee_multiplier",
+            "max_team_size",
+            "hard_debt_floor",
+            "corporate_tax_regime"
+          ],
+          "additionalProperties": false
+        },
+        "agencia_consultora": {
+          "type": "object",
+          "properties": {
+            "billing_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "event_stakes_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "monthly_structural_overhead": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "gestor_fee_multiplier": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "max_team_size": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "hard_debt_floor": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 0
+            },
+            "corporate_tax_regime": {
+              "type": "boolean"
+            },
+            "societario_quota": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "billing_multiplier",
+            "event_stakes_multiplier",
+            "monthly_structural_overhead",
+            "gestor_fee_multiplier",
+            "max_team_size",
+            "hard_debt_floor",
+            "corporate_tax_regime"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "solo_autonomo",
+        "estudio_consolidado",
+        "sociedad_limitada",
+        "agencia_consultora"
+      ],
+      "additionalProperties": false
+    },
+    "reta_brackets": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "max_monthly_profit": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "monthly_quota": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "max_monthly_profit",
+          "monthly_quota"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "irpf_brackets": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "up_to_monthly_profit": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "marginal_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "up_to_monthly_profit",
+          "marginal_rate"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "team_scaling": {
+      "type": "object",
+      "properties": {
+        "default_staff_monthly_cost": {
+          "type": "integer",
+          "minimum": 800,
+          "maximum": 6000
+        },
+        "base_additional_seat_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "seat_diminishing_factor": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1
+        },
+        "boutique_solo_min_reputation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "boutique_solo_min_month": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "boutique_solo_max_bonus": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        }
+      },
+      "required": [
+        "default_staff_monthly_cost",
+        "base_additional_seat_multiplier",
+        "seat_diminishing_factor",
+        "boutique_solo_min_reputation",
+        "boutique_solo_min_month",
+        "boutique_solo_max_bonus"
+      ],
+      "additionalProperties": false
+    },
+    "act_difficulty": {
+      "type": "object",
+      "properties": {
+        "act2_start_month": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "act3_start_month": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "act1_living_cost_growth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "act2_living_cost_growth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "act3_living_cost_growth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "act2_market_squeeze": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1.5
+        },
+        "act3_market_squeeze": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1.5
+        },
+        "act3_monthly_stress_pressure": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        }
+      },
+      "required": [
+        "act2_start_month",
+        "act3_start_month",
+        "act1_living_cost_growth",
+        "act2_living_cost_growth",
+        "act3_living_cost_growth",
+        "act2_market_squeeze",
+        "act3_market_squeeze",
+        "act3_monthly_stress_pressure"
+      ],
+      "additionalProperties": false
+    },
+    "gestor_compliance": {
+      "type": "object",
+      "properties": {
+        "premium_warning_fiscal_risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "premium_drop_fiscal_risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "sl_self_quarterly_penalty": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sl_self_error_prob": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "premium_warning_fiscal_risk",
+        "premium_drop_fiscal_risk",
+        "sl_self_quarterly_penalty",
+        "sl_self_error_prob"
+      ],
+      "additionalProperties": false
+    },
+    "prescripcion": {
+      "type": "object",
+      "properties": {
+        "window_months": {
+          "type": "integer",
+          "minimum": 12,
+          "maximum": 9007199254740991
+        },
+        "min_audit_age_months": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "max_audit_age_months": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "min_risk_points_recorded": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "base_quarterly_prob": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "prob_per_risk_point": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_quarterly_prob": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "gestor_shield_effectiveness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fallback_fine_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "fallback_fine_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "window_months",
+        "min_audit_age_months",
+        "max_audit_age_months",
+        "min_risk_points_recorded",
+        "base_quarterly_prob",
+        "prob_per_risk_point",
+        "max_quarterly_prob",
+        "gestor_shield_effectiveness",
+        "fallback_fine_rate",
+        "fallback_fine_min"
+      ],
+      "additionalProperties": false
+    },
+    "partner_pressure": {
+      "type": "object",
+      "properties": {
+        "neglect_personal_life_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "synergy_personal_life_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "crisis_weight_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "critical_crisis_weight_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "synergy_weight_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "tier_event_weight_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "neglect_personal_life_threshold",
+        "synergy_personal_life_threshold",
+        "crisis_weight_multiplier",
+        "critical_crisis_weight_multiplier",
+        "synergy_weight_multiplier",
+        "tier_event_weight_multiplier"
       ],
       "additionalProperties": false
     },

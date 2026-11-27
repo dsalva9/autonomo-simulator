@@ -13,17 +13,21 @@ illustration_id: null
 requirements:
   min_month: 64
 weight: 9
-cooldown_months: 16
-max_occurrences: null
+cooldown_months: 18
+max_occurrences: 3
 choices:
   - id: operar_solo_en_equipos_del_cliente
     label: Exigir trabajar dentro de su propio entorno remoto sin guardar datos locales
-    result_text: Al no almacenar un solo archivo suyo en tu estudio, 120 preguntas dejan de aplicar de golpe y renuevas por 2.900 €.
+    result_text: "Tu criterio sénior impone trabajar en su entorno remoto: 120 preguntas dejan de aplicar de golpe y renuevas por 3.200 €."
     effects:
-      billed_income: 2900
+      billed_income: 3200
       moral: 5
-      stress: 1
+      stress: -2
       reputation: 4
+    requirements:
+      stats:
+        reputation:
+          min: 60
   - id: implantar_cifrado_copias_y_pasar_auditoria
     label: Invertir 290 € en cifrado y auditoría externa para superar el filtro
     outcomes:

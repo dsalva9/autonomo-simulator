@@ -1,0 +1,74 @@
+schema_version: 1
+id: familia_boda_propia_alex
+category: familia
+title: "¿Firma en el juzgado o bodorrio de 11.500 €?"
+body: "Tras años capeando trimestres juntos, Álex propone casaros por fin. En cuanto corre la voz, la familia sueña con barra libre, finca y ciento veinte cubiertos mientras tu cabeza calcula el coste del cubierto como si fuera un IVA."
+tags:
+  - pareja
+  - sinergia_pareja
+  - celebracion
+character_id: pareja_alex
+character_expression: pleased
+illustration_id: banner_familia_base
+requirements:
+  min_month: 40
+  max_month: 108
+  family_statuses:
+    - cohabiting
+  stats:
+    personal_life:
+      min: 65
+  forbidden_flags:
+    - boda_con_alex_celebrada
+weight: 11
+cooldown_months: 24
+max_occurrences: 1
+exclusive_with: []
+choices:
+  - id: boda_intima_juzgado_y_viaje
+    label: "Firmar en el juzgado, comida íntima y escapada de lujo (1.800 €)"
+    result_text: "Cero protocolos absurdos ni primos desconocidos: firmáis entre risas con vuestra gente más cercana y os regaláis una semana inolvidable."
+    effects:
+      cash_delta: -1800
+      personal_life: 14
+      moral: 12
+      stress: -10
+      set_flags:
+        - boda_con_alex_celebrada
+  - id: bodorrio_completo_con_sobres
+    label: "Tirar la casa por la ventana con banquete de 11.500 € y sobres"
+    requirements:
+      stats:
+        money:
+          min: 12000
+    outcomes:
+      - id: sobres_generosos
+        weight: 70
+        result_text: "Fiestón histórico hasta el amanecer. Entre los 11.500 € del banquete y los sobres generosos de familia y amigos, el saldo neto queda en -5.300 €."
+        effects:
+          cash_delta: -5300
+          personal_life: 24
+          moral: 20
+          stress: -14
+          reputation: 4
+          set_flags:
+            - boda_con_alex_celebrada
+      - id: sobres_justitos
+        weight: 30
+        result_text: "Noche mágica con barra libre legendaria, aunque los sobres cubren menos de lo esperado y tras los 11.500 € de fianza el balance cierra en -7.400 €."
+        effects:
+          cash_delta: -7400
+          personal_life: 22
+          moral: 16
+          stress: -10
+          reputation: 4
+          set_flags:
+            - boda_con_alex_celebrada
+  - id: posponer_sin_fecha
+    label: "Dar largas sin fecha: «Este año el negocio está demasiado revuelto»"
+    result_text: "No gastas un céntimo, pero ves apagarse la ilusión en la cara de Álex mientras recoge la libreta de presupuestos en silencio."
+    effects:
+      personal_life: -12
+      moral: -6
+      set_flags:
+        - crisis_pareja_latente

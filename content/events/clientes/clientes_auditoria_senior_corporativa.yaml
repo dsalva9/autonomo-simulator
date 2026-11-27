@@ -47,3 +47,18 @@ choices:
       moral: 1
       personal_life: 6
       reputation: -3
+  - id: delegar_celula_agencia
+    label: Desplegar célula de tu agencia y facturar rescate completo (5.800 €)
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+        - agencia_consultora
+      team_size:
+        min: 3
+    result_text: Tu equipo entra en formación quirúrgica y desatasca el desastre en diez días. Facturación de agencia grande y moral de plantilla por las nubes.
+    effects:
+      billed_income: 5800
+      stress: 3
+      moral: 6
+      reputation: 7
+      employee_satisfaction: 6

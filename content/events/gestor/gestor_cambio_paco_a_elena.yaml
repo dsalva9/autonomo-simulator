@@ -2,7 +2,7 @@ schema_version: 1
 id: gestor_cambio_paco_a_elena
 category: gestor
 title: "Operación rescate contable: de la churrería al blindaje"
-body: "Tras tus últimos sobresaltos con las carpetas de Paco, Elena Montes te ofrece asumir tus libros y auditar trimestres pasados. Paco jura por WhatsApp haber actualizado su Excel y promete un mes gratis si te quedas."
+body: Tras tus últimos sobresaltos con las carpetas de Paco, Elena Montes te ofrece asumir tus libros y auditar trimestres pasados. Paco jura por WhatsApp haber actualizado su Excel y promete un mes gratis si te quedas.
 tags:
   - gestoria
   - cambio_gestor
@@ -22,22 +22,22 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: aceptar_mes_gratis_de_paco
-    label: "Quedarse con Paco a cambio de ahorrarte la cuota de este mes"
-    result_text: "Te guardas los sesenta euros en el bolsillo y aceptas vivir con esa adrenalina artesanal cada final de trimestre."
+    label: Quedarse con Paco a cambio de ahorrarte la cuota de este mes
+    result_text: Te guardas los ochenta y cinco euros en el bolsillo y aceptas vivir con esa adrenalina artesanal cada final de trimestre.
     effects:
-      cash_delta: 60
+      cash_delta: 85
       stress: 4
       moral: -1
       fiscal_risk: 4
       clear_flags:
         - susto_con_paco
   - id: contratar_traspaso_a_elena
-    label: "Pagar la auditoría de traspaso y pasarse a Elena Montes (170 €/mes)"
+    label: Pagar auditoría de traspaso y pasar a Elena (desde 260 €/mes)
     requirements:
       stats:
         money:
           min: 300
-    result_text: "El equipo de Elena sanea tus libros en cuarenta y ocho horas, corrige tres asientos cojos y te devuelve el sueño profundo."
+    result_text: El equipo de Elena sanea tus libros en cuarenta y ocho horas, corrige tres asientos cojos y te devuelve el sueño profundo.
     effects:
       set_gestor:
         tier: premium
@@ -49,12 +49,25 @@ choices:
       clear_flags:
         - susto_con_paco
   - id: cortar_por_lo_sano_sin_gestor
-    label: "Dar de baja a Paco y llevar tú mismo los libros desde cero"
-    result_text: "Te ahorras cuotas ajenas a cambio de reservar un domingo cada tres meses para pelearte con casillas numéricas."
+    label: Dar de baja a Paco y llevar tú mismo los libros desde cero
+    result_text: Te ahorras cuotas ajenas a cambio de reservar un domingo cada tres meses para pelearte con casillas numéricas.
     effects:
       set_gestor:
         tier: self
       stress: 6
       moral: 1
+      clear_flags:
+        - susto_con_paco
+  - id: negociar_blindaje_gris_con_paco
+    label: "Pactar alianza gris con Paco: bonificación de cuota y callejón discreto"
+    requirements:
+      stats:
+        fiscal_risk:
+          min: 35
+    result_text: "Paco sabe que con tu historial Elena te miraría mal: te abona 350 € de cortesía en honorarios y cierra filas contigo en la zona gris."
+    effects:
+      cash_delta: 350
+      stress: -8
+      fiscal_risk: 6
       clear_flags:
         - susto_con_paco

@@ -1,0 +1,68 @@
+schema_version: 1
+id: empleados_expansion_agencia_cinco_personas
+category: empleados
+title: "Salto a Agencia Consultora: cinco nóminas y estructura real"
+body: "Laura pone los números en la pizarra: con dos fichajes más y paso a Agencia Consultora podéis entrar en concursos grandes del IBEX y repartir guardias. El peaje: estructura fija alta y nóminas serias cada día 28."
+tags:
+  - plantilla
+  - agencia
+  - crecimiento
+character_id: empleada_senior_laura
+character_expression: neutral
+illustration_id: banner_empleados_estudio
+requirements:
+  min_month: 48
+  business_tiers:
+    - estudio_consolidado
+    - sociedad_limitada
+  team_size:
+    min: 2
+    max: 5
+weight: 14
+cooldown_months: 16
+max_occurrences: 2
+exclusive_with: []
+choices:
+  - id: escalar_a_agencia_cinco_personas
+    label: "Escalar a Agencia Consultora (+2 staff, Laura líder, 5.500 €)"
+    requirements:
+      stats:
+        money:
+          min: 9000
+        reputation:
+          min: 60
+    result_text: "Arranca tu Agencia Consultora con Laura al frente de operaciones. Entras en la liga de las grandes cuentas sabiendo que ya nadie para esta máquina."
+    effects:
+      deductible_expense: 5500
+      set_business_tier:
+        tier: agencia_consultora
+      expand_team:
+        count: 2
+        avg_monthly_cost: 1950
+        lead_character_id: empleada_senior_laura
+      reputation: 12
+      employee_satisfaction: 10
+      stress: 8
+  - id: sumar_un_perfil_sin_cambiar_tramo
+    label: "Sumar solo +1 perfil dentro de tu S.L. actual (1.600 €)"
+    requirements:
+      business_tiers:
+        - sociedad_limitada
+      stats:
+        money:
+          min: 3500
+    result_text: "Refuerzas el cuello de botella sin disparar todavía el gasto estructural de una agencia grande. Crecimiento medido con los pies en la caja."
+    effects:
+      deductible_expense: 1600
+      expand_team:
+        count: 1
+        avg_monthly_cost: 1900
+      reputation: 5
+      employee_satisfaction: 4
+  - id: quedarse_como_estudio_agil
+    label: "Quedarse como equipo ágil y proteger márgenes y descanso"
+    result_text: "Prefieres un equipo compacto y rentable antes que convertirte en gestor de nóminas a tiempo completo. El despacho respira aliviado."
+    effects:
+      moral: 4
+      stress: -6
+      personal_life: 4

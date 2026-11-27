@@ -11,6 +11,7 @@ character_id: cliente_regateador
 character_expression: pleased
 requirements:
   min_month: 2
+  max_month: 48
 weight: 9
 cooldown_months: 10
 max_occurrences: 4
@@ -48,7 +49,11 @@ choices:
     label: Salir del grupo y exigir un único interlocutor por correo
     result_text: "Impones orden quirúrgico: un solo portavoz y cambios agrupados por escrito. El ruido baja un ochenta por ciento y cobras limpio."
     effects:
-      billed_income: 750
-      stress: 5
-      moral: 4
+      billed_income: 900
+      stress: 1
+      moral: 5
       reputation: 1
+    requirements:
+      stats:
+        moral:
+          min: 60

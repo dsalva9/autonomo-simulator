@@ -1,0 +1,60 @@
+schema_version: 1
+id: clientes_shock_ia_tarifas_sector
+category: clientes
+title: "Tsunami de IA: «Las agencias ya cobran un 40 % menos»"
+body: "Borja reaparece agitando presupuestos automatizados a precio de saldo: «Con la nueva IA tu competencia hace esto en media tarde por la mitad». Media industria entra en pánico y empieza a reventar tarifas."
+tags:
+  - macro
+  - ia
+  - tarifas
+character_id: cliente_regateador
+character_expression: pleased
+illustration_id: banner_clientes_tension
+requirements:
+  min_month: 64
+weight: 12
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: invertir_en_flujo_ia_propio
+    label: "Invertir 4.500 € en flujo propio de IA para multiplicar margen"
+    requirements:
+      stats:
+        money:
+          min: 5500
+    result_text: "Automatizas la parte repetitiva con herramientas propias sin rebajar tu precio por valor. Durante seis meses facturas 1.800 € más con menor esfuerzo."
+    effects:
+      deductible_expense: 4500
+      reputation: 8
+      moral: 6
+      stress: 4
+      add_modifier:
+        id: mod_ventaja_flujo_ia_propio
+        label: "Flujo propio de IA con margen premium"
+        remaining_months: 6
+        monthly_billed_delta: 1800
+  - id: entrar_en_guerra_de_precios
+    label: "Bajar tarifas a competir con el low-cost (-1.200 €/mes seis meses)"
+    result_text: "Entras en una carrera hacia el suelo donde siempre hay alguien más barato que tú. Trabajas el doble por márgenes de supervivencia."
+    effects:
+      moral: -10
+      stress: 12
+      reputation: -4
+      add_modifier:
+        id: mod_guerra_precios_ia
+        label: "Erosión de tarifas por guerra low-cost"
+        remaining_months: 6
+        monthly_billed_delta: -1200
+  - id: vender_criterio_humano_elite
+    label: "Subir el listón y vender criterio humano experto (8.500 €)"
+    requirements:
+      stats:
+        reputation:
+          min: 72
+    result_text: "Dos clientes quemados tras intentar hacerlo todo con prompts gratis vuelven suplicando dirección experta. Cobras 8.500 € sin pestañear."
+    effects:
+      billed_income: 8500
+      reputation: 10
+      moral: 10
+      stress: -2

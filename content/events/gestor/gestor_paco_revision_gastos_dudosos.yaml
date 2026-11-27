@@ -1,8 +1,8 @@
 schema_version: 1
 id: gestor_paco_revision_gastos_dudosos
 category: gestor
-title: "Cruce informático por gastos de mobiliario"
-body: "Dos meses después de colar el sofá en el trimestre, salta un aviso de contraste censal: el epígrafe de tu actividad choca con partidas de decoración registradas por la gestoría de Paco y exigen aclaración."
+title: Cruce informático por gastos de mobiliario
+body: "Meses después de colar el sofá en el trimestre, salta un aviso de contraste censal: el epígrafe de tu actividad choca con partidas de decoración registradas por la gestoría de Paco y exigen aclaración."
 tags:
   - gestoria
   - contraste_censal
@@ -20,11 +20,11 @@ max_occurrences: 3
 exclusive_with: []
 choices:
   - id: preparar_dossier_fotografico_despacho
-    label: "Montar un rincón de trabajo impecable y enviar memoria fotográfica"
+    label: Montar un rincón de trabajo impecable y enviar memoria fotográfica
     outcomes:
       - id: aclaracion_archivada
         weight: 60
-        result_text: "Las fotos del escritorio convencen al tramitador, dan por buena la afectación profesional y archivan la consulta sin coste."
+        result_text: Las fotos del escritorio convencen al tramitador, dan por buena la afectación profesional y archivan la consulta sin coste.
         effects:
           stress: 5
           moral: 3
@@ -33,7 +33,7 @@ choices:
             - sofa_oficina_paco
       - id: ajuste_parcial_de_cuota
         weight: 40
-        result_text: "Aceptan la silla pero tumban el sofá por uso doméstico, tocando ingresar la diferencia con un pequeño recargo."
+        result_text: Aceptan la silla pero tumban el sofá por uso doméstico, tocando ingresar la diferencia con un pequeño recargo.
         effects:
           cash_delta: -210
           stress: 9
@@ -44,25 +44,30 @@ choices:
           clear_flags:
             - sofa_oficina_paco
   - id: presentar_complementaria_preventiva
-    label: "Encargar una declaración complementaria limpia y zanjar el tema (130 €)"
+    label: Presentar complementaria y regularizar el asiento (680 €)
     requirements:
       stats:
         money:
-          min: 200
-    result_text: "Limpias cualquier rastro dudoso antes de que escale a expediente sancionador y recuperas la paz mental de golpe."
+          min: 750
+    result_text: Limpias cualquier rastro dudoso antes de que escale a expediente sancionador y recuperas la paz mental de golpe.
     effects:
-      deductible_expense: 130
       stress: -5
       moral: 3
       fiscal_risk: -12
       clear_flags:
         - sofa_oficina_paco
+      cash_delta: -680
   - id: mantener_asiento_sin_tocar_nada
-    label: "Responder con una alegación genérica de Paco y no tocar ni un euro"
-    result_text: "Evitas soltar liquidez este mes, pero tu expediente queda marcado con un pósit amarillo fosforescente para futuros cruces."
+    label: Responder con una alegación genérica de Paco y no tocar ni un euro
+    result_text: Evitas soltar liquidez este mes, pero tu expediente queda marcado con un pósit amarillo fosforescente para futuros cruces.
     effects:
       stress: 4
       moral: -2
-      fiscal_risk: 13
+      fiscal_risk: 15
       clear_flags:
         - sofa_oficina_paco
+      schedule_events:
+        - event_id: hacienda_inspeccion_efectivo_tres_anos
+          delay_months: 28
+          probability: 0.35
+          priority: high

@@ -28,15 +28,20 @@ choices:
       reputation: -3
   - id: aceptar_aguinaldo_en_sobre
     label: Aceptar el sobre navideño sin factura y entregar en 48 horas
-    result_text: Sales con efectivo para todos los regalos y un jamón mediocre bajo el brazo, sumando papeletas para el sorteo de Hacienda.
+    result_text: Sales con un buen fajo en efectivo para las fiestas y un jamón mediocre bajo el brazo, sumando papeletas en el reloj de prescripción.
     effects:
-      cash_delta: 1050
-      stress: 14
-      moral: -4
+      cash_delta: 2400
+      moral: -2
+      stress: 8
       personal_life: -4
-      fiscal_risk: 27
+      fiscal_risk: 22
       set_flags:
         - cobro_en_b_reciente
+      schedule_events:
+        - event_id: hacienda_prescripcion_cruce_ejercicio_anterior
+          delay_months: 24
+          probability: 0.35
+          priority: high
   - id: facturar_urgencia_navidena_legal
     label: Salvarle la campaña con factura legal y recargo de urgencia
     result_text: Dos días de cafeína intensa producen el milagro navideño y entra una transferencia limpia para empezar enero con colchón.

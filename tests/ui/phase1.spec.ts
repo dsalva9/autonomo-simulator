@@ -25,7 +25,7 @@ const PHASE1_ACHIEVEMENT_IDS = [
   "familia_formada",
   "cinco_anos",
   "heroe_120m",
-  "ricachon_150k",
+  "ricachon_250k",
 ] as const;
 
 async function waitForImageDimensions(
@@ -186,7 +186,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     await expect(page.getByTestId("game-screen")).toBeVisible();
 
-    // 1. Style A WebP desk background & reactive prop threshold (hidden on M1 at 520 €, visible >= 1,200 €)
+    // 1. Style A WebP desk background & reactive prop threshold (hidden on M1 at 430 €, visible >= 1,200 €)
     await withDeskSceneVisible(page, async () => {
       const sceneBg = page.getByTestId("scene-bg");
       await expect(sceneBg).toHaveAttribute("data-asset-id", "bg_despacho_base");
@@ -218,7 +218,7 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
       expect(gestorThumbDims).toEqual({ naturalWidth: 512, naturalHeight: 512 });
     });
 
-    // Advance through Month 3 Trimestre to Month 4 (gestor_paco_espantada_benidorm) for Paco's multi-expression stage Polaroid
+    // Advance through Month 3 Trimestre to Month 4 (gestor_paco_caja_zapatos_tickets) for Paco's multi-expression stage Polaroid
     await selectChoiceAndAcknowledge(page, "aceptar_mitad_efectivo_y_cajas");
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-pay-btn").click();
@@ -226,8 +226,8 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     // 3. CSS-framed multi-expression NPC Polaroid + nameplate + zero overlap
     const polaroid = page.getByTestId("event-character-polaroid");
     await expect(polaroid).toBeVisible();
-    await expect(polaroid).toHaveAttribute("data-expression", "pleased");
-    await expect(polaroid).toHaveAttribute("data-asset-id", "char_gestor_barato_paco_confiado");
+    await expect(polaroid).toHaveAttribute("data-expression", "stressed");
+    await expect(polaroid).toHaveAttribute("data-asset-id", "char_gestor_barato_paco_estresado");
     await expect(polaroid.locator("figcaption")).toBeVisible();
     await expect(polaroid.locator("figcaption")).toContainText("Paco");
 
@@ -257,9 +257,9 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     await page.goto("./");
     await openDashboardFromLanding(page);
 
-    // 1. Verify Phase 1 achievements remain present in expanded 15-achievement Logros tab
+    // 1. Verify Phase 1 achievements remain present in expanded 18-achievement Logros tab
     const achievementsTab = page.getByTestId("title-tab-achievements");
-    await expect(achievementsTab).toContainText("Logros (0/15)");
+    await expect(achievementsTab).toContainText("Logros (0/18)");
     await achievementsTab.click();
 
     await expect(page.getByTestId("achievements-list")).toBeVisible();
@@ -313,26 +313,50 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
 
     await page.goto("./");
     await openDashboardFromLanding(page);
-    await page.getByTestId("seed-input").fill("P36-BURN-35");
+    await page.getByTestId("seed-input").fill("V2-BURN-232");
     await page.getByTestId("start-run-btn").click();
 
     // Month 1..3 escalation + Q1 deferral
-    await selectChoiceAndAcknowledge(page, "tragar_para_no_discutir");
-    await selectChoiceAndAcknowledge(page, "aceptar_mitad_efectivo_y_cajas");
-    await selectChoiceAndAcknowledge(page, "seguir_autogestion");
-
+    await selectChoiceAndAcknowledge(page, "rechazar_firmar_penalizaciones_absurdas");
+    await selectChoiceAndAcknowledge(page, "recibirles_con_auricular_puesto");
+    await selectChoiceAndAcknowledge(page, "meter_dinero_por_probar");
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-defer-btn").click();
 
-    // Month 4..8 escalation -> stress >= 75 switches desk background to bg_despacho_burnout on M9 hacienda_carta_certificada
-    await selectChoiceAndAcknowledge(page, "exigir_factura_legal");
-    await selectChoiceAndAcknowledge(page, "seguir_con_plantilla_casera");
-    await selectChoiceAndAcknowledge(page, "priorizar_cartera_clientes");
+    // Month 4..6 (resolves hacienda_recargo_cinco_por_ciento -> unlocks superviviente_hacienda) + Q2 pay
+    await selectChoiceAndAcknowledge(page, "entrega_express_contado");
+    await selectChoiceAndAcknowledge(page, "huir_de_papeleo_subvencionado");
+    await selectChoiceAndAcknowledge(page, "liquidar_recargo_reducido_ya");
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-pay-btn").click();
 
-    await selectChoiceAndAcknowledge(page, "regularizar_apuntes_dudosos_sin_litigar");
-    await selectChoiceAndAcknowledge(page, "guardar_pagare_hasta_vencimiento");
+    // Month 7..9 + Q3 deferral
+    await selectChoiceAndAcknowledge(page, "tarificar_cada_ronda_extra");
+    await selectChoiceAndAcknowledge(page, "aceptar_mitad_efectivo_y_cajas");
+    await selectChoiceAndAcknowledge(page, "tragar_horario_por_ingreso_seguro");
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.getByTestId("trimestre-defer-btn").click();
+
+    // Month 10..12 + Q4 pay + Year 1 AnnualSummaryModal
+    await selectChoiceAndAcknowledge(page, "podar_planes_al_minimo");
+    await selectChoiceAndAcknowledge(page, "buscar_piso_y_mudarse");
+    await selectChoiceAndAcknowledge(page, "cortar_excesos_con_contador_mensual");
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.getByTestId("trimestre-pay-btn").click();
+    await expect(page.getByTestId("annual-summary-modal")).toBeVisible();
+    await page.getByTestId("annual-summary-close-btn").click();
+
+    // Month 13..15 + Q5 deferral
+    await selectChoiceAndAcknowledge(page, "alquilar_puesto_coworking_dias");
+    await selectChoiceAndAcknowledge(page, "negociar_con_historial_buen_pagador");
+    await selectChoiceAndAcknowledge(page, "rechazar_intermediacion");
+    await selectChoiceAndAcknowledge(page, "regalar_un_remate_rapido_y_bloquear");
+    await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.getByTestId("trimestre-defer-btn").click();
+
+    // Month 16..17 escalation -> stress >= 75 switches desk background to bg_despacho_burnout on M18 hacienda_carta_certificada
+    await selectChoiceAndAcknowledge(page, "ibuprofeno_y_seguir_tecleando");
+    await selectChoiceAndAcknowledge(page, "enviar_copia_cortesia_y_vender_mantenimiento");
 
     await expect(page.getByTestId("event-card")).toHaveAttribute(
       "data-event-id",
@@ -363,10 +387,6 @@ test.describe("Autónomo Simulator — Phase 1 Art, Polaroids, Achievements & En
     await selectChoiceAndAcknowledge(page, "pagar_recargo_pronto_pago");
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
     await page.getByTestId("trimestre-pay-btn").click();
-
-    await selectChoiceAndAcknowledge(page, "podar_planes_al_minimo");
-    await selectChoiceAndAcknowledge(page, "aceptar_anexo_compensatorio");
-    await selectChoiceAndAcknowledge(page, "vender_kit_cerrado_sin_cambios");
 
     await expect(page.getByTestId("end-run-screen")).toBeVisible();
     const endIllus = page.getByTestId("end-run-illustration");

@@ -20,6 +20,9 @@ requirements:
     - 12
   gestor_tiers:
     - premium
+  business_tiers:
+    - solo_autonomo
+    - estudio_consolidado
 weight: 12
 cooldown_months: 9
 max_occurrences: 3
@@ -28,20 +31,18 @@ choices:
     label: No inmovilizar ahorros y priorizar liquidez inmediata
     result_text: Pagas el tramo completo sin reducciones extra, pero conservas todo tu colchón disponible en el banco.
     effects:
-      stress: -2
-      moral: 1
-      fiscal_risk: -2
+      stress: 2
   - id: aportar_tramo_optimo_plan_autonomos
-    label: Aportar el tramo óptimo calculado por Elena antes del 31
+    label: Aportar el tramo óptimo calculado por Elena antes del 31 (1.400 €)
     requirements:
       stats:
         money:
-          min: 1400
+          min: 2200
     result_text: Rebajas de un plumazo tu escalón marginal del año y sientes por primera vez que tienes red de futuro.
     effects:
-      deductible_expense: 950
-      stress: -8
-      moral: 8
+      deductible_expense: 1400
+      stress: -10
+      moral: 7
       personal_life: 4
       fiscal_risk: -8
   - id: hacer_aportacion_prudente_mitad_tramo

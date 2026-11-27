@@ -1,0 +1,72 @@
+schema_version: 1
+id: empleados_fuga_bloque_dos_seniors
+category: empleados
+title: "Motín en la agencia: dos perfiles clave se van juntos"
+body: "Una consultora grande tienta a la vez a dos de tus piezas clave con sueldo al alza y promesa de menos caos. Piden una reunión conjunta antes del viernes: si se marchan en bloque, dejan colgadas dos cuentas."
+tags:
+  - plantilla
+  - retencion
+  - fuga_talento
+character_id: empleada_senior_laura
+character_expression: stressed
+illustration_id: banner_empleados_tension
+requirements:
+  min_month: 60
+  team_size:
+    min: 4
+weight: 13
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: paquete_retencion_emergencia
+    label: "Blindarlos con prima de 4.500 € y plus mensual seis meses"
+    requirements:
+      stats:
+        money:
+          min: 6000
+    result_text: "Igualas la apuesta con prima deducible y mejora salarial temporal. El margen se estrecha medio año, pero conservas el corazón operativo de tu agencia."
+    effects:
+      deductible_expense: 4500
+      employee_satisfaction: 16
+      stress: -4
+      add_modifier:
+        id: mod_paquete_retencion_seniors
+        label: "Plus de retención de perfiles sénior"
+        remaining_months: 6
+        monthly_expense_delta: 900
+  - id: dejar_marchar_dos_seniors
+    label: "No entrar en subastas y liquidar la salida de ambos (-2.500 €)"
+    result_text: "Resistes el chantaje y firmas finiquitos tensos. El recorte reduce nómina, pero pierdes músculo durante un trimestre y se marchan con la agenda de clientes en mente."
+    effects:
+      shrink_team:
+        count: 2
+        severance_per_person: 1250
+      stress: 12
+      employee_satisfaction: -10
+      set_flags:
+        - exempleado_salida_conflictiva
+      add_modifier:
+        id: mod_vacio_fuga_dos_seniors
+        label: "Bache operativo tras fuga de séniores"
+        remaining_months: 3
+        monthly_billed_delta: -1800
+      schedule_events:
+        - event_id: empleados_exempleado_competidor_o_aliado
+          delay_months: 24
+          probability: 0.8
+          priority: high
+  - id: retener_por_cultura_y_autonomia
+    label: "Retener con plan de carrera y bono moderado (1.800 €)"
+    requirements:
+      employee_satisfaction:
+        min: 72
+      stats:
+        moral:
+          min: 65
+    result_text: "El buen clima construido durante años pesa más que una consultora picadora de carne: aceptan autonomía real y un incentivo asumible."
+    effects:
+      deductible_expense: 1800
+      employee_satisfaction: 12
+      moral: 8
+      stress: -6

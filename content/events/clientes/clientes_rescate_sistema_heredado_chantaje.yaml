@@ -13,8 +13,8 @@ illustration_id: null
 requirements:
   min_month: 60
 weight: 9
-cooldown_months: 15
-max_occurrences: null
+cooldown_months: 24
+max_occurrences: 2
 choices:
   - id: remitir_a_clausula_fin_garantia_y_bloquear
     label: Responder con el contrato vencido en copia a su socio y cerrar el hilo

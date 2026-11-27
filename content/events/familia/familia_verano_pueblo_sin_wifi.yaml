@@ -1,8 +1,8 @@
 schema_version: 1
 id: familia_verano_pueblo_sin_wifi
 category: familia
-title: "Teletrabajo idílico en el pueblo y cero rayas de red"
-body: "Te instalas una semana de verano en la casa del pueblo creyendo que trabajarás al fresco. Nadie avisó de que los muros de piedra bloquean el 4G y solo llega red junto al pilón de la plaza a treinta y ocho grados."
+title: Teletrabajo idílico en el pueblo y cero rayas de red
+body: Te instalas una semana de verano en la casa del pueblo creyendo que trabajarás al fresco. Nadie avisó de que los muros de piedra bloquean el 4G y solo llega red junto al pilón de la plaza a treinta y ocho grados.
 tags:
   - pueblo
   - verano
@@ -13,14 +13,17 @@ requirements:
   months_of_year:
     - 7
     - 8
+  forbidden_flags:
+    - router_portatil_pueblo
+  max_month: 48
 weight: 11
 cooldown_months: 10
-max_occurrences: 3
+max_occurrences: 2
 exclusive_with: []
 choices:
   - id: comprar_antena_router_portatil
-    label: "Bajar a la comarca a comprar un router portátil con tarjeta (145 €)"
-    result_text: "Colocas el cacharro en el alféizar más alto de la casa y salvas las entregas mientras entra olor a leña y tortilla."
+    label: Bajar a la comarca a comprar un router portátil con tarjeta (145 €)
+    result_text: Colocas el cacharro en el alféizar más alto de la casa y salvas las entregas mientras entra olor a leña y tortilla.
     effects:
       cash_delta: -65
       deductible_expense: 80
@@ -28,12 +31,14 @@ choices:
       stress: -3
       moral: 5
       personal_life: 6
+      set_flags:
+        - router_portatil_pueblo
   - id: videollamada_al_sol_en_la_plaza
-    label: "Hacer las reuniones desde el banco de la plaza esquivando el pregón"
+    label: Hacer las reuniones desde el banco de la plaza esquivando el pregón
     outcomes:
       - id: encanto_rural_simpatico
         weight: 55
-        result_text: "El camión del panadero pita en mitad de tu presentación, pero al cliente le hace gracia tu «despacho campestre»."
+        result_text: El camión del panadero pita en mitad de tu presentación, pero al cliente le hace gracia tu «despacho campestre».
         effects:
           billed_income: 490
           stress: 4
@@ -42,7 +47,7 @@ choices:
           reputation: 1
       - id: corte_en_minuto_clave
         weight: 45
-        result_text: "Tu pantalla se congela con una mueca absurda y el portátil arde al sol antes de poder enviar el presupuesto."
+        result_text: Tu pantalla se congela con una mueca absurda y el portátil arde al sol antes de poder enviar el presupuesto.
         effects:
           billed_income: 180
           stress: 11
@@ -50,8 +55,8 @@ choices:
           personal_life: -3
           reputation: -3
   - id: asumir_vacaciones_reales_pueblo
-    label: "Rendirse a la evidencia, cerrar la tapa y vivir la verbena sin culpa"
-    result_text: "Cambias videollamadas pixeladas por siestas con persiana bajada y tomates que saben a tomate. Vuelves como nuevo."
+    label: Rendirse a la evidencia, cerrar la tapa y vivir la verbena sin culpa
+    result_text: Cambias videollamadas pixeladas por siestas con persiana bajada y tomates que saben a tomate. Vuelves como nuevo.
     effects:
       cash_delta: -90
       stress: -14

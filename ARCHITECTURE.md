@@ -20,13 +20,13 @@ Autónomo Simulator is a **mobile-first, offline-capable, single-codebase satiri
 | PRD Open Item | Architectural Decision |
 |---|---|
 | **§16.1 Player Stats & Stress** | **5 visible indicators**: `money` (€), `moral` (0–100), `stress` (0–100), `personal_life` (0–100), `reputation` (0–100). Both `stress = 100` (*"Baja por ansiedad"*) and `moral = 0` (*"A preparar oposiciones / volver a oficina"*) are lethal with distinct satirical endings. |
-| **§16.2 Economy, Taxes & Insolvency** | Baseline monthly billing (scaled by `reputation`, `moral`, `employee`) + event gigs. Official billing accrues a simplified tax liability settled every 3rd month (*"El Trimestre"*). Cash can dip negative (*"Números rojos"*, adding monthly Stress) plus 1 active tax deferral (*"Aplazamiento"*). **Bancarrota** triggers after 3 consecutive negative months, breaching a hard debt floor (default `-5,000 €`), or defaulting on deferred taxes. |
-| **§16.3 Turn Pacing** | **1 random event + at most 1 scheduled chain follow-up** per month (excess queued follow-ups spill over FIFO to the next month), plus quarterly tax settlements (every 3rd month) and annual summaries (every 12th month), targeting ~15–25 min for 120 months. |
-| **§16.4 Event Schema & RNG** | Choices support **both** deterministic `effects` and weighted random `outcomes[]` (with immediate `result_text`) plus delayed `schedule_events`, driven by the seeded PRNG. Inline `es-ES` text uses deterministic `<event_id>.<choice_id>` paths for future i18n. |
+| **§16.2 Economy, Taxes & Insolvency** | Baseline monthly billing (scaled by `reputation`, `moral`, `business.tier`, 3-Act market squeeze, multi-staff diminishing seat curve, or Boutique Senior Solo bonus) + event gigs (with opt-in `scale_with_tier`). Official billing accrues progressive marginal IRPF + RETA brackets (Autónomo/Estudio) or flat `24%` Impuesto de Sociedades + Autónomo Societario (S.L./Agencia), settled every 3rd month (*"El Trimestre"*), alongside Spain's 4-year *prescripción fiscal* delayed audit ledger (`14–42m` window). Cash can dip negative (*"Números rojos"*, adding monthly Stress) plus 1 active tax deferral (*"Aplazamiento"*). **Bancarrota** triggers after 3 consecutive negative months, breaching a tier-scaled hard debt floor (`-5,000 €` Solo up to `-25,000 €` Agencia), or defaulting on deferred taxes. |
+| **§16.3 Turn Pacing** | **1 random event + at most 1 scheduled chain follow-up** per month (prioritizing `priority: "high"` due entries, deferring long-horizon `>= 12m` or high-priority chains up to `12` months, and deduplicating identical `event_id` within `±6` months), plus quarterly tax settlements (every 3rd month) and annual summaries (every 12th month), targeting ~15–25 min for 120 months. |
+| **§16.4 Event Schema & RNG** | Choices support **both** deterministic `effects` and weighted random `outcomes[]` (with immediate `result_text`) plus delayed `schedule_events`, driven by the seeded PRNG. Inline `es-ES` text uses deterministic `<event_id>.<choice_id>` paths for bilingual i18n overlays. |
 | **§16.5 Visual Style & Assets** | Locked in [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) (Franco-Spanish satirical editorial comic in `.webp` + reactive `.svg` props/fallbacks, `render_mode: "vector_hd"`). `assets/manifest.json` (`placeholder \| ready`) and multi-expression NPC maps decouple Narrative from Art (see [ADR 001](./docs/adr/001-art-direction-webp-and-expressions.md)). |
-| **§16.6 MVP Entity Scope** | Basic playable implementations of **Gestor**, **Partner/Children**, and **Employee (max 1)** are all included in the v1 `GameState`, `event.schema.json`, UI, and initial 30–50 MVP event pool. |
-| **§16.7 Endless Mode** | Both victories (`month === 120` *«¡Eres un héroe!»* and `money >= 150,000 €` *«Ricachón»*) fire once with an option to **Retire** or **Keep Playing** under normal rules; earned victory badges persist onto the final share card even if the player later loses. |
-| **§16.8 Agent Integration & Saves** | Trunk-based `main` with role branches/worktrees (`engine/*`, `content/*`, `art/*`), `pnpm verify` CI gates, repo-native `docs/proposals/` & `docs/adr/`, single roguelite autosave + persistent Hall of Fame/Achievements in IndexedDB, and client-side Canvas PNG + text sharing. |
+| **§16.6 Entity & Progression Scope (v2)** | Full implementations of **Gestor** (tier-scaled fees + Elena quarterly compliance friction + S.L. `self` penalty), **Partner/Children** (reactive `neglect_months` tracker, dynamic `support_modifier` gating, crisis/synergy weighting), **4 Business Tiers** (`solo_autonomo`, `estudio_consolidado`, `sociedad_limitada`, `agencia_consultora` + Boutique Senior Solo path), and **Multi-Employee Teams** (0–12 staff with named lead character Dani/Laura) per [ADR 004](./docs/adr/004-v2-scaling-progression-and-depth.md). |
+| **§16.7 Endless Mode** | Both victories (`month === 120` *«¡Eres un héroe!»* and `money >= 250,000 €` *«Ricachón»* `rich_250k`) fire once with an option to **Retire** or **Keep Playing** under normal rules; earned victory badges persist onto the final share card even if the player later loses. |
+| **§16.8 Agent Integration & Saves** | Trunk-based `main` with role branches/worktrees (`engine/*`, `content/*`, `art/*`), `pnpm verify` CI gates, repo-native `docs/proposals/` & `docs/adr/`, single roguelite autosave (`save_version: 2`, lossless `v1 → v2` migration) + persistent Hall of Fame/18 Achievements in IndexedDB, and client-side Canvas PNG + text sharing. |
 
 ---
 
@@ -35,9 +35,9 @@ Autónomo Simulator is a **mobile-first, offline-capable, single-codebase satiri
 ```mermaid
 flowchart TB
     subgraph BuildTime["Build & Validation Pipeline (Node / Scripts)"]
-        YAML["content/**/*.yaml\n(300 Events, 8 Characters, Balance)"]
-        LOC["content/locales/en/*.yaml\n(2,502 English Event Copy Keys)"]
-        MAN["assets/manifest.json\n(61 Logical IDs & Fallbacks)"]
+        YAML["content/**/*.yaml\n(362 Events, 8 Characters, Balance)"]
+        LOC["content/locales/en/*.yaml\n(3,046 English Event Copy Keys)"]
+        MAN["assets/manifest.json\n(66 Logical IDs & Fallbacks)"]
         ZOD["src/engine/schemas/\n(Authoritative Zod Schemas)"]
         JSONS["schemas/*.schema.json\n(Emitted JSON Schemas)"]
         BUNDLE["src/generated/content-bundle.json\n(Validated Static Catalog)"]
@@ -93,14 +93,14 @@ autonomo-simulator/
 │   ├── characters/                  # Recurring NPC definitions (gestores, partners, employees)
 │   ├── locales/
 │   │   └── en/                      # Category-sharded English ('en') event copy overlays (*.yaml)
-│   └── events/                      # 300 Spanish ('es-ES') narrative events across 5 categories
-│       ├── clientes/                # 90 events
-│       ├── hacienda/                # 56 events
-│       ├── familia/                 # 57 events
-│       ├── empleados/               # 48 events
-│       └── gestor/                  # 49 events
+│   └── events/                      # 362 Spanish ('es-ES') narrative events across 5 categories
+│       ├── clientes/                # 108 events
+│       ├── hacienda/                # 66 events
+│       ├── familia/                 # 72 events
+│       ├── empleados/               # 59 events
+│       └── gestor/                  # 57 events
 ├── assets/
-│   ├── manifest.json                # Logical asset registry (61 assets, status: placeholder | ready)
+│   ├── manifest.json                # Logical asset registry (66 assets, status: placeholder | ready)
 │   ├── characters/
 │   ├── backgrounds/
 │   ├── illustrations/
@@ -169,9 +169,31 @@ export type EndingId =
   | "abandon_salaried"           // Narrative voluntary exit
   | "abandon_subsidies"          // Narrative voluntary exit
   | "retired_hero"               // Voluntary retirement at/after Month 120
-  | "retired_rich";              // Voluntary retirement at/after 150,000 €
+  | "retired_rich";              // Voluntary retirement at/after 250,000 €
 
-export type VictoryBadge = "hero_120m" | "rich_150k";
+export type VictoryBadge = "hero_120m" | "rich_250k";
+
+export type BusinessTier =
+  | "solo_autonomo"
+  | "estudio_consolidado"
+  | "sociedad_limitada"
+  | "agencia_consultora";
+
+export interface BusinessState {
+  tier: BusinessTier;
+  months_in_tier: number;
+  sl_formed_month: number | null;      // First month S.L. or Agencia was entered
+}
+
+export interface FiscalExposureEntry {
+  id: string;
+  origin_month: number;
+  expires_month: number;               // origin_month + 48 (4-year prescripción fiscal)
+  risk_points: number;
+  untaxed_amount: number;
+  source_event_id: string;
+  audited: boolean;
+}
 
 export interface Indicators {
   money: number;          // Available liquid cash (€); may go negative ("Números rojos")
@@ -203,17 +225,18 @@ export interface PendingInvoice {
 export interface FinanceState {
   lifetime_billed: number;             // Cumulative official invoiced revenue (excludes "en B")
   current_quarter_billed: number;      // Resets every 3 months
-  accrued_tax_liability: number;       // Simplified IVA + IRPF owed at next Trimestre
+  accrued_tax_liability: number;       // Progressive IRPF or Impuesto de Sociedades owed at Trimestre
   deferred_tax: DeferredTaxDebt | null;// Max 1 active "Aplazamiento" at a time
   pending_invoices: PendingInvoice[];
   consecutive_negative_months: number; // 0..3; >= 3 triggers defeat_bankruptcy
+  historical_exposures: FiscalExposureEntry[]; // 4-year prescripción fiscal audit ledger
 }
 
 export interface GestorState {
   tier: "self" | "cheap" | "premium";
   character_id: string | null;
-  monthly_fee: number;
-  inspection_shield: number;           // Reduces fiscal_risk / error probability
+  monthly_fee: number;                 // Scales by business.tier gestor_fee_multiplier
+  inspection_shield: number;           // Reduces fiscal_risk / historical audit probability
   months_active: number;
 }
 
@@ -223,15 +246,18 @@ export interface FamilyState {
   partner_name?: string;               // Seeded per-run partner name from PARTNER_NAME_POOL ("Álex" | "Cris" | "Gabi" | "Noa" | "Clara")
   children_count: number;
   monthly_cost: number;
-  support_modifier: number;            // Modulates stress recovery / emergency family support
+  support_modifier: number;            // Dynamically gated by personal_life while partnered
+  neglect_months: number;              // Accumulated partner strain counter while partnered
 }
 
 export interface EmployeeState {
-  character_id: string;
+  character_id: string;                // Named team lead (Dani or Laura)
   role_label: string;
-  monthly_cost: number;                // Salary + Seguridad Social simplified lump cost (tax-deductible)
-  billing_multiplier: number;          // e.g. 1.58x / 2.05x base boost, modulated by satisfaction
-  satisfaction: number;                // 0..100; modulates billing boost & employee event eligibility
+  headcount: number;                   // 1..12 total active staff on payroll (including lead)
+  lead_monthly_cost: number;           // Lead individual employer cost
+  monthly_cost: number;                // Authoritative total monthly payroll (tax-deductible)
+  billing_multiplier: number;          // Lead base boost (Dani 1.58x / Laura 2.05x) + diminishing seat curve
+  satisfaction: number;                // 0..100 average team morale
   months_employed: number;
 }
 
@@ -240,7 +266,9 @@ export interface ScheduledEvent {
   event_id: string;
   trigger_month: number;
   source_event_id: string;
-  deferred_months?: number;            // Defers up to 6 months if temporarily ineligible on trigger_month
+  origin_month?: number;
+  priority?: "normal" | "high";
+  deferred_months?: number;            // Up to 6 months (short-term) or 12 months (horizon >= 12m / high priority)
 }
 
 export interface TemporalModifier {
@@ -254,7 +282,7 @@ export interface TemporalModifier {
 }
 
 export interface GameState {
-  schema_version: 1;
+  schema_version: 2;
   run_id: string;
   prng: PrngState;
   month: number;                       // Starts at 1; Year = ceil(month / 12)
@@ -262,9 +290,10 @@ export interface GameState {
   indicators: Indicators;
   fiscal_risk: number;                 // 0..100 internal tension gauge (partially obfuscated in UI)
   finances: FinanceState;
+  business: BusinessState;             // 4 progression tiers + SL formation tracking
   gestor: GestorState;
   family: FamilyState;
-  employee: EmployeeState | null;      // Hard cap: max 1 employee
+  employee: EmployeeState | null;      // Multi-staff team up to 12 people (capped by business.tier)
   flags: Record<string, boolean | number>;
   cooldowns: Record<string, number>;   // event_id -> earliest next eligible month
   occurrences: Record<string, number>; // event_id -> times seen this run
@@ -280,8 +309,8 @@ export interface GameState {
 ```
 
 ### 3.2 Initial Run State (Month 1 Defaults — Parameterized in `content/config/balance.yaml`)
-- Starts at `month: 1`, `family.status: "single"`, `family.children_count: 0`, `employee: null`, `gestor.tier: "self"`.
-- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md) and [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md)): `money: 2600` (`~3,052 €` after Month 1 recurring step, `~2,532 €` net after deductible-adjusted tax reserve), `moral: 75`, `stress: 20`, `personal_life: 68`, `reputation: 35`, `fiscal_risk: 0`.
+- Starts at `month: 1`, `business.tier: "solo_autonomo"`, `family.status: "single"`, `family.children_count: 0`, `employee: null`, `gestor.tier: "self"`.
+- Initial indicators (calibratable in `balance.yaml`, see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md), [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md), and [ADR 004](./docs/adr/004-v2-scaling-progression-and-depth.md)): `money: 2800` (`3,194 €` after Month 1 recurring step: `+2,128 €` billing, `-1,440 €` living, `-294 €` RETA; `2,764 €` net after `430 €` progressive IRPF reserve), `moral: 75`, `stress: 10` (`6` after Month 1 stress relief), `personal_life: 68`, `reputation: 35`, `fiscal_risk: 0`.
 
 ---
 
@@ -301,7 +330,7 @@ stateDiagram-v2
     EndOfMonthChecks --> AnnualSummary: Alive & month % 12 == 0
     AnnualSummary --> VictoryPrompt: Dismiss report & newly earned victory pending
     AnnualSummary --> AdvanceMonth: Dismiss report & no pending victory
-    EndOfMonthChecks --> VictoryPrompt: Alive & month % 12 != 0 & newly hit Money >= 150,000 €
+    EndOfMonthChecks --> VictoryPrompt: Alive & month % 12 != 0 & newly hit Money >= 250,000 €
     VictoryPrompt --> GameOver: Player chooses Retire
     VictoryPrompt --> AdvanceMonth: Player chooses Continue (Endless Mode)
     EndOfMonthChecks --> AdvanceMonth: Alive & month % 12 != 0 & no new victory
@@ -312,52 +341,40 @@ stateDiagram-v2
 
 1. **`MonthStart` (Recurring Economy & Timers)**:
    - Collect maturing `pending_invoices` where `due_month === month`: roll `default_prob` against `prng`. Paid invoices add to `money` (tax was accrued on issuance or on collection per `balance.yaml` standard—default: **cash-basis tax accrual on collection** so unpaid invoices hurt liquidity without double-taxing uncollected money, unless flagged otherwise). Unpaid invoices emit a notice and unlock client-chase flags.
-   - Compute **Baseline Monthly Billing** (with employee boost modulated by `satScale = 0.4 + 0.8 * (satisfaction / 100)` when `state.employee !== null`):
-     $$\text{grossBilling} = \text{round}\Big(\text{baseRate} \times f_{\text{rep}}(\text{reputation}) \times f_{\text{moral}}(\text{moral}) \times \text{employeeMultiplier} + \Delta_{\text{modifiers}}\Big)$$
-   - Compute **Tax-Deductible Business Overhead** via `computeMonthlyDeductibleExpenses(state, catalog)` (`autonomo_quota + gestor.monthly_fee + (employee?.monthly_cost ?? 0) + max(0, modifierExpenseDelta)`) and apply official billing + tax shield (see [ADR 003](./docs/adr/003-phase-3-5-tax-deductibility-decay-and-pacing.md)):
-     - `indicators.money += grossBilling`
-     - `finances.lifetime_billed += grossBilling`
-     - `finances.current_quarter_billed += grossBilling`
-     - `rawTax = round(grossBilling * balance.effective_quarterly_tax_rate) - round(deductibleExpenses * balance.deductible_tax_fraction)`
-     - `finances.accrued_tax_liability = max(0, finances.accrued_tax_liability + rawTax)`
-   - Deduct **Recurring Monthly Obligations** (including annual cost-of-living creep, tapering to `0.5x` per year after `balance.victory_month` in Endless Mode):
-     - `totalExpenses = baseLivingCost + livingCostCreep + autonomoQuota + gestor.monthly_fee + family.monthly_cost + (employee?.monthly_cost ?? 0) + modifierExpenses`
-     - `indicators.money -= totalExpenses`
-   - Tick `TemporalModifier`s (`remaining_months -= 1`, apply monthly stat deltas, prune expired), apply passive stress relief (`1` at `personal_life >= personal_life_recovery_threshold`, `2` at `personal_life >= 82`, plus `family.support_modifier`), apply gentle late-game stat maintenance drift above `balance.high_stat_decay_threshold` plus high-stress employee satisfaction erosion, and emit a complete `MonthStartSummary` (including `overdraft_stress_delta`, `maintenance_moral_delta`, `maintenance_reputation_delta`, `maintenance_personal_life_delta`, `net_moral_delta`, and `net_stress_delta` so HUD deltas and the monthly ticker never contradict each other).
+   - Compute **Monthly Economy Breakdown** via pure `computeMonthlyEconomyBreakdown(state, catalog)` (see [ADR 004](./docs/adr/004-v2-scaling-progression-and-depth.md)):
+     - **Baseline Monthly Billing** scales by `reputation`, `moral`, `business.tier` (`billing_multiplier`), 3-Act market squeeze (`act2_market_squeeze` / `act3_market_squeeze`), multi-staff diminishing seat curve (`computeEffectiveTeamMultiplier`, modulated by `satScale = 0.4 + 0.8 * (satisfaction / 100)`), or Boutique Senior Solo specialist bonus (`computeBoutiqueSoloFactor`), plus active `modifiers`.
+     - **Tax-Deductible Business Overhead** (`computeMonthlyDeductibleExpenses`) sums progressive RETA bracket or Autónomo Societario (`computeMonthlySocialSecurityQuota`), tier structural overhead, tier-scaled gestor retainer (`computeEffectiveGestorFee`), total team payroll, and `max(0, modifierExpenseDelta)`.
+     - **Tax Accrual**: Autónomo/Estudio tiers accrue progressive marginal IRPF (`22% / 30% / 37% / 44%` slices on `taxableProfit`), while S.L./Agencia tiers accrue flat `24%` Impuesto de Sociedades (with invariant `grossTaxWithoutDeductions - taxShieldOnExpenses === netTaxAccrued`).
+   - Deduct **Recurring Monthly Obligations** (3-Act living cost creep `75 / 110 / 145 €/mo/yr` tapering `0.5x` post-Month 120, SS quota, structural overhead, gestor fee, family costs, payroll, and modifiers), prune expired 48-month `historical_exposures` (setting `flags.ejercicio_prescrito_limpio` on clean prescription), update partner `neglect_months` & dynamic `support_modifier` gating, tick `TemporalModifier`s, apply management/Act III/high-fiscal-risk (`>= 65`) passive stress & maintenance drift, and emit a complete `MonthStartSummary`.
 
 2. **`EventDraw` & `EventResolution` (Pacing Cap: Max 2 Cards/Month)**:
-   - **Slot 1 (Scheduled Chain Follow-Up)**: Inspect `scheduled_queue` for entries with `trigger_month <= month`. Pop **at most 1** (FIFO) whose `event_id` meets `isEventHardEligible`. Temporarily ineligible due entries defer by 1 month (`trigger_month: month + 1`, `deferred_months + 1`) up to 6 times before expiring; excess due entries stay queued for next month.
-   - **Slot 2 (Novelty-Weighted Random Event)**: Filter the compiled catalog by `requirements` (including `months_of_year` and `employee_satisfaction`), `cooldowns`, `max_occurrences`, and `exclusive_with` (excluding Slot 1's event). Weight each candidate by `event.weight / (1 + (balance.event_novelty_decay_k ?? 0.85) * occurrences[event.id]) ** 1.35` and select **1** event via seeded PRNG draw. A fallback pool of hard-eligible events relaxes cooldowns if needed so Slot 2 never starves.
-   - **Choice Resolution & Intra-Month Slot 2 Revalidation**: When the player selects `choice_id`:
-     - Validate choice is eligible in current state.
-     - If `choice.outcomes` is present, roll one `Outcome` by `weight` using `prng`; otherwise apply `choice.effects` directly.
-     - Apply all deltas, clamp stats to `[0, 100]`, enqueue `schedule_events`, and record a `HistoryEntry` (surfacing `tax_accrued_delta` and `employee_satisfaction_delta` on `ChoiceOutcomeSummary`).
-     - If `Slot 2` remains in `current_turn_events`, re-verify `isEventHardEligible` against the post-`Slot 1` state; if `Slot 1` invalidated `Slot 2`, redraw a fresh eligible non-cooldown random event (excluding `Slot 1` and `exclusive_with`) using `prng`.
-     - Snapshot `TurnResolution.postChoiceState` at `month = N` immediately after `resolveChoiceEffects` (before `transitionAfterTurnEvents` / `advanceToNextMonth`) so the UI can display exact Month `N` outcome deltas prior to applying Month `N+1` recurring cashflow (see [ADR 002](./docs/adr/002-cashflow-timing-and-economy-tuning.md)). Pure helpers `computeReservedTaxObligation(state)`, `computeNetCashAfterTaxReserve(state)`, and `computeMonthlyDeductibleExpenses(state, catalog)` expose tax reserves and deductible overhead alongside raw `indicators.money`.
+   - **Slot 1 (Scheduled Chain Follow-Up)**: Inspect due entries (`trigger_month <= month`) sorted by `priority === "high"` first, then `trigger_month ASC`, then FIFO insertion order. Pop **at most 1** eligible entry (bypassing `fiscal_risk.min` for `quarterly_inspection` and `historical_audit`); temporarily ineligible entries defer by 1 month up to `12` times (`priority: "high"` or horizon `>= 12m`) or `6` times (short-term).
+   - **Slot 2 (Novelty- & Context-Weighted Random Event)**: Filter the compiled catalog by `requirements` (including `business_tiers`, `team_size`, `children_count`, `months_of_year`, and `employee_satisfaction`), `cooldowns`, `max_occurrences`, and `exclusive_with` (excluding Slot 1). Weight candidates by novelty decay `event.weight / (1 + k * seen) ** 1.35` multiplied by contextual pressure weights (partner crisis `2.8x`/`4.5x`, partner synergy `2.0x`, S.L./Agencia tier focus `1.8x`). A fallback pool relaxes cooldowns if needed so Slot 2 never starves.
+   - **Choice Resolution & Intra-Month Slot 2 Revalidation**: Validates choice eligibility (scaling `stats.money` requirements when `event.scale_with_tier: true`), applies scaled `effects` / weighted `outcomes` via `getEffectiveScaledChoiceEffects`, records qualifying `FiscalExposureEntry` rows (48m window), deduplicates queued `schedule_events` within `±6m`, revalidates/redraws Slot 2 if Slot 1 invalidated it, and snapshots `TurnResolution.postChoiceState` at `month = N`.
 
 3. **`QuarterlyTax` (*"El Trimestre"* — Months 3, 6, 9, 12, ...)**:
-   - **Gestor & Hacienda Check**:
-     - Roll `gestor_tiers[gestor.tier].quarterly_error_prob` when `accrued_tax_liability > 0` for filing surcharges and stress penalties.
-     - Roll `fiscal_risk` against `balance.inspection_curve` (mitigated by `gestor.inspection_shield`). If triggered, select an eligible `weight > 0` Hacienda audit/comprobación/requerimiento event via seeded `selectInspectableHaciendaEvent` **before** applying the `-35` `fiscal_risk` decay (evaluating eligibility at target month `month + 1`, including `months_of_year`, and excluding `weight: 0` chain finales and portal/certificate glitches)—or apply `fallback_fine_base + fallback_fine_per_risk * fiscal_risk` if none are eligible—and then decay `fiscal_risk`.
-   - **Maturing Deferral First**: If `finances.deferred_tax` is due this month (`due_month === month`), its `principal + surcharge` is mandatory—if `money - mandatoryDue < balance.hard_debt_floor` or cannot be settled per deferral rules, **Bancarrota** triggers (no chaining a second deferral onto a defaulted deferral).
+   - **Gestor Compliance, Error Roll & Hacienda Checks**:
+     - Applies S.L./Agencia `self` compliance penalty (`+450 €` + `35%` error prob), rolls tier-scaled gestor filing error surcharges, and runs Elena (`premium`) compliance checks (`warning` at `fiscal_risk >= 45`, `dropped` to `self` at `>= 65`).
+     - Rolls short-term `fiscal_risk` against `balance.inspection_curve` (mitigated by `gestor.inspection_shield`); if no immediate inspection triggers, rolls eligible 14–42m unaudited `historical_exposures` for a delayed *prescripción fiscal* audit (`selectHistoricalAuditEvent` with `source_event_id: "historical_audit"` and `priority: "high"`, or fallback back-tax fine).
+   - **Maturing Deferral First**: If `finances.deferred_tax` is due this month (`due_month === month`), its `principal + surcharge` is mandatory—if `money - mandatoryDue < getEffectiveHardDebtFloor(state, catalog)`, **Bancarrota** triggers (no chaining a second deferral).
    - **Current Quarter Bill (`accrued_tax_liability`)**:
      - **Option A — Pay in Full**: `money -= accrued_tax_liability`; `accrued_tax_liability = 0`.
-     - **Option B — Request *"Aplazamiento"* (enabled only when `deferred_tax === null` and `accrued_tax_liability > 0`)**: Moves `accrued_tax_liability` into `deferred_tax` due at `month + 3` with `balance.deferral_surcharge_pct` (e.g., `+10%`) and applies immediate `stress` penalty (e.g., `+8`).
+     - **Option B — Request *"Aplazamiento"* (enabled only when `deferred_tax === null` and `accrued_tax_liability > 0`)**: Moves `accrued_tax_liability` into `deferred_tax` due at `month + 3` with `balance.deferral_surcharge_pct` (`+10%`) and immediate `stress` penalty (`+8`).
 
 4. **`EndOfMonthChecks` (Insolvency, Burnout, Annual Report & Victories)**:
    - **Insolvency (*"Números Rojos"*)**:
      - If `indicators.money < 0`: increment `consecutive_negative_months` and apply `balance.negative_cash_monthly_stress` (e.g., `+6` Stress).
      - Else: reset `consecutive_negative_months = 0`.
-     - Trigger `defeat_bankruptcy` if `consecutive_negative_months >= 3` OR `indicators.money < balance.hard_debt_floor` (default `-5000`) OR deferred tax default occurred.
+     - Trigger `defeat_bankruptcy` if `consecutive_negative_months >= 3` OR `indicators.money < getEffectiveHardDebtFloor(state, catalog)` (`-5,000 €` Solo up to `-25,000 €` Agencia) OR deferred tax default occurred.
    - **Psychological Defeat**:
      - If `indicators.stress >= 100`: trigger `defeat_burnout_stress` (*"Baja por ansiedad"*).
      - Else if `indicators.moral <= 0`: trigger `defeat_resignation_moral` (*"A preparar oposiciones / volver a oficina"*).
    - **Annual Summary (`month % 12 === 0`) Before Year-End Victory Prompt**:
-     - At every year-end (`month % 12 === 0`, including Month 120 / Year 10 after settling Q40), `EndOfMonthChecks` emits `AnnualSummary` (yearly billed, taxes paid, net cash change, family/employee milestones, highlight events), resets `annual_snapshot`, and enters `phase: "annual_summary"` first. When the player closes `AnnualSummaryModal` (`dismissAnnualSummary`), any newly earned victory (`hero_120m` at Month 120 or `rich_150k`) transitions into `phase: "victory_prompt"` before advancing to the next month.
+     - At every year-end (`month % 12 === 0`, including Month 120 / Year 10 after settling Q40), `EndOfMonthChecks` emits `AnnualSummary` (yearly billed, taxes paid, net cash change, family/employee milestones, highlight events), resets `annual_snapshot`, and enters `phase: "annual_summary"` first. When the player closes `AnnualSummaryModal` (`dismissAnnualSummary`), any newly earned victory (`hero_120m` at Month 120 or `rich_250k`) transitions into `phase: "victory_prompt"` before advancing to the next month.
    - **Victories (One-Time Prompts & Voluntary Endless Retirement)**:
      - If `month >= 120` and `"hero_120m"` not in `earned_victories`: award `"hero_120m"`, prompt **Retire (`retired_hero`)** vs **Continue (`endless_mode = true`)**.
-     - If `indicators.money >= 150000` and `"rich_150k"` not in `earned_victories`: award `"rich_150k"`, prompt **Retire (`retired_rich`)** vs **Continue (`endless_mode = true`)**.
-     - At any non-`game_over` phase once `endless_mode || earned_victories.length > 0` holds (never prematurely before settling Q40), pure `retireFromRun(state, catalog)` settles voluntary retirement into `"retired_rich"` (when `money >= victory_money` or `"rich_150k"` earned) else `"retired_hero"`.
+     - If `indicators.money >= 250000` and `"rich_250k"` not in `earned_victories`: award `"rich_250k"`, prompt **Retire (`retired_rich`)** vs **Continue (`endless_mode = true`)**.
+     - At any non-`game_over` phase once `endless_mode || earned_victories.length > 0` holds (never prematurely before settling Q40), pure `retireFromRun(state, catalog)` settles voluntary retirement into `"retired_rich"` (when `money >= victory_money` or `"rich_250k"` earned) else `"retired_hero"`.
 
 ---
 
@@ -443,25 +460,28 @@ choices:
       reputation: -2
 ```
 
-### 5.3 Closed Catalog of Effect Primitives (v1)
+### 5.3 Closed Catalog of Effect Primitives (v2)
 
-Narrative agents may **only** combine primitives from this closed catalog. Any new mechanic requires a proposal in `docs/proposals/`.
+Narrative agents may **only** combine primitives from this closed catalog (see [ADR 004](./docs/adr/004-v2-scaling-progression-and-depth.md) for full semantics). Any new mechanic requires a proposal in `docs/proposals/`.
 
 | Primitive | Type | Engine Behavior |
 |---|---|---|
-| `billed_income` | `number` (`>= 0`) | Official revenue: adds to `money`, `lifetime_billed`, `current_quarter_billed`, and accrues `accrued_tax_liability`. |
-| `cash_delta` | `number` (`+/-`) | Direct untaxed liquidity change (e.g., cash *"en B"*, family gift, personal expense, non-deductible fine). |
-| `deductible_expense` | `number` (`>= 0`) | Subtracts from `money` and reduces `accrued_tax_liability` (floored at `0`) by the deductible tax fraction. |
-| `deferred_invoice` | `{ amount, delay_months, default_prob }` | Enqueues a `PendingInvoice` collected at `month + delay_months`. |
-| `moral`, `stress`, `personal_life`, `reputation`, `fiscal_risk` | `number` (`+/-`) | Additive integer delta clamped to `[0, 100]`. |
-| `set_flags` / `clear_flags` | `string[]` | Sets boolean flags `true` or removes them from `state.flags`. |
-| `schedule_events` | `{ event_id, delay_months, probability? }[]` | Rolls `probability` (default `1.0`) via `prng`; if hit, inserts into `scheduled_queue` for `month + delay_months`. |
-| `add_modifier` | `TemporalModifierSpec` | Attaches a multi-month recurring billing/expense/stat modifier. |
-| `set_gestor` | `{ tier, character_id? }` | Switches Gestor tier and updates `monthly_fee` & `inspection_shield` from config/character. |
-| `set_family_status` | `{ status, partner_character_id? }` | Updates relationship state and recurring family parameters (`dating`/`cohabiting` sets `historia_con_alex`; `separated` sets `ex_pareja_alex` and clears `partner_character_id = null`). |
+| `billed_income` | `number` (`>= 0`) | Official revenue (scaled when `event.scale_with_tier: true`): adds to `money`, `lifetime_billed`, `current_quarter_billed`, and accrues `accrued_tax_liability` at `computeMarginalTaxRate`. |
+| `cash_delta` | `number` (`+/-`) | Direct untaxed liquidity change (scaled when `event.scale_with_tier: true`), e.g., cash *"en B"*, family gift, personal expense, non-deductible fine. |
+| `deductible_expense` | `number` (`>= 0`) | Subtracts from `money` and reduces `accrued_tax_liability` (floored at `0`) at `computeMarginalTaxRate` (scaled when `event.scale_with_tier: true`). |
+| `deferred_invoice` | `{ amount, delay_months, default_prob }` | Enqueues a `PendingInvoice` collected at `month + delay_months` (amount scaled when `event.scale_with_tier: true`). |
+| `moral`, `stress`, `personal_life`, `reputation`, `fiscal_risk` | `number` (`+/-`) | Additive integer delta clamped to `[0, 100]`. Qualifying `fiscal_risk` deltas (`>= 10`, or `>= 6` with untaxed `cash_delta >= 1000`) also append a 48-month `FiscalExposureEntry`. |
+| `set_flags` / `clear_flags` | `string[]` | Sets boolean flags `true` or removes them from `state.flags` (`sociedad_limitada_activa` auto-syncs `business.tier` to `sociedad_limitada`). |
+| `schedule_events` | `{ event_id, delay_months, probability?, priority? }[]` | Rolls `probability` (default `1.0`) via `prng`; if hit, inserts into `scheduled_queue` with `origin_month` and `priority` (deduplicated within `±6m`). |
+| `add_modifier` | `TemporalModifierSpec` | Attaches a multi-month recurring billing/expense/stat modifier (monetary deltas scaled when `event.scale_with_tier: true`). |
+| `set_gestor` | `{ tier, character_id? }` | Switches Gestor tier and updates `monthly_fee` via `computeEffectiveGestorFee` and `inspection_shield` from config. |
+| `set_family_status` | `{ status, partner_character_id? }` | Updates relationship state and recurring family parameters (`dating`/`cohabiting` sets `historia_con_alex`; `separated` sets `ex_pareja_alex`, clears `partner_character_id = null`, `neglect_months = 0`, and `crisis_pareja_latente`). |
 | `add_child` | `number` (default `1`) | Increments `family.children_count` and adjusts `family.monthly_cost`. |
-| `hire_employee` | `{ character_id }` | Populates `state.employee` from `content/characters/<id>.yaml` (rejected by validator if choice lacks `has_employee: false` guard when needed). |
-| `dismiss_employee` | `{ severance_cost }` | Deducts `severance_cost` from `money` and sets `state.employee = null`. |
+| `hire_employee` | `{ character_id }` | Populates `state.employee` (`headcount: 1`) from `content/characters/<id>.yaml` (requires `has_employee: false` or `team_size.max === 0` guard). |
+| `dismiss_employee` | `{ severance_cost }` | Multi-staff safe: deducts `severance_cost` (scaled when `scale_with_tier: true`), removes `1` person from multi-staff teams (`-5` satisfaction) or clears `state.employee = null` when `headcount <= 1`. |
+| `set_business_tier` | `{ tier }` | Transitions `state.business.tier` (`solo_autonomo` \| `estudio_consolidado` \| `sociedad_limitada` \| `agencia_consultora`), auto-syncs `sociedad_limitada_activa`, and refreshes `gestor.monthly_fee`. |
+| `expand_team` | `{ count, avg_monthly_cost?, lead_character_id?, role_label? }` | Adds staff up to `min(12, tier.max_team_size)` (initializing lead Dani or specified `lead_character_id` if starting from 0, or upgrading lead cleanly). |
+| `shrink_team` | `{ count, severance_per_person, dismiss_all? }` | Reduces `employee.headcount` (or dissolves team on `dismiss_all: true`), deducts total severance (scaled when `scale_with_tier: true`), adjusts payroll, and applies `-6` layoff morale shock unless overridden. |
 | `employee_satisfaction` | `number` (`+/-`) | Adds rounded delta clamped `[0, 100]` to `state.employee.satisfaction` when `state.employee !== null` (no-op when `null`). |
 | `trigger_ending` | `EndingId` | Immediately ends the run with a narrative abandonment ending (`abandon_oposiciones`, `abandon_salaried`, `abandon_subsidies`). |
 
@@ -479,7 +499,7 @@ Narrative agents may **only** combine primitives from this closed catalog. Any n
 
 ### 5.5 Bilingual Localization (`es-ES` & `en`)
 - YAML events store Spanish (`es-ES`) copy inline for minimal Narrative authoring friction, while category-sharded English overlays in `content/locales/en/*.yaml` map deterministic keys (`<event_id>.title`, `<event_id>.body`, `<event_id>.choices.<choice_id>.label`, `<event_id>.choices.<choice_id>.result_text`, `<event_id>.choices.<choice_id>.outcomes.<outcome_id>.result_text`).
-- `pnpm validate:locales` enforces 100% key parity across all 300 events (2,502 keys) with zero missing or orphan keys, and `pnpm compile:content` emits `src/content/compiled-locales.json`.
+- `pnpm validate:locales` enforces 100% key parity across all 362 events (3,046 keys) with zero missing or orphan keys, and `pnpm compile:content` emits `src/content/compiled-locales.json`.
 - At runtime, `resolveEventText(locale, eventId, fieldPath, fallbackText)` resolves event copy, `getUiStrings(locale)` (`src/services/i18n/uiStrings.ts`) translates all screens/HUD/modals/achievements/endings/share cards, and `translateModifierLabel(modifier, locale)` / `translateCharacterName` / `formatFlagLabel` translate every `add_modifier`, NPC nameplate, and narrative flag. Users switch instantly via `[data-testid="locale-toggle-btn"]` (`ES | EN`) or the `L` hotkey on `TitleScreen` and `IndicatorBar`, persisted to `profile.settings.locale` in IndexedDB and synced to `<html lang="es|en">`.
 
 ---
@@ -496,10 +516,10 @@ Backed by IndexedDB (`idb-keyval`) behind an async `StoragePort` interface:
    - Single active autosave slot (roguelite model—no manual save-scumming slots).
    - Written automatically after every choice (including unacknowledged `pending_turn` outcomes), quarterly resolution, and month advance.
    - Deleted (and archived into `hall_of_fame`) once a fatal `pending_turn` outcome is acknowledged (`acknowledgeOutcome()`) or a direct ending (`retireRun()` / `abandonActiveRun()` / `decideVictory("retire")`) sets `ending !== null`.
-   - Envelope shape: `{ save_version: 1, engine_build: string, updated_at: string, state: GameState, pending_turn?: PersistedPendingTurn }`.
+   - Envelope shape: `{ save_version: 2, engine_build: "2.0.0", updated_at: string, state: GameState, pending_turn?: PersistedPendingTurn }`.
 2. **`autonomo:profile` (`ProfileEnvelope`)**:
-   - Persistent across runs: unlocked `achievements: Record<string, string>`, `hall_of_fame: PastRunSummary[]` (capped at e.g. top/last 50 runs), and user accessibility/audio preferences.
-3. **Migration Runner**: On boot, `migrateSaveEnvelope(raw)` runs sequential pure functions (`v1 -> v2 -> ...`). If a save is irreparably corrupted, the app backs up the raw blob to `autonomo:corrupt_backup`, notifies the player gracefully without crashing, and preserves `autonomo:profile`.
+   - Persistent across runs: unlocked `achievements: Record<string, string>` (18 career seals with lossless legacy normalization `ricachon_150k → ricachon_250k`), `hall_of_fame: PastRunSummary[]` (capped at 50 runs, migrating `rich_150k → rich_250k`), and user accessibility/audio preferences.
+3. **Migration Runner**: On boot, `migrateSaveEnvelope(raw)` runs sequential pure functions (`v0 -> v1 -> v2`), migrating `state`, `pending_turn.outcome_preview_state`, and `pending_turn.queued_final_state` losslessly via `migrateGameStateV1ToV2`. If a save is irreparably corrupted, the app backs up the raw blob to `autonomo:corrupt_backup`, notifies the player gracefully without crashing, and preserves `autonomo:profile`.
 
 ### 6.3 Shareable Epitaph & Canvas Card (`src/services/share/`)
 - Generates two artifacts from `EndRunSummary` (works identically for defeat, voluntary retirement, or Endless demise while displaying earned `VictoryBadge` stamps):
@@ -567,7 +587,7 @@ Per [docs/ART_DIRECTION.md](./docs/ART_DIRECTION.md) and [ADR 001](./docs/adr/00
 ```
 
 - **Multi-Expression NPC & Dynamic Tension Banner Resolution**: Character YAMLs (`content/characters/<id>.yaml`) declare `expressions: { neutral?, stressed?, angry?, pleased? }` mapping to `character` entries in `assets/manifest.json`, while events optionally set `character_expression` and `illustration_id` (7 bespoke `16:9` milestone panels across 8 milestone events). For non-milestone cards, `resolveEventBannerAsset` selects category tension/urgency variants (`banner_clientes_tension`, `banner_hacienda_inspeccion`, `banner_familia_tension`, `banner_empleados_tension`, `banner_gestor_urgencia`) when expressions, stress/fiscal thresholds, or crisis tags fire, falling back cleanly to `banner_<category>_base` and category SVG fallbacks.
-- **Binary Dimension & Budget Validation (`scripts/validate-assets.ts`)**: Accepts only `.webp` (verifying `RIFF....WEBP` magic bytes and exact `VP8 ` / `VP8L` / `VP8X` pixel `width` × `height`) and standalone `.svg` (`xmlns` + dimensions) across all 60 registered assets, enforcing per-category caps (`background <= 145 KB`, `illustration <= 125 KB`, `character <= 70 KB`, `ui <= 20 KB`) and a `<= 3.50 MB` total `assets/` payload ceiling.
+- **Binary Dimension & Budget Validation (`scripts/validate-assets.ts`)**: Accepts only `.webp` (verifying `RIFF....WEBP` magic bytes and exact `VP8 ` / `VP8L` / `VP8X` pixel `width` × `height`) and standalone `.svg` (`xmlns` + dimensions) across all 66 registered assets, enforcing per-category caps (`background <= 145 KB`, `illustration <= 125 KB`, `character <= 70 KB`, `ui <= 20 KB`) and a `<= 3.50 MB` total `assets/` payload ceiling.
 - `SceneRenderer` applies CSS scaling rules per asset's `render_mode` (`image-rendering: pixelated` for `"pixel_art"` sprites vs smooth high-DPI scaling for `"vector_hd"` WebP/SVG).
 - Upgrading an asset from `"placeholder"` to `"ready"` requires zero changes to `src/` or `content/`.
 
@@ -592,15 +612,15 @@ Every completed task or milestone runs a full verification + QA + delivery seque
 
 1. **Automated Static, Unit, Build & CI Gate (`pnpm verify` + `.github/workflows/verify.yml`)**:
    - `pnpm schema:check` — Ensures `schemas/*.schema.json` matches `src/engine/schemas/`.
-   - `pnpm validate:assets` — Verifies every entry in `assets/manifest.json` (60 assets) exists on disk, matches declared format/dimensions, and stays within the `<= 3.50 MB` payload cap.
-   - `pnpm validate:content` — Validates `balance.yaml`, 8 characters, and all 300 YAML events against Zod + semantic graph + manifest references.
-   - `pnpm validate:locales` — Verifies 100% English (`en`) translation key parity (2,502 keys across 300 events) with zero orphan keys.
+   - `pnpm validate:assets` — Verifies every entry in `assets/manifest.json` (66 assets) exists on disk, matches declared format/dimensions, and stays within the `<= 3.50 MB` payload cap.
+   - `pnpm validate:content` — Validates `balance.yaml`, 8 characters, and all 362 YAML events against Zod + semantic graph + manifest references.
+   - `pnpm validate:locales` — Verifies 100% English (`en`) translation key parity (3,046 keys across 362 events) with zero orphan keys.
    - `pnpm compile:content` — Emits `src/generated/content-bundle.json` and `src/content/compiled-locales.json`.
    - `pnpm typecheck` — `tsc --noEmit`.
    - `pnpm lint` — `biome check .`.
-   - `pnpm test` — `vitest run` (engine, schema, service, i18n, content, itch packager, and 300-event Monte Carlo simulation suites).
+   - `pnpm test` — `vitest run` (engine, schema, service, i18n, content, itch packager, and 362-event Monte Carlo simulation suites).
    - `pnpm build` — Production Vite bundle (`dist/`) verifying zero bundling or asset-resolution errors.
-   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-33`) against `dist/`.
+   - `pnpm test:e2e` — Local Playwright E2E + Usability/UX audit (`QA-01`..`QA-41`) against `dist/`.
    - **GitHub Actions CI (`.github/workflows/verify.yml`)**: Runs the full `pnpm verify` + `pnpm build:itch` pipeline on pushes and pull requests targeting `main` and uploads `release/autonomo-simulator-web.zip` as a workflow artifact.
 2. **Structured Manual Test Plan, Usability Audit & Playwright Execution (Local -> Live Vercel Production)**:
    - Every user-facing feature maintains human-readable test scenarios in `docs/qa/manual-test-plan.md` (covering preconditions, user journeys, edge cases, narrow mobile `360×780`, mobile `390×844`, compact laptop `1366×768`, and desktop `1440×900` multi-panel layout).

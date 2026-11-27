@@ -31,10 +31,14 @@ choices:
     label: Asignar turno estricto según quién ingrese antes el 50 % de señal
     result_text: "La regla del anticipo separa el humo de la solvencia en dos horas: dos cuentas pagan hoy y el resto acepta esperar a octubre."
     effects:
-      billed_income: 1950
+      billed_income: 2200
       moral: 5
-      stress: 4
+      stress: 1
       reputation: 4
+    requirements:
+      stats:
+        stress:
+          max: 50
   - id: derivar_excedente_a_red_colaboradores
     label: Quedarte la cuenta principal y repartir el resto con tu red externa
     requirements:

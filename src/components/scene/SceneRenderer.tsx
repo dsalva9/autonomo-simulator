@@ -6,6 +6,8 @@ import {
   type EventDef,
   type GameState,
   type RenderMode,
+  getTeamHeadcount,
+  isBoutiqueSeniorSolo,
   resolvePartnerName,
 } from "../../engine/index.ts";
 import {
@@ -17,6 +19,7 @@ import {
 } from "../../services/content/catalog.ts";
 import {
   normalizeLocale,
+  translateBusinessTierShort,
   translateCategoryLabel,
   translateCharacterName,
   translateCharacterRole,
@@ -59,6 +62,12 @@ export function SceneRenderer({
   const { manifest, characters } = compiledCatalog;
 
   const bgAsset = resolveDeskBackgroundAsset(manifest, state);
+  const businessTier = state.business?.tier ?? "solo_autonomo";
+  const headcount = getTeamHeadcount(state);
+  const boutiqueSolo = isBoutiqueSeniorSolo(state, compiledCatalog);
+  const tierShort = translateBusinessTierShort(businessTier, locale, {
+    isBoutiqueSeniorSolo: boutiqueSolo,
+  });
   const showCafe = state.indicators.stress >= 50;
   const showFacturas = state.finances.accrued_tax_liability >= 1200;
   const showNumerosRojos = state.indicators.money < 0;
@@ -67,8 +76,28 @@ export function SceneRenderer({
     state.family.status === "cohabiting" ||
     state.family.children_count > 0;
   const hasStudioOrTeam = Boolean(
-    state.employee || state.flags?.estudio_calle_alquilado || state.flags?.estudio_propio_activo,
+    businessTier !== "solo_autonomo" ||
+      headcount > 0 ||
+      boutiqueSolo ||
+      state.flags?.estudio_calle_alquilado ||
+      state.flags?.estudio_propio_activo,
   );
+  const structureChipLabel =
+    headcount >= 2
+      ? isEn
+        ? `${tierShort} · ${headcount} staff`
+        : `${tierShort} · ${headcount} pers.`
+      : headcount === 1
+        ? isEn
+          ? `${tierShort} · 1 staff`
+          : `${tierShort} · 1 pers.`
+        : boutiqueSolo
+          ? isEn
+            ? "Boutique Solo"
+            : "Boutique Sénior"
+          : businessTier !== "solo_autonomo"
+            ? tierShort
+            : null;
   const showHaciendaChip = state.fiscal_risk >= 25 || state.phase === "quarterly_tax";
 
   const cafeAsset = showCafe ? resolveManifestAsset(manifest, "prop_cafe") : null;
@@ -158,7 +187,11 @@ export function SceneRenderer({
   if (hasStudioOrTeam) {
     activePropChips.push({
       key: "equipo",
-      label: isEn ? "💻 Studio team" : "💻 Equipo",
+      label: structureChipLabel
+        ? `${boutiqueSolo ? "⭐" : "🏢"} ${structureChipLabel}`
+        : isEn
+          ? "💻 Studio team"
+          : "💻 Equipo",
       tone: "bg-[#e8f5f1] text-[#1f5c53] border-[#1f5c53]/40",
     });
   }
@@ -360,6 +393,14 @@ export function SceneRenderer({
               />
               {subjectSubLabel}
             </span>
+            {structureChipLabel && (
+              <span
+                data-testid="scene-structure-chip"
+                className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#e8f5f1] text-[#174d45] border border-[#1f5c53]/35"
+              >
+                {structureChipLabel}
+              </span>
+            )}
             {showCafe && (
               <span className="stamp-badge text-[10px] px-1.5 py-0.5 rounded bg-[#fcf4df] text-[#7a4308]">
                 {ui.scene.caffeineActive}

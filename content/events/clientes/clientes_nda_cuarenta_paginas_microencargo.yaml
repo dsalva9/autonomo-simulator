@@ -11,6 +11,7 @@ character_id: cliente_regateador
 character_expression: neutral
 requirements:
   min_month: 1
+  max_month: 36
 weight: 10
 cooldown_months: 9
 max_occurrences: 4
@@ -28,10 +29,14 @@ choices:
     label: Sustituirlo por tu cláusula estándar de confidencialidad de una hoja
     result_text: Acepta tu modelo sensato, desvela un proyecto normalísimo de tienda de barrio y cierras un encargo limpio sin hipotecar tu casa.
     effects:
-      billed_income: 650
-      stress: 4
+      billed_income: 850
+      stress: 0
       moral: 2
-      reputation: 1
+      reputation: 3
+    requirements:
+      stats:
+        reputation:
+          min: 42
   - id: firmar_sin_leer_por_curiosidad
     label: Firmar el mamotreto tal cual a ver qué joya esconde
     outcomes:

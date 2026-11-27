@@ -7,6 +7,7 @@ tags:
   - requerimiento
   - bancos
   - inspeccion
+  - prescripcion_fiscal
 character_id: hacienda_inspector_gomez
 character_expression: angry
 requirements:

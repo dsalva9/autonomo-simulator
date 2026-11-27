@@ -5,9 +5,15 @@ import {
   type ChoiceOutcomeSummary,
   type ChoiceSpec,
   type EffectsSpec,
+  type EventDef,
   type GameState,
   type MonthStartSummary,
   type RenderMode,
+  computeEffectiveGestorFee,
+  getBusinessTierConfig,
+  getEffectiveScaledChoiceEffects,
+  getTeamHeadcount,
+  getTeamScalingConfig,
   resolvePartnerName,
   substitutePartnerName,
 } from "../../engine/index.ts";
@@ -18,6 +24,7 @@ import {
   resolveEventBannerAsset,
 } from "../../services/content/catalog.ts";
 import {
+  describeUnlockedRpgChecks,
   explainChoiceLockReasons,
   formatEuros,
   formatSignedEuros,
@@ -28,6 +35,8 @@ import {
   resolveChoiceResultText,
   resolveEventBody,
   resolveEventTitle,
+  translateBusinessTier,
+  translateBusinessTierShort,
   translateCategoryLabel,
   translateCharacterName,
   translateFamilyStatus,
@@ -116,16 +125,18 @@ function formatShortPolaroidName(fullName: string): string {
 }
 
 function buildDeterministicStakeChips(
+  event: EventDef,
   choice: ChoiceSpec,
   resolvedLabel: string,
   locale: string,
   state: GameState,
 ): StakeChip[] {
-  const effects = choice.effects;
-  if (!effects || (choice.outcomes && choice.outcomes.length > 0)) {
+  const rawEffects = choice.effects;
+  if (!rawEffects || (choice.outcomes && choice.outcomes.length > 0)) {
     return [];
   }
 
+  const effects = getEffectiveScaledChoiceEffects(state, compiledCatalog, event, rawEffects);
   const isEn = normalizeLocale(locale) === "en";
   const { balance, characters } = compiledCatalog;
   const labelMentionsEuro = resolvedLabel.includes("€");
@@ -173,8 +184,62 @@ function buildDeterministicStakeChips(
     });
   }
 
-  // 3. Structural recurring commitments (staff, advisor, family, temporal modifier)
-  if (effects.hire_employee) {
+  // 3. Structural recurring commitments (tier, multi-staff, advisor, family, temporal modifier)
+  if (effects.set_business_tier) {
+    chips.push({
+      key: "business-tier",
+      text: `→ ${translateBusinessTierShort(effects.set_business_tier.tier, locale)}`,
+      tone: "info",
+    });
+  }
+
+  if (effects.expand_team) {
+    const spec = effects.expand_team;
+    const effectiveTier =
+      effects.set_business_tier?.tier ?? state.business?.tier ?? "solo_autonomo";
+    const maxCap = Math.min(
+      12,
+      getBusinessTierConfig(effectiveTier, compiledCatalog).max_team_size,
+    );
+    const currentHeadcount = getTeamHeadcount(state);
+    const added = Math.max(0, Math.min(spec.count, maxCap - currentHeadcount));
+    if (added > 0) {
+      const unitCost =
+        spec.avg_monthly_cost ?? getTeamScalingConfig(compiledCatalog).default_staff_monthly_cost;
+      let deltaCost = added * unitCost;
+      if (currentHeadcount === 0) {
+        const leadId = spec.lead_character_id ?? "empleado_junior_dani";
+        const leadCost = characters[leadId]?.employee_params?.monthly_cost ?? unitCost;
+        deltaCost = leadCost + (added - 1) * unitCost;
+      }
+      chips.push({
+        key: "expand-team",
+        text: isEn
+          ? `+${added} staff · -${formatEuros(deltaCost, locale)}/m`
+          : `+${added} pers. · -${formatEuros(deltaCost, locale)}/m`,
+        tone: "info",
+      });
+    }
+  } else if (effects.shrink_team) {
+    const spec = effects.shrink_team;
+    const currentHeadcount = getTeamHeadcount(state);
+    const removed = spec.dismiss_all ? currentHeadcount : Math.min(spec.count, currentHeadcount);
+    if (removed > 0) {
+      const totalSev = Math.round(removed * spec.severance_per_person);
+      chips.push({
+        key: "shrink-team",
+        text:
+          totalSev > 0 && !labelMentionsEuro
+            ? isEn
+              ? `-${formatEuros(totalSev, locale)} · -${removed} staff`
+              : `-${formatEuros(totalSev, locale)} · -${removed} pers.`
+            : isEn
+              ? `-${removed} staff`
+              : `-${removed} pers.`,
+        tone: totalSev > 0 ? "negative" : "neutral",
+      });
+    }
+  } else if (effects.hire_employee) {
     const empChar = characters[effects.hire_employee.character_id];
     const empCost = empChar?.employee_params?.monthly_cost;
     const empMult = empChar?.employee_params?.billing_multiplier;
@@ -200,12 +265,9 @@ function buildDeterministicStakeChips(
       tone: sev > 0 ? "negative" : "neutral",
     });
   } else if (effects.set_gestor) {
-    const gestorChar = effects.set_gestor.character_id
-      ? characters[effects.set_gestor.character_id]
-      : undefined;
-    const fee =
-      gestorChar?.gestor_params?.monthly_fee ??
-      balance.gestor_tiers[effects.set_gestor.tier].monthly_fee;
+    const effectiveTier =
+      effects.set_business_tier?.tier ?? state.business?.tier ?? "solo_autonomo";
+    const fee = computeEffectiveGestorFee(effects.set_gestor.tier, effectiveTier, compiledCatalog);
     chips.push({
       key: "gestor",
       text: `${translateGestorTier(effects.set_gestor.tier, locale)} (${formatEuros(fee, locale)}/m)`,
@@ -532,11 +594,26 @@ export function EventStage({
       : substitutePartnerName(pendingOutcome.choiceLabel, partnerName)
     : "";
 
-  const appliedEffects: EffectsSpec | undefined = pendingOutcome
+  const rawAppliedEffects: EffectsSpec | undefined = pendingOutcome
     ? pendingOutcome.outcome.outcome_id
       ? pendingChoiceObj?.outcomes?.find((o) => o.id === pendingOutcome.outcome.outcome_id)?.effects
       : (pendingChoiceObj?.effects ?? undefined)
     : undefined;
+  const appliedEffects: EffectsSpec | undefined =
+    pendingOutcome && rawAppliedEffects
+      ? getEffectiveScaledChoiceEffects(
+          state,
+          compiledCatalog,
+          pendingOutcome.event,
+          rawAppliedEffects,
+        )
+      : rawAppliedEffects;
+  const isCorporateRegime = getBusinessTierConfig(state, compiledCatalog).corporate_tax_regime;
+  const stripTaxLabel = isCorporateRegime
+    ? isEn
+      ? "VAT/Corp: "
+      : "IVA/IS: "
+    : ui.eventStage.vatIrpfShort;
 
   const extOutcome = pendingOutcome?.outcome as ExtendedChoiceOutcomeSummary | undefined;
   const extMonthStart = lastMonthStart as ExtendedMonthStartSummary | null;
@@ -618,7 +695,7 @@ export function EventStage({
               </strong>
             </span>
             <span className="whitespace-nowrap">
-              <span className="text-[#4a524e]">{ui.eventStage.vatIrpfShort}</span>
+              <span className="text-[#4a524e]">{stripTaxLabel}</span>
               <strong className="font-bold text-[#264e7a]">
                 +{formatEuros(extMonthStart.tax_accrued_on_billing, locale)}
               </strong>
@@ -670,7 +747,7 @@ export function EventStage({
               </strong>
             </span>
             <span className="whitespace-nowrap">
-              <span className="text-[#4a524e]">{ui.eventStage.vatIrpfShort}</span>
+              <span className="text-[#4a524e]">{stripTaxLabel}</span>
               <strong className="font-bold text-[#264e7a]">
                 +{formatEuros(extMonthStart.tax_accrued_on_billing, locale)}
               </strong>
@@ -754,6 +831,8 @@ export function EventStage({
         pendingOutcome.outcome.fiscal_risk_delta !== 0 ||
         computedTaxDelta !== 0 ||
         computedEmpSatDelta !== 0 ||
+        Boolean(pendingOutcome.outcome.business_tier_changed_to) ||
+        (pendingOutcome.outcome.team_headcount_delta ?? 0) !== 0 ||
         appliedEffects?.deferred_invoice ||
         appliedEffects?.add_modifier ||
         appliedEffects?.hire_employee ||
@@ -848,9 +927,13 @@ export function EventStage({
                       ? isEn
                         ? "Tax shield"
                         : "Escudo fiscal"
-                      : isEn
-                        ? "VAT/Tax reserve"
-                        : "Reserva IVA/IRPF"
+                      : isCorporateRegime
+                        ? isEn
+                          ? "VAT/Corp reserve"
+                          : "Reserva IVA/IS"
+                        : isEn
+                          ? "VAT/Tax reserve"
+                          : "Reserva IVA/IRPF"
                   }
                   formatted={
                     computedTaxDelta < 0
@@ -954,6 +1037,58 @@ export function EventStage({
                     />
                   );
                 })()}
+              {pendingOutcome.outcome.business_tier_changed_to && (
+                <DeltaPill
+                  label={isEn ? "Structure" : "Estructura"}
+                  formatted={translateBusinessTier(
+                    pendingOutcome.outcome.business_tier_changed_to,
+                    locale,
+                  )}
+                  favorable={pendingOutcome.outcome.business_tier_changed_to !== "solo_autonomo"}
+                />
+              )}
+              {(pendingOutcome.outcome.team_headcount_delta ?? 0) !== 0 &&
+                !appliedEffects?.hire_employee &&
+                !appliedEffects?.dismiss_employee &&
+                (() => {
+                  const headDelta = pendingOutcome.outcome.team_headcount_delta ?? 0;
+                  if (headDelta > 0) {
+                    const unitCost =
+                      appliedEffects?.expand_team?.avg_monthly_cost ??
+                      getTeamScalingConfig(compiledCatalog).default_staff_monthly_cost;
+                    const estCost = headDelta * unitCost;
+                    return (
+                      <DeltaPill
+                        label={isEn ? "Team" : "Plantilla"}
+                        formatted={
+                          isEn
+                            ? `+${headDelta} staff · -${formatEuros(estCost, locale)}/m`
+                            : `+${headDelta} ${headDelta === 1 ? "persona" : "personas"} · -${formatEuros(estCost, locale)}/m`
+                        }
+                        favorable={true}
+                      />
+                    );
+                  }
+                  const removedCount = Math.abs(headDelta);
+                  const totalSev = appliedEffects?.shrink_team
+                    ? Math.round(removedCount * appliedEffects.shrink_team.severance_per_person)
+                    : 0;
+                  return (
+                    <DeltaPill
+                      label={isEn ? "Team" : "Plantilla"}
+                      formatted={
+                        totalSev > 0
+                          ? isEn
+                            ? `-${removedCount} staff · -${formatEuros(totalSev, locale)} sev.`
+                            : `-${removedCount} pers. · indem. -${formatEuros(totalSev, locale)}`
+                          : isEn
+                            ? `-${removedCount} staff`
+                            : `-${removedCount} ${removedCount === 1 ? "persona" : "personas"}`
+                      }
+                      favorable={false}
+                    />
+                  );
+                })()}
               {appliedEffects?.hire_employee &&
                 (() => {
                   const empChar =
@@ -988,13 +1123,11 @@ export function EventStage({
               )}
               {appliedEffects?.set_gestor &&
                 (() => {
-                  const gChar = appliedEffects.set_gestor.character_id
-                    ? compiledCatalog.characters[appliedEffects.set_gestor.character_id]
-                    : undefined;
-                  const fee =
-                    gChar?.gestor_params?.monthly_fee ??
-                    compiledCatalog.balance.gestor_tiers[appliedEffects.set_gestor.tier]
-                      .monthly_fee;
+                  const fee = computeEffectiveGestorFee(
+                    appliedEffects.set_gestor.tier,
+                    state.business?.tier ?? "solo_autonomo",
+                    compiledCatalog,
+                  );
                   return (
                     <DeltaPill
                       label={isEn ? "Tax advisor" : "Gestoría"}
@@ -1209,9 +1342,14 @@ export function EventStage({
             >
               {activeEventView.choices.map((entry, index) => {
                 const { choice, eligible } = entry;
+                const moneyScaleMultiplier = activeEventView.event.scale_with_tier
+                  ? getBusinessTierConfig(state, compiledCatalog).event_stakes_multiplier
+                  : 1;
                 const lockReasons = eligible
                   ? []
-                  : explainChoiceLockReasons(state, choice.requirements, locale);
+                  : explainChoiceLockReasons(state, choice.requirements, locale, {
+                      moneyScaleMultiplier,
+                    });
                 const hasWeightedOutcomes = Boolean(choice.outcomes && choice.outcomes.length > 0);
                 const resolvedLabel = resolveChoiceLabel(
                   activeEventView.event.id,
@@ -1219,9 +1357,26 @@ export function EventStage({
                   locale,
                   partnerName,
                 );
-                const stakeChips = eligible
-                  ? buildDeterministicStakeChips(choice, resolvedLabel, locale, state)
+                const rpgUnlockChecks = eligible
+                  ? describeUnlockedRpgChecks(choice.requirements, locale)
                   : [];
+                const stakeChips = eligible
+                  ? buildDeterministicStakeChips(
+                      activeEventView.event,
+                      choice,
+                      resolvedLabel,
+                      locale,
+                      state,
+                    )
+                  : [];
+                const reservedChipSlots =
+                  (rpgUnlockChecks.length > 0 ? 1 : 0) + (hasWeightedOutcomes ? 1 : 0);
+                const visibleStakeChips = stakeChips.slice(0, Math.max(0, 4 - reservedChipSlots));
+                const showChoiceChips =
+                  eligible &&
+                  (rpgUnlockChecks.length > 0 ||
+                    hasWeightedOutcomes ||
+                    visibleStakeChips.length > 0);
 
                 return (
                   <button
@@ -1258,12 +1413,20 @@ export function EventStage({
                           {resolvedLabel}
                         </span>
 
-                        {(hasWeightedOutcomes || stakeChips.length > 0) && eligible && (
+                        {showChoiceChips && (
                           <span
                             data-testid={`choice-stakes-${index}`}
                             className="inline-flex flex-wrap items-center gap-1 max-w-full min-w-0"
                           >
-                            {stakeChips.map((chip) => (
+                            {rpgUnlockChecks.length > 0 && (
+                              <span
+                                data-testid={`choice-rpg-unlock-${index}`}
+                                className="inline-flex items-center font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded border leading-tight max-w-full break-words tabular-nums bg-[#e8f5f1] text-[#174d45] border-[#1f5c53]/50"
+                              >
+                                ✓ {rpgUnlockChecks.slice(0, 2).join(" · ")}
+                              </span>
+                            )}
+                            {visibleStakeChips.map((chip) => (
                               <span
                                 key={chip.key}
                                 className={`inline-flex items-center font-bureau text-[10px] font-bold px-1.5 py-0.5 rounded border leading-tight max-w-full break-words tabular-nums ${stakeChipClass(

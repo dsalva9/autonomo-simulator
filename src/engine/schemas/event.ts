@@ -6,6 +6,15 @@ export const GestorTierSchema = z.enum(["self", "cheap", "premium"]);
 
 export const FamilyStatusSchema = z.enum(["single", "dating", "cohabiting", "separated"]);
 
+export const BusinessTierSchema = z.enum([
+  "solo_autonomo",
+  "estudio_consolidado",
+  "sociedad_limitada",
+  "agencia_consultora",
+]);
+
+export const SchedulePrioritySchema = z.enum(["normal", "high"]);
+
 export const AbandonEndingSchema = z.enum([
   "abandon_oposiciones",
   "abandon_salaried",
@@ -50,6 +59,9 @@ export const RequirementsSpecSchema = z
     gestor_tiers: z.array(GestorTierSchema).nullable().optional(),
     family_statuses: z.array(FamilyStatusSchema).nullable().optional(),
     has_employee: z.boolean().nullable().optional(),
+    business_tiers: z.array(BusinessTierSchema).min(1).nullable().optional(),
+    team_size: StatRangeSchema.nullable().optional(),
+    children_count: StatRangeSchema.nullable().optional(),
   })
   .strict()
   .superRefine((req, ctx) => {
@@ -75,6 +87,7 @@ export const ScheduleEventSpecSchema = z
     event_id: SnakeCaseIdSchema,
     delay_months: z.number().int().min(0),
     probability: z.number().min(0).max(1).optional(),
+    priority: SchedulePrioritySchema.optional(),
   })
   .strict();
 
@@ -116,6 +129,29 @@ export const DismissEmployeeSpecSchema = z
   })
   .strict();
 
+export const SetBusinessTierSpecSchema = z
+  .object({
+    tier: BusinessTierSchema,
+  })
+  .strict();
+
+export const ExpandTeamSpecSchema = z
+  .object({
+    count: z.number().int().min(1).max(6),
+    avg_monthly_cost: z.number().int().min(800).max(6000).optional(),
+    lead_character_id: SnakeCaseIdSchema.optional(),
+    role_label: z.string().min(1).optional(),
+  })
+  .strict();
+
+export const ShrinkTeamSpecSchema = z
+  .object({
+    count: z.number().int().min(1).max(12),
+    severance_per_person: z.number().int().min(0),
+    dismiss_all: z.boolean().optional(),
+  })
+  .strict();
+
 export const EffectsSpecSchema = z
   .object({
     billed_income: z.number().min(0).optional(),
@@ -137,6 +173,9 @@ export const EffectsSpecSchema = z
     add_child: z.number().int().min(1).optional(),
     hire_employee: HireEmployeeSpecSchema.optional(),
     dismiss_employee: DismissEmployeeSpecSchema.optional(),
+    set_business_tier: SetBusinessTierSpecSchema.optional(),
+    expand_team: ExpandTeamSpecSchema.optional(),
+    shrink_team: ShrinkTeamSpecSchema.optional(),
     trigger_ending: AbandonEndingSchema.optional(),
   })
   .strict();
@@ -187,6 +226,8 @@ export const ChoiceSpecSchema = z
 
 export type GestorTier = z.infer<typeof GestorTierSchema>;
 export type FamilyStatus = z.infer<typeof FamilyStatusSchema>;
+export type BusinessTier = z.infer<typeof BusinessTierSchema>;
+export type SchedulePriority = z.infer<typeof SchedulePrioritySchema>;
 export type AbandonEndingId = z.infer<typeof AbandonEndingSchema>;
 export type StatRange = z.infer<typeof StatRangeSchema>;
 export type StatsRequirement = z.infer<typeof StatsRequirementSchema>;
@@ -198,6 +239,9 @@ export type SetGestorSpec = z.infer<typeof SetGestorSpecSchema>;
 export type SetFamilyStatusSpec = z.infer<typeof SetFamilyStatusSpecSchema>;
 export type HireEmployeeSpec = z.infer<typeof HireEmployeeSpecSchema>;
 export type DismissEmployeeSpec = z.infer<typeof DismissEmployeeSpecSchema>;
+export type SetBusinessTierSpec = z.infer<typeof SetBusinessTierSpecSchema>;
+export type ExpandTeamSpec = z.infer<typeof ExpandTeamSpecSchema>;
+export type ShrinkTeamSpec = z.infer<typeof ShrinkTeamSpecSchema>;
 export type EffectsSpec = z.infer<typeof EffectsSpecSchema>;
 export type OutcomeSpec = z.infer<typeof OutcomeSpecSchema>;
 export type ChoiceSpec = z.infer<typeof ChoiceSpecSchema>;
@@ -240,6 +284,15 @@ export function hasActiveRequirements(req?: RequirementsSpec | null): boolean {
   if (req.has_employee != null) {
     return true;
   }
+  if (req.business_tiers && req.business_tiers.length > 0) {
+    return true;
+  }
+  if (req.team_size && (req.team_size.min != null || req.team_size.max != null)) {
+    return true;
+  }
+  if (req.children_count && (req.children_count.min != null || req.children_count.max != null)) {
+    return true;
+  }
   return false;
 }
 
@@ -259,6 +312,7 @@ export const EventSchema = z
     cooldown_months: z.number().int().min(0),
     max_occurrences: z.number().int().min(1).nullable().optional(),
     exclusive_with: z.array(SnakeCaseIdSchema).optional(),
+    scale_with_tier: z.boolean().optional(),
     choices: z.array(ChoiceSpecSchema).min(2),
   })
   .strict()

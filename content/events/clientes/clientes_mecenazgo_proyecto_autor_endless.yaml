@@ -12,9 +12,11 @@ character_expression: null
 illustration_id: null
 requirements:
   min_month: 112
+  forbidden_flags:
+    - obra_referencia_completada
 weight: 10
 cooldown_months: 18
-max_occurrences: null
+max_occurrences: 1
 choices:
   - id: volcarse_en_obra_de_referencia
     label: Aceptar los 4.200 € e invertir 250 € en acabados de máxima calidad
@@ -28,6 +30,7 @@ choices:
       reputation: 10
       set_flags:
         - portfolio_actualizado
+        - obra_referencia_completada
   - id: ejecutar_edicion_sobria_respetando_descanso
     label: Pactar una edición sobria de 3.100 € cuidando tu tiempo libre
     result_text: "Frenas tu propio perfeccionismo a tiempo: sale una pieza redonda, cobras sin un solo sobresalto y disfrutas del fin de semana."
@@ -39,3 +42,4 @@ choices:
       reputation: 6
       set_flags:
         - portfolio_actualizado
+        - obra_referencia_completada

@@ -1,0 +1,64 @@
+schema_version: 1
+id: empleados_ere_ajuste_plantilla_bache
+category: empleados
+title: "Dos trimestres flojos: ¿ajustar equipo o quemar reservas?"
+body: "La cartera lleva dos trimestres sin llenar todas las mesas y las nóminas se comen la caja a velocidad de vértigo. Laura trae tres escenarios sobre la mesa: ajuste pactado, ERTE temporal o aguantar a pulmón."
+tags:
+  - plantilla
+  - reestructuracion
+  - crisis
+character_id: empleada_senior_laura
+character_expression: stressed
+illustration_id: illus_hito_conflicto_laboral
+requirements:
+  min_month: 60
+  team_size:
+    min: 4
+weight: 12
+cooldown_months: 18
+max_occurrences: null
+exclusive_with: []
+choices:
+  - id: ejecutar_ajuste_dos_plazas
+    label: "Pactar salida digna de 2 plazas (3.250 €/pers. de indemnización)"
+    result_text: "Es el día más amargo como empresario, pero pagas indemnización íntegra y cartas honestas. Salvas la viabilidad de la agencia sin dejar tierra quemada."
+    effects:
+      shrink_team:
+        count: 2
+        severance_per_person: 3250
+      stress: 10
+      employee_satisfaction: -14
+      moral: -8
+      set_flags:
+        - exempleado_salida_amistosa
+      schedule_events:
+        - event_id: empleados_exempleado_competidor_o_aliado
+          delay_months: 24
+          probability: 0.65
+          priority: high
+  - id: activar_erte_reduccion_temporal
+    label: "Tramitar ERTE de reducción de jornada cuatro meses (2.400 €)"
+    result_text: "Abogados laboralistas montan un ERTE temporal que alivia costes salariales sin despedir a nadie, aunque el ánimo se enfría hasta recuperar clientes."
+    effects:
+      deductible_expense: 2400
+      employee_satisfaction: -8
+      stress: 6
+      add_modifier:
+        id: mod_erte_reduccion_temporal
+        label: "ERTE temporal de jornada reducida"
+        remaining_months: 4
+        monthly_billed_delta: -1200
+        monthly_expense_delta: -1400
+  - id: proteger_toda_la_plantilla_con_caja
+    label: "Quemar 10.000 € de reserva propia y blindar cada puesto"
+    requirements:
+      stats:
+        money:
+          min: 14000
+    result_text: "Asumes el bache entero a costa de tu propio colchón. Nadie pierde su empleo y el equipo responde con una lealtad difícil de comprar con dinero."
+    effects:
+      cash_delta: -10000
+      employee_satisfaction: 20
+      moral: 14
+      reputation: 6
+      stress: -6
