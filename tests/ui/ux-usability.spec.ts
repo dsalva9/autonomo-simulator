@@ -462,6 +462,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
       );
 
       await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+      await page.evaluate(async () => {
+        await Promise.all(
+          document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+        );
+      });
       await page.getByTestId("trimestre-defer-btn").click();
 
       // Month 4 card 1 is hacienda_carta_certificada (16:9 milestone art + NPC Polaroid + 3 choices)
@@ -566,6 +571,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
         await page.getByTestId("outcome-continue-btn").click();
       }
       await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+      await page.evaluate(async () => {
+        await Promise.all(
+          document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+        );
+      });
       await assertVisibleInViewportWithoutScroll(
         page.getByTestId("trimestre-pay-btn"),
         fullViewportBounds,
@@ -934,6 +944,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     // Verify QuarterlyTaxModal auto-focus, Tab focus trap, ArrowDown/ArrowUp & '1' shortcut
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+      );
+    });
     await expect(page.getByTestId("trimestre-pay-btn")).toBeFocused();
     for (let t = 0; t < 4; t += 1) {
       await page.keyboard.press("Tab");
@@ -1088,6 +1103,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.keyboard.press("Enter");
 
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+      );
+    });
     await page.getByTestId("trimestre-pay-btn").click();
 
     // Year 10 AnnualSummaryModal MUST appear first before VictoryModal
@@ -1356,6 +1376,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await page.getByTestId("outcome-continue-btn").click();
 
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+      );
+    });
     await expect(page.getByTestId("trimestre-modal")).toContainText("FORM 303 / 130");
     await page.getByTestId("trimestre-pay-btn").click();
     await expect(page.getByTestId("indicator-calendar")).toContainText("Year 1 · Month 4");
@@ -2783,6 +2808,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
 
     for (const vp of viewports) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.evaluate(async () => {
+        await Promise.all(
+          document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+        );
+      });
 
       // IndicatorBar: inline business tier badge with zero height bloat or horizontal overflow
       const tierBadge = page.getByTestId("indicator-business-tier");
@@ -2953,6 +2983,11 @@ test.describe("Autónomo Simulator — Usability & User Experience (UX) Audit Su
     await openDashboardFromLanding(page);
     await page.getByTestId("continue-run-btn").click();
     await expect(page.getByTestId("trimestre-modal")).toBeVisible();
+    await page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((anim) => anim.finished.catch(() => undefined)),
+      );
+    });
     await expect(page.getByTestId("trimestre-form-badge")).toContainText("MODELO 303 / 202 (S.L.)");
     await expect(page.getByTestId("trimestre-sl-self-penalty")).toBeVisible();
     await expect(page.getByTestId("trimestre-elena-compliance-alert")).toBeVisible();
